@@ -1180,6 +1180,17 @@ h1 {
   width: 100%;
   display: block;
 }
+.loading {
+  width: 150px;
+  height: 150px;
+  padding-top: 60px;
+  display: inline-block;
+}
+.loading img {
+  width: 30px;
+  margin: 0 auto;
+  display: block;
+}
 .wrap {
   width: 990px;
   margin: 0 auto;

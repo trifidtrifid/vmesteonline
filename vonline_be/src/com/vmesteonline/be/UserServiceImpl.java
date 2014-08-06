@@ -20,6 +20,7 @@ import org.apache.thrift.TException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -807,7 +808,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	private List<VoUser> getUsersByLocation(VoUser loc, int radius, PersistenceManager pm) {
+	public static List<VoUser> getUsersByLocation(GeoLocation loc, int radius, PersistenceManager pm) {
 		List<VoUser> users = new ArrayList<VoUser>();
 
 		// BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);

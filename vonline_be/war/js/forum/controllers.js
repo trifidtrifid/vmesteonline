@@ -2234,6 +2234,8 @@ function initAttachImage(selector,attachAreaSelector){
             return true;
         }
     }).on('change', function(){
+        attachAreaSelector.find('.loading').removeClass('hidden');
+
         var fileLabel = $(this).find('+.file-label'),
         type = selector[0].files[0].type;
 
@@ -2251,7 +2253,9 @@ function initAttachImage(selector,attachAreaSelector){
                 var url = fileClient.saveFileContent(copyImgSrc, true),
                     fileName = fileLabel.find('.file-name').attr('data-title');
 
-                attachAreaSelector.append("<span class='attach-item new-attached'>" +
+                attachAreaSelector.find('.loading').addClass('hidden');
+
+                attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
                     "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
                     "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
 

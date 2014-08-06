@@ -89,7 +89,11 @@
                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                <div id="attach-area-{{talks.fullTalkTopic.id}}" class="attach-area"></div>
+                                <div id="attach-area-{{talks.fullTalkTopic.id}}" class="attach-area">
+                                    <div class="loading hidden">
+                                        <img ng-src="i/loading2.gif" alt="картинка"/>
+                                    </div>
+                                </div>
                                 <div id="attach-doc-area-{{talks.fullTalkTopic.id}}" class="attach-area attach-area-doc"></div>
 
                                 <div class="answer-input-bottom">
@@ -152,7 +156,11 @@
                                                   onblur="if(this.value=='') this.value='Ваш ответ';"
                                                   onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                        <div id="attach-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area"></div>
+                                        <div id="attach-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area">
+                                            <div class="loading hidden">
+                                                <img ng-src="i/loading2.gif" alt="картинка"/>
+                                            </div>
+                                        </div>
                                         <div id="attach-doc-area-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area attach-area-doc"></div>
 
                                         <div class="answer-input-bottom">
@@ -216,7 +224,11 @@
                                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                                <div id="attach-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area"></div>
+                                                <div id="attach-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area">
+                                                    <div class="loading hidden">
+                                                        <img ng-src="i/loading2.gif" alt="картинка"/>
+                                                    </div>
+                                                </div>
                                                 <div id="attach-doc-area-{{talks.fullTalkTopic.id+'-'+message.id}}" class="attach-area attach-area-doc"></div>
 
 

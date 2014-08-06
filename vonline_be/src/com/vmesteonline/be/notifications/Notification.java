@@ -1,10 +1,13 @@
 package com.vmesteonline.be.notifications;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +19,14 @@ import java.util.TreeSet;
 import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.NotificationFreq;
+import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
+import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.jdo2.dialog.VoDialog;
+import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
 import com.vmesteonline.be.utils.EMailHelper;
 
 public abstract class Notification {
@@ -35,7 +42,7 @@ public abstract class Notification {
 	public abstract void makeNotification( Set<VoUser> users ); 
 	private Map< VoUser, List<NotificationMessage>> messagesToSend = new HashMap<VoUser, List<NotificationMessage>>();
 	
-	public void sendNotifications(){
+	public void sendNotifications( ){
 		Set<VoUser> users = createRecipientsList();
 		new NewTopicsNotification().makeNotification(users); 
 		new NewNeigboursNotification().makeNotification(users);
@@ -55,7 +62,6 @@ public abstract class Notification {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 	
 	protected Set<VoUser> createRecipientsList() {
@@ -120,6 +126,64 @@ public abstract class Notification {
 			}
 		}
 		return groupUserMap;
+	}
+	
+	public static void messageBecomeImportantNotification( VoTopic it ){
+		Long ug = it.getUserGroupId();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUserGroup group = pm.getObjectById(VoUserGroup.class, it.getUserGroupId());
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
+			
+			String subject = "ВместеОнлайн.ру: ВНИМАНИЕ! важное сообщение";
+			String body;
+			try {
+				body = new String( it.getContent(), "UTF-8" );
+			} catch (UnsupportedEncodingException e1) {
+				body = new String( it.getContent() );
+				e1.printStackTrace();
+			}
+			body += "\n Сообщение было отмечено важным другими пользователями. Важность: "+it.getImportantScore();
+			for(VoUser rcpt: usersForMessage){
+				try {
+					EMailHelper.sendSimpleEMail( 
+							rcpt, subject, body );
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		} finally {
+			pm.close();
+		}
+	}
+	
+	public static void dialogMessageNotification( VoDialog dlg, VoUser author, VoUser rcpt ){
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, pm);
+			VoDialogMessage lastMsg;
+			if( messages.size() > 1 && 
+					(lastMsg = messages.iterator().next()).getAuthorId() != messages.iterator().next().getAuthorId() ){
+				
+				try {
+					EMailHelper.sendSimpleEMail( 
+							rcpt, "ВместеОнлайн.ру: сообщение от "+author.getName(), 
+							author.getName() + " " + author.getLastName() + " написал вам: "
+									+ lastMsg.getContent());
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		} finally {
+			pm.close();
+		}
+	}
+	
+	public static void welcomeMessageNotification( VoTopic it ){
+		
 	}
 	
 	protected Comparator<VoUser> vuComp = new Comparator<VoUser>() {
