@@ -134,7 +134,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				pm.makePersistent(vBuilding);
 			}
 			return new UserLocation( pa.getAddressText(pm), Long.toString(invite.getPostalAddressId()), 
-					VoGeocoder.createMapImageURL(  vBuilding.getLongitude(), vBuilding.getLatitude(), 800, 600 ));
+					VoGeocoder.createMapImageURL(  vBuilding.getLongitude(), vBuilding.getLatitude(), 450, 450 ));
 		} finally {
 			pm.close();
 		}
