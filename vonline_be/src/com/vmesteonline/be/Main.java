@@ -39,7 +39,8 @@ public class Main implements javax.servlet.Filter {
 		
 		if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
 			
-			doAuthFilter(srequest, sresponse);
+			if( doAuthFilter(srequest, sresponse)) //redirection made by AuthFCIlter
+				return;
 			
 			HttpServletRequest request = (HttpServletRequest) srequest;
 			HttpServletResponse response = (HttpServletResponse) sresponse;
@@ -147,7 +148,7 @@ public class Main implements javax.servlet.Filter {
 		}
 	}
 	
-	public void doAuthFilter(ServletRequest arg0, ServletResponse arg1) throws IOException, ServletException {
+	public boolean doAuthFilter(ServletRequest arg0, ServletResponse arg1) throws IOException, ServletException {
 		
 		String rt = arg0.getParameter("rt"); //type of request, auth or confirm
 		HttpServletRequest req = (HttpServletRequest) arg0;
@@ -188,12 +189,13 @@ public class Main implements javax.servlet.Filter {
 							rs.setUserId(userId);
 							logger.fine("User id="+userId+" successfully attached to session '"+si+"' from session '"+req.getSession().getId()+"' REdirect req to '"+URLDecoder.decode(bu)+"'");
 							resp.sendRedirect( URLDecoder.decode(bu) );
-							
+							return true;
 
 							
 						} catch( Exception e){
 							logger.warning("Failed to confirm user."+e.getMessage());
 							resp.sendRedirect(ref);
+							return true; 
 							
 						} finally {
 							pm.close();
@@ -205,5 +207,6 @@ public class Main implements javax.servlet.Filter {
 				logger.warning("Failed filter." + e.getMessage());
 			}
 		}
+		return false;
 	}
 }
