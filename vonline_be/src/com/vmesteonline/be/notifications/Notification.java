@@ -128,11 +128,10 @@ public abstract class Notification {
 		return groupUserMap;
 	}
 	
-	public static void messageBecomeImportantNotification( VoTopic it ){
-		Long ug = it.getUserGroupId();
+	public static void messageBecomeImportantNotification( VoTopic it, VoUserGroup group ){
+
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUserGroup group = pm.getObjectById(VoUserGroup.class, it.getUserGroupId());
 			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
 			
 			String subject = "ВместеОнлайн.ру: ВНИМАНИЕ! важное сообщение";

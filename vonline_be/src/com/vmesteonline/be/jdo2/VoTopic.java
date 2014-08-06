@@ -11,6 +11,7 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.messageservice.Attach;
+import com.vmesteonline.be.messageservice.Mark;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.Topic;
 
@@ -46,7 +47,8 @@ public class VoTopic extends VoBaseMessage {
 			}
 
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
-				links, null, null, 0, null, imgs, docs, null, isImportant(userId), isLiked(userId));
+				links, null, null, 0, null, imgs, docs, null, 
+					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId));
 
 
 		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
@@ -120,6 +122,14 @@ public class VoTopic extends VoBaseMessage {
 	public String toString() {
 		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";
 	}
+	
+	public boolean isImportant() {
+		return isImportant;
+	}
+
+	public void setImportant(boolean isImportant) {
+		this.isImportant = isImportant;
+	}
 
 	@Persistent
 	@Unindexed
@@ -153,4 +163,6 @@ public class VoTopic extends VoBaseMessage {
 	@Unindexed
 	protected byte[] subject;
 	
+	public boolean isImportant;
+
 }

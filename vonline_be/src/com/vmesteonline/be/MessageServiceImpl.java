@@ -35,6 +35,7 @@ import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.WallItem;
+import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class MessageServiceImpl extends ServiceImpl implements Iface {
@@ -177,7 +178,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		String req = "select `id` from topic where";
 		if (group != null)
-			req += " radius <= " + group.getRadius() + " and longitude <= "
+			req += " radius >= " + group.getRadius() + " and longitude <= "
 					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and longitude >= "
 					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude <= "
 					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
@@ -216,7 +217,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			while (rs.next() && topics.size() < length) {
 				long topicId = rs.getLong(1);
 				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-				if (addTopic && (!importantOnly || group.getImportantScore() <= topic.getImportantScore())) {
+				
+				boolean isImportant = group.getImportantScore() <= topic.getImportantScore();
+				topic.setImportant(isImportant);
+				
+				if (addTopic && (!importantOnly || isImportant )) {
 					topics.add(topic);
 					long topicAge = (System.currentTimeMillis() / 1000L) - topic.getLastUpdate();
 					if (importantOnly && (topics.size() > 4 || topicAge > 86400 * 7)) // в запросе важных возвращается не более 5 и не старше недели
@@ -590,7 +595,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
-			return msg.markImportant(getCurrentUser(), author, isImportant, pm);
+			int impScore = msg.markImportant(getCurrentUser(), author, isImportant, pm);
+			
+			//time to send notification if not sent?
+			if( isImportant && 0 == msg.getImportantNotificationSentDate() ){
+				VoUserGroup topicGroup = pm.getObjectById(VoUserGroup.class, msg.getUserGroupId());
+				if( impScore >= topicGroup.getImportantScore()){
+					Notification.messageBecomeImportantNotification( msg, topicGroup );
+					msg.setImportantNotificationSentDate((int) (System.currentTimeMillis()/1000L));
+				}
+			}
+			return impScore;
 		} finally {
 			pm.close();
 		}
