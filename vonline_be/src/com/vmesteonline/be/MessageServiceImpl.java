@@ -255,7 +255,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public TopicListPart getImportantTopics(long groupId, long rubricId, int commmunityId, int length) throws InvalidOperation {
-		return getTopics(groupId, rubricId, commmunityId, 0, length, MessageType.BASE, true);
+		return getTopics(groupId, rubricId, commmunityId, 0, 1000, MessageType.WALL, true);
 	}
 
 	@Override
