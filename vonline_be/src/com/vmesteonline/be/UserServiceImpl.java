@@ -291,6 +291,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 			}
+			uProfile.importancy = user.getImportancy();
+			uProfile.populatity = user.getPopularuty();
+			
 			return uProfile;
 
 		} catch (Exception e) {

@@ -135,6 +135,8 @@ struct UserProfile {
 	4: UserPrivacy privacy, 
 	5: UserInterests interests,
 	6: Notifications notifications,
+	7: i32 importancy,
+	8: i32 populatity,
 }
 
 

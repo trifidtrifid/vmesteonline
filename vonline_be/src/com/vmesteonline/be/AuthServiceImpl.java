@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -122,6 +123,20 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
+	public String getInviteCode(String address, String email) {
+
+		try {
+			EMailHelper.sendSimpleEMail("trifid@gmail.com", "want to register", email + " " + address + " want to join");
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.warning("warning when try to send email from join. user " + email + " address " + address);
+		}
+
+		//todo return url to map
+		return "";
+	}
+
+	@Override
 	public UserLocation checkInviteCode(String code) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
@@ -129,12 +144,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			VoInviteCode invite = VoInviteCode.getInviteCode(code, pm);
 			VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class, invite.getPostalAddressId());
 			VoBuilding vBuilding = pm.getObjectById(VoBuilding.class, pa.getBuilding());
-			if( vBuilding.getLatitude() == null || vBuilding.getLongitude() == null ){
-				VoGeocoder.getPosition(vBuilding, false );
+			if (vBuilding.getLatitude() == null || vBuilding.getLongitude() == null) {
+				VoGeocoder.getPosition(vBuilding, false);
 				pm.makePersistent(vBuilding);
 			}
-			return new UserLocation( pa.getAddressText(pm), Long.toString(invite.getPostalAddressId()), 
-					VoGeocoder.createMapImageURL(  vBuilding.getLongitude(), vBuilding.getLatitude(), 450, 450 ));
+			return new UserLocation(pa.getAddressText(pm), Long.toString(invite.getPostalAddressId()), VoGeocoder.createMapImageURL(
+					vBuilding.getLongitude(), vBuilding.getLatitude(), 450, 450));
 		} finally {
 			pm.close();
 		}
