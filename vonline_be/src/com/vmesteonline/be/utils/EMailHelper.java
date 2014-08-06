@@ -1,11 +1,13 @@
 package com.vmesteonline.be.utils;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 import com.google.appengine.api.mail.*;
 import com.google.appengine.api.mail.MailService.Message;
 import com.google.appengine.api.utils.SystemProperty;
+import com.vmesteonline.be.jdo2.VoUser;
 
 public class EMailHelper {
 	
@@ -24,6 +26,11 @@ public class EMailHelper {
 		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
 			logger.fine("MEssage body was: "+body);
 		}
+	}
+	
+	public static void sendSimpleEMail( VoUser to, String subject, String body) throws IOException {
+		sendSimpleEMail( URLEncoder.encode(to.getName() + " " + to.getLastName(), "UTF-8") + " <"+to.getEmail()+">", 
+				subject, body);
 	}
 	
 	public static void sendSimpleEMail( String to, String subject, String body) throws IOException {

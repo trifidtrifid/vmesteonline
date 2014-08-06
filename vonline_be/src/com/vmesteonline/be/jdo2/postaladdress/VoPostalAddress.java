@@ -134,11 +134,10 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			if( null == building.getAddressString() || building.getAddressString().trim().length() == 0 ) {
 				
 				PostalAddress pa = getPostalAddress(pm);
-				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo + " [э." + floor + " п. "
-						+ staircase + "]");
+				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo );
 				return building.getAddressString();
 			} else {
-				return building.getAddressString() + " кв. " + flatNo + " [этаж " + floor + " подъезд "+ staircase + "]";
+				return building.getAddressString() + " кв. " + flatNo/* + " [этаж " + floor + " подъезд "+ staircase + "]"*/;
 			}
 		} finally {
 			if (null == _pm)

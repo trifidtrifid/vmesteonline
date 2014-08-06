@@ -17,6 +17,9 @@ import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.EMailHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
@@ -124,8 +127,14 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoInviteCode invite = VoInviteCode.getInviteCode(code, pm);
-			// invite.getPostalAddressId();
-			return new UserLocation("Zanevski 32", Long.toString(invite.getPostalAddressId()), "http://maps.yandex.ru");
+			VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class, invite.getPostalAddressId());
+			VoBuilding vBuilding = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+			if( vBuilding.getLatitude() == null || vBuilding.getLongitude() == null ){
+				VoGeocoder.getPosition(vBuilding, false );
+				pm.makePersistent(vBuilding);
+			}
+			return new UserLocation( pa.getAddressText(pm), Long.toString(invite.getPostalAddressId()), 
+					VoGeocoder.createMapImageURL(  vBuilding.getLongitude(), vBuilding.getLatitude(), 800, 600 ));
 		} finally {
 			pm.close();
 		}

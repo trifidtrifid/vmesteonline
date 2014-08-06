@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
@@ -27,29 +28,27 @@ public class NewTopicsNotification extends Notification {
 
 	private JDBCConnector con = new MySQLJDBCConnector();
 
-	public void makeNotification() {
+	public void makeNotification( Set<VoUser> users ) {
 
 		int now = (int)(System.currentTimeMillis()/1000L);
 
-		Set<VoUser> users = createRecipientsList();
-		Map<VoUserGroup, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
-
-		// collect topics by group
-		Map<VoUserGroup, List<VoTopic>> groupTopicMap = new TreeMap<VoUserGroup, List<VoTopic>>(ugComp);
 		PersistenceManager pm = PMF.getPm();
 		try {
-			for (VoUserGroup ug : groupUserMap.keySet()) {
-				groupTopicMap.put(ug, MessageServiceImpl.getTopics(ug, MessageType.BASE, 0, 10, false, con, pm));
-			}
+			Map<VoUserGroup, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
 
 			// create message for each user
 			String body = "Близкие события\n\n";
+			
 			for (VoUser u : users) {
+				Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
+				
 				for (VoUserGroup ug : u.getGroups()) {
-					List<VoTopic> topics = groupTopicMap.get(ug);
+					Set<VoTopic> topics = groupTopicMap.get(ug);
+					topics.removeAll(userTopics);
 					if (topics.size() != 0) {
 						body += createGroupContent(pm, ug, topics);
 					}
+					userTopics.addAll(topics);
 				}
 				NotificationMessage mn = new NotificationMessage();
 				mn.message = body;
@@ -69,9 +68,23 @@ public class NewTopicsNotification extends Notification {
 		}
 	}
 
-	private String createGroupContent(PersistenceManager pm, VoUserGroup ug, List<VoTopic> topics) {
+	private Map<VoUserGroup, Set<VoTopic>> collectTopicsByGroups(Set<VoUser> users, PersistenceManager pm) {
+		// collect topics by group
+		Map<VoUserGroup, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
+		Map<VoUserGroup, Set<VoTopic>> groupTopicMap = new TreeMap<VoUserGroup, Set<VoTopic>>(ugComp);
+		
+		for (VoUserGroup ug : groupUserMap.keySet()) {
+			Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
+			topics.addAll(MessageServiceImpl.getTopics(ug, MessageType.BASE, 0, 10, false, con, pm));
+			groupTopicMap.put(ug, topics);
+		}
+		return groupTopicMap;
+	}
+
+	private String createGroupContent(PersistenceManager pm, VoUserGroup ug, Set<VoTopic> topics) {
 		String groupContent = "Пишут в группе '" + ug.getName() + "=====\n";
-		for (VoTopic tpc : topics) {
+		Set<VoTopic> orderedTopics = new TreeSet<VoTopic>( topicCreatedDateComp );
+		for (VoTopic tpc : orderedTopics) {
 			String topicTxt = createTopicContent(pm, ug, tpc);
 			groupContent += topicTxt;
 		}
@@ -86,4 +99,20 @@ public class NewTopicsNotification extends Notification {
 		return topicTxt;
 	}
 
+	
+	Comparator<VoTopic> topicIdComp = new Comparator<VoTopic>(){
+		@Override
+		public int compare(VoTopic o1, VoTopic o2) {
+			return Long.compare( o1.getId(), o2.getId());
+		}
+	};
+	
+	Comparator<VoTopic> topicCreatedDateComp = new Comparator<VoTopic>(){
+
+		@Override
+		public int compare(VoTopic o1, VoTopic o2) {
+			return -Integer.compare(o1.getCreatedAt(), o2.getCreatedAt());
+		}
+		
+	};
 }

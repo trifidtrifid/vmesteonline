@@ -153,6 +153,4 @@ public class VoTopic extends VoBaseMessage {
 	@Unindexed
 	protected byte[] subject;
 	
-	
-
 }
