@@ -2,18 +2,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.Rubric"%>
 <%@ page import="com.vmesteonline.be.messageservice.Message"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.Topic"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="java.util.ArrayList"%>
 <%@ page import="com.vmesteonline.be.messageservice.MessageType" %>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -33,7 +26,6 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 }
 
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
 
     TopicListPart Blog = messageService.getBlog(0,1000);
 

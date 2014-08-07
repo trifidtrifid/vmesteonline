@@ -297,6 +297,11 @@ to {
 }
 .subscribe {
 	padding: 45px 0;
+    text-align: left;
+    font-size: 16px;
+}
+.subscribe input{
+    margin-bottom: 10px;
 }
 .alertMsg {
 	float: left;
@@ -313,6 +318,19 @@ to {
     z-index: 2;
     margin-top: 15px !important;
     right: 15px;
+}
+.request-response{
+    display: none;
+    padding-top: 109px;
+}
+.request-response span{
+    display: block;
+    text-align: center;
+}
+.request-response img{
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
 }
 
 
@@ -818,7 +836,7 @@ html{
     margin-top: 0;
 }
 .poll.getCode .logo{
-    margin-bottom: 150px;
+    margin-bottom: 50px;
 }
 .poll.getCode #result{
     font-size: 30px;
@@ -846,6 +864,10 @@ html{
     }
     .poll .subscribe{
         padding-bottom: 0;
+        text-align: left;
+    }
+    .poll .subscribe input{
+        margin-bottom: 10px;
     }
     .poll .thanks h1{
         font-size: 60px;

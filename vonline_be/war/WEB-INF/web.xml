@@ -96,7 +96,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
     <servlet>
         <servlet-name>Contacts</servlet-name>
-        <jsp-file>/contacts.html</jsp-file>
+        <jsp-file>/contacts.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>Contacts</servlet-name>

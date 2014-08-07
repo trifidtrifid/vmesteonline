@@ -1239,6 +1239,15 @@ h1 {
   display: block;
   margin-bottom: 10px;
 }
+.wrap.contacts .contacts-user {
+  margin-bottom: 10px;
+}
+.wrap.contacts .contacts-user .user-name {
+  margin-left: 50px;
+}
+.wrap.contacts .send {
+  margin-right: 15px;
+}
 .blog {
   text-align: left;
 }

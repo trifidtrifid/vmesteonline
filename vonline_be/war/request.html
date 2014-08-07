@@ -34,11 +34,23 @@
 				<form class="form-horizontal" role="form" action="subscribe.php" id="subscribeForm" method="POST">
 					<div class="form-group">
 						<div class="col-md-7 col-sm-6 col-sm-offset-1 col-md-offset-0">
+                            <p>Спасибо за проявленный интерес !</p>
+                            <p>Для получения кода доступа к сайту, укажите контактную информацию</p>
+                            <br/>
 							<input class="form-control input-lg active" name="address" type="text" id="address" placeholder="Укажите ваш домашний адрес" required="required">
-
+							<input class="form-control input-lg active" name="address" type="text" id="flat-number" placeholder="Укажите номер квартиры" required="required">
+							<input class="form-control input-lg active" name="address" type="email" id="email" placeholder="Укажите email" required="required">
+                            <br/>
+                            <button type="submit" class="btn btn-success btn-lg">Получить код</button>
 						</div>
 						<div class="col-md-5 col-sm-4">
-							<button type="submit" class="btn btn-success btn-lg">Получить код</button>
+							<!--<button type="submit" class="btn btn-success btn-lg">Получить код</button>-->
+                            <div class="request-response">
+
+                                <img class="request-map" src="#" alt="карта"/>
+                                <span></span>
+
+                            </div>
 						</div>
 					</div>
 				</form>
@@ -59,6 +71,14 @@
 	<script src="js/forum/landing/nicescroll.js"></script>
 	<script src="js/forum/landing/ketchup.all.js"></script>
 
+
+    <!-- файлы thrift -->
+    <script src="js/thrift.js" type="text/javascript"></script>
+    <script src="gen-js/bedata_types.js" type="text/javascript"></script>
+    <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <!-- -->
+
 	<!-- Typer -->
 
 	<script>
@@ -75,24 +95,43 @@
 			$('#subscribeForm').ketchup().submit(function() {
 				if ($(this).ketchup('isValid')) {
 					var action = $(this).attr('action');
-					$.ajax({
-						url : action,
-						type : 'POST',
-						data : {
-							address : $('#address').val(),
+                    var transport = new Thrift.Transport("/thrift/AuthService");
+                    var protocol = new Thrift.Protocol(transport);
+                    var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+
+                    var address = $('#address').val()+", "+$('#flat-number').val(),
+                            email = $('#email').val();
+
+                    try{
+                        var responseMap = authClient.getInviteCode(address,email);
+                        var response = $('.request-response');
+                        response.find('img').attr('src',responseMap);
+                        response.find('span').text('Мы доставим код в почтовый ящик в Вашем подъеде').removeClass('error-info');
+                    }catch(e){
+                        response.find('span').text('Мы не смогли найти указанный Вами адрес. Проверьте адрес и попробуйте снова').addClass('error-info');
+                    }
+
+                    response.fadeIn(200);
+
+
+                    /*$.ajax({
+                        url : action,
+                        type : 'POST',
+                        data : {
+                            address : $('#address').val(),
                             isAddress: true
-						},
-						success : function(data) {
-							//$('#result').html(data);
+                        },
+                        success : function(data) {
+                            //$('#result').html(data);
                             $('#subscribeForm').slideUp(200,function(){
                                 $('#result').text("Ваш запрос принят. Мы доставим код-приглашение в Ваш почтовый ящик в ближайшее время.").fadeIn(200);
                             });
 
-						},
-						error : function() {
-							$('#result').html('Sorry, an error occurred.');
-						}
-					});
+                        },
+                        error : function() {
+                            $('#result').html('Sorry, an error occurred.');
+                        }
+                    });*/
 				}
 				return false;
 			});
