@@ -824,15 +824,25 @@ h1 {
   position: absolute;
   bottom: 3px;
 }
-.fa-star {
+.fa-star,
+.fa-heart {
   color: #ccc;
   font-size: 16px;
   margin-right: 10px;
   margin-top: 4px;
 }
 .fa-star:hover,
-.fa-star.important {
+.fa-heart:hover,
+.fa-star.important,
+.fa-heart.important {
   color: #ffea4a;
+}
+.fa-heart {
+  margin-right: 5px;
+}
+.fa-heart:hover,
+.fa-heart.isLike {
+  color: #f00;
 }
 .itemdiv.dialogdiv > .body {
   margin-left: 58px;

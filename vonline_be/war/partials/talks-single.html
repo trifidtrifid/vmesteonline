@@ -24,6 +24,7 @@
                                     <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="talks.fullTalkTopic.tagColor">{{talks.fullTalkTopic.label}}</span>
                                     <a class="fa fa-star pull-right" ng-class="{'important' : talks.fullTalkTopic.message.important == 1}" title='{{ talks.fullTalkTopic.message.importantText }}' href="#" ng-click="base.markImportant($event,talks.fullTalkTopic.message)"></a>
+                                    <a class="fa fa-heart pull-right" ng-class="{'isLike' : talks.fullTalkTopic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,talks.fullTalkTopic.message)"></a>
 
                                         <h2>
                                             <span>{{talks.fullTalkTopic.subject}}</span>

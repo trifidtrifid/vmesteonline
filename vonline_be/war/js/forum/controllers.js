@@ -157,6 +157,13 @@ angular.module('forum.controllers', ['ui.select2'])
 
             messageClient.markMessageImportant(message.id,isImportant);
         };
+        base.markLike = function(event,message){
+            event.preventDefault();
+            var isLike;
+
+            message.like = 1;
+            messageClient.markMessageLike(message.id);
+        };
 
         base.showAllGroups = function(){
             var groupsLength = $rootScope.groups.length;

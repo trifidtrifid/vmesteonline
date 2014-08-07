@@ -87,6 +87,7 @@
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="talk.tagColor">{{talk.label}}</span>
                     <a class="fa fa-star pull-right" ng-class="{'important' : talk.message.important == 1}" title='{{ talk.message.importantText }}' href="#" ng-click="base.markImportant($event,talk.message)"></a>
+                    <a class="fa fa-heart pull-right" ng-class="{'isLike' : talk.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,talk.message)"></a>
 
                     <div class="clearfix"></div>
 
