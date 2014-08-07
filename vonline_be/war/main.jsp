@@ -199,7 +199,7 @@
                                 <div ng-switch on="importantTopic.message.type" >
 
                                     <a ui-sref="wall-single({ topicId :{{ importantTopic.id }} })" ng-switch-when="5">Перейти к записи</a>
-                                    <a ui-sref="talks-single-({ talkId :{{ importantTopic.id }} })" ng-switch-when="1">Перейти к записи</a>
+                                    <a ui-sref="talks-single({ talkId :{{ importantTopic.id }} })" ng-switch-when="1">Перейти к записи</a>
 
                                 </div>
                             </div>

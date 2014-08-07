@@ -215,6 +215,7 @@
                             <div class="talks-title-right">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="wallItem.tagColor">{{wallItem.label}}</span>
+                                <a class="fa fa-star pull-right" ng-class="{'important' : wallItem.topic.message.important == 1}" title='Пометить как "Важное"' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"></a>
                                 <div class="clearfix"></div>
 
                                 <div>Последнее обновление:</div>
