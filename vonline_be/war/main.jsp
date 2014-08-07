@@ -43,7 +43,7 @@
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
-		response.sendRedirect("/login.html");
+		response.sendRedirect("/index.html");
 		return;
 	}
 
