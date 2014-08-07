@@ -71,7 +71,9 @@ public class VoUser extends GeoLocation {
 		up.userInfo = getUserInfo();
 		up.family = getUserFamily();
 		up.privacy = getPrivacy();
-		up.interests = new UserInterests( getInterests(), getJob() );;
+		up.interests = new UserInterests( getInterests(), getJob() );
+		up.importancy = getImportancy();
+		up.populatity = getPopularuty();
 		return up;
 	}
 

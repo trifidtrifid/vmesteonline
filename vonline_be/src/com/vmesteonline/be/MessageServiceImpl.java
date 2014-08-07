@@ -635,6 +635,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
+			if( msg.getAuthorId() == null || msg.getAuthorId().getId() == getCurrentUserId())
+				return msg.getPopularityScore();
+			
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markLikes(getCurrentUser(), author, pm);
 		} finally {
