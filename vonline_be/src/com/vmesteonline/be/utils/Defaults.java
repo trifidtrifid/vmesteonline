@@ -10,6 +10,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
@@ -185,10 +186,10 @@ public class Defaults {
 		if (defGroups.isEmpty()){
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 200, 500, 1000, 5000 }).iterator();
 			for (VoGroup dg : new VoGroup[] { 
-					new VoGroup("Мой подъезд", radiusStarecase, true), 
-					new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Мои соседи", radiusMedium, true), 
-					new VoGroup("Мой район", radiusLarge, true) }) {
+					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
+					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
+					new VoGroup("Мои соседи", radiusMedium, GroupType.NEIGHBORS, true), 
+					new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) }) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);

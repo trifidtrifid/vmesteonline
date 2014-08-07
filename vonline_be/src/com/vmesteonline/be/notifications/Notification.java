@@ -18,9 +18,11 @@ import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -112,7 +114,7 @@ public abstract class Notification {
 		messagesToSend.put(u, uns);
 	}
 	
-	protected Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
+	protected static Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
 		// group users by groups and group types
 		Map<VoUserGroup, Set<VoUser>> groupUserMap = new TreeMap<VoUserGroup, Set<VoUser>>(ugComp);
 		for (VoUser u : users) {
@@ -181,17 +183,65 @@ public abstract class Notification {
 		}
 	}
 	
-	public static void welcomeMessageNotification( VoTopic it ){
-		
+	public static void welcomeMessageNotification( VoUser newUser ){
+		String body = "Добро пожаловть на сайт Вашего дома!\n\n ";
+		List<VoUserGroup> groups = newUser.getGroups();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
+			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, ""));
+			Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
+			
+			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек\n";
+			for(VoUserGroup group: groups ){
+				int usersInGroup;
+				if( null!=usersMap.get(group) && (usersInGroup = usersMap.get(group).size()) > 0 ){
+					
+					if( GroupType.FLOOR.getValue() == group.getGroupType()){
+						body += "\tНа вашем этаже: ";
+					} else if( GroupType.STAIRCASE.getValue() == group.getGroupType()){
+						body += "\tВ вашем подъезде: ";
+					} else if( GroupType.BUILDING.getValue() == group.getGroupType()){
+						body += "\tВ доме: ";
+					} else if( GroupType.BLOCK.getValue() == group.getGroupType()){
+						body += "\tВ вашем квартале: ";
+					} else if( GroupType.DISTRICT.getValue() == group.getGroupType()){
+						body += "\tВ вашем районе: ";
+					} else if( GroupType.TOWN.getValue() == group.getGroupType()){
+						body += "\tВ вашем городе: ";
+					}
+					body += usersInGroup +" \n";
+				}
+	 		}
+			body += "\n Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. \n"
+					+ "Мы - Вместеонлайн.ру.\nВы всегда можете связаться с нами по телефону, отправить нам письмо по адресу.\n\n";
+			
+			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...\n\n";
+			
+			if( !newUser.isEmailConfirmed() ){
+				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, введите код подтверждения вашего email адреса на странице профиля: http://vmesteonline.ru/profile\n"
+						+ "Код: " + newUser.getConfirmCode();
+			}
+			
+			body += "Спасибо что вы вместе, онлайн!";
+			try {
+				EMailHelper.sendSimpleEMail( newUser.getEmail(), "ВместеОнлайн.ру: добро пожаловать в ваш дом онлайн!",body);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} finally {
+			pm.close();
+		}		
 	}
 	
-	protected Comparator<VoUser> vuComp = new Comparator<VoUser>() {
+	static Comparator<VoUser> vuComp = new Comparator<VoUser>() {
 		@Override
-		public int compare(VoUser o1, VoUser o2) {
+	public int compare(VoUser o1, VoUser o2) {
 			return Long.compare( o1.getId(), o2.getId());
 		}
 	};
-	protected Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
+	protected static Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
 		@Override
 		public int compare(VoUserGroup o1, VoUserGroup o2) {
 			Long.compare(o1.getId(), o2.getId());
@@ -199,7 +249,7 @@ public abstract class Notification {
 		}
 	};
 	
-	Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
+	protected static Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
 
 		@Override
 		public int compare(VoSession o1, VoSession o2) {

@@ -22,6 +22,7 @@ import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.EMailHelper;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
@@ -198,6 +199,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				logger.fine("can't send email to " + email + " " + e.getMessage());
 				e.printStackTrace();
 			}
+			
+			Notification.welcomeMessageNotification(user);
 			return user.getId();
 
 		} finally {

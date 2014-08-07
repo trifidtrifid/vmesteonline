@@ -178,7 +178,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public long getConfirmCode() {
-		return confirmCode;
+		return 0 == confirmCode ? confirmCode = System.currentTimeMillis() % 98765 : confirmCode;
 	}
 
 	public void setConfirmCode(long confirmCode) {
@@ -315,6 +315,7 @@ public class VoUser extends GeoLocation {
 
 	@Persistent
 	@Unowned
+	@Unindexed
 	private List<VoRubric> rubrics;
 
 	@Persistent

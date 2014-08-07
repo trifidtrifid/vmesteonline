@@ -7,6 +7,7 @@ import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
+import com.vmesteonline.be.GroupType;
 
 @PersistenceCapable
 public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
@@ -17,6 +18,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		radius = grp.getRadius();
 		name = grp.getVisibleName();
 		importantScore = grp.getImportantScore();
+		groupType = grp.getGroupType();
 	}
 
 	
@@ -36,7 +38,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	}
 
 	public Group createGroup() {
-		return new Group(getId(), name, name, description, radius);
+		return new Group(getId(), name, name, description, radius, GroupType.findByValue(groupType));
 	}
 
 	public String getName() {
@@ -76,6 +78,18 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		return importantScore;
 	}
 
+	@Persistent
+	@Unindexed
+	private int groupType;
+	
+	public int getGroupType() {
+		return groupType;
+	}
+
+	public void setGroupType(int groupType) {
+		this.groupType = groupType;
+	}
+	
 	@Override
 	public String toString() {
 		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", radius=" + radius
