@@ -173,10 +173,10 @@
                         <li ng-class="{active:isSet(3)}"><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
-                    <div class="footer-left">
+                    <div class="footer footer-left" ng-hide="base.isFooterBottom">
                         (c) Вместе Онлайн 2014
                         <ul>
-                            <li><a href="about" target="_blank">О нас</a></li>
+                            <li><a href="about" target="_blank">О сайте</a></li>
                             <li><a href="blog" target="_blank">Блог</a></li>
                             <li><a href="contacts" target="_blank">Контакты</a></li>
                         </ul>
@@ -220,12 +220,12 @@
                         </div>
 
                         <nav class="submenu pull-right clearfix">
-                            <button class="btn btn-sm btn-info no-border pull-right ng-cloak" ng-repeat="group in groups"
+                            <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in groups"
                             id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button>
 
                         </nav>
 
-                        <div class="create-topic-btn pull-right" ng-show="base.talksIsActive || base.advertsIsActive">
+                        <div class="create-topic-btn pull-right ng-cloak" ng-show="base.talksIsActive || base.advertsIsActive">
                             <a class="btn btn-primary btn-sm no-border clearfix" href="#" ng-click="mainContentTop.showCreateTopic($event)">
                                 <span ng-show="base.talksIsActive">Создать тему</span>
                                 <span ng-hide="base.talksIsActive">Создать объявление</span>
@@ -240,6 +240,17 @@
 				</div>
 			</div>
 		</div>
+        
+        <div class="footer footer-bottom clearfix ng-cloak" ng-show="base.isFooterBottom">
+            <div class="pull-left">(c) Вместе Онлайн 2014</div>
+            <div class="pull-right">
+                <ul>
+                    <li><a href="about">О сайте</a></li>
+                    <li><a href="contacts">Контакты</a></li>
+                    <li><a href="blog">Блог</a></li>
+                </ul>
+            </div>
+        </div>
 
 	</div>
 

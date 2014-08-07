@@ -46,7 +46,10 @@
                             <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
                         </div>
 
-                        <div class="home-map"><img src="./i/map_home.jpg" alt="карта"/></div>
+                        <div class="home-map">
+                            <!--<img src="./i/map_home.jpg" alt="карта"/>-->
+                            <img ng-src="{{ profile.map }}" alt="карта"/>
+                        </div>
 
                         <!--<div style="margin-bottom:10px;">
                             <h4>Панель предварительного просмотра:</h4>

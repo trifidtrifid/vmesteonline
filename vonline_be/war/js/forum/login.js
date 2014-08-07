@@ -9,9 +9,12 @@ $(document).ready(function(){
     if(URL) {
         var URLArray = URL.split(';');
         var email = URLArray[0].split('=')[1],
-            mapUrl = URLArray[1].split('=')[1],
             address = URLArray[2].split('=')[1],
             code = URLArray[3].split('=')[1];
+
+        var mapUrlTemp = URLArray[1].split('=');
+        mapUrlTemp.shift();
+        var mapUrl = mapUrlTemp.join('=');
 
         $('#email').val(email);
         $('.mapUrl').attr('src', mapUrl);

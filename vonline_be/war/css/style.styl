@@ -136,12 +136,10 @@ transform()
   .show-left
     display none
 
-.footer-left
-  border-top 1px solid #CCCCCC
-  padding-top 10px
-  margin-top 40px
+.footer
   text-align left
   color #a6a6a6
+  border-top 1px solid #CCCCCC
   ul
     margin 0
     li
@@ -150,6 +148,12 @@ transform()
       margin 0 5px
       a
         color #a6a6a6
+  &.footer-left
+    padding-top 10px
+    margin-top 40px
+  &.footer-bottom
+    padding 20px 0
+
 
 .sidebar-right
   position absolute
@@ -1023,10 +1027,15 @@ transform()
 .coming-soon
   text-align center
   min-height 0
+  width 1024px
+  margin 0 auto
+  padding-left 0
   p
     font-size 16px
   h1
     font-size 40px
+  .navbar-brand
+    padding-left 0
 
 .maps
   img

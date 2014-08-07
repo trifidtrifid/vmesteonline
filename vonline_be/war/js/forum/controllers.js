@@ -15,6 +15,8 @@ angular.module('forum.controllers', ['ui.select2'])
         base.createTopicIsHide = true;
         base.me = shortUserInfo;
 
+        base.isFooterBottom = false;
+
         base.isTalkTitles = true;
 
         resetPages(base);
@@ -1674,10 +1676,11 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = 0;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
-            //initProfileAva();
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
+
+        profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
 
         $rootScope.chageIndex = 0;
 
@@ -2234,13 +2237,13 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.mapsLoadStatus = "isLoaded";
 
         $rootScope.groups[0].isShow = false;
-        $rootScope.groups[1].isShow = false;
-        $rootScope.groups[2].selected = true;
+        $rootScope.groups[1].selected = true;
+        $rootScope.base.isFooterBottom = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'6FB3E0C0');
+        maps.url = userClient.getGroupMap($rootScope.groups[1].id,MAP_COLOR);
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId,'6FB3E0C0');
+             maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
         };
     });
     /*.controller('BlogController',function($state,$rootScope) {
@@ -2256,6 +2259,8 @@ var TEXT_DEFAULT_1 = "Написать сообщение";
 var TEXT_DEFAULT_2 = "Ваш ответ";
 var TEXT_DEFAULT_3 = "Сообщение";
 var TEXT_DEFAULT_4 = "Заголовок";
+
+var MAP_COLOR = "6FB3E040";
 
 /* functions */
 

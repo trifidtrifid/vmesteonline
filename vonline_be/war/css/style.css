@@ -126,23 +126,28 @@ h1 {
 .sidebar#sidebar .show-left {
   display: none;
 }
-.footer-left {
-  border-top: 1px solid #ccc;
-  padding-top: 10px;
-  margin-top: 40px;
+.footer {
   text-align: left;
   color: #a6a6a6;
+  border-top: 1px solid #ccc;
 }
-.footer-left ul {
+.footer ul {
   margin: 0;
 }
-.footer-left ul li {
+.footer ul li {
   list-style: none;
   display: inline-block;
   margin: 0 5px;
 }
-.footer-left ul li a {
+.footer ul li a {
   color: #a6a6a6;
+}
+.footer.footer-left {
+  padding-top: 10px;
+  margin-top: 40px;
+}
+.footer.footer-bottom {
+  padding: 20px 0;
 }
 .sidebar-right {
   position: absolute;
@@ -1179,12 +1184,18 @@ h1 {
 .coming-soon {
   text-align: center;
   min-height: 0;
+  width: 1024px;
+  margin: 0 auto;
+  padding-left: 0;
 }
 .coming-soon p {
   font-size: 16px;
 }
 .coming-soon h1 {
   font-size: 40px;
+}
+.coming-soon .navbar-brand {
+  padding-left: 0;
 }
 .maps img {
   width: 100%;
