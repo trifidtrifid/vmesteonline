@@ -14,7 +14,7 @@
                             <div class="body" ng-switch on="wallSingle.wallItem.topic.metaType">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallSingle.wallItem.tagColor">{{wallSingle.wallItem.label}}</span>
-                                <a class="fa fa-star pull-right" ng-class="{'important' : wallSingle.wallItem.topic.message.important == 3}" href="#" ng-click="base.markImportant($event,wallSingle.wallItem.topic.message)"></a>
+                                <a class="fa fa-star pull-right" ng-class="{'important' : wallSingle.wallItem.topic.message.important == 1}" title='{{ wallSingle.wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallSingle.wallItem.topic.message)"></a>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })">{{wallSingle.wallItem.topic.userInfo.firstName+" "+wallSingle.wallItem.topic.userInfo.lastName}}</a>

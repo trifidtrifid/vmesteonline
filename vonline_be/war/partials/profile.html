@@ -10,7 +10,7 @@
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
                             <img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>
-                            <a ui-sref="profile.change-avatar" class="change-avatar-link">Изменить аватар</a>
+                            <a ui-sref="profile.change-avatar" class="change-avatar-link" ng-show="profile.isMayEdit">Изменить аватар</a>
                             <!--<input type="file" id="profile-ava" ng-show="profile.isMayEdit">-->
                         </label>
 
@@ -46,7 +46,7 @@
                             <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
                         </div>
 
-                        <div class="home-map">
+                        <div class="home-map" ng-show="profile.isMayEdit">
                             <!--<img src="./i/map_home.jpg" alt="карта"/>-->
                             <img ng-src="{{ profile.map }}" alt="карта"/>
                         </div>

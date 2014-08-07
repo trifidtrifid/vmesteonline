@@ -148,9 +148,11 @@ angular.module('forum.controllers', ['ui.select2'])
             if (message.important == 3 || message.important == 2){
                 message.important = 1;
                 isImportant = true;
+                message.importantText = 'Снять метку "Важное"';
             }else{
                 message.important = 3;
                 isImportant = false;
+                message.importantText = 'Пометить как "Важное"';
             }
 
             messageClient.markMessageImportant(message.id,isImportant);
@@ -495,6 +497,13 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
+                if(lenta.wallItems[i].topic.message.important == 1){
+                    lenta.wallItems[i].topic.message.importantText = 'Снять метку "Важное"';
+                }else{
+                    lenta.wallItems[i].topic.message.importantText = 'Пометить как "Важное"';
+                }
+
+
                 if(lenta.wallItems[i].topic.message.type == 1){
 
                     lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
@@ -547,6 +556,12 @@ angular.module('forum.controllers', ['ui.select2'])
         wallSingle.wallItem.answerShow = false;
         wallSingle.wallItem.isFocus = false;
         wallSingle.wallItem.isCreateCommentError = false;
+
+        if(wallSingle.wallItem.topic.message.important == 1){
+            wallSingle.wallItem.topic.message.importantText = 'Снять метку "Важное"';
+        }else{
+            wallSingle.wallItem.topic.message.importantText = 'Пометить как "Важное"';
+        }
 
         //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
         wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.message.groupId);
@@ -800,6 +815,12 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
                 talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
                 talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
+
+                if(talk.topics[i].message.important == 1){
+                    talk.topics[i].message.importantText = 'Снять метку "Важное"';
+                }else{
+                    talk.topics[i].message.importantText = 'Пометить как "Важное"';
+                }
             }
         }
 
@@ -842,6 +863,12 @@ angular.module('forum.controllers', ['ui.select2'])
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
                     talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
                     talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
+
+                    if(talk.fullTalkTopic.message.important == 1){
+                        talk.fullTalkTopic.message.importantText = 'Снять метку "Важное"';
+                    }else{
+                        talk.fullTalkTopic.message.importantText = 'Пометить как "Важное"';
+                    }
                 }
             }
             if(talk.fullTalkTopic.poll != null){
@@ -1669,6 +1696,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $("#dialog-message").addClass('hide');
 
+        //alert($stateParams.userId+" "+shortUserInfo.id);
         if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
