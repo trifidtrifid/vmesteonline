@@ -189,7 +189,7 @@ public abstract class Notification {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
-			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, ""));
+			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
 			Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
 			
 			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек\n";
@@ -209,6 +209,8 @@ public abstract class Notification {
 						body += "\tВ вашем районе: ";
 					} else if( GroupType.TOWN.getValue() == group.getGroupType()){
 						body += "\tВ вашем городе: ";
+					} else {
+						continue;
 					}
 					body += usersInGroup +" \n";
 				}
