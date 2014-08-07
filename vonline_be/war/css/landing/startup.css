@@ -599,6 +599,21 @@ to {
 	display:inline-block;
 	padding-bottom: 15px;
 }
+.footer{
+    text-align: left;
+    color: #a6a6a6;
+}
+.footer ul{
+    margin: 0;
+}
+.footer ul li{
+    list-style: none;
+    display: inline-block;
+    margin: 0 5px;
+}
+.footer ul li a{
+    color: #a6a6a6;
+}
 
 
 

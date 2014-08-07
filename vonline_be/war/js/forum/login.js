@@ -19,6 +19,8 @@ $(document).ready(function(){
         $('#email').val(email);
         $('.mapUrl').attr('src', mapUrl);
         $('.address').text(address);
+
+        document.location.hash = "";
     }
 
     $('#login-box .btn-login').click(function(e){
@@ -63,4 +65,38 @@ $(document).ready(function(){
             $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
         }
     }
+
+    $('.show-remember').click(function(e){
+        e.preventDefault();
+
+       $('.login-main').addClass('hidden');
+       $('.remember').removeClass('hidden');
+        $('.login-error').hide();
+    });
+
+    $('.btn-back').click(function(e){
+        e.preventDefault();
+
+        $('.remember').addClass('hidden');
+        $('.login-main').removeClass('hidden');
+        $('.login-error').hide();
+
+    });
+
+    $('.btn-remember').click(function(e){
+        var email = $('#email').val();
+
+        if(email) {
+            try {
+                authClient.sendConfirmCode(email);
+                $('.login-error').removeClass('.error-info').addClass('info-good').text('Вам отправлено письмо для восстановления пароля').show();
+            }catch(e){
+                $('.login-error').text('Пользователь с таким email не зарегистрирован').show();
+            }
+
+        }else{
+            $('.login-error').text('Введите пожалуйста email').show();
+        }
+
+    });
 });

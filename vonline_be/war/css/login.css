@@ -266,7 +266,7 @@
   font-size: 20px;
 }
 .login-forum .login-container .tools {
-  margin-bottom: 15px;
+  text-align: right;
 }
 .login-forum .login-container .tools .checkbox {
   display: inline-block;
@@ -279,6 +279,8 @@
   margin-left: 10px;
   vertical-align: middle;
   display: inline-block;
+  color: #c4c4c4;
+  margin-top: -12px;
 }
 .login-forum .login-container .tools a:hover {
   text-decoration: none;
@@ -294,6 +296,18 @@
 .login-forum .login-container .widget-box .widget-main {
   border-radius: 3px;
   padding: 25px 36px;
+}
+.login-forum .login-container .widget-box .btn-back {
+  color: #c4c4c4;
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 14px;
+}
+.login-forum .login-container .widget-box .btn-back:hover {
+  text-decoration: none;
+}
+.login-forum .login-container .widget-box .btn-login {
+  margin-top: 15px;
 }
 .help-text {
   font-size: 12px;
@@ -313,6 +327,11 @@
     margin: 0 auto !important;
     float: none !important;
   }
+}
+.reg-forum {
+  height: auto;
+  padding-bottom: 80px;
+  position: relative;
 }
 .reg-forum header {
   padding: 20px 0;

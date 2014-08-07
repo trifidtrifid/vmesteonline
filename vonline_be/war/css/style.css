@@ -149,6 +149,17 @@ h1 {
 .footer.footer-bottom {
   padding: 20px 0;
 }
+.footer.footer-login {
+  position: absolute;
+  bottom: 0;
+}
+.footer.footer-white {
+  border-top: 1px solid #fff;
+  color: #fff;
+}
+.footer.footer-white a {
+  color: #fff;
+}
 .sidebar-right {
   position: absolute;
   right: 0;
