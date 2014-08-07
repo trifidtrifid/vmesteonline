@@ -92,7 +92,9 @@
 	<script>
 		$(document).ready(function() {
 
-			$('#subscribeForm').ketchup().submit(function() {
+			$('#subscribeForm').ketchup().submit(function(e) {
+                e.preventDefault();
+
 				if ($(this).ketchup('isValid')) {
 					var action = $(this).attr('action');
                     var transport = new Thrift.Transport("/thrift/AuthService");
@@ -103,10 +105,10 @@
                             email = $('#email').val();
 
                     try{
-                        var responseMap = authClient.getInviteCode(address,email);
+                        var responseMap = authClient.requestInviteCode(address,email);
                         var response = $('.request-response');
                         response.find('img').attr('src',responseMap);
-                        response.find('span').text('Мы доставим код в почтовый ящик в Вашем подъеде').removeClass('error-info');
+                        response.find('span').text('Мы доставим код в почтовый ящик в Вашем подъезде').removeClass('error-info');
                     }catch(e){
                         response.find('span').text('Мы не смогли найти указанный Вами адрес. Проверьте адрес и попробуйте снова').addClass('error-info');
                     }
