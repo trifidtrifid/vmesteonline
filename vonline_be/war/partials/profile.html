@@ -9,10 +9,16 @@
                 <div class="user-body">
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
-                            <img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>
+                            <!--<img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>-->
+                            <div class="avatar big" style="background-image: url({{base.user.avatar}})"></div>
                             <a ui-sref="profile.change-avatar" class="change-avatar-link" ng-show="profile.isMayEdit">Изменить аватар</a>
                             <!--<input type="file" id="profile-ava" ng-show="profile.isMayEdit">-->
                         </label>
+
+                        <div class="rating">
+                            <div class="rating-item popularity"><a href="#" title="Популярность" class="fa fa-heart"></a><span>{{profile.userProfile.populatity}}</span></div>
+                            <div class="rating-item importancy"><a href="#" title="Важность" class="fa fa-star"></a><span>{{profile.userProfile.importancy}}</span></div>
+                        </div>
 
                     </div>
                     

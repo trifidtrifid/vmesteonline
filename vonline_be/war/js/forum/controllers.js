@@ -2118,7 +2118,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             var saveSrc = newSrc+"?w="+ imageWidth +"&h="+ imageHeight +"&s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
-            $('.logo-container img').attr('src',saveSrc);
+            //$('.logo-container .avatar').css({'background-image':saveSrc});
             $rootScope.base.user.avatar = saveSrc;
 
             $("#dialog-message").dialog('close');

@@ -856,6 +856,10 @@ h1 {
   width: 70px;
   height: 70px;
 }
+.avatar.big {
+  width: 150px;
+  height: 150px;
+}
 .create-topic-btn {
   overflow: auto;
 }
@@ -1040,6 +1044,7 @@ h1 {
 .user-body .user-body-left .logo-container {
   position: relative;
   width: 150px;
+  height: 150px;
 }
 .user-body .user-body-left .logo-container .change-avatar-link {
   background: rgba(0,0,0,0.3);
@@ -1083,6 +1088,30 @@ h1 {
 .user-body .user-body-left .ace-file-input .file-name {
   display: inline-block;
   vertical-align: middle;
+}
+.user-body .user-body-left .rating {
+  text-align: center;
+/*margin-top -20px
+      position relative
+      z-index 2*/
+}
+.user-body .user-body-left .rating .rating-item {
+  display: inline-block;
+  margin: 0 15px;
+}
+.user-body .user-body-left .rating .rating-item a {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 18px;
+}
+.user-body .user-body-left .rating .rating-item span {
+  display: inline-block;
+}
+.user-body .user-body-left .rating .rating-item .fa-star {
+  color: #ffea4a;
+}
+.user-body .user-body-left .rating .rating-item .fa-heart {
+  color: #f00;
 }
 .user-body .user-body-left img {
   max-width: 150px;
@@ -1222,6 +1251,11 @@ h1 {
   width: 30px;
   margin: 0 auto;
   display: block;
+}
+.crop-area .loading {
+  width: 30px !important;
+  height: auto;
+  padding: 0;
 }
 .wrap {
   width: 990px;

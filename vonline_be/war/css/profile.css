@@ -63,9 +63,7 @@
   font-size: 20px;
 }
 .user-descr .text-area .user-body span {
-  width: 170px;
   display: inline-block;
-  max-height: 150px;
 }
 .user-descr .text-area .user-body .user-addresses {
   padding-bottom: 30px;

@@ -748,6 +748,9 @@ transform()
   &.middle
     width 70px
     height 70px
+  &.big
+    width 150px
+    height 150px
 
 .create-topic-btn
   overflow auto
@@ -894,6 +897,7 @@ transform()
     .logo-container
       position relative
       width 150px
+      height 150px
       .change-avatar-link
         background rgba(0,0,0,.3)
         text-align center
@@ -930,6 +934,24 @@ transform()
       .file-name
         display inline-block
         vertical-align middle //
+    .rating
+      text-align center
+      /*margin-top -20px
+      position relative
+      z-index 2*/
+      .rating-item
+        display inline-block
+        margin 0 15px
+        a
+          display inline-block
+          margin-right 10px
+          font-size 18px
+        span
+          display inline-block
+        .fa-star
+          color #ffea4a
+        .fa-heart
+          color #ff0000
     img
       max-width 150px
       max-height 150px
@@ -1059,6 +1081,11 @@ transform()
     width: 30px;
     margin 0 auto
     display block
+
+.crop-area .loading
+  width 30px !important
+  height auto
+  padding 0
 
 // контакты, о нас, блог
 .wrap
