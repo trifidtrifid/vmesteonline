@@ -856,21 +856,28 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
-			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
-			String los = userGroup.getLongitude().toPlainString();
-			String las = userGroup.getLatitude().toPlainString();
-			url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" + "&pl=c:" + color + ",f:" + color + ",w:1";
-
-			double lad = userGroup.getLatitude().doubleValue();
-			double lod = userGroup.getLongitude().doubleValue();
-
-			double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
-			double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
-
-			for (double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
-				url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
-			}
-			ServiceImpl.putObjectToCache(mapKey, (String) url);
+				VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+				String los = userGroup.getLongitude().toPlainString();
+				String las = userGroup.getLatitude().toPlainString();
+				if(0!=userGroup.getRadius()){
+						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" + "&pl=c:" + color + ",f:" + color + ",w:1";	
+		
+					double lad = userGroup.getLatitude().doubleValue();
+					double lod = userGroup.getLongitude().doubleValue();
+		
+					double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
+					double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
+		
+					for ( double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
+						url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
+					}
+				
+					ServiceImpl.putObjectToCache(mapKey, (String) url);
+					
+				} else {
+					
+					url = VoGeocoder.createMapImageURL(  userGroup.getLongitude(), userGroup.getLatitude(), 450, 450 );
+				}
 
 		} finally {
 			pm.close();
