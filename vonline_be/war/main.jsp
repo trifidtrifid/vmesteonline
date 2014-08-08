@@ -89,7 +89,7 @@
     <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
 
 </head>
-<body ng-controller="baseController as base" ng-cloak>
+<body ng-controller="baseController as base" ng-cloak ng-class="{'height100': !base.isFooterBottom}">
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
@@ -159,7 +159,7 @@
 	<div class="container">
 
 		<div class="main-container" id="main-container">
-			<div class="main-container-inner">
+			<div class="main-container-inner"> <!--  ng-class="{'heightAuto' : base.isFooterBottom }" -->
 				<aside class="sidebar" id="sidebar" ng-controller="leftBarController as leftbar">
 					<script type="text/javascript">
 						try {
@@ -222,7 +222,6 @@
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in groups"
                             id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button>
-
                         </nav>
 
                         <div class="create-topic-btn pull-right ng-cloak" ng-show="base.talksIsActive || base.advertsIsActive">

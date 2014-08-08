@@ -20,7 +20,7 @@ $(document).ready(function(){
         $('.mapUrl').attr('src', mapUrl);
         $('.address').text(address);
 
-        //document.location.hash = "";
+        document.location.hash = "";
     }
 
     $('#login-box .btn-login').click(function(e){
