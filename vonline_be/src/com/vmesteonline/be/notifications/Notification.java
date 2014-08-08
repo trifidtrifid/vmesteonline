@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
@@ -51,9 +49,9 @@ public abstract class Notification {
 		
 		for( Entry<VoUser, List<NotificationMessage>> un :messagesToSend.entrySet()){
 			VoUser user = un.getKey();
-			String body = "Новости ВместеОнлайн.ру\n\n";
+			String body = "Новости ВместеОнлайн.ру<br/><br/>";
 			for( NotificationMessage nm : un.getValue())
-				body += nm.message + "\n\n";
+				body += nm.message + "<br/><br/>";
 			
 			body += "Подробности на http://vmesteonline.ru";
 			try {
@@ -136,7 +134,7 @@ public abstract class Notification {
 		try {
 			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
 			
-			String subject = "ВместеОнлайн.ру: ВНИМАНИЕ! важное сообщение";
+			String subject = "ВместеОнлайн.ру: важное сообщение";
 			String body;
 			try {
 				body = new String( it.getContent(), "UTF-8" );
@@ -144,7 +142,7 @@ public abstract class Notification {
 				body = new String( it.getContent() );
 				e1.printStackTrace();
 			}
-			body += "\n Сообщение было отмечено важным другими пользователями. Важность: "+it.getImportantScore();
+			body += "<br/> Ваши соседи считают это сообщение важным. Важность: "+it.getImportantScore();
 			for(VoUser rcpt: usersForMessage){
 				try {
 					EMailHelper.sendSimpleEMail( 
@@ -170,8 +168,8 @@ public abstract class Notification {
 				try {
 					EMailHelper.sendSimpleEMail( 
 							rcpt, "ВместеОнлайн.ру: сообщение от "+author.getName(), 
-							author.getName() + " " + author.getLastName() + " написал вам: "
-									+ lastMsg.getContent());
+							author.getName() + " " + author.getLastName() + " написал вам: <br/><i>"
+									+ lastMsg.getContent()+"</i>");
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -184,7 +182,7 @@ public abstract class Notification {
 	}
 	
 	public static void welcomeMessageNotification( VoUser newUser ){
-		String body = "Добро пожаловть на сайт Вашего дома!\n\n ";
+		String body = "Добро пожаловть на сайт Вашего дома!<br/><br/> ";
 		List<VoUserGroup> groups = newUser.getGroups();
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -192,7 +190,7 @@ public abstract class Notification {
 			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
 			Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
 			
-			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек\n";
+			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек<br/>";
 			for(VoUserGroup group: groups ){
 				int usersInGroup;
 				if( null!=usersMap.get(group) && (usersInGroup = usersMap.get(group).size()) > 0 ){
@@ -212,17 +210,16 @@ public abstract class Notification {
 					} else {
 						continue;
 					}
-					body += usersInGroup +" \n";
+					body += usersInGroup +" <br/>";
 				}
 	 		}
-			body += "\n Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. \n"
-					+ "Мы - Вместеонлайн.ру.\nВы всегда можете связаться с нами по телефону, отправить нам письмо по адресу.\n\n";
+			body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/>"
+					+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по телефону, отправить нам письмо по адресу.<br/><br/>";
 			
-			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...\n\n";
+			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...<br/><br/>";
 			
 			if( !newUser.isEmailConfirmed() ){
-				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, введите код подтверждения вашего email адреса на странице профиля: http://vmesteonline.ru/profile-"+newUser.getId()+"\n"
-						+ "Код: " + newUser.getConfirmCode();
+				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя со ссылке: http://vmesteonline.ru/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"<br/>";
 			}
 			
 			body += "Спасибо что вы вместе, онлайн!";

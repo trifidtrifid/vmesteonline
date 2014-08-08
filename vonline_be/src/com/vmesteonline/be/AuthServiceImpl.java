@@ -190,16 +190,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
 					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
-			try {
-				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.vmesteonline.ru. Ваш логин " + email
-						+ ".<br/>";
-				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
-
-			} catch (Exception e) {
-				logger.fine("can't send email to " + email + " " + e.getMessage());
-				e.printStackTrace();
-			}
-			
 			Notification.welcomeMessageNotification(user);
 			return user.getId();
 
