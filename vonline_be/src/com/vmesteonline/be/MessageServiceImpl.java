@@ -236,11 +236,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			while (rs.next() && topics.size() < length) {
 				long topicId = rs.getLong(1);
 				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-				
-				boolean isImportant = group.getImportantScore() <= topic.getImportantScore();
-				topic.setImportant(isImportant);
-				
-				if (addTopic && (!importantOnly || isImportant )) {
+
+				boolean isImportant = false;
+				if (group != null) {
+					isImportant = group.getImportantScore() <= topic.getImportantScore();
+					topic.setImportant(isImportant);
+				}
+				if (addTopic && (!importantOnly || isImportant)) {
 					topics.add(topic);
 					long topicAge = (System.currentTimeMillis() / 1000L) - topic.getLastUpdate();
 					if (importantOnly && (topics.size() > 4 || topicAge > 86400 * 7)) // в запросе важных возвращается не более 5 и не старше недели
@@ -615,13 +617,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			int impScore = msg.markImportant(getCurrentUser(), author, isImportant, pm);
-			
-			//time to send notification if not sent?
-			if( isImportant && 0 == msg.getImportantNotificationSentDate() ){
+
+			// time to send notification if not sent?
+			if (isImportant && 0 == msg.getImportantNotificationSentDate()) {
 				VoUserGroup topicGroup = pm.getObjectById(VoUserGroup.class, msg.getUserGroupId());
-				if( impScore >= topicGroup.getImportantScore()){
-					Notification.messageBecomeImportantNotification( msg, topicGroup );
-					msg.setImportantNotificationSentDate((int) (System.currentTimeMillis()/1000L));
+				if (impScore >= topicGroup.getImportantScore()) {
+					Notification.messageBecomeImportantNotification(msg, topicGroup);
+					msg.setImportantNotificationSentDate((int) (System.currentTimeMillis() / 1000L));
 				}
 			}
 			return impScore;
