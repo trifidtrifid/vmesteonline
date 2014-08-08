@@ -29,18 +29,39 @@ $(document).ready(function(){
     });
 
     $('.btn-reg').click(function(){
-        var gender = "";
+        var gender,
+            email = $('#email').val(),
+            firstName = $('#ufirstname').val(),
+            lastName = $('#ulastname').val(),
+            pass = $('#password').val();
+
         $('input[name="sex"]').each(function(){
             if($(this).prop("checked")){
                 gender = $(this).index();
             }
         });
 
-        try{
-            authClient.registerNewUser($('#ufirstname').val(), $('#ulastname').val(), $('#password').val(), $('#email').val(), code, gender);
-            document.location.replace('coming-soon.html');
-        }catch(e){
-           $('.error-info').text('Ошибка регистрации. Вы указали не все данные').show();
+        if(!firstName || !lastName || !email || !pass || gender === undefined){
+
+            $('.error-info').text('Ошибка регистрации. Вы указали не все данные').show();
+
+        }else{
+
+            try{
+                console.log('2');
+                authClient.registerNewUser(firstName, lastName, pass, email, code, gender);
+                document.location.replace('coming-soon.html');
+            }catch(e){
+                console.log('3');
+                $('.error-info').html('Такой адрес email уже зарегистрирован. <a href="#" class="reg-remember">Забыли пароль?</a>').show();
+
+                $('.reg-remember').click(function(e){
+                    e.preventDefault();
+
+                    authClient.sendConfirmCode(email);
+                    $('.login-error').removeClass('.error-info').text('На ваш email отправлен код подтверждения').show();
+                });
+            }
         }
 
     });

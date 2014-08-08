@@ -11,7 +11,12 @@ html
 
 body
   background #fff
+  min-height 100%
+
+body.height100
+  min-height 0
   height 100%
+  padding-bottom 45px
 
 a
   outline none !important
@@ -38,7 +43,16 @@ transform()
   padding 0
   max-width 1240px
   min-width 753px
-  //min-height 100%
+  height 100%
+
+.main-container
+  height 100%
+
+.main-container > .main-container-inner
+  height 100%
+
+.heightAuto
+  height auto !important
 
 .navbar-container
   text-align center
@@ -132,6 +146,7 @@ transform()
   bottom 0
   position absolute
   z-index 13
+  border-right 0
   background none
   .show-left
     display none
@@ -263,7 +278,8 @@ transform()
 
 .main-content
   border-right 1px solid #ccc;
-  min-height 200%
+  border-left 1px solid #ccc;
+  min-height 100%
   margin-right 190px
 
 .widget-main
