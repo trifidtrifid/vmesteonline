@@ -23,10 +23,15 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.notifications.Notification.NotificationMessage;
 
 public class NewTopicsNotification extends Notification {
 
 	private JDBCConnector con = new MySQLJDBCConnector();
+	
+	public NewTopicsNotification( Map< VoUser, List<NotificationMessage>> ntf ) {
+		this.messagesToSend = ntf;
+	}
 
 	public void makeNotification( Set<VoUser> users ) {
 

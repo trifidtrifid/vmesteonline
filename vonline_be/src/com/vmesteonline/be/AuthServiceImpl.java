@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -13,6 +12,8 @@ import javax.jdo.Query;
 
 import org.apache.thrift.TException;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -24,6 +25,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.EMailHelper;
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
@@ -190,7 +192,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
 					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
-			Notification.welcomeMessageNotification(user);
+			// Add the task to the default queue.
+      Queue queue = QueueFactory.getDefaultQueue();
+      queue.add(withUrl("/tasks/notification").param("rt", "swm").param("uid", ""+user.getId()));
+			//Notification.welcomeMessageNotification(user);
 			return user.getId();
 
 		} finally {

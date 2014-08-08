@@ -40,40 +40,23 @@ public abstract class Notification {
 	}
 
 	public abstract void makeNotification( Set<VoUser> users ); 
-	private Map< VoUser, List<NotificationMessage>> messagesToSend = new HashMap<VoUser, List<NotificationMessage>>();
+	protected Map< VoUser, List<NotificationMessage>> messagesToSend = new HashMap<VoUser, List<NotificationMessage>>();
 	
-	public void sendNotifications( ){
-		Set<VoUser> users = createRecipientsList();
-		new NewTopicsNotification().makeNotification(users); 
-		new NewNeigboursNotification().makeNotification(users);
-		
-		for( Entry<VoUser, List<NotificationMessage>> un :messagesToSend.entrySet()){
-			VoUser user = un.getKey();
-			String body = "Новости ВместеОнлайн.ру<br/><br/>";
-			for( NotificationMessage nm : un.getValue())
-				body += nm.message + "<br/><br/>";
-			
-			body += "Подробности на http://vmesteonline.ru";
-			try {
-				EMailHelper.sendSimpleEMail( 
-						URLEncoder.encode(user.getName() + " " + user.getLastName(), "UTF-8") + " <"+user.getEmail()+">", 
-						"Рядом с вами на ВместеОнлайн.ру", body );
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	protected Set<VoUser> createRecipientsList() {
+	protected Set<VoUser> createRecipientsList(PersistenceManager pm) {
 
 		List<VoUser> userList = new ArrayList<VoUser>();
-		PersistenceManager pm = PMF.getPm();
-		try {
+
 			int twoDaysAgo = (int) (System.currentTimeMillis() / 1000L) - 86400 * 2;
 			int weekAgo = (int) (System.currentTimeMillis() / 1000L) - 86400 * 2;
 			List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
 			for (VoSession vs : vsl) {
-				VoUser vu = pm.getObjectById(VoUser.class, vs.getUserId());
+				VoUser vu;
+				try {
+					vu = pm.getObjectById(VoUser.class, vs.getUserId());
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
 				
 				if (vu.isEmailConfirmed()) {
 					//найдем самую псоледнюю сессию ползователя
@@ -97,9 +80,6 @@ public abstract class Notification {
 					}
 				}
 			}
-		} finally {
-			pm.close();
-		}
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll(userList);
 		return userSet;
@@ -234,13 +214,13 @@ public abstract class Notification {
 		}		
 	}
 	
-	static Comparator<VoUser> vuComp = new Comparator<VoUser>() {
+	public static Comparator<VoUser> vuComp = new Comparator<VoUser>() {
 		@Override
 	public int compare(VoUser o1, VoUser o2) {
 			return Long.compare( o1.getId(), o2.getId());
 		}
 	};
-	protected static Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
+	public static Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
 		@Override
 		public int compare(VoUserGroup o1, VoUserGroup o2) {
 			Long.compare(o1.getId(), o2.getId());
@@ -248,7 +228,7 @@ public abstract class Notification {
 		}
 	};
 	
-	protected static Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
+	public static Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
 
 		@Override
 		public int compare(VoSession o1, VoSession o2) {
