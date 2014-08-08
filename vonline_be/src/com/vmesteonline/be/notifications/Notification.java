@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.data.PMF;
@@ -49,9 +49,9 @@ public abstract class Notification {
 		
 		for( Entry<VoUser, List<NotificationMessage>> un :messagesToSend.entrySet()){
 			VoUser user = un.getKey();
-			String body = "Новости ВместеОнлайн.ру\n\n";
+			String body = "Новости ВместеОнлайн.ру<br/><br/>";
 			for( NotificationMessage nm : un.getValue())
-				body += nm.message + "\n\n";
+				body += nm.message + "<br/><br/>";
 			
 			body += "Подробности на http://vmesteonline.ru";
 			try {
@@ -112,7 +112,7 @@ public abstract class Notification {
 		messagesToSend.put(u, uns);
 	}
 	
-	protected Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
+	protected static Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
 		// group users by groups and group types
 		Map<VoUserGroup, Set<VoUser>> groupUserMap = new TreeMap<VoUserGroup, Set<VoUser>>(ugComp);
 		for (VoUser u : users) {
@@ -134,7 +134,7 @@ public abstract class Notification {
 		try {
 			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
 			
-			String subject = "ВместеОнлайн.ру: ВНИМАНИЕ! важное сообщение";
+			String subject = "ВместеОнлайн.ру: важное сообщение";
 			String body;
 			try {
 				body = new String( it.getContent(), "UTF-8" );
@@ -142,7 +142,7 @@ public abstract class Notification {
 				body = new String( it.getContent() );
 				e1.printStackTrace();
 			}
-			body += "\n Сообщение было отмечено важным другими пользователями. Важность: "+it.getImportantScore();
+			body += "<br/> Ваши соседи считают это сообщение важным. Важность: "+it.getImportantScore();
 			for(VoUser rcpt: usersForMessage){
 				try {
 					EMailHelper.sendSimpleEMail( 
@@ -168,8 +168,8 @@ public abstract class Notification {
 				try {
 					EMailHelper.sendSimpleEMail( 
 							rcpt, "ВместеОнлайн.ру: сообщение от "+author.getName(), 
-							author.getName() + " " + author.getLastName() + " написал вам: "
-									+ lastMsg.getContent());
+							author.getName() + " " + author.getLastName() + " написал вам: <br/><i>"
+									+ lastMsg.getContent()+"</i>");
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -181,17 +181,66 @@ public abstract class Notification {
 		}
 	}
 	
-	public static void welcomeMessageNotification( VoTopic it ){
-		
+	public static void welcomeMessageNotification( VoUser newUser ){
+		String body = "Добро пожаловть на сайт Вашего дома!<br/><br/> ";
+		List<VoUserGroup> groups = newUser.getGroups();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
+			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
+			Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
+			
+			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек<br/>";
+			for(VoUserGroup group: groups ){
+				int usersInGroup;
+				if( null!=usersMap.get(group) && (usersInGroup = usersMap.get(group).size()) > 0 ){
+					
+					if( GroupType.FLOOR.getValue() == group.getGroupType()){
+						body += "\tНа вашем этаже: ";
+					} else if( GroupType.STAIRCASE.getValue() == group.getGroupType()){
+						body += "\tВ вашем подъезде: ";
+					} else if( GroupType.BUILDING.getValue() == group.getGroupType()){
+						body += "\tВ доме: ";
+					} else if( GroupType.BLOCK.getValue() == group.getGroupType()){
+						body += "\tВ вашем квартале: ";
+					} else if( GroupType.DISTRICT.getValue() == group.getGroupType()){
+						body += "\tВ вашем районе: ";
+					} else if( GroupType.TOWN.getValue() == group.getGroupType()){
+						body += "\tВ вашем городе: ";
+					} else {
+						continue;
+					}
+					body += usersInGroup +" <br/>";
+				}
+	 		}
+			body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/>"
+					+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по телефону, отправить нам письмо по адресу.<br/><br/>";
+			
+			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...<br/><br/>";
+			
+			if( !newUser.isEmailConfirmed() ){
+				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя со ссылке: http://vmesteonline.ru/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"<br/>";
+			}
+			
+			body += "Спасибо что вы вместе, онлайн!";
+			try {
+				EMailHelper.sendSimpleEMail( newUser.getEmail(), "ВместеОнлайн.ру: добро пожаловать в ваш дом онлайн!",body);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		} finally {
+			pm.close();
+		}		
 	}
 	
-	protected Comparator<VoUser> vuComp = new Comparator<VoUser>() {
+	static Comparator<VoUser> vuComp = new Comparator<VoUser>() {
 		@Override
-		public int compare(VoUser o1, VoUser o2) {
+	public int compare(VoUser o1, VoUser o2) {
 			return Long.compare( o1.getId(), o2.getId());
 		}
 	};
-	protected Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
+	protected static Comparator<VoUserGroup> ugComp = new Comparator<VoUserGroup>() {
 		@Override
 		public int compare(VoUserGroup o1, VoUserGroup o2) {
 			Long.compare(o1.getId(), o2.getId());
@@ -199,7 +248,7 @@ public abstract class Notification {
 		}
 	};
 	
-	Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
+	protected static Comparator<VoSession> lastActivityComparator = new Comparator<VoSession>(){
 
 		@Override
 		public int compare(VoSession o1, VoSession o2) {

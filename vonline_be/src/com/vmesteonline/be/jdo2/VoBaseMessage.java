@@ -54,7 +54,13 @@ public abstract class VoBaseMessage extends GeoLocation {
 					VoFileAccessRecord cfar;
 					try {
 						FileSource fs = StorageHelper.createFileSource( img );
-						cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+						if( fs == null ){
+							cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(img.getURL()));
+							cfar.updateContentParams(img.contentType, img.fileName);
+						}	else {	
+							cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+						}
+						
 					} catch (IOException e) {
 						throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to upload content. "+e);
 					}
@@ -68,7 +74,13 @@ public abstract class VoBaseMessage extends GeoLocation {
 				List<Attach> savedDocs = new ArrayList<Attach>();
 				for (Attach doc : msg.documents) {
 					FileSource fs = StorageHelper.createFileSource( doc );
-					VoFileAccessRecord cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					VoFileAccessRecord cfar;
+					if( fs == null ){
+						cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(doc.getURL()));
+						cfar.updateContentParams(doc.contentType, doc.fileName);
+					}	else {	
+						cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+					}
 					documents.add( cfar.getId());
 					savedDocs.add(cfar.getAttach());
 				}

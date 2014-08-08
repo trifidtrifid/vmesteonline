@@ -23,6 +23,7 @@ import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Dialog;
@@ -121,9 +122,14 @@ public class VoDialog {
 		for( Attach att: attachs ){
 			try {
 				FileSource fs = StorageHelper.createFileSource( att );
-				attchs.add(
-						StorageHelper.saveAttach( fs.fname, fs.contentType, currentUserId, true, fs.is, pm)
-						.getId());
+				VoFileAccessRecord cfar;
+				if( fs == null ){
+					cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(att.getURL()));
+					cfar.updateContentParams(att.contentType, att.fileName);
+				}	else {	
+					cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, currentUserId, true, fs.is, pm);
+				}
+				attchs.add( cfar.getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
