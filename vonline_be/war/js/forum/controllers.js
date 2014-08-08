@@ -307,6 +307,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.setTab(1);
         $rootScope.base.showAllGroups();
+        $rootScope.base.isFooterBottom = false;
 
         initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
         initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
@@ -549,6 +550,7 @@ angular.module('forum.controllers', ['ui.select2'])
         var wallSingle = this;
 
         $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.base.isFooterBottom = false;
 
         // временно, нужна функция getWallItem(topicId)
         var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
@@ -697,6 +699,7 @@ angular.module('forum.controllers', ['ui.select2'])
             initAttachDoc($('#attachDoc-00'), $('#attach-doc-area-00')); // для обсуждений
             initFancyBox($('.talks'));
             $rootScope.base.showAllGroups();
+            $rootScope.base.isFooterBottom = false;
 
             $rootScope.base.createTopicIsHide = true;
             var talk = this;
@@ -843,6 +846,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('TalksSingleController',function($rootScope,$stateParams){
+
+        $rootScope.base.isFooterBottom = false;
 
         var talk = this,
             fullTalkMessagesLength,
@@ -1212,6 +1217,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.setTab(3);
         $rootScope.base.showAllGroups();
+        $rootScope.base.isFooterBottom = false;
 
         initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений
@@ -1326,6 +1332,8 @@ angular.module('forum.controllers', ['ui.select2'])
         var advert = this,
             fullAdvertMessagesLength,
             advertId = $stateParams.advertId;
+
+        $rootScope.base.isFooterBottom = false;
 
         advert.selectedGroup = $rootScope.currentGroup;
         advert.topics = messageClient.getAdverts(advert.selectedGroup.id, 0, 1000).topics;
@@ -1647,6 +1655,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
         $rootScope.base.showAllGroups();
+        $rootScope.base.isFooterBottom = false;
 
         resetPages($rootScope.base);
         $rootScope.base.mainContentTopIsHide = false;
@@ -1693,6 +1702,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         resetPages($rootScope.base);
         $rootScope.base.profileIsActive = true;
+        $rootScope.base.isFooterBottom = true;
 
         resetAceNavBtns($rootScope.navbar);
         $rootScope.base.mainContentTopIsHide = true;
@@ -1726,6 +1736,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         resetPages($rootScope.base);
         $rootScope.base.settingsIsActive = true;
+        $rootScope.base.isFooterBottom = true;
 
         resetAceNavBtns($rootScope.navbar);
         $rootScope.base.mainContentTopIsHide = true;
@@ -2018,6 +2029,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.isTopSearchShow = false;
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.leftbar.tab = 0;
+        $rootScope.base.isFooterBottom = false;
 
         resetPages($rootScope.base);
         $rootScope.base.privateMessagesIsActive = true;
@@ -2063,6 +2075,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
         initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.base.isFooterBottom = false;
+
         var dialog = this;
         var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
         dialog.users = currentDialog.users;
