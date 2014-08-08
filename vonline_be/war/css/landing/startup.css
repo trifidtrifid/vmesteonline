@@ -309,6 +309,7 @@ to {
 	display: block;
 	padding: 5px 17px;
     font-weight: bold;
+    color: #ff0000;
 }
 .position-relative{
     position: relative;

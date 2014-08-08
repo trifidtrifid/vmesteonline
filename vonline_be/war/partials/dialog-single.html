@@ -38,7 +38,11 @@
                       onblur="if(this.value=='') this.value='Написать сообщение';"
                       onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
-            <div class="attach-area" id="attach-area-000"></div>
+            <div class="attach-area" id="attach-area-000">
+                <div class="loading hidden">
+                    <img ng-src="i/loading2.gif" alt="картинка"/>
+                </div>
+            </div>
             <div class="attach-area attach-area-doc" id="attach-doc-area-000"></div>
 
             <div class="dialog-send-bottom">
