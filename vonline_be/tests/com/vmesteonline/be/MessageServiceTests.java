@@ -51,7 +51,7 @@ public class MessageServiceTests extends TestWorkAround {
 	}
 
 	private Topic createTopic(long groupId, MessageType type) throws Exception {
-		Message msg = new Message(groupId, 0, type, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
+		Message msg = new Message(0, 0, type, 0, groupId, 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
 		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
 		return msi.postTopic(topic);
@@ -477,7 +477,7 @@ public class MessageServiceTests extends TestWorkAround {
 	public void testBlogMessages() {
 		try {
 
-			Topic topic = createTopic(0, MessageType.BLOG);
+			Topic topic = createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase), MessageType.BLOG);
 
 			Message msg = createMessage(topic.getId(), 0, MessageType.BLOG, "");
 			asi.logout();

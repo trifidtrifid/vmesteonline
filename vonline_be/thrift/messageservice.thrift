@@ -149,6 +149,7 @@ service MessageService {
 **/	 
 	Message postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 
+
 	Poll doPoll( 1:i64 pollId, 2:i32 item) throws (1:error.InvalidOperation exc),
 	Topic postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
 	 
