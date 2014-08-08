@@ -10,6 +10,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import com.vmesteonline.be.AuthServiceImpl;
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
@@ -30,6 +31,16 @@ import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
+	
+	static {
+		
+		PersistenceManager pm = PMF.getPm();
+		try {
+			initializeGroups(pm);
+		} finally {
+			pm.close();
+		}
+	}
 
 	private static final String CITY = "Санкт Петербург";
 	private static final String COUNTRY = "Россия";
@@ -178,22 +189,22 @@ public class Defaults {
 	// ======================================================================================================================
 	private static void initializeGroups(PersistenceManager pm) {
 		Query q;
-		defaultGroups = new ArrayList<VoGroup>();
 		q = pm.newQuery(VoGroup.class);
 		q.setFilter("subscribedByDefault == true");
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty()){
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 200, 500, 1000, 5000 }).iterator();
+			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
-					new VoGroup("Мой подъезд", radiusStarecase, true), 
-					new VoGroup("Мой дом", radiusHome, true),
-					new VoGroup("Мои соседи", radiusMedium, true), 
-					new VoGroup("Мой район", radiusLarge, true) }) {
+					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
+					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
+					new VoGroup("Мои соседи", radiusMedium, GroupType.NEIGHBORS, true), 
+					new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) }) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
-		}
+		} else defaultGroups = defGroups;
 	}
 
 	// ======================================================================================================================

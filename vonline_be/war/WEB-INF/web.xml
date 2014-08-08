@@ -67,6 +67,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
+    <!-- servlet>
+        <servlet-name>Index</servlet-name>
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Index</servlet-name>
+        <url-pattern>/index.jsp</url-pattern>
+    </servlet-mapping -->
+
     <servlet>
         <servlet-name>Backoffice</servlet-name>
         <jsp-file>/backoffice.jsp</jsp-file>
@@ -87,7 +96,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
     <servlet>
         <servlet-name>Contacts</servlet-name>
-        <jsp-file>/contacts.html</jsp-file>
+        <jsp-file>/contacts.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>Contacts</servlet-name>
@@ -96,7 +105,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
     <servlet>
         <servlet-name>About</servlet-name>
-        <jsp-file>/about.html</jsp-file>
+        <jsp-file>/about.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>About</servlet-name>
@@ -121,7 +130,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
 
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+    <welcome-file-list>
+        <welcome-file>main.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

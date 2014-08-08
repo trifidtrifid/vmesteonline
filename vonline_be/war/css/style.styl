@@ -136,12 +136,10 @@ transform()
   .show-left
     display none
 
-.footer-left
-  border-top 1px solid #CCCCCC
-  padding-top 10px
-  margin-top 40px
+.footer
   text-align left
   color #a6a6a6
+  border-top 1px solid #CCCCCC
   ul
     margin 0
     li
@@ -150,6 +148,20 @@ transform()
       margin 0 5px
       a
         color #a6a6a6
+  &.footer-left
+    padding-top 10px
+    margin-top 40px
+  &.footer-bottom
+    padding 20px 0
+  &.footer-login
+    position absolute
+    bottom 0
+  &.footer-white
+    border-top 1px solid #fff
+    color #fff
+    a
+     color #fff
+
 
 .sidebar-right
   position absolute
@@ -184,6 +196,7 @@ transform()
   .importantly-bottom
     font-size 11px
     border-bottom 1px solid #438eb9
+    border-top 1px solid #438eb9
     padding 3px 5px
   .importantly-middle
     font-size 14px
@@ -665,6 +678,8 @@ transform()
   .wallitem-message
     padding-top 10px
     border-top 1px solid rgb(80, 144, 193)
+    &.wall-single
+      border 0
     .input-group
       display block
       .input-group-btn
@@ -705,14 +720,24 @@ transform()
   .lenta-item-bottom
     position absolute
     bottom 3px
-  .fa-star
-    color #CCCCCC
-    font-size 16px
-    margin-right 10px
-    margin-top 4px
-    &:hover
-    &.important
-      color #ffea4a
+
+.fa-star
+.fa-heart
+  color #CCCCCC
+  font-size 16px
+  margin-right 10px
+  margin-top 4px
+  &:hover
+  &.important
+    color #ffea4a
+
+.fa-heart
+  margin-right 5px
+  &:hover
+  &.isLike
+    color #ff0000
+
+
 
 .itemdiv.dialogdiv > .body
   margin-left 58px
@@ -732,6 +757,9 @@ transform()
   &.middle
     width 70px
     height 70px
+  &.big
+    width 150px
+    height 150px
 
 .create-topic-btn
   overflow auto
@@ -878,6 +906,7 @@ transform()
     .logo-container
       position relative
       width 150px
+      height 150px
       .change-avatar-link
         background rgba(0,0,0,.3)
         text-align center
@@ -914,6 +943,24 @@ transform()
       .file-name
         display inline-block
         vertical-align middle //
+    .rating
+      text-align center
+      /*margin-top -20px
+      position relative
+      z-index 2*/
+      .rating-item
+        display inline-block
+        margin 0 15px
+        a
+          display inline-block
+          margin-right 10px
+          font-size 18px
+        span
+          display inline-block
+        .fa-star
+          color #ffea4a
+        .fa-heart
+          color #ff0000
     img
       max-width 150px
       max-height 150px
@@ -1019,10 +1066,15 @@ transform()
 .coming-soon
   text-align center
   min-height 0
+  width 1024px
+  margin 0 auto
+  padding-left 0
   p
     font-size 16px
   h1
     font-size 40px
+  .navbar-brand
+    padding-left 0
 
 .maps
   img
@@ -1039,6 +1091,11 @@ transform()
     margin 0 auto
     display block
 
+.crop-area .loading
+  width 30px !important
+  height auto
+  padding 0
+
 // контакты, о нас, блог
 .wrap
   width 990px
@@ -1054,6 +1111,12 @@ transform()
       height 100px
       display block
       margin-bottom 10px
+    .contacts-user
+      margin-bottom 10px
+      .user-name
+        margin-left 50px
+    .send
+      margin-right 15px
 
 .blog
   text-align left

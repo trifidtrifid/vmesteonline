@@ -139,13 +139,15 @@ struct UserProfile {
 	8: i32 populatity,
 }
 
+enum GroupType { FLOOR=1, STAIRCASE=2, BUILDING=3, NEIGHBORS=4, BLOCK=5, DISTRICT=6, TOWN=7 }
 
-struct Group{
+struct Group {
 	1: i64 id,
 	2: string visibleName,
 	3: string name,
 	4: string description,
 	5: i32 radius,
+	6: GroupType type;
 }
 
 struct Rubric{

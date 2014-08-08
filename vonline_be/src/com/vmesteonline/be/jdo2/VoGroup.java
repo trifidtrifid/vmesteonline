@@ -7,24 +7,26 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.GroupType;
 
 @PersistenceCapable
 public class VoGroup implements Comparable<VoGroup> {
 
 	public static final int RADIUS_FOR_UNKNOWNS = 2000000; // whole world
 
-	public VoGroup(String visibleName, int radius) {
-		this(visibleName, radius, false);
+	public VoGroup(String visibleName, int radius, GroupType gType) {
+		this(visibleName, radius, gType, false);
 	}
 
-	public VoGroup(String visibleName, int radius, boolean subscribedByDefault) {
+	public VoGroup(String visibleName, int radius, GroupType gType, boolean subscribedByDefault) {
 		this.visibleName = visibleName;
 		this.radius = radius;
 		this.subscribedByDefault = subscribedByDefault;
+		this.groupType = gType.getValue();
 	}
 
 	public VoGroup clone() {
-		VoGroup gr = new VoGroup(visibleName, radius);
+		VoGroup gr = new VoGroup(visibleName, radius, GroupType.findByValue(groupType));
 		return gr;
 	}
 
@@ -81,6 +83,18 @@ public class VoGroup implements Comparable<VoGroup> {
 
 	public void setImportantScore(int importantScore) {
 		this.importantScore = importantScore;
+	}
+	
+	@Persistent
+	@Unindexed
+	private int groupType;
+	
+	public int getGroupType() {
+		return groupType;
+	}
+
+	public void setGroupType(int groupType) {
+		this.groupType = groupType;
 	}
 
 	@Override

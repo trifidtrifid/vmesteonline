@@ -267,6 +267,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			UserProfile uProfile = user.getUserProfile();
 			UserPrivacy uPrivacy = user.getPrivacy();
+			
 			// show everything if no privacy set
 			if (uPrivacy.contacts == PrivacyType.EVERYBODY && uPrivacy.profile == PrivacyType.EVERYBODY)
 				return uProfile;
@@ -291,8 +292,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 			}
-			uProfile.importancy = user.getImportancy();
-			uProfile.populatity = user.getPopularuty();
 			
 			return uProfile;
 

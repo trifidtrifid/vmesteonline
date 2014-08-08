@@ -2,18 +2,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.Rubric"%>
 <%@ page import="com.vmesteonline.be.messageservice.Message"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.Topic"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="java.util.ArrayList"%>
 <%@ page import="com.vmesteonline.be.messageservice.MessageType" %>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -33,7 +26,6 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 }
 
     MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-    //MessageType mesType = MessageType.BASE;
 
     TopicListPart Blog = messageService.getBlog(0,1000);
 
@@ -72,7 +64,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 <body>
 <div class="navbar navbar-default" id="navbar">
 
-    <div class="navbar-container" id="navbar-container">
+    <div class="navbar-container coming-soon" id="navbar-container">
         <div class="navbar-header pull-left">
             <a href="#" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
@@ -244,8 +236,9 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             var message = new com.vmesteonline.be.messageservice.Message();
 
             message.id = 0;
+            message.topicId = 0;
             message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//5;
-            message.groupId = 5277655813324800;
+            message.groupId = 0;
             message.content = $(this).closest('.input-group').find('.message-textarea').val();
             message.parentId = 0;
             message.created = Date.parse(new Date)/1000;

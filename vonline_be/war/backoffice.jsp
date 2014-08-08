@@ -91,7 +91,8 @@
 
             var newTopic = new com.vmesteonline.be.messageservice.Topic();
             newTopic.message = new com.vmesteonline.be.messageservice.Message();
-            newTopic.message.groupId = 5277655813324800;
+            newTopic.message.groupId = 4996180836614144;
+            //newTopic.message.topicId = 0;
             newTopic.message.type = 7; // blog
             newTopic.message.content = $('.post-url').val();
             newTopic.message.id = 0;

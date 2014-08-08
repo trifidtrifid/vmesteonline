@@ -9,13 +9,18 @@ $(document).ready(function(){
     if(URL) {
         var URLArray = URL.split(';');
         var email = URLArray[0].split('=')[1],
-            mapUrl = URLArray[1].split('=')[1],
             address = URLArray[2].split('=')[1],
             code = URLArray[3].split('=')[1];
+
+        var mapUrlTemp = URLArray[1].split('=');
+        mapUrlTemp.shift();
+        var mapUrl = mapUrlTemp.join('=');
 
         $('#email').val(email);
         $('.mapUrl').attr('src', mapUrl);
         $('.address').text(address);
+
+        document.location.hash = "";
     }
 
     $('#login-box .btn-login').click(function(e){
@@ -60,4 +65,38 @@ $(document).ready(function(){
             $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
         }
     }
+
+    $('.show-remember').click(function(e){
+        e.preventDefault();
+
+       $('.login-main').addClass('hidden');
+       $('.remember').removeClass('hidden');
+        $('.login-error').hide();
+    });
+
+    $('.btn-back').click(function(e){
+        e.preventDefault();
+
+        $('.remember').addClass('hidden');
+        $('.login-main').removeClass('hidden');
+        $('.login-error').hide();
+
+    });
+
+    $('.btn-remember').click(function(e){
+        var email = $('#email').val();
+
+        if(email) {
+            try {
+                authClient.sendConfirmCode(email);
+                $('.login-error').removeClass('.error-info').addClass('info-good').text('Вам отправлено письмо для восстановления пароля').show();
+            }catch(e){
+                $('.login-error').text('Пользователь с таким email не зарегистрирован').show();
+            }
+
+        }else{
+            $('.login-error').text('Введите пожалуйста email').show();
+        }
+
+    });
 });

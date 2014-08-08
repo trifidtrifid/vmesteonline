@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
 import org.datanucleus.util.Base64;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
@@ -44,6 +45,8 @@ import com.vmesteonline.be.messageservice.Attach;
 
 public class StorageHelper {
 	
+	public static final String DEFAULT_CONTENT_TYPE = "binary/stream";
+
 	public static class FileSource {
 		
 		public FileSource(String fname2, String contentType2, InputStream is2) {
@@ -104,7 +107,10 @@ public class StorageHelper {
 	public static String saveImage(byte[] urlOrContent, String _contentType, long ownerId, boolean isPublic, PersistenceManager _pm, String fileName) throws IOException {
 
 		FileSource fs = createFileSource( urlOrContent, _contentType, fileName);
-		return saveImage(fs.fname, fs.contentType, ownerId, isPublic, fs.is, _pm);
+		if( null == fs ) 
+			return new String(urlOrContent); //local URL found in urlOrContent
+		else
+			return saveImage(fs.fname, fs.contentType, ownerId, isPublic, fs.is, _pm);
 	}
 
 	// ===================================================================================================================
@@ -293,13 +299,13 @@ public class StorageHelper {
 		} catch (Exception e) {
 			logger.warning("Failed to parse content type string '"+contentType+"'. Default would be used");
 			try {
-				cType = new ContentType(contentType = "binary/stream");
+				cType = new ContentType(contentType = DEFAULT_CONTENT_TYPE);
 			} catch (ParseException e1) {
 			}
 		}
 		String url = getURL(vfar.getId(), 
 				-1 == liop ? 	
-						(contentType.equals("binary/stream") ? 
+						(contentType.equals(DEFAULT_CONTENT_TYPE) ? 
 								"dat" : cType.getSubType())
 								: 
 								fileName.substring(liop + 1));
@@ -396,7 +402,7 @@ public class StorageHelper {
 
 		} else {
 			String fname = null == fileName ? null : fileName;
-			String contentType = null==_contentType ? "binary/stream" : _contentType;
+			String contentType = null==_contentType ? DEFAULT_CONTENT_TYPE : _contentType;
 			String ext = ".bin";
 			InputStream is = null;
 			
@@ -464,6 +470,9 @@ public class StorageHelper {
 					} catch (MalformedURLException e) {
 						
 					}
+			} else if( contentString.startsWith("/file/")  ){ //it's a local file
+				return null; 
+				
 			}
 			
 			if( is == null && urlOrContent.length % 4 == 0 ){ //try to decode base64 

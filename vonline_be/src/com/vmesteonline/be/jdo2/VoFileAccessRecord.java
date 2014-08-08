@@ -58,12 +58,17 @@ public class VoFileAccessRecord {
 	public GcsFilename getGSFileName() {
 		return new GcsFilename(bucket, fileName);
 	}
-
 	
 	public String getContentType() {
 		return contentType;
 	}
-
+	
+	public void updateContentParams( String contentType, String publicName ){
+		if( null==this.contentType || this.contentType.equals( StorageHelper.DEFAULT_CONTENT_TYPE )){
+			this.contentType = contentType;
+			this.publicFileName = publicName;
+		}
+	}
 
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey

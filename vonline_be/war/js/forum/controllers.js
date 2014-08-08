@@ -15,6 +15,8 @@ angular.module('forum.controllers', ['ui.select2'])
         base.createTopicIsHide = true;
         base.me = shortUserInfo;
 
+        base.isFooterBottom = false;
+
         base.isTalkTitles = true;
 
         resetPages(base);
@@ -146,12 +148,21 @@ angular.module('forum.controllers', ['ui.select2'])
             if (message.important == 3 || message.important == 2){
                 message.important = 1;
                 isImportant = true;
+                message.importantText = 'Снять метку "Важное"';
             }else{
                 message.important = 3;
                 isImportant = false;
+                message.importantText = 'Пометить как "Важное"';
             }
 
             messageClient.markMessageImportant(message.id,isImportant);
+        };
+        base.markLike = function(event,message){
+            event.preventDefault();
+            var isLike;
+
+            message.like = 1;
+            messageClient.markMessageLike(message.id);
         };
 
         base.showAllGroups = function(){
@@ -278,7 +289,6 @@ angular.module('forum.controllers', ['ui.select2'])
             }else if($rootScope.currentPage == 'maps'){
                 $rootScope.mapsChangeGroup(group.id);
             }
-
 
             //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
 
@@ -494,6 +504,13 @@ angular.module('forum.controllers', ['ui.select2'])
 
                 lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
+                if(lenta.wallItems[i].topic.message.important == 1){
+                    lenta.wallItems[i].topic.message.importantText = 'Снять метку "Важное"';
+                }else{
+                    lenta.wallItems[i].topic.message.importantText = 'Пометить как "Важное"';
+                }
+
+
                 if(lenta.wallItems[i].topic.message.type == 1){
 
                     lenta.wallItems[i].topic.lastUpdateEdit = getTiming(lenta.wallItems[i].topic.lastUpdate);
@@ -531,15 +548,117 @@ angular.module('forum.controllers', ['ui.select2'])
     .controller('WallSingleController',function($rootScope, $stateParams){
         var wallSingle = this;
 
+        $rootScope.base.mainContentTopIsHide = true;
+
         // временно, нужна функция getWallItem(topicId)
         var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
-        wallItemsLength = wallItems.length,
-            wallItem;
+        wallItemsLength = wallItems.length;
         for(var i = 0; i < wallItemsLength; i++){
-            if(wallItems[i].id == $stateParams.topicId){
-                wallItem = wallItems[i];
+            if(wallItems[i].topic.id == $stateParams.topicId){
+                wallSingle.wallItem = wallItems[i];
             }
         }
+
+        wallSingle.wallItem.commentText = "Ваш ответ";
+        wallSingle.wallItem.answerShow = false;
+        wallSingle.wallItem.isFocus = false;
+        wallSingle.wallItem.isCreateCommentError = false;
+
+        if(wallSingle.wallItem.topic.message.important == 1){
+            wallSingle.wallItem.topic.message.importantText = 'Снять метку "Важное"';
+        }else{
+            wallSingle.wallItem.topic.message.importantText = 'Пометить как "Важное"';
+        }
+
+        //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
+        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.message.groupId);
+
+        wallSingle.wallItem.tagColor = getTagColor(wallSingle.wallItem.label);
+
+        if(wallSingle.wallItem.topic.message.type == 1){
+
+            wallSingle.wallItem.topic.lastUpdateEdit = getTiming(wallSingle.wallItem.topic.lastUpdate);
+
+        }else if(wallSingle.wallItem.topic.message.type == 5){
+
+            wallSingle.wallItem.topic.message.createdEdit = getTiming(wallSingle.wallItem.topic.message.created);
+            wallSingle.wallItem.topic.authorName = getAuthorName(wallSingle.wallItem.topic.userInfo);
+            wallSingle.wallItem.topic.metaType = "message";
+
+            var mesLen;
+            wallSingle.wallItem.messages ?
+                mesLen = wallSingle.wallItem.messages.length:
+                mesLen = 0;
+
+            for(var j = 0; j < mesLen; j++){
+                wallSingle.wallItem.messages[j].createdEdit = getTiming(wallSingle.wallItem.messages[j].created);
+                wallSingle.wallItem.messages[j].authorName = getAuthorName(wallSingle.wallItem.messages[j].userInfo);
+            }
+
+
+            if(wallSingle.wallItem.topic.poll != null){
+                //значит это опрос
+                setPollEditNames(wallSingle.wallItem.topic.poll);
+
+                wallSingle.wallItem.topic.metaType = "poll";
+            }
+        }
+
+        var initFlagsArray = [];
+        wallSingle.showAnswerInput = function(event,wallItem,wallMessage){
+            event.preventDefault();
+
+            /*wallItem.answerShow ?
+             wallItem.answerShow = false :*/
+            wallItem.answerShow = true ;
+            wallItem.isFocus = true ;
+
+            if(wallMessage){
+                var authorName;
+                wallMessage.userInfo ?
+                    authorName = wallMessage.userInfo.firstName :
+                    authorName = wallMessage.authorName.split(' ')[0];
+                wallItem.commentText = authorName+", ";
+            }else{
+                wallItem.commentText = "";
+            }
+
+            if(!initFlagsArray[wallItem.topic.id]) {
+                // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
+                initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
+                initAttachDoc($('#attachDoc-' + wallItem.topic.id), $('#attach-doc-area-' + wallItem.topic.id));
+                initFlagsArray[wallItem.topic.id] = true;
+            }
+
+        };
+
+        wallSingle.createWallComment = function(event,wallItem){
+            event.preventDefault();
+
+            wallItem.groupId = $rootScope.currentGroup.id;
+
+            var isWall = true,
+                message = postMessage(wallItem, isWall);
+
+            if(message == 0){
+                wallItem.isCreateCommentError = true;
+                wallItem.createCommentErrorText = "Вы не ввели сообщение";
+            }else {
+                wallItem.isCreateCommentError = false;
+
+                if (wallItem.messages) {
+                    wallItem.messages.push(message);
+                } else {
+                    wallItem.messages = [];
+                    wallItem.messages[0] = message;
+                }
+
+                wallItem.answerShow = false;
+            }
+
+        };
+
+        $('.ng-cloak').removeClass('ng-cloak');
     })
     .controller('TalksController',function($rootScope) {
         /*
@@ -703,6 +822,12 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
                 talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
                 talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
+
+                if(talk.topics[i].message.important == 1){
+                    talk.topics[i].message.importantText = 'Снять метку "Важное"';
+                }else{
+                    talk.topics[i].message.importantText = 'Пометить как "Важное"';
+                }
             }
         }
 
@@ -745,6 +870,12 @@ angular.module('forum.controllers', ['ui.select2'])
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
                     talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
                     talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
+
+                    if(talk.fullTalkTopic.message.important == 1){
+                        talk.fullTalkTopic.message.importantText = 'Снять метку "Важное"';
+                    }else{
+                        talk.fullTalkTopic.message.importantText = 'Пометить как "Важное"';
+                    }
                 }
             }
             if(talk.fullTalkTopic.poll != null){
@@ -1572,6 +1703,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $("#dialog-message").addClass('hide');
 
+        //alert($stateParams.userId+" "+shortUserInfo.id);
         if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
@@ -1579,10 +1711,11 @@ angular.module('forum.controllers', ['ui.select2'])
             userId = 0;
             profile.isMayEdit = true;
             profile.userContacts = userClient.getUserContacts();
-            //initProfileAva();
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
+
+        profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
 
         $rootScope.chageIndex = 0;
 
@@ -1992,7 +2125,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             var saveSrc = newSrc+"?w="+ imageWidth +"&h="+ imageHeight +"&s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
-            $('.logo-container img').attr('src',saveSrc);
+            //$('.logo-container .avatar').css({'background-image':saveSrc});
             $rootScope.base.user.avatar = saveSrc;
 
             $("#dialog-message").dialog('close');
@@ -2139,13 +2272,13 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.mapsLoadStatus = "isLoaded";
 
         $rootScope.groups[0].isShow = false;
-        $rootScope.groups[1].isShow = false;
-        $rootScope.groups[2].selected = true;
+        $rootScope.groups[1].selected = true;
+        $rootScope.base.isFooterBottom = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[2].id,'6FB3E0C0');
+        maps.url = userClient.getGroupMap($rootScope.groups[1].id,MAP_COLOR);
 
         $rootScope.mapsChangeGroup = function(groupId){
-            maps.url = userClient.getGroupMap(groupId,'6FB3E0C0');
+             maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
         };
     });
     /*.controller('BlogController',function($state,$rootScope) {
@@ -2161,6 +2294,8 @@ var TEXT_DEFAULT_1 = "Написать сообщение";
 var TEXT_DEFAULT_2 = "Ваш ответ";
 var TEXT_DEFAULT_3 = "Сообщение";
 var TEXT_DEFAULT_4 = "Заголовок";
+
+var MAP_COLOR = "6FB3E040";
 
 /* functions */
 

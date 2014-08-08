@@ -40,7 +40,7 @@ public class VoInviteCode {
 		q.setFilter("code == '" + inviteCode + "'");
 		List<VoInviteCode> voInviteCodes = (List<VoInviteCode>) q.execute();
 		if (voInviteCodes.isEmpty())
-			throw new InvalidOperation(VoError.IncorrectParametrs, "unknown invite code " + inviteCode);
+			throw new InvalidOperation(VoError.IncorectLocationCode, "unknown invite code " + inviteCode);
 		if (voInviteCodes.size() != 1) {
 			Logger.getLogger(VoInviteCode.class.getName()).severe("has more than one invite code " + inviteCode);
 		}
