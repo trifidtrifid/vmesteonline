@@ -983,6 +983,11 @@ h1 {
 .dialog,
 .private-messages {
   padding: 10px;
+  padding-top: 15px;
+}
+.dialog .dialogs-container,
+.private-messages .dialogs-container {
+  margin-top: 15px;
 }
 .dialog h2,
 .private-messages h2 {

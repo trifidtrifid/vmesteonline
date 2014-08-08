@@ -48,23 +48,23 @@ $(document).ready(function(){
         }else{
 
             try{
-                console.log('2');
                 authClient.registerNewUser(firstName, lastName, pass, email, code, gender);
                 document.location.replace('coming-soon.html');
             }catch(e){
-                console.log('3');
                 $('.error-info').html('Такой адрес email уже зарегистрирован. <a href="#" class="reg-remember">Забыли пароль?</a>').show();
 
                 $('.reg-remember').click(function(e){
                     e.preventDefault();
 
-                    authClient.sendConfirmCode(email);
-                    $('.login-error').removeClass('.error-info').text('На ваш email отправлен код подтверждения').show();
+                    authClient.sendConfirmCode(email,resourcefileName);
+                    $('.login-error').removeClass('error-info').addClass('info-good').text('На ваш email отправлен код подтверждения').show();
                 });
             }
         }
 
     });
+
+    var resourcefileName = "mailTemplates/changePasswordConfirm.html";
 
     function login(selector) {
         var result = $('#result');
@@ -82,8 +82,8 @@ $(document).ready(function(){
                 result.css('color', 'black');
             }
 
-        } catch (ouch) {
-            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
+        } catch (e) {
+            $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
         }
     }
 
@@ -109,7 +109,7 @@ $(document).ready(function(){
 
         if(email) {
             try {
-                authClient.sendConfirmCode(email);
+                authClient.sendConfirmCode(email,resourcefileName);
                 $('.login-error').removeClass('.error-info').addClass('info-good').text('Вам отправлено письмо для восстановления пароля').show();
             }catch(e){
                 $('.login-error').text('Пользователь с таким email не зарегистрирован').show();

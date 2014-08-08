@@ -1930,7 +1930,7 @@ angular.module('forum.controllers', ['ui.select2'])
                     //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
                     settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
-                    alert(settings.family.childs[i].birthday);
+                    //alert(settings.family.childs[i].birthday);
                     //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
                 }
             }
