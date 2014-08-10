@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -116,12 +117,8 @@ public abstract class Notification {
 			
 			String subject = "ВместеОнлайн.ру: важное сообщение";
 			String body;
-			try {
-				body = new String( it.getContent(), "UTF-8" );
-			} catch (UnsupportedEncodingException e1) {
-				body = new String( it.getContent() );
-				e1.printStackTrace();
-			}
+			body = it.getContent();
+			
 			body += "<br/> Ваши соседи считают это сообщение важным. Важность: "+it.getImportantScore();
 			for(VoUser rcpt: usersForMessage){
 				try {
@@ -142,17 +139,22 @@ public abstract class Notification {
 		try {
 			Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, pm);
 			VoDialogMessage lastMsg;
-			if( messages.size() > 1 && 
-					(lastMsg = messages.iterator().next()).getAuthorId() != messages.iterator().next().getAuthorId() ){
-				
-				try {
-					EMailHelper.sendSimpleEMail( 
-							rcpt, "ВместеОнлайн.ру: сообщение от "+author.getName(), 
-							author.getName() + " " + author.getLastName() + " написал вам: <br/><i>"
-									+ lastMsg.getContent()+"</i>");
+			Iterator<VoDialogMessage> mi = messages.iterator();
+			if( messages.size() > 0 ){
+				lastMsg = mi.next();
+			
+				if(messages.size() == 1  ||  //else check that the last message has different author 
+						lastMsg.getAuthorId() != mi.next().getAuthorId() ){
 					
-				} catch (Exception e) {
-					e.printStackTrace();
+					try {
+						EMailHelper.sendSimpleEMail( 
+								rcpt, "ВместеОнлайн.ру: сообщение от "+author.getName(), 
+								author.getName() + " " + author.getLastName() + " написал вам: <br/><i>"
+										+ lastMsg.getContent()+"</i><br/><br/><a href=\"http://vmesteonline.ru/dialog-single-"+dlg.getId()+"\">Ответить...</a>");
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			
@@ -162,7 +164,8 @@ public abstract class Notification {
 	}
 	
 	public static void welcomeMessageNotification( VoUser newUser ){
-		String body = "Добро пожаловть на сайт Вашего дома!<br/><br/> ";
+		
+		String body = newUser.getName() + " " + newUser.getLastName() + "Добро пожаловть на сайт Вашего дома!<br/><br/> ";
 		List<VoUserGroup> groups = newUser.getGroups();
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -194,15 +197,15 @@ public abstract class Notification {
 				}
 	 		}
 			body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/>"
-					+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по телефону, отправить нам письмо по адресу.<br/><br/>";
+					+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по адресу <a href=\"mailto:info@vmesteonline.ru\">info@vmesteonline.ru</a> нам письмо по адресу.<br/><br/>";
 			
 			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...<br/><br/>";
 			
 			if( !newUser.isEmailConfirmed() ){
-				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя со ссылке: http://vmesteonline.ru/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"<br/>";
+				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя по этой <a href=\"http://vmesteonline.ru/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"\">ссылке</a><br/>";
 			}
 			
-			body += "Спасибо что вы вместе, онлайн!";
+			body += "Спасибо что вы вместе, онлайн!<br/>Будем рады прочитать ваши пожелания и предложения на <a href=\"http://vmesteonline.ru/blog\">странице обсуждения</a>";
 			try {
 				EMailHelper.sendSimpleEMail( newUser.getEmail(), "ВместеОнлайн.ру: добро пожаловать в ваш дом онлайн!",body);
 			} catch (IOException e) {

@@ -547,11 +547,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 
 			/* Check if content changed, then update edit date */
-			if (!Arrays.equals(storedMsg.getContent(), msg.getContent().getBytes())) {
+			if (!(storedMsg.getContent().equals( msg.getContent()))) {
 				int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
 				storedMsg.setEditedAt(editedAt);
 				topic.setLastUpdate(editedAt);
-				storedMsg.setContent(msg.getContent().getBytes());
+				storedMsg.setContent(msg.getContent());
 			}
 
 			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()

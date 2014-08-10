@@ -4,6 +4,6 @@
     <url>/tasks/notification?rt=news</url>
     <description>Send news to all subscribed users</description>
     <schedule>every day 00:01</schedule>
-    <timezone>Russia/Moscow</timezone>
+    <timezone>Europe/Moscow</timezone>
   </cron>
 </cronentries>

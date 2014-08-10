@@ -144,11 +144,11 @@ public class VoDialog {
 		
 		Queue queue = QueueFactory.getDefaultQueue();
     for( Long recipient : users )
-    	if( recipient != currentUserId)
+    	if( recipient != currentUserId )
 				queue.add(withUrl("/tasks/notification").param("rt", "ndm")
 		    		.param("dg", ""+getId())
 		    		.param("ar", ""+currentUserId)
-		    		.param("rt", ""+recipient));
+		    		.param("rcpt", ""+recipient));
 		return dmsg;
 	}
 	

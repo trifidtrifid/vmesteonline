@@ -61,7 +61,7 @@ public class VoMessage extends VoBaseMessage {
 			this.authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 
 		this.userNameForBlog = msg.getAnonName();
-		this.content = msg.getContent().getBytes();
+		this.content = msg.getContent();
 		createdAt = msg.getCreated();
 		images = new ArrayList<Long>();
 		images = new ArrayList<Long>();

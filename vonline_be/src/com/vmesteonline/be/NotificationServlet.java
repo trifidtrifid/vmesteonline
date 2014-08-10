@@ -50,7 +50,7 @@ public class NotificationServlet extends HttpServlet {
 		} catch (InvalidOperation e) {
 
 			e.printStackTrace();
-			rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST, e.why);
+			rsp.setStatus(HttpServletResponse.SC_OK, e.why);
 		}
 	}
 
@@ -74,7 +74,7 @@ private void sendNewDialogMsg(HttpServletRequest req) throws InvalidOperation {
 			Notification.dialogMessageNotification(
 							(VoDialog)getVoObjectByParam( req, "dg", VoDialog.class.getName(), pm),
 							(VoUser)getVoObjectByParam( req, "ar", VoUser.class.getName(), pm),
-							(VoUser)getVoObjectByParam( req, "rt", VoUser.class.getName(), pm));
+							(VoUser)getVoObjectByParam( req, "rcpt", VoUser.class.getName(), pm));
 			
 		} finally {
 			pm.close();
@@ -98,7 +98,7 @@ private void sendNewDialogMsg(HttpServletRequest req) throws InvalidOperation {
 		try {
 			return pm.getObjectById( Class.forName(className), Long.parseLong( req.getParameter(pName)));
 		} catch (Exception e) {
-			throw new InvalidOperation( VoError.IncorrectParametrs, "failed to get");
+			throw new InvalidOperation( VoError.IncorrectParametrs, "Failed to get Oject of "+className+" by key "+pName+"="+req.getParameter(pName)+". "+e.getMessage());
 		}
 	}
 
