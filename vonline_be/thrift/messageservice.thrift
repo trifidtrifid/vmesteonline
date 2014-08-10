@@ -47,7 +47,6 @@ struct Message {
 	21: string anonName 
 	22: Mark important,
 	23: Mark like,
-	
 } // 'сообщение';
 		
 
@@ -85,6 +84,7 @@ struct Topic {
 	12: UserTopic usertTopic,
 	13: bedata.ShortUserInfo userInfo,
 	14: Poll poll, 	
+	15: bedata.GroupType groupType,	
 }
 
 struct TopicListPart {
