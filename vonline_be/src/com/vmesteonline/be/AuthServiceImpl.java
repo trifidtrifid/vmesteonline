@@ -82,7 +82,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return LoginResult.NOT_MATCH;
 	}
 
-	private void saveUserInSession(PersistenceManager pm, VoUser u) throws InvalidOperation {
+	void saveUserInSession(PersistenceManager pm, VoUser u) throws InvalidOperation {
 		VoSession currentSession = getCurrentSession(pm);
 		if (null == currentSession)
 			currentSession = new VoSession(sessionStorage.getId(), u);

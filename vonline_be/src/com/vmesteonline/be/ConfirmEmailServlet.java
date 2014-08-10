@@ -27,7 +27,7 @@ public class ConfirmEmailServlet extends HttpServlet {
 					if( (""+user.getConfirmCode()).equals(uidAndConfCode[1])){
 						user.setEmailConfirmed(true);
 						serviceImpl.setSession(req.getSession());
-						serviceImpl.getCurrentSession().setUser(user);				
+						serviceImpl.saveUserInSession(pm, user);				
 					}
 				} catch (Exception e) {					
 					e.printStackTrace();
@@ -40,11 +40,11 @@ public class ConfirmEmailServlet extends HttpServlet {
 		return;
 	}
 
-	private ServiceImpl serviceImpl;
+	private AuthServiceImpl serviceImpl;
 
 	public ConfirmEmailServlet() {
 		super();
-		this.serviceImpl = new ServiceImpl();
+		this.serviceImpl = new AuthServiceImpl();
 	}
 	/**
 	 * 
