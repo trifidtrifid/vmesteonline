@@ -103,7 +103,7 @@ private void sendNewDialogMsg(HttpServletRequest req) throws InvalidOperation {
 		if( null!=uid ){
 			PersistenceManager pm = PMF.getPm();
 			try {
-				Notification.welcomeMessageNotification(pm.getObjectById(VoUser.class, Long.parseLong(uid)));
+				Notification.welcomeMessageNotification(pm.getObjectById(VoUser.class, Long.parseLong(uid)), pm);
 				
 			} finally {
 				pm.close();

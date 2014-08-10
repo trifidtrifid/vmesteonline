@@ -126,7 +126,7 @@ public abstract class Notification {
 			
 			body += "<br/> Ваши соседи считают это сообщение важным. Важность: "+it.getImportantScore();
 			for(VoUser rcpt: usersForMessage){
-					attachFooterAndSend(rcpt, subject, body); 
+					decorateAndSendMessage(rcpt, subject, body); 
 			}
 			
 		} finally {
@@ -151,7 +151,7 @@ public abstract class Notification {
 								author.getName() + " " + author.getLastName() + " написал вам: <br/><i>"
 										+ lastMsg.getContent()+"</i><br/><br/><a href=\"http://"+host+"/dialog-single-"+dlg.getId()+"\">Ответить...</a>";
 						
-						attachFooterAndSend(rcpt, "сообщение от "+author.getName(), body);
+						decorateAndSendMessage(rcpt, "сообщение от "+author.getName(), body);
 						
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -164,56 +164,53 @@ public abstract class Notification {
 		}
 	}
 	
-	public static void welcomeMessageNotification( VoUser newUser ){
+	public static void welcomeMessageNotification( VoUser newUser, PersistenceManager pm ){
 		
 		String body = newUser.getName() + " " + newUser.getLastName() + ", добро пожаловть на сайт Вашего дома!<br/><br/> ";
 		List<VoUserGroup> groups = newUser.getGroups();
-		PersistenceManager pm = PMF.getPm();
-		try {
-			Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
-			userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
-			Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
-			
-			body += "На сайте уже зарегистрированно: "+userSet.size()+" человек<br/>";
-			for(VoUserGroup group: groups ){
-				int usersInGroup;
-				if( null!=usersMap.get(group) && (usersInGroup = usersMap.get(group).size()) > 0 ){
-					
-					if( GroupType.FLOOR.getValue() == group.getGroupType()){
-						body += "\tНа вашем этаже: ";
-					} else if( GroupType.STAIRCASE.getValue() == group.getGroupType()){
-						body += "\tВ вашем подъезде: ";
-					} else if( GroupType.BUILDING.getValue() == group.getGroupType()){
-						body += "\tВ доме: ";
-					} else if( GroupType.BLOCK.getValue() == group.getGroupType()){
-						body += "\tВ вашем квартале: ";
-					} else if( GroupType.DISTRICT.getValue() == group.getGroupType()){
-						body += "\tВ вашем районе: ";
-					} else if( GroupType.TOWN.getValue() == group.getGroupType()){
-						body += "\tВ вашем городе: ";
-					} else {
-						continue;
-					}
-					body += usersInGroup +" <br/>";
+
+		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
+		userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
+		Map<VoUserGroup, Set<VoUser>> usersMap = arrangeUsersInGroups(userSet);
+		
+		body += "На сайте уже зарегистрированно: "+userSet.size()+" человек<br/>";
+		for(VoUserGroup group: groups ){
+			int usersInGroup;
+			if( null!=usersMap.get(group) && (usersInGroup = usersMap.get(group).size()) > 0 ){
+				
+				if( GroupType.FLOOR.getValue() == group.getGroupType() && 0!=newUser.getAddress().getFloor() ){
+					body += "\tНа вашем этаже: ";
+				} else if( GroupType.STAIRCASE.getValue() == group.getGroupType() && 0!=newUser.getAddress().getStaircase()){
+					body += "\tВ вашем подъезде: ";
+				} else if( GroupType.BUILDING.getValue() == group.getGroupType()){
+					body += "\tВ доме: ";
+				} else if( GroupType.BLOCK.getValue() == group.getGroupType()){
+					body += "\tВ вашем квартале: ";
+				} else if( GroupType.DISTRICT.getValue() == group.getGroupType()){
+					body += "\tВ вашем районе: ";
+				} else if( GroupType.TOWN.getValue() == group.getGroupType()){
+					body += "\tВ вашем городе: ";
+				} else {
+					continue;
 				}
-	 		}
-			body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/>"
-					+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по адресу <a href=\"mailto:info@vmesteonline.ru\">info@vmesteonline.ru</a> нам письмо по адресу.<br/><br/>";
-			
-			body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...<br/><br/>";
-			
-			if( !newUser.isEmailConfirmed() ){
-				body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя по этой <a href=\"http://"+host+"/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"\">ссылке</a><br/>";
+				body += usersInGroup +" <br/>";
 			}
-			
-			attachFooterAndSend(newUser, "добро пожаловать в ваш дом онлайн!", body);
-			
-		} finally {
-			pm.close();
-		}		
+ 		}
+		body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/>"
+				+ "Мы - Вместеонлайн.ру.<br/>Вы всегда можете связаться с нами по адресу <a href=\"mailto:info@vmesteonline.ru\">info@vmesteonline.ru</a> нам письмо по адресу.<br/><br/>";
+		
+		body += "На страницах сайта вы найдете все новости и полезную информацию от управляющей компании, обсудить их с соседями вашего дома...<br/><br/>";
+		
+		if( !newUser.isEmailConfirmed() ){
+			body += "Чтобы получать всю актуальну информацию о вашем доме и ваших соседях, подтвердите ваш email перейдя по этой <a href=\"http://"+host+"/confirm/profile-"+newUser.getId()+","+newUser.getConfirmCode()+"\">ссылке</a><br/>";
+			pm.makePersistent(newUser);//to save confirm code
+		}
+		
+		decorateAndSendMessage(newUser, "добро пожаловать в ваш дом онлайн!", body);
+		
 	}
 
-	static void attachFooterAndSend(VoUser user, String subject, String body) {
+	static void decorateAndSendMessage(VoUser user, String subject, String body) {
 		body += "<p>Спасибо что вы вместе, онлайн!<br/>Будем рады прочитать ваши пожелания и предложения на <a href=\"http://"+host+"/blog\">странице обсуждения</a></p>";
 		try {
 			EMailHelper.sendSimpleEMail( 
@@ -253,7 +250,7 @@ public abstract class Notification {
 					+ "Если вы хотите выполнить эту действие, воспользуйтесь <a href=\"http://"+host+"/remindPassword-"
 							+ user.getConfirmCode()+","+URLEncoder.encode(user.getEmail(),"UTF-8")+"\">этой ссылкой</a>.</p>"
 					+ "<p>Если у вас возникли трудности с доступом к сайту или есть вопросы, вы можете задать их нам в ответном письме.</p>";
-			attachFooterAndSend(user, "восстановление пароля", body);
+			decorateAndSendMessage(user, "восстановление пароля", body);
 			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block

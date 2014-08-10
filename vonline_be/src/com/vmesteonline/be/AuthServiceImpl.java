@@ -58,16 +58,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	public boolean allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
+	public LoginResult allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser u = getUserByEmail(email, pm);
 			if (u != null) {
 				if (u.getPassword().equals(pwd) || !checkPwd) {
-
+					if( !u.isEmailConfirmed() )
+						return LoginResult.EMAIL_NOT_CONFIRMED;
 					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
 					saveUserInSession(pm, u);
-					return true;
+					return LoginResult.SUCCESS;
 				} else
 					logger.info("incorrect password " + email + " pass " + pwd);
 
@@ -78,7 +79,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (checkPwd)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 
-		return false;
+		return LoginResult.NOT_MATCH;
 	}
 
 	private void saveUserInSession(PersistenceManager pm, VoUser u) throws InvalidOperation {
@@ -107,7 +108,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean login(final String email, final String password) throws InvalidOperation {
+	public LoginResult login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
 			logger.fine("http session is null");
 			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
@@ -189,7 +190,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
 					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
-			// Add the task to the default queue.
+			// Add the send welcomeMessage Task to the default queue.
       Queue queue = QueueFactory.getDefaultQueue();
       queue.add(withUrl("/tasks/notification").param("rt", "swm").param("uid", ""+user.getId()));
 			//Notification.welcomeMessageNotification(user);

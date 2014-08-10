@@ -38,7 +38,7 @@ public class NewsNotification extends Notification {
 					
 					body += "Подробности на http://vmesteonline.ru";
 						
-					attachFooterAndSend(user, " новости о рядом с вами", body);
+					decorateAndSendMessage(user, " новости о рядом с вами", body);
 
 				}
 			}	
