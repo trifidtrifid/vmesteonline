@@ -45,6 +45,9 @@ public class NotificationServlet extends HttpServlet {
 				} finally {
 					pm.close();
 				}	
+			} else if( "pwdrem".equals(reqType)){
+				sendRemindPasswordMsg(req);
+			
 			}  
 			rsp.setStatus(HttpServletResponse.SC_OK);
 		} catch (InvalidOperation e) {
@@ -52,6 +55,20 @@ public class NotificationServlet extends HttpServlet {
 			e.printStackTrace();
 			rsp.setStatus(HttpServletResponse.SC_OK, e.why);
 		}
+	}
+
+	//=============================================================================================================
+	
+	private void sendRemindPasswordMsg(HttpServletRequest req) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			Notification.sendRemindCodeMessage( 
+							(VoUser)getVoObjectByParam( req, "user", VoUser.class.getName(), pm));
+			
+		} finally {
+			pm.close();
+		}
+		
 	}
 
 	private void sendNewImportantMsg(HttpServletRequest req) throws InvalidOperation {

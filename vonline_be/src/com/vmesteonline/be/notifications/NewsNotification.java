@@ -37,13 +37,9 @@ public class NewsNotification extends Notification {
 						body += nm.message + "<br/><br/>";
 					
 					body += "Подробности на http://vmesteonline.ru";
-					try {
-						EMailHelper.sendSimpleEMail( 
-								URLEncoder.encode(user.getName() + " " + user.getLastName(), "UTF-8") + " <"+user.getEmail()+">", 
-								"Рядом с вами на ВместеОнлайн.ру", body );
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+						
+					attachFooterAndSend(user, " новости о рядом с вами", body);
+
 				}
 			}	
 		} catch (Exception e) {
