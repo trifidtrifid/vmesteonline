@@ -161,8 +161,20 @@ angular.module('forum.controllers', ['ui.select2'])
             event.preventDefault();
             var isLike;
 
+            if(message.like == 1){
+
+                $('#like-help-'+message.id).fadeIn(200);
+
+                setTimeout(hideLikeHelp,2000,message.id);
+
+            }
+
             message.like = 1;
             messageClient.markMessageLike(message.id);
+        };
+
+        var hideLikeHelp = function(messageId){
+            $('#like-help-'+messageId).fadeOut(200);
         };
 
         base.showAllGroups = function(){
