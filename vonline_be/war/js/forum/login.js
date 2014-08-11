@@ -120,7 +120,7 @@ $(document).ready(function(){
                 if (selector.closest('.modal-auth').length > 0){
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("./main.jsp");
+                    document.location.replace("/");
                 }
             } else {
                 result.val(session.error);

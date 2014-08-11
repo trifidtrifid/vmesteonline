@@ -1889,40 +1889,38 @@ angular.module('forum.controllers', ['ui.select2'])
 
         settings.isProfileError = false;
         settings.isProfileResult = false;
-        settings.updatePasswordOrUserInfo = function(){
-            if (!settings.passwChange){
+        settings.updateUserInfo = function(){
+            var temp = new com.vmesteonline.be.UserInfo();
 
-                //settings.userInfo.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000;
-                var temp = new com.vmesteonline.be.UserInfo();
-
-                settings.userInfo.birthdayMeta ?
+            settings.userInfo.birthdayMeta ?
                 temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
-                //alert(temp.birthday+" "+new Date(temp.birthday));
+            //alert(temp.birthday+" "+new Date(temp.birthday));
 
-                temp.gender = settings.userInfo.gender;
-                temp.firstName = settings.userInfo.firstName;
-                temp.lastName = settings.userInfo.lastName;
+            temp.gender = settings.userInfo.gender;
+            temp.firstName = settings.userInfo.firstName;
+            temp.lastName = settings.userInfo.lastName;
 
-                userClient.updateUserInfo(temp);
-                settings.isProfileResult = true;
-                settings.isProfileError = false;
-                settings.profileInfo = "Сохранено";
+            userClient.updateUserInfo(temp);
+            settings.isProfileResult = true;
+            settings.isProfileError = false;
+            settings.profileInfo = "Сохранено";
+
+        };
+        settings.updatePassword = function(){
+            if (settings.newPassw.length < 3){
+                settings.isPasswResult = true;
+                settings.isPasswError = true;
+                settings.passwInfo = "Вы указали слишком короткий пароль";
             }else{
-                if (settings.newPassw.length < 3){
-                    settings.isProfileResult = true;
-                    settings.isProfileError = true;
-                    settings.profileInfo = "Вы указали слишком короткий пароль";
-                }else{
-                    settings.isProfileResult = true;
-                    try {
-                        userClient.changePassword(settings.oldPassw, settings.newPassw);
-                        settings.isProfileError = false;
-                        settings.profileInfo = "Сохранено";
-                    }catch(e){
-                        settings.isProfileError = true;
-                        settings.profileInfo = "Вы указали не верный старый пароль";
-                    }
+                settings.isPasswResult = true;
+                try {
+                    userClient.changePassword(settings.oldPassw, settings.newPassw);
+                    settings.isPasswError = false;
+                    settings.passwInfo = "Сохранено";
+                }catch(e){
+                    settings.isPasswError = true;
+                    settings.passwInfo = "Вы указали не верный старый пароль";
                 }
             }
         };
