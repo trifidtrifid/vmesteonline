@@ -391,7 +391,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 newWallItem.commentText = "Ваш ответ";
                 newWallItem.answerShow = false;
                 newWallItem.isFocus = false;
-                newWallItem.label = getLabel(lenta.groups, $rootScope.base.bufferSelectedGroup.id);
+                newWallItem.label = getLabel(lenta.groups, $rootScope.base.bufferSelectedGroup.type);
                 newWallItem.tagColor = getTagColor(newWallItem.label);
 
                 cleanAttached($('#attach-area-0'));
@@ -501,7 +501,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 lenta.wallItems[i].isCreateCommentError = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
-                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
+                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.groupType);
 
                 lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
@@ -573,7 +573,7 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
-        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.message.groupId);
+        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.groupType);
 
         wallSingle.wallItem.tagColor = getTagColor(wallSingle.wallItem.label);
 
@@ -769,7 +769,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.isCreateTalkError = false;
                 var isWall = 0,
                     newTopic = postTopic(talk, isWall);
-                newTopic.label = getLabel(talk.groups,newTopic.message.groupId);
+                newTopic.label = getLabel(talk.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
 
                 /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
@@ -823,7 +823,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
-                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
+                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].groupType);
                 talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
 
                 if(talk.topics[i].message.important == 1){
@@ -873,7 +873,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
-                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
+                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.groupType);
                     talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
 
                     if(talk.fullTalkTopic.message.important == 1){
@@ -1291,7 +1291,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 adverts.isCreateAdvertsError = false;
                 var isWall = 0, isAdverts = true,
                     newTopic = postTopic(adverts, isWall,isAdverts);
-                newTopic.label = getLabel(adverts.groups,newTopic.message.groupId);
+                newTopic.label = getLabel(adverts.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
 
                 $rootScope.base.createTopicIsHide = true;
@@ -1312,7 +1312,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 adverts.topics[i].lastUpdateEdit = getTiming(adverts.topics[i].lastUpdate);
-                adverts.topics[i].label = getLabel(adverts.groups,adverts.topics[i].message.groupId);
+                adverts.topics[i].label = getLabel(adverts.groups,adverts.topics[i].groupType);
                 adverts.topics[i].tagColor = getTagColor(adverts.topics[i].label);
             }
         }
@@ -1354,7 +1354,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(advertId == advert.topics[i].id){
                     advert.fullAdvertTopic = advert.topics[i];
                     advert.fullAdvertTopic.message.createdEdit = getTiming(advert.fullAdvertTopic.message.created);
-                    advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.message.groupId);
+                    advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.groupType);
                     advert.fullAdvertTopic.tagColor = getTagColor(advert.fullAdvertTopic.label);
                 }
             }
@@ -2548,12 +2548,12 @@ function getTiming(messageObjDate){
     return timing;
 }
 
-function getLabel(groupsArray,groupid){
+function getLabel(groupsArray,groupType){
     var groupsArrayLen = groupsArray.length;
     var label="";
     for(var i = 0; i < groupsArrayLen; i++){
 
-        if(groupsArray[i].type == groupid){
+        if(groupsArray[i].type == groupType){
             label = groupsArray[i].visibleName;
         }
     }
@@ -2580,7 +2580,7 @@ function getTagColor(labelName){
         case "Мой дом":
             color = 'label-yellow';
             break;
-        case "Парадная 1":
+        case "Мой подъезд":
             color = 'label-purple';
             break;
         default :
