@@ -1331,6 +1331,13 @@ h1 {
 .blog {
   text-align: left;
 }
+.blog .post {
+  padding: 15px 0;
+  border-top: 1px solid #ccc;
+}
+.blog .post:first-child {
+  border-top: 0;
+}
 .blog .dialogs,
 .blog .input-group {
   display: none;
@@ -1353,4 +1360,24 @@ h1 {
 .blog .no-link:hover {
   color: #000;
   text-decoration: none;
+}
+.blog .post-date {
+  margin-left: 210px;
+}
+.blog .post-avatar {
+  width: 200px;
+}
+.blog .topic,
+.blog .topic-stuff {
+  margin-left: 210px;
+}
+.blog .lenta-item-bottom span,
+.blog .lenta-item-bottom a {
+  display: inline-block;
+}
+.blog .lenta-item-bottom a {
+  margin-left: 5px;
+}
+.blog .itemdiv.dialogdiv > .body {
+  padding-bottom: 0;
 }

@@ -78,6 +78,8 @@
 <script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 
 <script type="text/javascript">
@@ -86,12 +88,17 @@
         var protocol = new Thrift.Protocol(transport);
         var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
 
+        transport = new Thrift.Transport("/thrift/UserService");
+        protocol = new Thrift.Protocol(transport);
+        var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+
         $('.send-post').click(function(e){
             e.preventDefault();
+            var groups = userClient.getUserGroups();
 
             var newTopic = new com.vmesteonline.be.messageservice.Topic();
             newTopic.message = new com.vmesteonline.be.messageservice.Message();
-            newTopic.message.groupId = 4996180836614144;
+            newTopic.message.groupId = groups[0].id;
             //newTopic.message.topicId = 0;
             newTopic.message.type = 7; // blog
             newTopic.message.content = $('.post-url').val();

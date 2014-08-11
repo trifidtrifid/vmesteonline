@@ -1,13 +1,19 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <%@ page import="java.util.List"%>
+<%@ page import="java.util.Date"%>
+<%@ page import="java.text.SimpleDateFormat"%>
+
 <%@ page import="com.vmesteonline.be.messageservice.Message"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
+<%@ page import="com.vmesteonline.be.messageservice.MessageType"%>
+<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageType" %>
+
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -32,6 +38,8 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
         //out.print(Blog.topics.get(0).message.content);
 
         pageContext.setAttribute("blog",Blog.topics);
+
+    SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 
 
 
@@ -93,6 +101,14 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
                 %>
                 <div class="post" data-postlink="<%=Blog.topics.get(i).message.content%>" >
+                    <div class="post-avatar pull-left">
+                        <%--<div style="background-image: url(<%=Blog.topics.get(i).userInfo%>)"><%=Blog.topics.get(i).userInfo%></div>--%>
+                    </div>
+                    <div class="post-date" data-date="<%=Blog.topics.get(i).message.created%>">
+                        <%--<%=format1.format(Blog.topics.get(i).message.created)%>
+                        <%=new Date()%>
+                        <%=Blog.topics.get(i).message.created * 1000%>--%>
+                    </div>
                     <div class="topic"></div>
                     <div class="topic-stuff">
                         <a href="#" class="show-comment">Показать комментарии</a>
@@ -102,6 +118,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                     <div class="dialogs">
                         <%
                             Long topicId = Blog.topics.get(i).id;
+                            //MessageType mesType = new com.vmesteonline.be.MessageType.BLOG();
                             List<Message> comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000).messages;
                             if(comments != null && comments.size() != 0){
                                 
@@ -138,8 +155,8 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                                 <div class="text"><%=comments.get(j).content%></div>
 
                                 <div class="lenta-item-bottom">
-                                    <span><%=comments.get(j).created%></span>
-                                    <a href="#">Ответить</a>
+                                    <span data-crated="<%=comments.get(j).created%>"> </span>
+                                    <a href="#"> Ответить</a>
                                 </div>
                             </div>
                         </div>
@@ -195,6 +212,23 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
         var protocol = new Thrift.Protocol(transport);
         var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
 
+        $('.post-date').each(function(){
+
+            var dateNumber = $(this).attr('data-date');
+
+            var dateStr = new Date(parseInt(dateNumber)*1000);
+
+            $(this).text(dateStr.toLocaleDateString()+" "+dateStr.toLocaleTimeString());
+
+        });
+
+        $('.itemdiv').each(function(){
+           var span = $(this).find('.lenta-item-bottom span');
+           var created = span.attr('data-created');
+
+            span.text(getTiming(created));
+        });
+
         $('.post').each(function(){
             var link = $(this).attr('data-postlink');
 
@@ -213,6 +247,15 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             $(this).closest('.post').find('.dialogs').slideToggle(200);
         });
+
+        function initAnswerToComment(selector){
+            selector.click(function(e){
+                e.preventDefault();
+
+                $(this).closest('.post').find('.make-comment').trigger('click');
+            });
+        }
+        initAnswerToComment($('.lenta-item-bottom a'));
 
         $('.make-comment').click(function(e){
             e.preventDefault();
@@ -237,11 +280,11 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             message.id = 0;
             message.topicId = 0;
-            message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//5;
+            message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//7;
             message.groupId = 0;
             message.content = $(this).closest('.input-group').find('.message-textarea').val();
             message.parentId = 0;
-            message.created = Date.parse(new Date)/1000;
+            message.created = Date.parse(new Date())/1000;
             var isAuth = true;
 
             if($('.blog').attr('data-auth') == 'false') isAuth = false;
@@ -264,7 +307,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                 message.userId = returnComment.userInfo.id ;
             }
 
-            var newCommentHTML = '<div class="itemdiv dialogdiv">'+
+            var newCommentHTML = '<div class="itemdiv dialogdiv new">'+
                 '<a href="profile-'+ message.userId +'" class="user '+ classNoLink +'">'+
                         '<div class="avatar short2" style="background-image: url('+ message.avatar +')"></div>'+
                         '</a>'+
@@ -274,15 +317,68 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                         '</div>'+
                     '<div class="text">'+ message.content +'</div>'+
             '<div class="lenta-item-bottom">'+
-                    '<span>'+ message.created +'</span>'+
+                    '<span>'+ getTiming(message.created) +'</span>'+
             '<a href="#">Ответить</a>'+
             '</div>'+
             '</div>'+
             '</div>';
 
-            $(this).closest('.post').find('.dialogs').append(newCommentHTML);
+            var comments = $(this).closest('.post').find('.dialogs');
+            comments.append(newCommentHTML);
             initNoLink($(this).closest('.post'));
+            initAnswerToComment($('.new .lenta-item-bottom a'));
+            $('.new').removeClass('new');
+
+            $(this).closest('.input-group').hide();
+            $(this).closest('.input-group').find('textarea').val("");
+
+            if(comments.css('display') == 'none'){
+                $(this).closest('.post').find('.show-comment').trigger('click');
+            }
         });
+
+        function getTiming(messageObjDate){
+            var minute = 60*1000,
+                    hour = minute*60,
+                    day = hour*24,
+                    threeDays = day* 3,
+                    now = Date.parse(new Date()),
+                    timing = (now - messageObjDate*1000),
+                    timeTemp;
+
+            if(timing < minute){
+                timing = "только что";
+            }else if(timing < hour){
+                timing = new Date(timing);
+                timing = timing.getMinutes()+" мин назад";
+            }else if(timing < day){
+                timing = new Date(timing);
+                timeTemp = timing.getHours();
+                if(timeTemp == 1 || timeTemp == 0){
+                    timing = "1 час назад";
+                }else if(timeTemp > 1 && timeTemp < 5){
+                    timing = timeTemp + " часа назад";
+                }else{
+                    timing = timeTemp + " часов назад";
+                }
+            }else if(timing < threeDays){
+                timing = new Date(timing);
+                timeTemp = timing.getDate();
+                if(timeTemp == 1){
+                    timing = timeTemp+" день назад";
+                }else{
+                    timing = timeTemp+" дней назад";
+                }
+            }else{
+                timeTemp = new Date(messageObjDate*1000).toLocaleDateString();
+                var arr = timeTemp.split('.');
+                if(arr[0].length == 1) arr[0] = "0"+arr[0];
+                if(arr[1].length == 1) arr[1] = "0"+arr[1];
+                timing = arr[0]+"."+arr[1]+"."+arr[2];
+            }
+
+            return timing;
+        }
 
     });
 </script>
