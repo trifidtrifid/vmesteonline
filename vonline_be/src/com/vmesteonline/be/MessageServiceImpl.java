@@ -1,5 +1,7 @@
 package com.vmesteonline.be;
 
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,8 @@ import javax.jdo.Query;
 import org.apache.thrift.TException;
 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
@@ -543,11 +547,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 
 			/* Check if content changed, then update edit date */
-			if (!Arrays.equals(storedMsg.getContent(), msg.getContent().getBytes())) {
+			if (!(storedMsg.getContent().equals( msg.getContent()))) {
 				int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
 				storedMsg.setEditedAt(editedAt);
 				topic.setLastUpdate(editedAt);
-				storedMsg.setContent(msg.getContent().getBytes());
+				storedMsg.setContent(msg.getContent());
 			}
 
 			if (storedMsg.getTopicId() != msg.getTopicId() || storedMsg.getAuthorId().getId() != msg.getAuthorId()
@@ -622,7 +626,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (isImportant && 0 == msg.getImportantNotificationSentDate()) {
 				VoUserGroup topicGroup = pm.getObjectById(VoUserGroup.class, msg.getUserGroupId());
 				if (impScore >= topicGroup.getImportantScore()) {
-					Notification.messageBecomeImportantNotification(msg, topicGroup);
+					
+					Queue queue = QueueFactory.getDefaultQueue();
+		      queue.add(withUrl("/tasks/notification").param("rt", "mbi")
+		      		.param("it", ""+msg.getId())
+		      		.param("ug", ""+topicGroup.getId()));
+					
+					//Notification.messageBecomeImportantNotification(msg, topicGroup);
 					msg.setImportantNotificationSentDate((int) (System.currentTimeMillis() / 1000L));
 				}
 			}

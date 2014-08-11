@@ -9,6 +9,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Mark;
@@ -52,7 +53,7 @@ public class VoTopic extends VoBaseMessage {
 
 
 		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
-				null, null);
+				null, null, getGroupType(pm));
 
 		if (pollId != 0) {
 			VoPoll voPoll = pm.getObjectById(VoPoll.class, pollId);
@@ -62,6 +63,10 @@ public class VoTopic extends VoBaseMessage {
 
 	}
 
+	public GroupType getGroupType( PersistenceManager pm){
+		return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, userGroupId).getGroupType() );
+	}
+	
 	public int getMessageNum() {
 		return messageNum;
 	}

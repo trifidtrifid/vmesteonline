@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/tasks/notification?rt=news</url>
+    <description>Send news to all subscribed users</description>
+    <schedule>every day 00:01</schedule>
+    <timezone>Europe/Moscow</timezone>
+  </cron>
+</cronentries>

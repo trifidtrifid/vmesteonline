@@ -33,7 +33,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 	
 	public VoBaseMessage(Message msg) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
-		content = msg.getContent().getBytes();
+		content = msg.getContent();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
@@ -121,11 +121,11 @@ public abstract class VoBaseMessage extends GeoLocation {
 	/*
 	 * public void setId(Key key) { this.id = key; }
 	 */
-	public byte[] getContent() {
+	public String getContent() {
 		return content;
 	}
 
-	public void setContent(byte[] content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 
@@ -255,9 +255,9 @@ public abstract class VoBaseMessage extends GeoLocation {
 	 * 
 	 * @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY) protected Key id;
 	 */
-	@Persistent(serialized = "true")
+	@Persistent
 	@Unindexed
-	protected byte[] content;
+	protected String content;
 
 	@Persistent
 	@Unindexed

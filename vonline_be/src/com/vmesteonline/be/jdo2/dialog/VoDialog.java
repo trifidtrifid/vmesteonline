@@ -1,5 +1,7 @@
 package com.vmesteonline.be.jdo2.dialog;
 
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.management.openmbean.InvalidOpenTypeException;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ShortUserInfo;
@@ -47,7 +51,6 @@ public class VoDialog {
 	}
 	
 	public VoDialog(List<Long> users) {
-		super();
 		this.users = users;
 		this.createDate = (int)(System.currentTimeMillis() / 1000L);
 		this.lastMessageDate = (int)(System.currentTimeMillis() / 1000L);
@@ -138,6 +141,14 @@ public class VoDialog {
 		lastMessageDate = dmsg.getCreateDate();
 		pm.makePersistent(dmsg);
 		pm.makePersistent(this);
+		
+		Queue queue = QueueFactory.getDefaultQueue();
+    for( Long recipient : users )
+    	if( recipient != currentUserId )
+				queue.add(withUrl("/tasks/notification").param("rt", "ndm")
+		    		.param("dg", ""+getId())
+		    		.param("ar", ""+currentUserId)
+		    		.param("rcpt", ""+recipient));
 		return dmsg;
 	}
 	

@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -13,6 +12,8 @@ import javax.jdo.Query;
 
 import org.apache.thrift.TException;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -24,6 +25,8 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.EMailHelper;
+
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
@@ -55,21 +58,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	public boolean allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
+	public LoginResult allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser u = getUserByEmail(email, pm);
 			if (u != null) {
 				if (u.getPassword().equals(pwd) || !checkPwd) {
-
+					if( !u.isEmailConfirmed() )
+						return LoginResult.EMAIL_NOT_CONFIRMED;
 					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-					VoSession currentSession = getCurrentSession(pm);
-					if (null == currentSession)
-						currentSession = new VoSession(sessionStorage.getId(), u);
-					else
-						currentSession.setUser(u);
-					pm.makePersistent(currentSession);
-					return true;
+					saveUserInSession(pm, u);
+					return LoginResult.SUCCESS;
 				} else
 					logger.info("incorrect password " + email + " pass " + pwd);
 
@@ -80,7 +79,16 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (checkPwd)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 
-		return false;
+		return LoginResult.NOT_MATCH;
+	}
+
+	void saveUserInSession(PersistenceManager pm, VoUser u) throws InvalidOperation {
+		VoSession currentSession = getCurrentSession(pm);
+		if (null == currentSession)
+			currentSession = new VoSession(sessionStorage.getId(), u);
+		else
+			currentSession.setUser(u);
+		pm.makePersistent(currentSession);
 	}
 
 	public static VoSession getSession(String sessId, PersistenceManager pm) throws InvalidOperation {
@@ -100,7 +108,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	@Override
-	public boolean login(final String email, final String password) throws InvalidOperation {
+	public LoginResult login(final String email, final String password) throws InvalidOperation {
 		if (sessionStorage == null) {
 			logger.fine("http session is null");
 			throw new InvalidOperation(VoError.IncorrectParametrs, "http session is null");
@@ -113,15 +121,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	public void allowUserAccess(PersistenceManager pm, VoUser u) throws InvalidOperation {
 		logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-		VoSession currentSession = getCurrentSession(pm);
-		if (null == currentSession)
-			currentSession = new VoSession(sessionStorage.getId(), u);
-		else
-			currentSession.setUser(u);
-		/*
-		 * sess.setLatitude(u.getLatitude()); sess.setLongitude(u.getLongitude());
-		 */
-		pm.makePersistent(currentSession);
+		saveUserInSession(pm, u);
 	}
 
 	@Override
@@ -190,7 +190,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
 					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
-			Notification.welcomeMessageNotification(user);
+			// Add the send welcomeMessage Task to the default queue.
+      Queue queue = QueueFactory.getDefaultQueue();
+      queue.add(withUrl("/tasks/notification").param("rt", "swm").param("uid", ""+user.getId()));
+			//Notification.welcomeMessageNotification(user);
 			return user.getId();
 
 		} finally {
@@ -314,7 +317,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	// TODO what is this?
+	// TODO what is this? This is a part of the method access restrictions implementation 
 	@Override
 	public boolean isPublicMethod(String method) {
 		return true;// publicMethods.contains(method);
@@ -327,4 +330,56 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		return ServiceCategoryID.AUTH_SI.ordinal();
 	}
 
+
+	@Override
+	public boolean remindPassword(String emal) throws TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser user = getUserByEmail(emal,pm);
+			if( null!= user ){
+				user.setConfirmCode( System.currentTimeMillis() % 998765 );
+				Queue queue = QueueFactory.getDefaultQueue();
+				queue.add(withUrl("/tasks/notification").param("rt", "pwdrem")
+				    		.param("user", ""+user.getId()));
+				return true;
+			}
+		} finally {
+			pm.close();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkRemindCode(String remindeCode, String emal) throws TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser user = getUserByEmail(emal,pm);
+			if( null!= user ){
+				if( remindeCode!=null && remindeCode.equals( ""+user.getConfirmCode()))
+					return true;
+			}
+		} finally {
+			pm.close();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean changePasswordByRemidCode(String remindCode, String emal, String newPwd) throws TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoUser user = getUserByEmail(emal,pm);
+			if( null!= user ){
+				if( remindCode!=null && remindCode.equals( ""+user.getConfirmCode())){
+					
+					user.setPassword(newPwd);
+					saveUserInSession(pm, user);
+					return true;
+				}
+			}
+		} finally {
+			pm.close();
+		}
+		return false;
+	}
 }

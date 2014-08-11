@@ -49,7 +49,7 @@ public class TestWorkAround {
 
 			pm = PMF.get().getPersistenceManager();
 			asi = new AuthServiceImpl(sessionId);
-			if (!asi.login(Defaults.user1email, Defaults.user1pass))
+			if (LoginResult.SUCCESS != asi.login(Defaults.user1email, Defaults.user1pass))
 				return false;
 			usi = new UserServiceImpl(sessionId);
 			msi = new MessageServiceImpl(sessionId);

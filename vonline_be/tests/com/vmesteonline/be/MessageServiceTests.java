@@ -53,7 +53,7 @@ public class MessageServiceTests extends TestWorkAround {
 	private Topic createTopic(long groupId, MessageType type) throws Exception {
 		Message msg = new Message(0, 0, type, 0, groupId, 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 				new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
-		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null);
+		Topic topic = new Topic(0, topicSubject, msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, null, null);
 		return msi.postTopic(topic);
 	}
 
@@ -328,7 +328,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
-			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
+			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll, null);
 			msi.postTopic(topic);
 
 			TopicListPart rTopic = msi.getTopics(grId, 0, 0, 0L, 10);
@@ -356,7 +356,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			Message msg = new Message(0, 0, MessageType.BASE, 0, homeGroup.getId(), 0, 0, 0, "Content of the first topic is a simple string", 0, 0,
 					new HashMap<MessageType, Long>(), new HashMap<Long, String>(), new UserMessage(true, false, false), 0, null, null, null, null, null, null);
-			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll);
+			Topic topic = new Topic(0, "testSubject", msg, 0, 0, 0, 0, 0, 0, new UserTopic(), null, poll, null);
 			topic = msi.postTopic(topic);
 
 			msi.doPoll(topic.poll.pollId, 0);
