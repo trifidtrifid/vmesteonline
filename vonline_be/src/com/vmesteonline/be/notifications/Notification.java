@@ -254,7 +254,6 @@ public abstract class Notification {
 			decorateAndSendMessage(user, "восстановление пароля", body);
 			
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

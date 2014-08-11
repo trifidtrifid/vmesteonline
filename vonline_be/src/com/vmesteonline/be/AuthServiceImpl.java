@@ -373,6 +373,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				if( remindCode!=null && remindCode.equals( ""+user.getConfirmCode())){
 					
 					user.setPassword(newPwd);
+					user.setConfirmCode(System.currentTimeMillis()); //just to reset
+					pm.makePersistent(user);
 					saveUserInSession(pm, user);
 					return true;
 				}

@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
+import javax.management.openmbean.InvalidOpenTypeException;
 
 import org.apache.thrift.TException;
 
@@ -22,6 +25,7 @@ import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoPoll;
 import com.vmesteonline.be.jdo2.VoRubric;
@@ -40,6 +44,7 @@ import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.WallItem;
 import com.vmesteonline.be.utils.EMailHelper;
+import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -174,18 +179,30 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 
 	}
-
+	
 	// ===================================================================================================================================
+	private static String mlpKeyPrefix = "MessageListPartByGroupAndTopic";
 	@Override
 	public MessageListPart getMessages(long topicId, long groupId, MessageType messageType, long lastLoadedMsgId, boolean archived, int length)
 			throws InvalidOperation, TException {
 
+		String key = mlpKeyPrefix+":"+topicId+":"+groupId+":"+messageType+":"+lastLoadedMsgId+":"+archived+":"+length;
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
+			int lastUpdate = pm.getObjectById(VoTopic.class, topicId).getLastUpdate();
+			
+			Object objectFromCache = getObjectFromCache(key);
+			if( null!=objectFromCache && objectFromCache instanceof VoHelper.CacheObjectUnit<?> 
+				&& ((VoHelper.CacheObjectUnit<?>)objectFromCache).timestamp == lastUpdate )
+				return ((VoHelper.CacheObjectUnit<MessageListPart>)objectFromCache).object;
+			
 			VoUser user = getCurrentUser(pm);
 			MessagesTree tree = MessagesTree.createMessageTree(topicId, pm);
 			List<VoMessage> voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, new MessagesTree.Filters(user.getId(), user.getGroupById(groupId)));
-			return createMlp(voMsgs, user.getId(), pm, length);
+			MessageListPart mlp = createMlp(voMsgs, user.getId(), pm, length);
+			putObjectToCache(key, new VoHelper.CacheObjectUnit<MessageListPart>(lastUpdate,mlp));
+			return mlp;
 		} finally {
 			pm.close();
 		}
@@ -424,6 +441,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public Message postBlogMessage(Message msg) throws InvalidOperation {
+		if( 0!=msg.getId() ){
+			updateMessage(msg);
+			return msg;
+		}
 		PersistenceManager pm = PMF.getPm();
 		try {
 			try {
@@ -541,16 +562,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoMessage storedMsg = pm.getObjectById(VoMessage.class, msg.getId());
-			if (null == storedMsg)
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Message not found by ID=" + msg.getId());
+			
+			if (storedMsg.getAuthorId().getId() != getCurrentUserId(pm) )
+				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "User is not author of message");
 
 			VoTopic topic = pm.getObjectById(VoTopic.class, storedMsg.getTopicId());
 
 			/* Check if content changed, then update edit date */
-			if (!(storedMsg.getContent().equals( msg.getContent()))) {
-				int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
-				storedMsg.setEditedAt(editedAt);
-				topic.setLastUpdate(editedAt);
+			if (!storedMsg.getContent().equals( msg.getContent())) {
+				//int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
+				storedMsg.setEditedAt(now);
+				topic.setLastUpdate(now);
 				storedMsg.setContent(msg.getContent());
 			}
 
@@ -562,6 +584,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
 			pm.makePersistent(storedMsg);
+		} catch( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs,
+					"Message not found");
+
 		} finally {
 			pm.close();
 		}
@@ -586,7 +612,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
 						+ topic.getRubricId());
 			}
-
+			updateMessage( topic.getMessage() );
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
@@ -642,8 +668,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	// ======================================================================================================================
+
 	@Override
-	public int markMessageLike(long messageId) throws InvalidOperation, TException {
+	public int markMessageLike(long messageId) throws InvalidOperation{
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
@@ -657,4 +685,88 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	// ======================================================================================================================
+
+	@Override
+	public void deleteMessage(long msgId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoMessage msg = pm.getObjectById(VoMessage.class, msgId);
+			if( msg.getAuthorId().getId() != getCurrentUserId() )
+				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
+			
+			long topicId = msg.getTopicId();
+			VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
+			topic.setMessageNum( topic.getMessageNum() - 1 );
+			topic.setChildMessageNum( topic.getChildMessageNum() - 1);
+			
+			
+			deleteAttachments(pm, msg.getImages());
+			deleteAttachments(pm, msg.getDocuments());
+			
+			//check if message can be deleted
+			List<VoMessage> msgsOfTopic = (List<VoMessage>) pm.newQuery(VoMessage.class,"topicId=="+topicId ).execute();
+			boolean canDelete = true;
+			for( VoMessage msgot : msgsOfTopic){
+				if( msgot.getParentId() == msgId){
+					canDelete = false;
+					break;
+				}
+			}
+			if(canDelete){
+				pm.deletePersistent(msg);
+			} else {
+				msg.setContent("Сообщение удалено пользователем.");
+			}
+			
+		} catch( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs,
+					"Message not found");
+
+		} finally {
+			pm.close();
+		}
+	}
+
+	// ======================================================================================================================
+
+	private void deleteAttachments(PersistenceManager pm, List<Long> imgs) {
+		for( Long attachId: imgs ){
+			try {
+				VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, attachId);
+				StorageHelper.deleteImage(att.getGSFileName());
+				pm.deletePersistent(att);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	// ======================================================================================================================
+
+	@Override
+	public void deleteTopic(long topicId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoTopic tpc = pm.getObjectById(VoTopic.class, topicId);
+			if( tpc.getAuthorId().getId() != getCurrentUserId() )
+				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
+			
+			deleteAttachments(pm, tpc.getImages());
+			deleteAttachments(pm, tpc.getDocuments());
+			
+			if(0==tpc.getMessageNum()){
+				pm.deletePersistent(tpc);
+			} else {
+				tpc.setContent("Тема удалена пользователем.");
+			}
+			
+		} catch( JDOObjectNotFoundException onfe ){
+			throw new InvalidOperation(VoError.IncorrectParametrs,
+					"Topic not found");
+
+		} finally {
+			pm.close();
+		}
+	}
 }
