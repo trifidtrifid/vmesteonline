@@ -13,6 +13,7 @@
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
+<%@ page import="com.vmesteonline.be.messageservice.MessageListPart" %>
 
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -74,7 +75,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
     <div class="navbar-container coming-soon" id="navbar-container">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
             </a>
         </div>
@@ -119,8 +120,11 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                         <%
                             Long topicId = Blog.topics.get(i).id;
                             //MessageType mesType = new com.vmesteonline.be.MessageType.BLOG();
-                            List<Message> comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000).messages;
-                            if(comments != null && comments.size() != 0){
+                            //List<Message> comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000);
+                            MessageListPart comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000);
+                            out.print(comments);
+
+                            /*if(comments != null && comments.size() != 0){
                                 
                                 int commentsSize = comments.size();
                                 for(int j = 0; j < commentsSize; j++){
@@ -139,10 +143,10 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                                         messageAvatar = comments.get(j).userInfo.avatar;
                                         messageName = comments.get(j).userInfo.firstName+" "+comments.get(j).userInfo.lastName;
                                         messageUserId = comments.get(j).userInfo.id;
-                                    }
+                                    }*/
                         %>
 
-                        <div class="itemdiv dialogdiv">
+                        <%--<div class="itemdiv dialogdiv">
                             <a href="profile-<%=messageUserId%>" class="user <%=classNoLink%>">
                                 <div class="avatar short2" style="background-image: url(<%=messageAvatar%>)"></div>
                             </a>
@@ -159,10 +163,10 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                                     <a href="#"> Ответить</a>
                                 </div>
                             </div>
-                        </div>
+                        </div>--%>
 
                         <%
-                           }}
+                           //}}
                         %>
 
 
@@ -325,7 +329,10 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             var comments = $(this).closest('.post').find('.dialogs');
             comments.append(newCommentHTML);
-            initNoLink($(this).closest('.post'));
+
+            document.location.replace('/');
+
+            /*initNoLink($(this).closest('.post'));
             initAnswerToComment($('.new .lenta-item-bottom a'));
             $('.new').removeClass('new');
 
@@ -334,7 +341,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             if(comments.css('display') == 'none'){
                 $(this).closest('.post').find('.show-comment').trigger('click');
-            }
+            }*/
         });
 
         function getTiming(messageObjDate){
