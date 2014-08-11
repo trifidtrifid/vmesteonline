@@ -187,6 +187,7 @@ angular.module('forum.controllers', ['ui.select2'])
         this.logout = function(event){
             event.preventDefault();
 
+            localStorage.removeItem('groupId');
             authClient.logout();
 
             document.location.replace("login.html");
@@ -253,8 +254,20 @@ angular.module('forum.controllers', ['ui.select2'])
             groups[i].isShow = true;
         }
 
-        groups[0].selected = true;
-        $rootScope.currentGroup = groups[0];
+        var lsGroupId = localStorage.getItem('groupId');
+
+        if(!lsGroupId){
+            groups[0].selected = true;
+            $rootScope.currentGroup = groups[0];
+        }else{
+            for(var i = 0; i < groupsLength; i++){
+                if(groups[i].id == lsGroupId){
+                    groups[i].selected = true;
+                    $rootScope.currentGroup = groups[i];
+                }
+            }
+        }
+
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -290,6 +303,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.mapsChangeGroup(group.id);
             }
 
+            localStorage.setItem('groupId',group.id);
             //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
 
         };
@@ -315,7 +329,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var lenta = this;
         lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
-        lenta.selectedGroup = $rootScope.base.bufferSelectedGroup;
+        lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
             lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
         lenta.pollSubject = "";
@@ -731,7 +745,9 @@ angular.module('forum.controllers', ['ui.select2'])
             var fullTalkFirstMessagesLength,
                 talkId;
 
-            $rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
+            //$rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
+            $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
+
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
             initTalks();
@@ -843,6 +859,7 @@ angular.module('forum.controllers', ['ui.select2'])
             }
 
         };
+
 
     })
     .controller('TalksSingleController',function($rootScope,$stateParams){
@@ -1252,7 +1269,9 @@ angular.module('forum.controllers', ['ui.select2'])
         var fullAdvertsFirstMessagesLength,
             advertsId;*/
 
-        $rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
+        //$rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
+        $rootScope.base.bufferSelectedGroup = adverts.selectedGroup = $rootScope.currentGroup;
+
         adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 1000).topics;
         //adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
 
@@ -2287,10 +2306,15 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.mapsLoadStatus = "isLoaded";
 
         $rootScope.groups[0].isShow = false;
-        $rootScope.groups[1].selected = true;
+        //$rootScope.groups[1].selected = true;
+
+        if($rootScope.currentGroup.id == $rootScope.groups[0].id){
+            $rootScope.currentGroup = $rootScope.groups[1];
+        }
+
         $rootScope.base.isFooterBottom = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[1].id,MAP_COLOR);
+        maps.url = userClient.getGroupMap($rootScope.currentGroup.id,MAP_COLOR);
 
         $rootScope.mapsChangeGroup = function(groupId){
              maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
