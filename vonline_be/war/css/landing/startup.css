@@ -621,6 +621,8 @@ to {
 .footer{
     text-align: left;
     color: #a6a6a6;
+    font-size: 13px !important;
+    font-family: "tahoma","arial";
 }
 .footer ul{
     margin: 0;
@@ -633,6 +635,21 @@ to {
 .footer ul li a{
     color: #a6a6a6;
 }
+.footer-login {
+    position: absolute;
+    bottom: 0;
+}
+.footer-white{
+    border-top: 1px solid #fff;
+    color: #fff;
+}
+.footer-white a{
+    color: #fff !important;
+}
+.footer-bottom{
+    padding: 20px 0;
+}
+
 
 
 

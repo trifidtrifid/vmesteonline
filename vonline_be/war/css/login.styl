@@ -192,8 +192,15 @@
 
   /* login-forum */
 .login-forum
-  background url(../i/login-bg.jpg) top center
-  background-size 100% 100%
+  background-image url(../i/login-bg.jpg)
+  //background-size 100% 100%
+  background-repeat no-repeat
+  background-position center center
+  background-attachment fixed
+  -webkit-background-size cover
+  -moz-background-size cover
+  -o-background-size cover
+  background-size cover
   padding-top 100px
   .login-left
     text-align center
@@ -222,11 +229,10 @@
         margin 0
         line-height 16px
       a
-        font-size 14px
+        font-size 13px
         margin-left 10px
         vertical-align middle
         display inline-block
-        color #c4c4c4
         margin-top -12px
         &:hover
           text-decoration none
@@ -238,9 +244,8 @@
         background transparent
       .widget-main
         border-radius 3px
-        padding 25px 36px
+        padding 20px 36px
       .btn-back
-        color #c4c4c4
         display inline-block
         margin-top 10px
         font-size 14px

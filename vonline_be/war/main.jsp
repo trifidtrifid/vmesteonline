@@ -128,7 +128,7 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a ui-sref="profile"> <i class="icon-user"></i>
+                        <li><a ui-sref="profile({ userId : 0})"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
 

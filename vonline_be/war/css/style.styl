@@ -848,7 +848,8 @@ transform()
 
   /* private-messages */
 .dialog-send
-  padding-top 15px
+  padding-bottom 15px
+  border-bottom 1px solid #ccc
   .dialog-send-center
     margin 0 60px
     textarea
@@ -873,6 +874,8 @@ transform()
     padding-left 0
     overflow auto
     border-bottom 1px solid #CCCCCC
+    &:hover
+      background-color #f6fcff
     &:first-child
       border-top 1px solid #CCCCCC
     .private-message-ava

@@ -978,7 +978,8 @@ h1 {
   font-family: tahoma, arial;
 }
 .dialog-send {
-  padding-top: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ccc;
 }
 .dialog-send .dialog-send-center {
   margin: 0 60px;
@@ -1014,6 +1015,10 @@ h1 {
   padding-left: 0;
   overflow: auto;
   border-bottom: 1px solid #ccc;
+}
+.dialog .private-message-single:hover,
+.private-messages .private-message-single:hover {
+  background-color: #f6fcff;
 }
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {

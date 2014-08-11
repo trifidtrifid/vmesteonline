@@ -1728,6 +1728,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
+
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
@@ -1745,7 +1746,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $("#dialog-message").addClass('hide');
 
         //alert($stateParams.userId+" "+shortUserInfo.id);
-        if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
+        if ($stateParams.userId && $stateParams.userId != 0 && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
         }else{
@@ -1755,6 +1756,45 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
+
+        //alert(userId+" "+profile.userProfile.family.relations);
+
+        $rootScope.base.avatarBuffer = profile.userProfile.userInfo.avatar;
+
+        if(profile.userProfile.family && profile.userProfile.family.relations == 0){
+
+            if(profile.userProfile.userInfo.gender == 0){
+                profile.userProfile.family.relationsMeta = "За мужем";
+            }else if(profile.userProfile.userInfo.gender == 1){
+                profile.userProfile.family.relationsMeta = "Женат";
+            }
+
+        }else if(profile.userProfile.family && profile.userProfile.family.relations == 1){
+            if(profile.userProfile.userInfo.gender == 0){
+                profile.userProfile.family.relationsMeta = "Не замужем";
+            }else if(profile.userProfile.userInfo.gender == 1){
+                profile.userProfile.family.relationsMeta = "Холост";
+            }
+        }
+
+        if(profile.userProfile.family && profile.userProfile.family.pets && profile.userProfile.family.pets.length != 0){
+           var petsLength = profile.userProfile.family.pets.length;
+            var pets = profile.userProfile.family.pets;
+            for(var i = 0; i < petsLength; i++){
+                switch(profile.userProfile.family.pets[i].type){
+                    case 0:
+                        profile.userProfile.family.pets[i].typeMeta = "Кот/кошка";
+                        break;
+                    case 1:
+                        profile.userProfile.family.pets[i].typeMeta = "Собака";
+                        break;
+                    case 2:
+                        profile.userProfile.family.pets[i].typeMeta = "Птичка";
+                        break;
+                }
+
+            }
+        }
 
         profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
 
@@ -1944,26 +1984,30 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         };
         settings.updateFamily = function(){
-            /*var temp = new com.vmesteonline.be.UserFamily();
+            var temp = new com.vmesteonline.be.UserFamily();
             temp.relations = settings.family.relations;
             temp.childs = settings.family.childs;
-            temp.childs = [];
-            temp.childs[0] = settings.firstChild;
+            //temp.childs = [];
+            //temp.childs[0] = settings.firstChild;
 
-            temp.pets = settings.family.pets;*/
+            temp.pets = settings.family.pets;
+
             var childsLength = settings.family.childs.length;
             for(var i = 0; i < childsLength; i++){
-                //alert(settings.family.childs[i].month+" "+settings.family.childs[i].year);
-                if(settings.family.childs[i].month && settings.family.childs[i].year){
+                if(settings.family.childs[i].name && settings.family.childs[i].month && settings.family.childs[i].year){
 
-                    //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
-                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
-                    //alert(settings.family.childs[i].birthday);
-                    //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
+                    temp.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
                 }
             }
-            userClient.updateFamily(settings.family);
+            var petsLength = settings.family.pets.length;
+            for(var i = 0; i < petsLength; i++){
+                if(!temp.pets[i].name){
+
+                    //temp.pets.splice(i,1);
+                }
+            }
+            userClient.updateFamily(temp);
         };
         settings.updateInterests = function(){
             var temp = new com.vmesteonline.be.UserInterests();
@@ -2169,8 +2213,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             var saveSrc = newSrc+"?w="+ imageWidth +"&h="+ imageHeight +"&s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
-            //$('.logo-container .avatar').css({'background-image':saveSrc});
-            $rootScope.base.user.avatar = saveSrc;
+            $rootScope.base.user.avatar = $rootScope.base.avatarBuffer = saveSrc;
 
             $("#dialog-message").dialog('close');
             $state.go('profile');
