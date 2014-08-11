@@ -161,8 +161,20 @@ angular.module('forum.controllers', ['ui.select2'])
             event.preventDefault();
             var isLike;
 
+            if(message.like == 1){
+
+                $('#like-help-'+message.id).fadeIn(200);
+
+                setTimeout(hideLikeHelp,2000,message.id);
+
+            }
+
             message.like = 1;
             messageClient.markMessageLike(message.id);
+        };
+
+        var hideLikeHelp = function(messageId){
+            $('#like-help-'+messageId).fadeOut(200);
         };
 
         base.showAllGroups = function(){
@@ -187,6 +199,7 @@ angular.module('forum.controllers', ['ui.select2'])
         this.logout = function(event){
             event.preventDefault();
 
+            localStorage.removeItem('groupId');
             authClient.logout();
 
             document.location.replace("login.html");
@@ -253,8 +266,20 @@ angular.module('forum.controllers', ['ui.select2'])
             groups[i].isShow = true;
         }
 
-        groups[0].selected = true;
-        $rootScope.currentGroup = groups[0];
+        var lsGroupId = localStorage.getItem('groupId');
+
+        if(!lsGroupId){
+            groups[0].selected = true;
+            $rootScope.currentGroup = groups[0];
+        }else{
+            for(var i = 0; i < groupsLength; i++){
+                if(groups[i].id == lsGroupId){
+                    groups[i].selected = true;
+                    $rootScope.currentGroup = groups[i];
+                }
+            }
+        }
+
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -290,6 +315,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 $rootScope.mapsChangeGroup(group.id);
             }
 
+            localStorage.setItem('groupId',group.id);
             //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
 
         };
@@ -315,7 +341,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var lenta = this;
         lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
-        lenta.selectedGroup = $rootScope.base.bufferSelectedGroup;
+        lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
             lenta.selectedGroupInTop = $rootScope.currentGroup;
         lenta.isPollShow = false;
         lenta.pollSubject = "";
@@ -391,7 +417,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 newWallItem.commentText = "Ваш ответ";
                 newWallItem.answerShow = false;
                 newWallItem.isFocus = false;
-                newWallItem.label = getLabel(lenta.groups, $rootScope.base.bufferSelectedGroup.id);
+                newWallItem.label = getLabel(lenta.groups, $rootScope.base.bufferSelectedGroup.type);
                 newWallItem.tagColor = getTagColor(newWallItem.label);
 
                 cleanAttached($('#attach-area-0'));
@@ -501,7 +527,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 lenta.wallItems[i].isCreateCommentError = false;
 
                 //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
-                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.message.groupId);
+                lenta.wallItems[i].label = getLabel(lenta.groups,lenta.wallItems[i].topic.groupType);
 
                 lenta.wallItems[i].tagColor = getTagColor(lenta.wallItems[i].label);
 
@@ -573,7 +599,7 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         //  lenta.wallItems[i].topic.message.groupId сейчас не задана почему-то
-        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.message.groupId);
+        wallSingle.wallItem.label = getLabel(userClientGroups,wallSingle.wallItem.topic.groupType);
 
         wallSingle.wallItem.tagColor = getTagColor(wallSingle.wallItem.label);
 
@@ -731,7 +757,9 @@ angular.module('forum.controllers', ['ui.select2'])
             var fullTalkFirstMessagesLength,
                 talkId;
 
-            $rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
+            //$rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
+            $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
+
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
             initTalks();
@@ -769,7 +797,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.isCreateTalkError = false;
                 var isWall = 0,
                     newTopic = postTopic(talk, isWall);
-                newTopic.label = getLabel(talk.groups,newTopic.message.groupId);
+                newTopic.label = getLabel(talk.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
 
                 /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
@@ -823,7 +851,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 talk.topics[i].lastUpdateEdit = getTiming(talk.topics[i].lastUpdate);
-                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].message.groupId);
+                talk.topics[i].label = getLabel(talk.groups,talk.topics[i].groupType);
                 talk.topics[i].tagColor = getTagColor(talk.topics[i].label);
 
                 if(talk.topics[i].message.important == 1){
@@ -843,6 +871,7 @@ angular.module('forum.controllers', ['ui.select2'])
             }
 
         };
+
 
     })
     .controller('TalksSingleController',function($rootScope,$stateParams){
@@ -873,7 +902,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
-                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.message.groupId);
+                    talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.groupType);
                     talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
 
                     if(talk.fullTalkTopic.message.important == 1){
@@ -1252,7 +1281,9 @@ angular.module('forum.controllers', ['ui.select2'])
         var fullAdvertsFirstMessagesLength,
             advertsId;*/
 
-        $rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
+        //$rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
+        $rootScope.base.bufferSelectedGroup = adverts.selectedGroup = $rootScope.currentGroup;
+
         adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 1000).topics;
         //adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
 
@@ -1291,7 +1322,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 adverts.isCreateAdvertsError = false;
                 var isWall = 0, isAdverts = true,
                     newTopic = postTopic(adverts, isWall,isAdverts);
-                newTopic.label = getLabel(adverts.groups,newTopic.message.groupId);
+                newTopic.label = getLabel(adverts.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
 
                 $rootScope.base.createTopicIsHide = true;
@@ -1312,7 +1343,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             for(var i = 0; i < topicLength;i++){
                 adverts.topics[i].lastUpdateEdit = getTiming(adverts.topics[i].lastUpdate);
-                adverts.topics[i].label = getLabel(adverts.groups,adverts.topics[i].message.groupId);
+                adverts.topics[i].label = getLabel(adverts.groups,adverts.topics[i].groupType);
                 adverts.topics[i].tagColor = getTagColor(adverts.topics[i].label);
             }
         }
@@ -1354,7 +1385,7 @@ angular.module('forum.controllers', ['ui.select2'])
                 if(advertId == advert.topics[i].id){
                     advert.fullAdvertTopic = advert.topics[i];
                     advert.fullAdvertTopic.message.createdEdit = getTiming(advert.fullAdvertTopic.message.created);
-                    advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.message.groupId);
+                    advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.groupType);
                     advert.fullAdvertTopic.tagColor = getTagColor(advert.fullAdvertTopic.label);
                 }
             }
@@ -1697,6 +1728,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
+
         $rootScope.isTopSearchShow = false;
         $rootScope.leftbar.tab = 0;
 
@@ -1714,7 +1746,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $("#dialog-message").addClass('hide');
 
         //alert($stateParams.userId+" "+shortUserInfo.id);
-        if ($stateParams.userId && $stateParams.userId != shortUserInfo.id){
+        if ($stateParams.userId && $stateParams.userId != 0 && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
             profile.userContacts = userClient.getUserContactsExt(userId);
         }else{
@@ -1724,6 +1756,45 @@ angular.module('forum.controllers', ['ui.select2'])
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
+
+        //alert(userId+" "+profile.userProfile.family.relations);
+
+        $rootScope.base.avatarBuffer = profile.userProfile.userInfo.avatar;
+
+        if(profile.userProfile.family && profile.userProfile.family.relations == 0){
+
+            if(profile.userProfile.userInfo.gender == 0){
+                profile.userProfile.family.relationsMeta = "За мужем";
+            }else if(profile.userProfile.userInfo.gender == 1){
+                profile.userProfile.family.relationsMeta = "Женат";
+            }
+
+        }else if(profile.userProfile.family && profile.userProfile.family.relations == 1){
+            if(profile.userProfile.userInfo.gender == 0){
+                profile.userProfile.family.relationsMeta = "Не замужем";
+            }else if(profile.userProfile.userInfo.gender == 1){
+                profile.userProfile.family.relationsMeta = "Холост";
+            }
+        }
+
+        if(profile.userProfile.family && profile.userProfile.family.pets && profile.userProfile.family.pets.length != 0){
+           var petsLength = profile.userProfile.family.pets.length;
+            var pets = profile.userProfile.family.pets;
+            for(var i = 0; i < petsLength; i++){
+                switch(profile.userProfile.family.pets[i].type){
+                    case 0:
+                        profile.userProfile.family.pets[i].typeMeta = "Кот/кошка";
+                        break;
+                    case 1:
+                        profile.userProfile.family.pets[i].typeMeta = "Собака";
+                        break;
+                    case 2:
+                        profile.userProfile.family.pets[i].typeMeta = "Птичка";
+                        break;
+                }
+
+            }
+        }
 
         profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
 
@@ -1858,40 +1929,38 @@ angular.module('forum.controllers', ['ui.select2'])
 
         settings.isProfileError = false;
         settings.isProfileResult = false;
-        settings.updatePasswordOrUserInfo = function(){
-            if (!settings.passwChange){
+        settings.updateUserInfo = function(){
+            var temp = new com.vmesteonline.be.UserInfo();
 
-                //settings.userInfo.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000;
-                var temp = new com.vmesteonline.be.UserInfo();
-
-                settings.userInfo.birthdayMeta ?
+            settings.userInfo.birthdayMeta ?
                 temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
-                //alert(temp.birthday+" "+new Date(temp.birthday));
+            //alert(temp.birthday+" "+new Date(temp.birthday));
 
-                temp.gender = settings.userInfo.gender;
-                temp.firstName = settings.userInfo.firstName;
-                temp.lastName = settings.userInfo.lastName;
+            temp.gender = settings.userInfo.gender;
+            temp.firstName = settings.userInfo.firstName;
+            temp.lastName = settings.userInfo.lastName;
 
-                userClient.updateUserInfo(temp);
-                settings.isProfileResult = true;
-                settings.isProfileError = false;
-                settings.profileInfo = "Сохранено";
+            userClient.updateUserInfo(temp);
+            settings.isProfileResult = true;
+            settings.isProfileError = false;
+            settings.profileInfo = "Сохранено";
+
+        };
+        settings.updatePassword = function(){
+            if (settings.newPassw.length < 3){
+                settings.isPasswResult = true;
+                settings.isPasswError = true;
+                settings.passwInfo = "Вы указали слишком короткий пароль";
             }else{
-                if (settings.newPassw.length < 3){
-                    settings.isProfileResult = true;
-                    settings.isProfileError = true;
-                    settings.profileInfo = "Вы указали слишком короткий пароль";
-                }else{
-                    settings.isProfileResult = true;
-                    try {
-                        userClient.changePassword(settings.oldPassw, settings.newPassw);
-                        settings.isProfileError = false;
-                        settings.profileInfo = "Сохранено";
-                    }catch(e){
-                        settings.isProfileError = true;
-                        settings.profileInfo = "Вы указали не верный старый пароль";
-                    }
+                settings.isPasswResult = true;
+                try {
+                    userClient.changePassword(settings.oldPassw, settings.newPassw);
+                    settings.isPasswError = false;
+                    settings.passwInfo = "Сохранено";
+                }catch(e){
+                    settings.isPasswError = true;
+                    settings.passwInfo = "Вы указали не верный старый пароль";
                 }
             }
         };
@@ -1915,26 +1984,30 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         };
         settings.updateFamily = function(){
-            /*var temp = new com.vmesteonline.be.UserFamily();
+            var temp = new com.vmesteonline.be.UserFamily();
             temp.relations = settings.family.relations;
             temp.childs = settings.family.childs;
-            temp.childs = [];
-            temp.childs[0] = settings.firstChild;
+            //temp.childs = [];
+            //temp.childs[0] = settings.firstChild;
 
-            temp.pets = settings.family.pets;*/
+            temp.pets = settings.family.pets;
+
             var childsLength = settings.family.childs.length;
             for(var i = 0; i < childsLength; i++){
-                //alert(settings.family.childs[i].month+" "+settings.family.childs[i].year);
-                if(settings.family.childs[i].month && settings.family.childs[i].year){
+                if(settings.family.childs[i].name && settings.family.childs[i].month && settings.family.childs[i].year){
 
-                    //settings.family.childs[i].birthday = Date.parse(settings.family.childs[i].month +".15."+ settings.family.childs[i].year);
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
-                    settings.family.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
-                    //alert(settings.family.childs[i].birthday);
-                    //settings.family.childs[i].birthday = settings.family.childs[i].birthday/1000;
+                    temp.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
                 }
             }
-            userClient.updateFamily(settings.family);
+            var petsLength = settings.family.pets.length;
+            for(var i = 0; i < petsLength; i++){
+                if(!temp.pets[i].name){
+
+                    //temp.pets.splice(i,1);
+                }
+            }
+            userClient.updateFamily(temp);
         };
         settings.updateInterests = function(){
             var temp = new com.vmesteonline.be.UserInterests();
@@ -2033,6 +2106,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         resetPages($rootScope.base);
         $rootScope.base.privateMessagesIsActive = true;
+        $rootScope.base.pageTitle = "Личные сообщения";
 
         resetAceNavBtns($rootScope.navbar);
         $rootScope.navbar.privateMessagesBtnStatus = "active";
@@ -2139,8 +2213,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
             var saveSrc = newSrc+"?w="+ imageWidth +"&h="+ imageHeight +"&s="+x1+","+y1+","+x2+","+y2;
             userClient.updateUserAvatar(saveSrc);
-            //$('.logo-container .avatar').css({'background-image':saveSrc});
-            $rootScope.base.user.avatar = saveSrc;
+            $rootScope.base.user.avatar = $rootScope.base.avatarBuffer = saveSrc;
 
             $("#dialog-message").dialog('close');
             $state.go('profile');
@@ -2286,10 +2359,15 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.mapsLoadStatus = "isLoaded";
 
         $rootScope.groups[0].isShow = false;
-        $rootScope.groups[1].selected = true;
+        //$rootScope.groups[1].selected = true;
+
+        if($rootScope.currentGroup.id == $rootScope.groups[0].id){
+            $rootScope.currentGroup = $rootScope.groups[1];
+        }
+
         $rootScope.base.isFooterBottom = true;
 
-        maps.url = userClient.getGroupMap($rootScope.groups[1].id,MAP_COLOR);
+        maps.url = userClient.getGroupMap($rootScope.currentGroup.id,MAP_COLOR);
 
         $rootScope.mapsChangeGroup = function(groupId){
              maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
@@ -2547,12 +2625,12 @@ function getTiming(messageObjDate){
     return timing;
 }
 
-function getLabel(groupsArray,groupId){
+function getLabel(groupsArray,groupType){
     var groupsArrayLen = groupsArray.length;
     var label="";
     for(var i = 0; i < groupsArrayLen; i++){
 
-        if(groupsArray[i].id == groupId){
+        if(groupsArray[i].type == groupType){
             label = groupsArray[i].visibleName;
         }
     }
@@ -2579,7 +2657,7 @@ function getTagColor(labelName){
         case "Мой дом":
             color = 'label-yellow';
             break;
-        case "Парадная 1":
+        case "Мой подъезд":
             color = 'label-purple';
             break;
         default :

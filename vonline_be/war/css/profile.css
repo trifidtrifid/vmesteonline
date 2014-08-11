@@ -64,6 +64,7 @@
 }
 .user-descr .text-area .user-body span {
   display: inline-block;
+  font-weight: bold;
 }
 .user-descr .text-area .user-body .user-addresses {
   padding-bottom: 30px;

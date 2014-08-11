@@ -10,7 +10,7 @@
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
                             <!--<img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>-->
-                            <div class="avatar big" style="background-image: url({{base.user.avatar}})"></div>
+                            <div class="avatar big" style="background-image: url({{base.avatarBuffer}})"></div> <!-- base.user.avatar -->
                             <a ui-sref="profile.change-avatar" class="change-avatar-link" ng-show="profile.isMayEdit">Изменить аватар</a>
                             <!--<input type="file" id="profile-ava" ng-show="profile.isMayEdit">-->
                         </label>
@@ -37,14 +37,32 @@
                         <div class="profile-item" ng-show="profile.userProfile.family.relations != null && profile.userProfile.family.childs != null
                         && profile.userProfile.family.pets != null">
                             <h3>Семья</h3>
-                            <div ng-show="profile.userProfile.family.relations != null"><span>Семейное положение:</span>{{profile.userProfile.family.relations}}</div>
-                            <div ng-show="profile.userProfile.family.childs != null"><span>Ребенок:</span> {{profile.userProfile.family.childs}}</div>
-                            <div ng-show="profile.userProfile.family.pets != null"><span>Питомец:</span> {{profile.userProfile.family.pets}}</div>
+                            <div ng-show="profile.userProfile.family.relations != null"><span>Семейное положение: </span> {{profile.userProfile.family.relationsMeta}}</div>
+                            <div ng-show="profile.userProfile.family.childs && profile.userProfile.family.childs.length != 0"><span>Дети: </span>
+                                <div ng-repeat="child in profile.userProfile.family.childs">
+                                    {{child.name}}, родился: {{child.birthday*1000 | date: 'MM.yyyy'}}
+                                </div>
+                            </div>
+                            <div ng-show="profile.userProfile.family.pets != null && profile.userProfile.family.pets.length != 0 && profile.userProfile.family.pets[0].name"><span>Питомцы:</span>
+                                <div ng-repeat="pet in profile.userProfile.family.pets">
+                                    {{pet.name + ", "+ pet.typeMeta+", "+pet.breed}}
+                                </div>
+
+                            </div>
                         </div>
 
-                        <div class="profile-item" ng-show="profile.userProfile.interests != null">
-                            <h3>Интересы</h3>
-                            <p>{{profile.userProfile.interests.userInterests}}</p>
+                        <div class="profile-item" ng-show="profile.userProfile.interests &&
+                        ((profile.userProfile.interests.userInterests && profile.userProfile.interests.userInterests != '')
+                        || (profile.userProfile.interests.job && profile.userProfile.interests.job != ''))">
+
+                            <div ng-show="profile.userProfile.interests.userInterests && profile.userProfile.interests.userInterests != ''">
+                                <h3>Интересы</h3>
+                                <p>{{profile.userProfile.interests.userInterests}}</p>
+                            </div>
+                            <div ng-show="profile.userProfile.interests.job && profile.userProfile.interests.job != ''">
+                                <h3>Работа</h3>
+                                <p>{{profile.userProfile.interests.job}}</p>
+                            </div>
                         </div>
 
                         <div class="profile-item last" ng-show="profile.userContacts.homeAddress != null">
