@@ -2033,6 +2033,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         resetPages($rootScope.base);
         $rootScope.base.privateMessagesIsActive = true;
+        $rootScope.base.pageTitle = "Личные сообщения";
 
         resetAceNavBtns($rootScope.navbar);
         $rootScope.navbar.privateMessagesBtnStatus = "active";
@@ -2547,12 +2548,12 @@ function getTiming(messageObjDate){
     return timing;
 }
 
-function getLabel(groupsArray,groupId){
+function getLabel(groupsArray,groupid){
     var groupsArrayLen = groupsArray.length;
     var label="";
     for(var i = 0; i < groupsArrayLen; i++){
 
-        if(groupsArray[i].id == groupId){
+        if(groupsArray[i].type == groupid){
             label = groupsArray[i].visibleName;
         }
     }
