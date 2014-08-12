@@ -346,6 +346,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
             lenta.selectedGroupInTop = $rootScope.currentGroup;
+
         lenta.isPollShow = false;
         lenta.pollSubject = "";
         lenta.pollInputs = [
@@ -372,7 +373,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             wallItemsLength = 0;
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
-        //alert(lastLoadedId);
 
         initWallItem();
 
@@ -515,7 +515,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.wallChangeGroup = function(groupId){
 
-            lenta.wallItems = messageClient.getWallItems(groupId);
+            lenta.wallItems = messageClient.getWallItems(groupId, lastLoadedId, loadedLength);
 
             if(lenta.wallItems.length) {
                 initWallItem();
@@ -577,16 +577,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.addMoreItems = function(){
             //alert(lastLoadedId);
-            var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
-            if(buff) {
+            if(wallItemsLength == 10) {
+                var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
+                if (buff) {
 
-                var buffLength = buff.length;
+                    var buffLength = buff.length;
+                    //alert(buffLength);
 
-                lastLoadedId = buff[buffLength - 1].topic.id;
+                    if (buffLength != 0) {
 
-                //alert(lastLoadedId);
+                        lastLoadedId = buff[buffLength - 1].topic.id;
 
-                lenta.wallItems = lenta.wallItems.concat(buff);
+                        lenta.wallItems = lenta.wallItems.concat(buff);
+                    }
+                }
             }
         };
 
@@ -1269,9 +1273,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             if(buff) {
                 var buffLength = buff.length;
 
-                lastLoadedId = buff[buffLength - 1].id;
+                if(buffLength != 0) {
 
-                talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                    lastLoadedId = buff[buffLength - 1].id;
+
+                    talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                }
             }
 
         };
@@ -2252,9 +2259,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             if(buff) {
                 var buffLength = buff.length;
 
-                lastLoadedId = buff[buffLength - 1].id;
+                if(buffLength != 0) {
 
-                dialog.privateMessages = dialog.privateMessages.concat(buff);
+                    lastLoadedId = buff[buffLength - 1].id;
+
+                    dialog.privateMessages = dialog.privateMessages.concat(buff);
+                }
             }
 
         };
