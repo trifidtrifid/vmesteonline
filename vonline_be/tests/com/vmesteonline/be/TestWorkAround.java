@@ -16,6 +16,7 @@ import com.vmesteonline.be.Group;
 import com.vmesteonline.be.MessageServiceImpl;
 import com.vmesteonline.be.Rubric;
 import com.vmesteonline.be.UserServiceImpl;
+import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;

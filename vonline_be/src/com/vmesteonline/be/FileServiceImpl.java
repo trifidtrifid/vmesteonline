@@ -2,11 +2,11 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.fileservice.FileService;
 import com.vmesteonline.be.utils.StorageHelper;
 
 public class FileServiceImpl extends ServiceImpl implements FileService.Iface {

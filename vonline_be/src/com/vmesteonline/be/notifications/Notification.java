@@ -137,7 +137,7 @@ public abstract class Notification {
 	public static void dialogMessageNotification( VoDialog dlg, VoUser author, VoUser rcpt ){
 		PersistenceManager pm = PMF.getPm();
 		try {
-			Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, pm);
+			Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, 0, pm);
 			VoDialogMessage lastMsg;
 			Iterator<VoDialogMessage> mi = messages.iterator();
 			if( messages.size() > 0 ){

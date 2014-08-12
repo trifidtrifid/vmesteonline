@@ -1,4 +1,4 @@
-namespace * com.vmesteonline.be
+namespace * com.vmesteonline.be.userservice
 include "bedata.thrift"
 include "error.thrift"
 

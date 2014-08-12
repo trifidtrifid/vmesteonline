@@ -183,7 +183,7 @@ public class MessageServiceTests extends TestWorkAround {
 	public void testGetWallItems() {
 
 		try {
-			List<WallItem> rTopic = msi.getWallItems(homeGroup.getId());
+			List<WallItem> rTopic = msi.getWallItems(homeGroup.getId(), 0 , 10000);
 			Assert.assertNotNull(rTopic);
 			Assert.assertEquals(1, rTopic.size());
 
