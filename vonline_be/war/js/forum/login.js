@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var transport = new Thrift.Transport("/thrift/AuthService");
     var protocol = new Thrift.Protocol(transport);
-    var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
+    var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
     var URL,URLArray, email;
 

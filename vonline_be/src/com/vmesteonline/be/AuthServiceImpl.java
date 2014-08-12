@@ -16,6 +16,8 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.vmesteonline.be.authservice.AuthService;
+import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
