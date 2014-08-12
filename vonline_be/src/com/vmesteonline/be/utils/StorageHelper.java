@@ -339,7 +339,7 @@ public class StorageHelper {
 
 	// ===================================================================================================================
 
-	private static boolean deleteImage(GcsFilename fileName) throws IOException {
+	public static boolean deleteImage(GcsFilename fileName) throws IOException {
 		return gcsService.delete(fileName);
 	}
 

@@ -308,4 +308,14 @@ public abstract class VoBaseMessage extends GeoLocation {
 	
 	@Persistent
 	protected int importantNotificationSentDate;
+
+	public List<Long> getImages() {
+		return images;
+	}
+
+	public List<Long> getDocuments() {
+		return documents;
+	}
+	
+	
 }

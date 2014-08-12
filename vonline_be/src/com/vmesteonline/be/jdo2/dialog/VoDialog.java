@@ -98,7 +98,7 @@ public class VoDialog {
 		return id;
 	}
 
-	public Collection<VoDialogMessage> getMessages(int afterDate, int lastCount, PersistenceManager pm) {
+	public Collection<VoDialogMessage> getMessages(int afterDate, int lastCount, long lastLoadedId, PersistenceManager pm) {
 		Query q = pm.newQuery(VoDialogMessage.class, "dialogId=="+id+
 				(afterDate > 0 ? " && createDate>"+afterDate : ""));
 		//q.setOrdering("createDate DESC"); List will be empty if sorting is enabled :(
@@ -109,12 +109,17 @@ public class VoDialog {
 				return -Integer.compare(o1.getCreateDate(), o2.getCreateDate());
 			}});
 		msgsSorted.addAll(msgs);
+		boolean startAdd = lastLoadedId == 0 ? true : false; 
 		if( lastCount>0 && msgsSorted.size() > lastCount ){
 			Iterator<VoDialogMessage> mi = msgsSorted.iterator();
 			while( lastCount-- != 0 ) {
 				mi.next();
 			}
-			msgsSorted.tailSet(mi.next());
+			if( startAdd ) {
+				msgsSorted.tailSet(mi.next());
+				
+			} else if( lastLoadedId == mi.next().getId() )
+				startAdd = true;
 		}
 		return msgsSorted;
 	}
