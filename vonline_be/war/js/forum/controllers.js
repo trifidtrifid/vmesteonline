@@ -339,7 +339,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
         initFancyBox($('.forum'));
 
-        var lenta = this;
+        var lenta = this,
+            lastLoadedId = 0,
+            loadedLength = 10;
+
         lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
             lenta.selectedGroupInTop = $rootScope.currentGroup;
@@ -362,11 +365,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.wallMessageContent = TEXT_DEFAULT_1;
         lenta.isCreateMessageError = false;
 
-        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id);
+        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
+
+        if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
+        //alert(lastLoadedId);
 
         initWallItem();
 
@@ -568,6 +574,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }
             }
         }
+
+        lenta.addMoreItems = function(){
+            //alert(lastLoadedId);
+            var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
+            if(buff) {
+
+                var buffLength = buff.length;
+
+                lastLoadedId = buff[buffLength - 1].topic.id;
+
+                //alert(lastLoadedId);
+
+                lenta.wallItems = lenta.wallItems.concat(buff);
+            }
+        };
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -926,7 +947,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
                 fullTalkFirstMessagesLength = 0;
 
-            lastLoadedId = talk.fullTalkFirstMessages[fullTalkFirstMessagesLength-1].id
+            if(fullTalkFirstMessagesLength != 0) lastLoadedId = talk.fullTalkFirstMessages[fullTalkFirstMessagesLength-1].id
 
             if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
 
@@ -2167,8 +2188,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
 
-        var dialog = this;
-        var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
+        var dialog = this,
+            lastLoadedId = 0,
+            loadedLength = 20,
+            currentDialog = dialogClient.getDialogById($stateParams.dialogId),
+            currentDialogLength = currentDialog.length;
+
         dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
@@ -2181,9 +2206,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
 
         if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
+            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,loadedLength,lastLoadedId);
             var privateMessagesLength = dialog.privateMessages.length;
                 dialog.authors = [];
+
+            if(privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength-1].id;
+
             for(var i = 0; i < privateMessagesLength; i++){
                 dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
             }
@@ -2220,13 +2248,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
 
         dialog.addMoreItems = function(){
-            var buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            var buff = dialogClient.getDialogMessages($stateParams.dialogId,loadedLength,lastLoadedId).messages;
             if(buff) {
                 var buffLength = buff.length;
 
                 lastLoadedId = buff[buffLength - 1].id;
 
-                talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                dialog.privateMessages = dialog.privateMessages.concat(buff);
             }
 
         };

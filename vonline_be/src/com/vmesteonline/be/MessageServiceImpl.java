@@ -43,7 +43,6 @@ import com.vmesteonline.be.messageservice.Poll;
 import com.vmesteonline.be.messageservice.Topic;
 import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.WallItem;
-import com.vmesteonline.be.messageservice.WallItemsListPart;
 import com.vmesteonline.be.utils.EMailHelper;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.notifications.Notification;
