@@ -3,7 +3,6 @@ import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.protocol.TJSONProtocol;
 
 import com.vmesteonline.be.access.VoServiceMapAccessValidator;
-import com.vmesteonline.be.authservice.AuthService;
 
 public class AuthSericeServlet extends VoServlet {
 

@@ -4,7 +4,6 @@ import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.protocol.TJSONProtocol;
 
 import com.vmesteonline.be.access.VoServiceMapAccessValidator;
-import com.vmesteonline.be.fileservice.FileService;
 
 @SuppressWarnings("serial")
 public class FileServiceServlet extends VoServlet {

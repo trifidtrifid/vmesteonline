@@ -2457,18 +2457,18 @@ var dialogClient = new com.vmesteonline.be.messageservice.DialogServiceClient(pr
 
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
-var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+var userClient = new com.vmesteonline.be.userservice.UserServiceClient(protocol);
 
 var userClientGroups = userClient.getUserGroups();
 var shortUserInfo = userClient.getShortUserInfo();
 
-transport = new Thrift.Transport("/thrift/AuthService");
+/*transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
-var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);*/
 
 transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
-var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
+var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
 function resetPages(base){
     base.neighboursIsActive = false;
