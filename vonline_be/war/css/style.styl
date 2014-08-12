@@ -753,7 +753,14 @@ transform()
   &.isLike
     color #ff0000
 
-
+.like-help
+  position absolute
+  right 50px
+  top 30px
+  padding 5px
+  background #efefef
+  border-radius 2px
+  display none
 
 .itemdiv.dialogdiv > .body
   margin-left 58px
@@ -789,6 +796,7 @@ transform()
 .talks-title
   padding 10px
   overflow auto
+  position relative
   border-top 1px solid rgb(80, 144, 193)
   .talks-title-left
     float left
@@ -840,7 +848,8 @@ transform()
 
   /* private-messages */
 .dialog-send
-  padding-top 15px
+  padding-bottom 15px
+  border-bottom 1px solid #ccc
   .dialog-send-center
     margin 0 60px
     textarea
@@ -852,6 +861,11 @@ transform()
 .dialog
 .private-messages
   padding 10px
+  padding-top 15px
+  .page-title
+    padding 0
+  .dialogs-container
+    margin-top 15px
   h2
     margin-top 0
   .private-message-single
@@ -860,6 +874,8 @@ transform()
     padding-left 0
     overflow auto
     border-bottom 1px solid #CCCCCC
+    &:hover
+      background-color #f6fcff
     &:first-child
       border-top 1px solid #CCCCCC
     .private-message-ava
@@ -969,7 +985,7 @@ transform()
         margin 0 15px
         a
           display inline-block
-          margin-right 10px
+          margin-right 5px
           font-size 18px
         span
           display inline-block
@@ -1136,6 +1152,11 @@ transform()
 
 .blog
   text-align left
+  .post
+    padding 15px 0
+    border-top 1px solid #ccc
+    &:first-child
+      border-top 0
   .dialogs
   .input-group
     display none
@@ -1153,4 +1174,20 @@ transform()
     &:hover
       color #000
       text-decoration none
+  .post-date
+    margin-left 210px;
+  .post-avatar
+    width 200px
+  .topic
+  .topic-stuff
+    margin-left 210px
+  .lenta-item-bottom
+    span
+    a
+      display inline-block
+    a
+      margin-left 5px
+  .itemdiv.dialogdiv > .body
+    padding-bottom 0
+
 

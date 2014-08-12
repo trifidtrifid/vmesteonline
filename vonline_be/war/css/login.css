@@ -45,6 +45,11 @@
   float: none !important;
   font-size: 16px;
 }
+.login-box p,
+.signup-box p,
+.forgot-box p {
+  text-align: left;
+}
 .email-forgot-error,
 .password-new-error {
   margin-bottom: 10px;
@@ -237,8 +242,14 @@
   margin-top: -37px;
 }
 .login-forum {
-  background: url("../i/login-bg.jpg") top center;
-  background-size: 100% 100%;
+  background-image: url("../i/login-bg.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   padding-top: 100px;
 }
 .login-forum .login-left {
@@ -275,11 +286,10 @@
   line-height: 16px;
 }
 .login-forum .login-container .tools a {
-  font-size: 14px;
+  font-size: 13px;
   margin-left: 10px;
   vertical-align: middle;
   display: inline-block;
-  color: #c4c4c4;
   margin-top: -12px;
 }
 .login-forum .login-container .tools a:hover {
@@ -295,10 +305,9 @@
 }
 .login-forum .login-container .widget-box .widget-main {
   border-radius: 3px;
-  padding: 25px 36px;
+  padding: 20px 36px;
 }
 .login-forum .login-container .widget-box .btn-back {
-  color: #c4c4c4;
   display: inline-block;
   margin-top: 10px;
   font-size: 14px;

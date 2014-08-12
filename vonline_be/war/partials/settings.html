@@ -1,4 +1,4 @@
-<section class="settings page"> <!--  ng-show="base.settingsIsActive" -->
+<section class="settings page">
 
         <div class="dynamic">
             <section class="settings">
@@ -51,6 +51,12 @@
                                     <option value="0" ng-selected="settings.userInfo.gender == 0 ">Жен</option>
                                 </select>
                             </div>
+                                <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"
+                                        href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updateUserInfo()">Сохранить</button>
+
+                                <span ng-class="{'info-good': !settings.isProfileError, 'error-info': settings.isProfileError}" ng-show="settings.isProfileResult">{{ settings.profileInfo}}</span>
+                                <br>
+                                <br>
 
                             <h4>Изменить пароль</h4>
                             <div>
@@ -67,8 +73,9 @@
                             </div>
 
                             <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"
-                                    href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updatePasswordOrUserInfo()">Сохранить</button>
-                                <span ng-class="{'info-good': !settings.isProfileError, 'error-info': settings.isProfileError}" ng-show="settings.isProfileResult">{{ settings.profileInfo}}</span>
+                                    href="#" ng-disabled="!settings.canSave(1)" ng-click="settings.updatePassword()">Сохранить</button>
+
+                                <span ng-class="{'info-good': !settings.isPasswError, 'error-info': settings.isPasswError}" ng-show="settings.isPasswResult">{{ settings.passwInfo}}</span>
                             </form>
 
                         </div>
@@ -106,8 +113,11 @@
                         <div id="alerts" class="tab-pane">
                             <form name="formAlerts">
                             <div>
-                                <label for="settings-input-13">E-mail для оповещений</label>
-                                <input type="email" id="settings-input-13" ng-model="settings.userNotifications.email"/>
+                                <label>E-mail для оповещений :</label>
+                                <span>{{settings.userNotifications.email}}</span>
+                                <br>
+                                <br>
+                                <!--<input type="email" id="settings-input-13" ng-model="settings.userNotifications.email"/>-->
                             </div>
                             <!--<div>
                                 <label>E-mail для оповещений</label> ttt@sdf.ru <a href="#">изменить</a>
@@ -130,8 +140,10 @@
                         <div id="contacts" class="tab-pane">
                             <form name="formContacts">
                             <div>
-                                <label for="settings-input-7">Email</label>
-                                <input type="text" id="settings-input-7" ng-model="settings.userContacts.email" required/>
+                                <label>Email</label>
+                                <span>{{settings.userContacts.email}}</span>
+                                <br><br>
+                                <!--<input type="text" id="settings-input-7" ng-model="settings.userContacts.email" required/>-->
                             </div>
                             <div>
                                 <label for="settings-input-8">Телефон</label>
@@ -182,7 +194,6 @@
 
                                         <a class="remove-child" href="#" ng-hide="child.isNotRemove" title="Удалить" ng-click="settings.removeChild(child.name)">&times;</a>
 
-                                        <!--<input type="text" class="short" placeholder="год" id="settings-input-10"/>-->
                                     </div>
                                 </div>
 
@@ -223,11 +234,11 @@
                             <form name="formInterests">
                             <div>
                                 <label for="settings-textarea-1">Интересы</label>
-                                <textarea id="settings-textarea-1" ng-model="settings.interests.userInterests"></textarea>
+                                <textarea id="settings-textarea-1" class="no-resize" ng-keyup="base.messageChange($event,1)" ng-model="settings.interests.userInterests"></textarea>
                             </div>
                             <div>
                                 <label for="settings-textarea-2">Работа</label>
-                                <textarea id="settings-textarea-2" ng-model="settings.interests.job"></textarea>
+                                <textarea id="settings-textarea-2" class="no-resize" ng-keyup="base.messageChange($event,1)" ng-model="settings.interests.job"></textarea>
                             </div>
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(6),'btn-primary' : settings.canSave(6)}"

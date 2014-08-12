@@ -47,7 +47,6 @@ struct Message {
 	21: string anonName 
 	22: Mark important,
 	23: Mark like,
-	
 } // 'сообщение';
 		
 
@@ -85,6 +84,7 @@ struct Topic {
 	12: UserTopic usertTopic,
 	13: bedata.ShortUserInfo userInfo,
 	14: Poll poll, 	
+	15: bedata.GroupType groupType,	
 }
 
 struct TopicListPart {
@@ -129,7 +129,7 @@ service DialogService {
 	Dialog getDialog( 1:list<i64> users, 2:i32 after ) throws (1:error.InvalidOperation exc),
 	Dialog getDialogById( 1:i64 dialogId ) throws (1:error.InvalidOperation exc),
 	list<Dialog> getDialogs(1:i32 after ) throws (1:error.InvalidOperation exc),
-	list<DialogMessage> getDialogMessages( 1:i64 dialogID, 2:i32 afterDate, 3:i32 tailSize) throws (1:error.InvalidOperation exc),
+	list<DialogMessage> getDialogMessages( 1:i64 dialogID, 2:i32 afterDate, 3:i32 tailSize, 4:i64 lastLoadedId) throws (1:error.InvalidOperation exc),
 	DialogMessage postMessage( 1:i64 dialogId, 2:string content, 3:list<Attach> attachments ) throws (1:error.InvalidOperation exc),
 	void updateDialogMessage( 1:i64 dlgMsgId, 2:string content ) throws (1:error.InvalidOperation exc),
 	void deleteDialogMessage( 1:i64 dlgMsgId ) throws (1:error.InvalidOperation exc),
@@ -142,16 +142,18 @@ service MessageService {
 
 	void sendInfoEmail(1:string email, 2:string name, 3:string content) throws (1:error.InvalidOperation exc),
 
-	list<WallItem> getWallItems(1:i64 groupId)	 throws (1:error.InvalidOperation exc)
+	list<WallItem> getWallItems(1:i64 groupId, 2:i32 lastLoadedIdTopicId, 3:i32 length) throws (1:error.InvalidOperation exc)
 
 /**
 * Cоздание нового или обновление старого сообщения
 **/	 
 	Message postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
+	Message deleteMessage( 1:i64 msgId ) throws (1:error.InvalidOperation exc),
 
 
 	Poll doPoll( 1:i64 pollId, 2:i32 item) throws (1:error.InvalidOperation exc),
 	Topic postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
+	Topic deleteTopic( 1: i64 topicId ) throws (1:error.InvalidOperation exc),
 	 
 	 /**
 	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе

@@ -15,9 +15,14 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.notifications.Notification.NotificationMessage;
 
 
 public class NewNeigboursNotification extends Notification {
+
+	public NewNeigboursNotification( Map< VoUser, List<NotificationMessage>> ntf ) {
+		this.messagesToSend = ntf;
+	}
 
 	@Override
 	public void makeNotification( Set<VoUser> users ) {
@@ -53,7 +58,6 @@ public class NewNeigboursNotification extends Notification {
 					e.printStackTrace();
 				}
 			}
-
 		} finally {
 			pm.close();
 		}

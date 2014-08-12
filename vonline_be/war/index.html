@@ -320,9 +320,13 @@
                                 $('#result').html(data);
                             }else{
 
-                                var userLocation = authClient.checkInviteCode(code);
-                                document.location.replace('registration.html#email='+ email +';mapUrl='+userLocation.mapUrl+";address="+
-                                        userLocation.address+";code="+code);
+                                try{
+                                    var userLocation = authClient.checkInviteCode(code);
+                                    document.location.replace('registration.html#email='+ email +';mapUrl='+userLocation.mapUrl+";address="+
+                                    userLocation.address+";code="+code);
+                                }catch(e){
+                                    $('.alertMsg').text('Вы ввели некоректный код или этот код уже был активирован.').show();
+                                }
 
                             /*$('body').hide(0).addClass('poll').load('poll.html .masthead',function(){
                                 var marginLeft = 0;

@@ -31,8 +31,9 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.userservice.FullAddressCatalogue;
+import com.vmesteonline.be.userservice.UserService;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.InviteCodeUploader;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class UserServiceImpl extends ServiceImpl implements UserService.Iface {

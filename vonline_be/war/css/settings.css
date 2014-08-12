@@ -48,6 +48,7 @@
 .edit-personal textarea {
   width: 70%;
   margin-bottom: 10px;
+  overflow: hidden;
 }
 .settings input.short,
 .edit-personal input.short,

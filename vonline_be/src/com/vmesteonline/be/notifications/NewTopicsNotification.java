@@ -23,10 +23,15 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.messageservice.MessageType;
+import com.vmesteonline.be.notifications.Notification.NotificationMessage;
 
 public class NewTopicsNotification extends Notification {
 
 	private JDBCConnector con = new MySQLJDBCConnector();
+	
+	public NewTopicsNotification( Map< VoUser, List<NotificationMessage>> ntf ) {
+		this.messagesToSend = ntf;
+	}
 
 	public void makeNotification( Set<VoUser> users ) {
 
@@ -37,7 +42,7 @@ public class NewTopicsNotification extends Notification {
 			Map<VoUserGroup, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
 
 			// create message for each user
-			String body = "Близкие события\n\n";
+			String body = "Близкие события<br/><br/>";
 			
 			for (VoUser u : users) {
 				Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
@@ -82,7 +87,7 @@ public class NewTopicsNotification extends Notification {
 	}
 
 	private String createGroupContent(PersistenceManager pm, VoUserGroup ug, Set<VoTopic> topics) {
-		String groupContent = "Пишут в группе '" + ug.getName() + "=====\n";
+		String groupContent = "Пишут в группе '" + ug.getName() + "=====<br/>";
 		Set<VoTopic> orderedTopics = new TreeSet<VoTopic>( topicCreatedDateComp );
 		for (VoTopic tpc : orderedTopics) {
 			String topicTxt = createTopicContent(pm, ug, tpc);
@@ -93,9 +98,10 @@ public class NewTopicsNotification extends Notification {
 
 	private String createTopicContent(PersistenceManager pm, VoUserGroup ug, VoTopic tpc) {
 		String topicTxt = new Date(((long) tpc.getCreatedAt()) * 1000L) + " " + pm.getObjectById(VoUser.class, tpc.getAuthorId()).getName();
-		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "===== \n";
-		topicTxt += new String(tpc.getContent(), 0, Math.min(255, tpc.getContent().length));
-		topicTxt += "...\n--------------------------------------------------------\n\n";
+		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "===== <br/>";
+		topicTxt += tpc.getContent().substring( 0, Math.min(255, tpc.getContent().length()));
+		if( tpc.getContent().length() > 255 ) topicTxt += "...";
+		topicTxt += "<br/>--------------------------------------------------------<br/><br/>";
 		return topicTxt;
 	}
 

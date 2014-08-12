@@ -128,7 +128,7 @@
                     </a>
 
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                        <li><a ui-sref="profile"> <i class="icon-user"></i>
+                        <li><a ui-sref="profile({ userId : 0})"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
 
@@ -221,7 +221,7 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in groups"
-                            id="{{group.id}}" ng-class="{active : group.selected}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button>
+                            id="{{group.id}}" ng-class="{active : currentGroup.id == group.id}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button> <!-- {active : group.selected} -->
                         </nav>
 
                         <div class="create-topic-btn pull-right ng-cloak" ng-show="base.talksIsActive || base.advertsIsActive">

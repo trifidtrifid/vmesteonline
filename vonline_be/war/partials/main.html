@@ -76,6 +76,7 @@
                                         ng-class="wallItem.tagColor">{{wallItem.label}}</span>
                                 <a class="fa fa-star pull-right" ng-class="{'important' : wallItem.topic.message.important == 1}" title='{{ wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"></a>
                                 <a class="fa fa-heart pull-right" ng-class="{'isLike' : wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallItem.topic.message)"></a>
+                                <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>

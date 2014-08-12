@@ -212,13 +212,20 @@ public class Defaults {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		for (String uname : unames) {
-			try {
-				uids.add(asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0));
-				
-			} catch (Exception e) {
-				e.printStackTrace();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			for (String uname : unames) {
+				try {
+					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
+					pm.getObjectById(VoUser.class, uid).setEmailConfirmed(true);
+					uids.add(uid);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
+		} finally {
+			pm.close();
 		}
 		if (uids.size() == 0)
 			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
@@ -265,7 +272,7 @@ public class Defaults {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + e.getMessage());
+			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + (e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
 		} finally {
 			pm.close();
 		}

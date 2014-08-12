@@ -77,7 +77,8 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public List<DialogMessage> getDialogMessages(long dialogID, int afterDate, int lastCount) throws InvalidOperation {
+	public List<DialogMessage> getDialogMessages(long dialogID, int afterDate, int tailSize, long lastLoadedId) throws InvalidOperation, TException {
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			long currentUserId = getCurrentUserId();
@@ -85,7 +86,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 			if (!new HashSet<Long>(vdlg.getUsers()).contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
 
-			return VoHelper.convertMutableSet(vdlg.getMessages(afterDate, lastCount, pm), new ArrayList<DialogMessage>(), new DialogMessage(), pm);
+			return VoHelper.convertMutableSet(vdlg.getMessages(afterDate, tailSize, lastLoadedId, pm), new ArrayList<DialogMessage>(), new DialogMessage(), pm);
 
 		} finally {
 			pm.close();

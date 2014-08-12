@@ -1,4 +1,4 @@
-namespace * com.vmesteonline.be
+namespace * com.vmesteonline.be.userservice
 include "bedata.thrift"
 include "error.thrift"
 
@@ -41,6 +41,7 @@ service UserService {
 	void updateUserInfo(1:bedata.UserInfo userInfo) throws (1:error.InvalidOperation exc),
 	void changePassword(1:string oldPwd, 2:string newPwd) throws (1:error.InvalidOperation exc),
 	void updatePrivacy(1:bedata.UserPrivacy privacy) throws (1:error.InvalidOperation exc),
+	
 	//для изменения контактов пользователя на странице профайла. 
 	void updateContacts(1:bedata.UserContacts contacts) throws (1:error.InvalidOperation exc),
 	void updateFamily(1:bedata.UserFamily family) throws (1:error.InvalidOperation exc),

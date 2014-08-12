@@ -22,7 +22,7 @@
 				<div class="row clearfix">
 					<div class="col-sm-10 col-sm-offset-1">
                         <div class="login-left col-md-5 ">
-                            <a href="/"><img src="i/logo.png" alt="логотип"/></a>
+                            <img src="i/logo.png" alt="логотип"/>
                             <h1>Соседи.Вместе.Онлайн.</h1>
                         </div>
                         <div class="col-md-2"></div>
@@ -34,69 +34,39 @@
 									<div class="widget-body">
 										<div class="widget-main">
                                             <div class="login-main">
-                                                <div class="clearfix">
-
-                                                    <FORM action="https://oauth.vk.com/authorize" method="get">
-                                                        <input type="hidden" name="client_id" value="4429306">
-                                                        <input type="hidden" name="redirect_uri" value="https://1-dot-vmesteonline.appspot.com/oauth">
-                                                        <input type="hidden" name="scope" value="4194305">
-                                                        <input type="hidden" name="v" value="5.21">
-                                                        <input type="hidden" name="state" value="vk">
-                                                        <INPUT type="submit" class="width-100 btn btn-sm no-border btn-primary" value="Войти через Вконтакте">
-                                                    </FORM>
-
-                                                    <!--<button type="button" class="width-100 pull-right btn btn-sm btn-primary">
-                                                        Войти через Вконтакте
-                                                    </button>-->
-
-                                                    <div class="or">или</div>
-                                                </div>
-
-                                                <form>
+                                                <form class="hidden">
                                                     <fieldset>
+                                                        <p>Введите новый пароль :</p>
                                                         <label class="block clearfix">
                                                             <span class="block input-icon input-icon-right">
-                                                                <input type="text" id="uname" class="form-control" placeholder="Ваш email" />
-                                                                <i class="icon-user"></i>
+                                                                <input type="password" id="new_pass_1" class="form-control" placeholder="Новый пароль" />
                                                             </span>
                                                         </label>
 
                                                         <label class="block clearfix">
                                                             <span class="block input-icon input-icon-right">
-                                                                <input type="password" id="password" class="form-control" placeholder="Пароль" />
-                                                                <i class="icon-lock"></i>
+                                                                <input type="password" id="new_pass_2" class="form-control" placeholder="Повторите новый пароль" />
                                                             </span>
                                                         </label>
-
-                                                        <div class="tools">
-                                                            <!--<div class="checkbox">
-                                                                <label>
-                                                                    <input name="form-field-checkbox" type="checkbox" class="ace">
-                                                                    <span class="lbl"> Запомнить меня</span>
-                                                                </label>
-                                                            </div>-->
-                                                            <a href="#" class="show-remember">Напомнить пароль</a>
-                                                        </div>
-
 
                                                         <div class="error-info login-error"></div>
 
-
                                                         <div class="clearfix">
-
-                                                            <button type="button" class="width-100 btn btn-sm btn-primary no-border btn-login">
-                                                                Войти
+                                                            <button type="button" class="width-100 btn btn-sm btn-primary no-border btn-remember-passw">
+                                                                Изменить пароль
                                                             </button>
-                                                            <br>
-                                                            <br>
-                                                            <div><a href="/" class="reg-link">Зарегестрируйтесь</a> если у вас нет аккаунта</div>
                                                         </div>
 
                                                     </fieldset>
 
                                                 </form>
-                                            </div>
 
+                                                <div class="remember-error error-info hidden">
+                                                    Смена пароля не доступна
+                                                </div>
+
+
+                                            </div>
                                             <div class="remember hidden">
                                                 <form>
                                                     <fieldset>

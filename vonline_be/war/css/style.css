@@ -861,6 +861,15 @@ h1 {
 .fa-heart.isLike {
   color: #f00;
 }
+.like-help {
+  position: absolute;
+  right: 50px;
+  top: 30px;
+  padding: 5px;
+  background: #efefef;
+  border-radius: 2px;
+  display: none;
+}
 .itemdiv.dialogdiv > .body {
   margin-left: 58px;
 }
@@ -900,6 +909,7 @@ h1 {
 .talks-title {
   padding: 10px;
   overflow: auto;
+  position: relative;
   border-top: 1px solid #5090c1;
 }
 .talks-title .talks-title-left {
@@ -968,7 +978,8 @@ h1 {
   font-family: tahoma, arial;
 }
 .dialog-send {
-  padding-top: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ccc;
 }
 .dialog-send .dialog-send-center {
   margin: 0 60px;
@@ -983,6 +994,15 @@ h1 {
 .dialog,
 .private-messages {
   padding: 10px;
+  padding-top: 15px;
+}
+.dialog .page-title,
+.private-messages .page-title {
+  padding: 0;
+}
+.dialog .dialogs-container,
+.private-messages .dialogs-container {
+  margin-top: 15px;
 }
 .dialog h2,
 .private-messages h2 {
@@ -995,6 +1015,10 @@ h1 {
   padding-left: 0;
   overflow: auto;
   border-bottom: 1px solid #ccc;
+}
+.dialog .private-message-single:hover,
+.private-messages .private-message-single:hover {
+  background-color: #f6fcff;
 }
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
@@ -1128,7 +1152,7 @@ h1 {
 }
 .user-body .user-body-left .rating .rating-item a {
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 5px;
   font-size: 18px;
 }
 .user-body .user-body-left .rating .rating-item span {
@@ -1312,6 +1336,13 @@ h1 {
 .blog {
   text-align: left;
 }
+.blog .post {
+  padding: 15px 0;
+  border-top: 1px solid #ccc;
+}
+.blog .post:first-child {
+  border-top: 0;
+}
 .blog .dialogs,
 .blog .input-group {
   display: none;
@@ -1334,4 +1365,24 @@ h1 {
 .blog .no-link:hover {
   color: #000;
   text-decoration: none;
+}
+.blog .post-date {
+  margin-left: 210px;
+}
+.blog .post-avatar {
+  width: 200px;
+}
+.blog .topic,
+.blog .topic-stuff {
+  margin-left: 210px;
+}
+.blog .lenta-item-bottom span,
+.blog .lenta-item-bottom a {
+  display: inline-block;
+}
+.blog .lenta-item-bottom a {
+  margin-left: 5px;
+}
+.blog .itemdiv.dialogdiv > .body {
+  padding-bottom: 0;
 }

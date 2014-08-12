@@ -1,27 +1,72 @@
 $(document).ready(function(){
-
     var transport = new Thrift.Transport("/thrift/AuthService");
     var protocol = new Thrift.Protocol(transport);
     var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
 
-    var URL = document.location.hash;
+    var URL,URLArray, email;
 
-    if(URL) {
-        var URLArray = URL.split(';');
-        var email = URLArray[0].split('=')[1],
-            address = URLArray[2].split('=')[1],
-            code = URLArray[3].split('=')[1];
+    if($('.btn-remember-passw').length){
+        // если восстановление пароля
+        URL = document.location.hash;
+        URL = URL.slice(1);
+        URLArray = URL.split('-');
+        email = URLArray[1];
+        var remindPassw = URLArray[0];
 
-        var mapUrlTemp = URLArray[1].split('=');
-        mapUrlTemp.shift();
-        var mapUrl = mapUrlTemp.join('=');
+        var isGood_1 = authClient.checkRemindCode(remindPassw,email);
 
-        $('#email').val(email);
-        $('.mapUrl').attr('src', mapUrl);
-        $('.address').text(address);
+        if(isGood_1){
+            $('.login-main>form').removeClass('hidden');
+        }else{
+            $('.remember-error').removeClass('hidden');
+        }
 
-        document.location.hash = "";
+        $('.btn-remember-passw').click(function(e){
+            e.preventDefault();
+
+            if($('#new_pass_1').val().length > 3 && $('#new_pass_2').val().length > 3 ){
+                var isGood_2 = authClient.changePasswordByRemidCode(remindPassw,email,$('#new_pass_1').val());
+
+                if(isGood_2){
+                    document.location.replace('/');
+                }else{
+                    $('.login-error').html('Смена пароля не произошла. <a href="#" class="show-remember-2">попробуйте еще раз</a>.').show();
+                    showRemember($('.show-remember-2'));
+                }
+            }else{
+
+                $('.login-error').text('Пароль должен быть длиннее 3-х символов.').show();
+
+            }
+
+
+        });
+    }else{
+        // если страница регистрации или логина
+        URL = document.location.hash;
+
+        if(URL) {
+            // если страница регистрации
+
+            URLArray = URL.split(';');
+
+            email = URLArray[0].split('=')[1];
+            var address = URLArray[2].split('=')[1],
+                code = URLArray[3].split('=')[1];
+
+            var mapUrlTemp = URLArray[1].split('=');
+            mapUrlTemp.shift();
+            var mapUrl = mapUrlTemp.join('=');
+
+            $('#email').val(email);
+            $('.mapUrl').attr('src', mapUrl);
+            $('.address').text(address);
+
+            document.location.hash = "";
+        }
     }
+
+
 
     $('#login-box .btn-login').click(function(e){
         e.preventDefault();
@@ -48,23 +93,23 @@ $(document).ready(function(){
         }else{
 
             try{
-                console.log('2');
                 authClient.registerNewUser(firstName, lastName, pass, email, code, gender);
                 document.location.replace('coming-soon.html');
             }catch(e){
-                console.log('3');
                 $('.error-info').html('Такой адрес email уже зарегистрирован. <a href="#" class="reg-remember">Забыли пароль?</a>').show();
 
                 $('.reg-remember').click(function(e){
                     e.preventDefault();
 
-                    authClient.sendConfirmCode(email);
-                    $('.login-error').removeClass('.error-info').text('На ваш email отправлен код подтверждения').show();
+                    authClient.remindPassword(email);
+                    $('.login-error').removeClass('error-info').addClass('info-good').text('На ваш email отправлен код подтверждения').show();
                 });
             }
         }
 
     });
+
+    var resourcefileName = "mailTemplates/changePasswordConfirm.html";
 
     function login(selector) {
         var result = $('#result');
@@ -75,25 +120,30 @@ $(document).ready(function(){
                 if (selector.closest('.modal-auth').length > 0){
                     AuthRealTime(selector);
                 }else{
-                    document.location.replace("./main.jsp");
+                    document.location.replace("/");
                 }
             } else {
                 result.val(session.error);
                 result.css('color', 'black');
             }
 
-        } catch (ouch) {
-            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
+        } catch (e) {
+            $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
         }
     }
 
-    $('.show-remember').click(function(e){
-        e.preventDefault();
+    function showRemember(selector){
+        selector.click(function(e){
+            e.preventDefault();
 
-       $('.login-main').addClass('hidden');
-       $('.remember').removeClass('hidden');
-        $('.login-error').hide();
-    });
+            $('.login-main').addClass('hidden');
+            $('.remember').removeClass('hidden');
+            $('.login-error').hide();
+        });
+
+    }
+    showRemember($('.show-remember'));
+
 
     $('.btn-back').click(function(e){
         e.preventDefault();
@@ -108,10 +158,10 @@ $(document).ready(function(){
         var email = $('#email').val();
 
         if(email) {
-            try {
-                authClient.sendConfirmCode(email);
+            var isUserExist = authClient.remindPassword(email);
+            if(isUserExist){
                 $('.login-error').removeClass('.error-info').addClass('info-good').text('Вам отправлено письмо для восстановления пароля').show();
-            }catch(e){
+            }else{
                 $('.login-error').text('Пользователь с таким email не зарегистрирован').show();
             }
 

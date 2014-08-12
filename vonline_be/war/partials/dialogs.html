@@ -1,16 +1,11 @@
 
 <section class="private-messages page"> <!-- ng-show="base.privateMessagesIsActive" -->
+    <div class="page-title pull-left">{{ base.pageTitle}}</div>
     <a class="btn btn-primary no-border btn-sm pull-right" ui-sref="neighbours">Написать сообщение</a>
-    <form method="post" action="#" class="form-group has-info form-search-private">
-<!--
-        <span class="block input-icon input-icon-right">
--->
-            <input id="search-private-messages" type="text" class="form-control width-70" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
-            <!--<a href="#" class="icon-search icon-on-right bigger-110"></a>-->
-        <!--</span>-->
-    </form>
+    <div class="clearfix"></div>
+
     <!--<div class="private-messages">-->
-        <div>
+        <div class="dialogs-container">
             <div class="private-message-single" ng-click="dialogs.goToSingleDialog(dialog.id)" ng-repeat="dialog in dialogs.dialogsList"> <!-- ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" -->
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">

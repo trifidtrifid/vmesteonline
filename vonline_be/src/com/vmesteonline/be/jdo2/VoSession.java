@@ -9,7 +9,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.vmesteonline.be.CurrentAttributeType;
+import com.vmesteonline.be.authservice.CurrentAttributeType;
 
 //extends GeoLocation
 

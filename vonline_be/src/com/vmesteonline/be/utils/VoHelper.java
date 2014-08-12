@@ -1,5 +1,6 @@
 package com.vmesteonline.be.utils;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -377,5 +378,14 @@ public class VoHelper {
 			}
 		}
 		return out;
+	}
+	
+	public static class CacheObjectUnit<T> implements Serializable {
+		public int timestamp;
+		public T object;
+		public CacheObjectUnit(int timestamp, T object) {
+			this.timestamp = timestamp;
+			this.object = object;
+		}
 	}
 }
