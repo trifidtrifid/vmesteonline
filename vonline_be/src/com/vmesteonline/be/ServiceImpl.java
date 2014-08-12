@@ -14,8 +14,8 @@ import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
 
 
-
 import com.vmesteonline.be.access.VoUserAccessBase;
+import com.vmesteonline.be.authservice.CurrentAttributeType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;

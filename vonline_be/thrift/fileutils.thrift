@@ -1,4 +1,4 @@
-namespace * com.vmesteonline.be
+namespace * com.vmesteonline.be.fileservice
 include "error.thrift"
 
 service FileService {

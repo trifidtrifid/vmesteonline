@@ -1,5 +1,7 @@
 package com.vmesteonline.be;
 
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
@@ -14,6 +16,8 @@ import org.apache.thrift.TException;
 
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.vmesteonline.be.authservice.AuthService;
+import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoSession;
@@ -23,10 +27,7 @@ import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-import com.vmesteonline.be.notifications.Notification;
 import com.vmesteonline.be.utils.EMailHelper;
-
-import static com.google.appengine.api.taskqueue.TaskOptions.Builder.*;
 
 public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
