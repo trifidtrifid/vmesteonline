@@ -142,7 +142,7 @@ service MessageService {
 
 	void sendInfoEmail(1:string email, 2:string name, 3:string content) throws (1:error.InvalidOperation exc),
 
-	list<WallItem> getWallItems(1:i64 groupId, 2:i32 lastLoadedIdTopicId, 3:i32 length) throws (1:error.InvalidOperation exc)
+	list<WallItem> getWallItems(1:i64 groupId, 2:i64 lastLoadedIdTopicId, 3:i32 length) throws (1:error.InvalidOperation exc)
 
 /**
 * Cоздание нового или обновление старого сообщения
