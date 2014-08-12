@@ -148,12 +148,12 @@ service MessageService {
 * Cоздание нового или обновление старого сообщения
 **/	 
 	Message postMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
-	void deleteMessage( 1:i64 msgId ) throws (1:error.InvalidOperation exc),
+	Message deleteMessage( 1:i64 msgId ) throws (1:error.InvalidOperation exc),
 
 
 	Poll doPoll( 1:i64 pollId, 2:i32 item) throws (1:error.InvalidOperation exc),
 	Topic postTopic( 1: Topic topic ) throws (1:error.InvalidOperation exc),  
-	void deleteTopic( 1: i64 topicId ) throws (1:error.InvalidOperation exc),
+	Topic deleteTopic( 1: i64 topicId ) throws (1:error.InvalidOperation exc),
 	 
 	 /**
 	 * checkUpdates запрашивает наличие обновлений с момента предыдущего запроса, который возвращает сервер в ответе

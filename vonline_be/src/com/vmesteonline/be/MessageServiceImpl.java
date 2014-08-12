@@ -688,11 +688,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 
 	@Override
-	public void deleteMessage(long msgId) throws InvalidOperation {
+	public Message deleteMessage(long msgId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, msgId);
-			if( msg.getAuthorId().getId() != getCurrentUserId() )
+			long cuId = getCurrentUserId();
+			if( msg.getAuthorId().getId() != cuId )
 				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
 			
 			long topicId = msg.getTopicId();
@@ -715,8 +716,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 			if(canDelete){
 				pm.deletePersistent(msg);
+				return null;
 			} else {
 				msg.setContent("Сообщение удалено пользователем.");
+				return msg.getMessage(cuId, pm);
 			}
 			
 		} catch( JDOObjectNotFoundException onfe ){
@@ -745,11 +748,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 
 	@Override
-	public void deleteTopic(long topicId) throws InvalidOperation, TException {
+	public Topic deleteTopic(long topicId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic tpc = pm.getObjectById(VoTopic.class, topicId);
-			if( tpc.getAuthorId().getId() != getCurrentUserId() )
+			long cu = getCurrentUserId();
+			if( tpc.getAuthorId().getId() != cu )
 				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
 			
 			deleteAttachments(pm, tpc.getImages());
@@ -757,8 +761,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			if(0==tpc.getMessageNum()){
 				pm.deletePersistent(tpc);
+				return null;
 			} else {
 				tpc.setContent("Тема удалена пользователем.");
+				return tpc.getTopic(cu, pm);
 			}
 			
 		} catch( JDOObjectNotFoundException onfe ){
