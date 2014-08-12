@@ -278,6 +278,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     $rootScope.currentGroup = groups[i];
                 }
             }
+            if(!$rootScope.currentGroup){
+                groups[0].selected = true;
+                $rootScope.currentGroup = groups[0];
+            }
         }
 
 
