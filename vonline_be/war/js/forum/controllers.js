@@ -373,6 +373,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             wallItemsLength = 0;
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
+        //alert(lastLoadedId+" "+lenta.wallItems[0].topic.id);
 
         initWallItem();
 
@@ -587,6 +588,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     if (buffLength != 0) {
 
                         lastLoadedId = buff[buffLength - 1].topic.id;
+                        //alert(lastLoadedId+" "+buff[0].topic.id);
 
                         lenta.wallItems = lenta.wallItems.concat(buff);
                     }
@@ -604,7 +606,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.isFooterBottom = false;
 
         // временно, нужна функция getWallItem(topicId)
-        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
+        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id,0,1000),
         wallItemsLength = wallItems.length;
         for(var i = 0; i < wallItemsLength; i++){
             if(wallItems[i].topic.id == $stateParams.topicId){
@@ -1971,6 +1973,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
+        settings.profileInfo = "Сохранено";
+
         settings.isProfileError = false;
         settings.isProfileResult = false;
         settings.updateUserInfo = function(){
@@ -1991,6 +1995,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             settings.profileInfo = "Сохранено";
 
         };
+
+        settings.isPasswError = false;
+        settings.isPasswResult = false;
         settings.updatePassword = function(){
             if (settings.newPassw.length < 3){
                 settings.isPasswResult = true;
@@ -2009,15 +2016,31 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
+
+        settings.isPrivacyError = false;
+        settings.isPrivacyResult = false;
         settings.updatePrivacy = function(){
             userClient.updatePrivacy(settings.userPrivacy);
+
+            settings.isPrivacyResult = true;
+            settings.isPrivacyError = false;
         };
+
+
+        settings.isContactsError = false;
+        settings.isContactsResult = false;
         settings.updateContacts = function(){
             var temp = new com.vmesteonline.be.UserContacts();
             temp.email = settings.userContacts.email;
             temp.mobilePhone = settings.userContacts.mobilePhone;
             userClient.updateContacts(temp);
+
+            settings.isContactsError = false;
+            settings.isContactsResult = true;
         };
+
+        settings.isAlertsError = false;
+        settings.isAlertsResult = false;
         settings.updateNotifications = function(){
             if(settings.userNotifications && (settings.userNotifications.email || settings.userNotifications.freq) ){
                 var temp = new com.vmesteonline.be.Notifications();
@@ -2025,8 +2048,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 temp.freq = settings.userNotifications.freq;
 
                 userClient.updateNotifications(temp);
+
+                settings.isAlertsError = false;
+                settings.isAlertsResult = true;
             }
         };
+
+        settings.isFamilyError = false;
+        settings.isFamilyResult = false;
         settings.updateFamily = function(){
             var temp = new com.vmesteonline.be.UserFamily();
             temp.relations = settings.family.relations;
@@ -2052,12 +2081,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }
             }
             userClient.updateFamily(temp);
+
+            settings.isFamilyError = false;
+            settings.isFamilyResult = true;
         };
+
+        settings.isInterestsError = false;
+        settings.isInterestsResult = false;
         settings.updateInterests = function(){
             var temp = new com.vmesteonline.be.UserInterests();
             temp.job = settings.interests.job;
             temp.userInterests = settings.interests.userInterests;
             userClient.updateInterests(temp);
+
+            settings.isInterestsError = false;
+            settings.isInterestsResult = true;
         };
 
         settings.childAdd = function(event){
