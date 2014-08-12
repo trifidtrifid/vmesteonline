@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('baseController',function($rootScope) {
         $rootScope.isTopSearchShow = true;
         var base = this;
@@ -880,6 +880,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var talk = this,
             fullTalkMessagesLength,
+            lastLoadedId = 0,
             talkId = $stateParams.talkId;
 
         talk.selectedGroup = $rootScope.currentGroup;
@@ -919,11 +920,14 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.fullTalkTopic.metaType = "message";
             }
 
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
 
             talk.fullTalkFirstMessages ?
                 fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
                 fullTalkFirstMessagesLength = 0;
+
+            lastLoadedId = talk.fullTalkFirstMessages[fullTalkFirstMessagesLength-1].id
+
             if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
 
             for(var i = 0; i < fullTalkFirstMessagesLength; i++){
@@ -1237,6 +1241,18 @@ angular.module('forum.controllers', ['ui.select2'])
                     afterCurrentIndex = true;
                 }
             }
+        };
+
+        talk.addMoreItems = function(){
+            var buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            if(buff) {
+                var buffLength = buff.length;
+
+                lastLoadedId = buff[buffLength - 1].id;
+
+                talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+            }
+
         };
 
 
@@ -2195,13 +2211,25 @@ angular.module('forum.controllers', ['ui.select2'])
                 newDialogMessage.images = tempMessage.images;
                 newDialogMessage.documents = tempMessage.documents;
 
-                dialog.privateMessages.push(newDialogMessage);
+                dialog.privateMessages.unshift(newDialogMessage);
 
                 dialog.messageText = TEXT_DEFAULT_1;
                 cleanAttached($('#attach-area-000'));
                 cleanAttached($('#attach-doc-area-000'));
             }
         }
+
+        dialog.addMoreItems = function(){
+            var buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            if(buff) {
+                var buffLength = buff.length;
+
+                lastLoadedId = buff[buffLength - 1].id;
+
+                talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+            }
+
+        };
 
     })
     .controller('changeAvatarController',function($state,$rootScope){

@@ -23,8 +23,9 @@ h1 {
 .header-color-blue2 {
   background-color: #438eb9 !important;
 }
-.overflow-auto {
+.top-overflow-auto {
   overflow: auto;
+  border-bottom: 1px solid #ccc;
 }
 .container {
   padding: 0;
@@ -236,9 +237,8 @@ h1 {
   padding: 15px 0 0 10px;
   font-size: 20px;
 }
-.main-content-top {
-  border-bottom: 1px solid #ccc;
-}
+/*.main-content-top
+  border-bottom 1px solid #ccc*/
 .submenu {
   padding: 15px 10px 15px 0;
 }
@@ -1004,6 +1004,10 @@ h1 {
 .private-messages .dialogs-container {
   margin-top: 15px;
 }
+.dialog .dialogs-container .private-message-single:hover,
+.private-messages .dialogs-container .private-message-single:hover {
+  background-color: #f6fcff;
+}
 .dialog h2,
 .private-messages h2 {
   margin-top: 0;
@@ -1015,10 +1019,6 @@ h1 {
   padding-left: 0;
   overflow: auto;
   border-bottom: 1px solid #ccc;
-}
-.dialog .private-message-single:hover,
-.private-messages .private-message-single:hover {
-  background-color: #f6fcff;
 }
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
@@ -1072,6 +1072,9 @@ h1 {
   margin-bottom: 20px;
   width: 100%;
   clear: both;
+}
+.nextdoors .form-search .icon-search:hover {
+  text-decoration: none;
 }
 .nextdoors .nextdoor-single {
   padding: 10px;
