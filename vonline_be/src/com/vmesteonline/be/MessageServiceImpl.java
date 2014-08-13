@@ -602,12 +602,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 
-			try {
-				pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-			} catch (Exception e) {
-				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
-						+ topic.getRubricId());
-			}
+			if(0!=topic.getRubricId())
+				try {
+					pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
+				} catch (Exception e) {
+					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
+							+ topic.getRubricId());
+				}
 			updateMessage( topic.getMessage() );
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
@@ -659,6 +660,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 			}
 			return impScore;
+		} catch(JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No message found by ID:"+messageId);
 		} finally {
 			pm.close();
 		}
@@ -676,6 +679,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markLikes(getCurrentUser(), author, pm);
+		} catch(JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No message found by ID:"+messageId);
 		} finally {
 			pm.close();
 		}
@@ -756,8 +761,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			deleteAttachments(pm, tpc.getDocuments());
 			
 			if(0==tpc.getMessageNum()){
-				pm.deletePersistent(tpc);
-				return null;
+				try {
+					new MySQLJDBCConnector()
+						.execute("delete from topic where `id`="+tpc.getId());
+					pm.deletePersistent(tpc);
+					return null;
+				} catch (Exception e) {
+					logger.severe("Failed to delete Topic: "+e.getMessage());
+					e.printStackTrace();
+					throw new InvalidOperation(VoError.GeneralError,
+							"Topic not deleted. "+e.getMessage());
+				}
 			} else {
 				tpc.setContent("Тема удалена пользователем.");
 				return tpc.getTopic(cu, pm);
