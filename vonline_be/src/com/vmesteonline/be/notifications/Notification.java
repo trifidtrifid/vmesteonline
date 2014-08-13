@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,8 +16,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.GroupType;
@@ -32,6 +37,8 @@ import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
 import com.vmesteonline.be.utils.EMailHelper;
 
 public abstract class Notification {
+	
+	private static Logger logger = Logger.getLogger(Notification.class.getName());
 
 	public static class NotificationMessage {
 		public String to;
@@ -41,7 +48,7 @@ public abstract class Notification {
 		public String message;
 	}
 
-	private static String host;
+	protected static String host;
 	static {
 		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "vmesteonline.ru" : "localhost:8888";
 	}
@@ -52,13 +59,18 @@ public abstract class Notification {
 
 		List<VoUser> userList = new ArrayList<VoUser>();
 
-			int twoDaysAgo = (int) (System.currentTimeMillis() / 1000L) - 86400 * 2;
-			int weekAgo = (int) (System.currentTimeMillis() / 1000L) - 86400 * 2;
+			int now = (int) (System.currentTimeMillis() / 1000L);
+			int twoDaysAgo = (int) now - 86400 * 2;
+			int weekAgo = (int) now - 86400 * 2;
 			List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
 			for (VoSession vs : vsl) {
 				VoUser vu;
 				try {
 					vu = pm.getObjectById(VoUser.class, vs.getUserId());
+				} catch( JDOObjectNotFoundException onfe){
+					logger.warning("No user of session found by ID:"+vs.getUserId()+" discard the session "+vs);
+					pm.deletePersistent(vs);
+					continue;
 				} catch (Exception e) {
 					e.printStackTrace();
 					continue;
@@ -68,7 +80,8 @@ public abstract class Notification {
 					//найдем самую псоледнюю сессию ползователя
 					List<VoSession> uSessions = (List<VoSession>)pm.newQuery(VoSession.class, "userId=="+vu.getId()).execute();
 					Collections.sort(uSessions, lastActivityComparator );
-					boolean activityWasMoreThenTwoDaysAgo = uSessions.get(uSessions.size()-1).getLastActivityTs() < twoDaysAgo;
+					int lastActivityTs = uSessions.get(uSessions.size()-1).getLastActivityTs();
+					boolean activityWasMoreThenTwoDaysAgo = lastActivityTs < twoDaysAgo;
 					for( VoSession ns: uSessions ){
 						if( ns.getLastActivityTs() < weekAgo ) //пора удалять неактивную сессию
 							pm.deletePersistent(ns);
@@ -77,13 +90,22 @@ public abstract class Notification {
 					
 					if(activityWasMoreThenTwoDaysAgo){
 						
-						int timeAgo = (int) (System.currentTimeMillis() / 1000L) - vu.getLastNotified();
+						int timeAgo = (int) now - vu.getLastNotified();
 						NotificationFreq nf = vu.getNotificationFreq().freq;
 						if (NotificationFreq.DAYLY == nf && timeAgo >= 86400 || NotificationFreq.TWICEAWEEK == nf && timeAgo >= 3 * 86400
-								|| NotificationFreq.WEEKLY == nf && timeAgo >= 7 * 86400)
-	
+								|| NotificationFreq.WEEKLY == nf && timeAgo >= 7 * 86400){
+							logger.fine("User:"+vu+" would be notified with news");
 							userList.add(vu);
+						}
+						else {
+							logger.fine("USer:"+vu+" was notified "+timeAgo +" days ago and he perefers to be notified "+nf.name()+" so he would not been notified this time");
+						}
+							
+					} else {
+						logger.fine("USer:"+vu+" visited the site at "+new Date(((long)lastActivityTs)*1000L) +" less the two days ago so he/she would not been notified with news");
 					}
+				} else {
+					logger.fine("USer:"+vu+" not confirmed email, so new would not been sent.");
 				}
 			}
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
@@ -121,10 +143,11 @@ public abstract class Notification {
 			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
 			
 			String subject = "важное сообщение";
-			String body;
-			body = it.getContent();
+			String body = "Ваши соседи считают это сообщение достойным внимания (важность: "+it.getImportantScore()+")";
 			
-			body += "<br/> Ваши соседи считают это сообщение важным. Важность: "+it.getImportantScore();
+			body += "<i>"+StringEscapeUtils.escapeHtml4(it.getContent())+"</i>";
+			
+			body += "<br/><br/><a href=\"http://"+host+"/wall-single-"+it.getId()+"\">Обсудить, ответить ...</a>";
 			for(VoUser rcpt: usersForMessage){
 					decorateAndSendMessage(rcpt, subject, body); 
 			}
