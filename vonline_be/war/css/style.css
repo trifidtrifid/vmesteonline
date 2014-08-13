@@ -630,6 +630,9 @@ h1 {
 .itemdiv.dialogdiv > .body {
   padding-bottom: 28px;
 }
+.itemdiv {
+  padding-right: 0;
+}
 .btn.active:after {
   border-bottom: 0;
 }
