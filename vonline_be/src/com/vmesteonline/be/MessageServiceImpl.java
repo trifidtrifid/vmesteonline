@@ -80,7 +80,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 
 	@Override
-	public List<WallItem> getWallItems(long groupId, int lastLoadedIdTopicId, int length) throws InvalidOperation, TException {
+	public List<WallItem> getWallItems(long groupId, long lastLoadedIdTopicId, int length) throws InvalidOperation, TException {
 		List<WallItem> wallItems = new ArrayList<WallItem>();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 
