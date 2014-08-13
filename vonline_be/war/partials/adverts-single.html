@@ -20,15 +20,27 @@
                                 </div>
                                 <div class="topic-right" ng-switch on="adverts.fullAdvertTopic.metaType">
 
+                                    <div class="message-tools pull-right" ng-show="adverts.fullAdvertTopic.userInfo.id == base.me.id">
+                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(adverts.fullAdvertTopic,adverts.topics,true,false)">&times;</a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit(adverts.fullAdvertTopic)" class="fa fa-pencil pull-right"></a>
+                                    </div>
 
                                     <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="adverts.fullAdvertTopic.tagColor">{{adverts.fullAdvertTopic.label}}</span>
 
+                                    <div ng-hide="adverts.fullAdvertTopic.isEdit">
                                         <h2>
                                             <span>{{adverts.fullAdvertTopic.subject}}</span>
                                         </h2>
 
-                                    <p ng-switch-when="message">{{adverts.fullAdvertTopic.message.content}}</p>
+                                        <p ng-switch-when="message">{{adverts.fullAdvertTopic.message.content}}</p>
+                                    </div>
+
+                                    <div class="edit-message" ng-show="adverts.fullAdvertTopic.isEdit">
+                                        <input type="text" ng-model="adverts.fullAdvertTopic.subject"/>
+                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="adverts.fullAdvertTopic.message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(adverts.fullAdvertTopic,true)" href="#">Сохранить</a> <!--  -->
+                                    </div>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id}}" ng-repeat="image in adverts.fullAdvertTopic.message.images">
@@ -132,8 +144,19 @@
                                             </div>
                                         </div>
                                         <div class="topic-right">
+
+                                            <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
+                                                <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,adverts.fullAdvertFirstMessages,false,false)">&times;</a>
+                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage)" class="fa fa-pencil pull-right"></a>
+                                            </div>
+
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
-                                            <p>{{firstMessage.content}}</p>
+                                            <p ng-hide="firstMessage.isEdit">{{firstMessage.content}}</p>
+
+                                            <div class="edit-message" ng-show="firstMessage.isEdit">
+                                                <textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> <!--  -->
+                                            </div>
 
                                             <div class="attached">
                                                 <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
@@ -200,8 +223,18 @@
                                                     </div>
                                                 </div>
                                                 <div class="topic-right">
+                                                    <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
+                                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,adverts.fullAdvertMessages[firstMessage.id],false,false)">&times;</a>
+                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                                                    </div>
+
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
-                                                    <p>{{message.content}}</p>
+                                                    <p ng-hide="message.isEdit">{{message.content}}</p>
+
+                                                    <div class="edit-message" ng-show="message.isEdit">
+                                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> <!--  -->
+                                                    </div>
 
                                                     <div class="attached">
                                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+message.id}}" ng-repeat="image in message.images">

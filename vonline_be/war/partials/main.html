@@ -72,12 +72,14 @@
                             </a>
 
                             <div class="body" ng-switch on="wallItem.topic.metaType">
-                                <div class="message-tools pull-right">
-                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true)">&times;</a>
+
+                                <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
+                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true,true)">&times;</a>
                                     <a href="#" title="Редактировать" ng-click="base.setEdit(wallItem.topic)" class="fa fa-pencil pull-right"></a>
                                 </div>
+
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                        ng-class="wallItem.tagColor">{{wallItem.label}}</span>
+                                        ng-class="wallItem.tagColor">{{wallItem.label}} {{wallItem.topic.rubricId}}</span>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
@@ -86,8 +88,8 @@
                                 <div class="text" ng-switch-when="message" ng-hide="wallItem.topic.isEdit">{{wallItem.topic.message.content}}</div>
 
                                 <div class="edit-message" ng-show="wallItem.topic.isEdit">
-                                    <textarea class="no-resize message-textarea" ng-model="wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallItem.topic.isEdit"></textarea>
-                                    <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallItem.topic,true)">Сохранить</a>
+                                    <textarea class="no-resize message-textarea edit-textarea" ng-model="wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallItem.topic.isFocus"></textarea>
+                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallItem.topic,true)" href="#">Сохранить</a> <!--  -->
                                 </div>
 
                                 <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
@@ -170,7 +172,7 @@
                                     </div>
                                     <div class="text" ng-hide="wallMessage.isEdit">{{wallMessage.content}}</div>
                                     <div class="edit-message" ng-show="wallMessage.isEdit">
-                                        <textarea class="no-resize message-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
                                         <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>
                                     </div>
 

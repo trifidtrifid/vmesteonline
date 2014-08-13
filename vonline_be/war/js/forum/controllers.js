@@ -158,44 +158,64 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             return lastLoadedId;
         };
 
-        base.deleteMessage = function(message,messagesArray,isTopic){
+        base.deleteMessage = function(message,messagesArray,isTopic,isWall,isDialog){
 
             if(isTopic){
-                var deleteResult = messageClient.deleteTopic(message.id);
-                //alert('0');
-                if(!deleteResult){
-                    // удалено чисто
-                    var messagesArrayLength = messagesArray.length;
-                    for(var i = 0; i < messagesArrayLength; i++){
-                        if(messagesArray[i].topic.id == message.id){
-                            messagesArray.splice(i,1);
-                        }
-                    }
-
-                }else{
+                try {
+                    var deleteResult = messageClient.deleteTopic(message.id);
                     message.message.content = "Тема удалена пользователем";
+                }catch(e){
+                    // вернул null, значит удаление произошло чисто
+                    var messagesArrayLength = messagesArray.length;
+                     for(var i = 0; i < messagesArrayLength; i++){
+                         //alert(messagesArray[i].topic.id+" "+message.id);
+
+                         var currentId;
+                         isWall ? currentId = messagesArray[i].topic.id :
+                             currentId = messagesArray[i].id ;
+
+                         if(currentId == message.id){
+                            messagesArray.splice(i,1);
+                             break;
+                         }
+                     }
                 }
             }else{
-                deleteResult = messageClient.deleteMessage(message.id);
-                //alert('0');
-                if(!deleteResult){
-                    // удалено чисто
+                if(isDialog){
+                    dialogClient.deleteDialogMessage(message.id);
+
                     messagesArrayLength = messagesArray.length;
-                    for(var i = 0; i < messagesArrayLength; i++){
-                        if(messagesArray[i].topic.id == message.id){
-                            messagesArray.splice(i,1);
+                    for (var i = 0; i < messagesArrayLength; i++) {
+                        if (messagesArray[i].id == message.id) {
+                            messagesArray.splice(i, 1);
+                            break;
                         }
                     }
 
-                }else{
-                    message.message.content = "Сообщение удалено пользователем";
+                }else {
+                    try {
+                        deleteResult = messageClient.deleteMessage(message.id);
+                        message.message.content = "Сообщение удалено пользователем";
+                    }
+                    catch (e) {
+                        // удалено чисто
+                        messagesArrayLength = messagesArray.length;
+                        for (var i = 0; i < messagesArrayLength; i++) {
+                            if (messagesArray[i].id == message.id) {
+                                messagesArray.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
                 }
 
             }
         };
 
-        base.saveEditedMessage = function(message,isTopic){
-          if(isTopic){
+        base.saveEditedMessage = function(message,isTopic,isDialog){
+           if(isDialog){
+              dialogClient.updateDialogMessage(message.id,message.content);
+          }else if(isTopic){
               //var editedTopic = new com.vmesteonline.be.messageservice.Topic();
               messageClient.postTopic(message);
           }else{
@@ -2349,6 +2369,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 var tempMessage = dialogClient.postMessage($stateParams.dialogId, newDialogMessage.content,attach);
                 newDialogMessage.images = tempMessage.images;
                 newDialogMessage.documents = tempMessage.documents;
+                newDialogMessage.id = tempMessage.id;
 
                 dialog.privateMessages.unshift(newDialogMessage);
 

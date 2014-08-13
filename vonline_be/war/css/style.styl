@@ -373,6 +373,8 @@ transform()
       .plus-minus
         font-size 30px
         margin-top 5px
+        position relative
+        z-index 2
       img
         width 95px
       .topic-author
@@ -587,12 +589,12 @@ transform()
     font-size 16px
   .message-delete-link
     font-size 20px
-    margin-top -11px
+    margin-top -4px
+    line-height 20px
     &:hover
       color #ff0000
       text-decoration none
   .fa-pencil
-    margin-top -2px
     margin-right 8px
     &:hover
       color #438eb9
@@ -756,9 +758,6 @@ transform()
     margin 0 0 0 30px
     padding-top 15px
     padding-right 0
-  .message-textarea
-    width 100%
-    overflow hidden
   .lenta-item-bottom
     position absolute
     bottom 3px
@@ -766,11 +765,19 @@ transform()
     margin-left -95px
     padding-left 95px
     padding-right 15px
-  .edit-message
-    .message-textarea
-      margin 5px 0
-    .btn
-      border-width 2px
+
+.message-textarea
+  width 100%
+  overflow hidden
+
+.edit-message
+  .btn
+    border-width 2px
+  input
+    width 50%
+
+.edit-textarea
+  margin 5px 0
 
 .fa-star
 .fa-heart
@@ -881,7 +888,11 @@ transform()
     position relative
   .message-bottom
     position absolute
-    bottom 5px
+    bottom 3px
+    width 100%
+    margin-left -95px
+    padding-left 95px
+    padding-right 15px
   .poll
     padding-bottom 30px
     .radio .lbl:before
@@ -921,6 +932,9 @@ transform()
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
+    .private-message-left
+      width 100%
+      padding-right 100px
     .private-message-ava
       img
         width 70px
