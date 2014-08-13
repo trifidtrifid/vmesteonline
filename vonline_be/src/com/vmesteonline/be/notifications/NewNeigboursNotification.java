@@ -9,6 +9,8 @@ import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -33,7 +35,7 @@ public class NewNeigboursNotification extends Notification {
 			Map< VoUserGroup, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 			// create message for each user
-			String body = "Новые соседи\n\n";
+			String body = "Новые соседи<br/><br/>";
 			
 			for (VoUser u : users) {
 				Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
@@ -64,7 +66,7 @@ public class NewNeigboursNotification extends Notification {
 	}
 	
 	private String createNeighborsContent(PersistenceManager pm, VoUserGroup ug, Set<VoUser> neghbors) {
-		String groupContent = "В группе '" + ug.getName() + "' подкрепление =====\n";
+		String groupContent = "В группе '" + ug.getName() + "' подкрепление <br/>";
 		for (VoUser vuc : neghbors) {
 			String contactTxt = createUserContactContent(pm, ug, vuc);
 			groupContent += contactTxt;
@@ -75,7 +77,7 @@ public class NewNeigboursNotification extends Notification {
 	private String createUserContactContent(PersistenceManager pm, VoUserGroup ug, VoUser vuc) {
 		
 		VoPostalAddress address = vuc.getAddress();
-		String contactTxt = vuc.getName() + " " + vuc.getLastName();
+		String contactTxt = "<a href=\"http://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
 		
 		if( ug.getRadius() == 0 ) 
 			contactTxt += " живет в квартире " + address.getFlatNo();
@@ -90,7 +92,7 @@ public class NewNeigboursNotification extends Notification {
 			}
 		}
 	
-		contactTxt += "\n--------------------------------------------------------\n\n";
+		contactTxt += "<br/>";
 		return contactTxt;
 	}
 

@@ -12,6 +12,8 @@ import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.MessageServiceImpl;
 import com.vmesteonline.be.NotificationFreq;
@@ -87,7 +89,7 @@ public class NewTopicsNotification extends Notification {
 	}
 
 	private String createGroupContent(PersistenceManager pm, VoUserGroup ug, Set<VoTopic> topics) {
-		String groupContent = "Пишут в группе '" + ug.getName() + "=====<br/>";
+		String groupContent = "Пишут в группе '" + ug.getName() + "<br/>";
 		Set<VoTopic> orderedTopics = new TreeSet<VoTopic>( topicCreatedDateComp );
 		for (VoTopic tpc : orderedTopics) {
 			String topicTxt = createTopicContent(pm, ug, tpc);
@@ -98,9 +100,9 @@ public class NewTopicsNotification extends Notification {
 
 	private String createTopicContent(PersistenceManager pm, VoUserGroup ug, VoTopic tpc) {
 		String topicTxt = new Date(((long) tpc.getCreatedAt()) * 1000L) + " " + pm.getObjectById(VoUser.class, tpc.getAuthorId()).getName();
-		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "===== <br/>";
-		topicTxt += tpc.getContent().substring( 0, Math.min(255, tpc.getContent().length()));
-		if( tpc.getContent().length() > 255 ) topicTxt += "...";
+		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "<br/>";
+		topicTxt += StringEscapeUtils.escapeHtml4(tpc.getContent().substring( 0, Math.min(255, tpc.getContent().length())));
+		if( tpc.getContent().length() > 255 ) topicTxt += "<a href=\"http://"+host+"/wall-single-"+tpc.getId()+"\">...</a>";
 		topicTxt += "<br/>--------------------------------------------------------<br/><br/>";
 		return topicTxt;
 	}

@@ -109,19 +109,21 @@ public class VoDialog {
 				return -Integer.compare(o1.getCreateDate(), o2.getCreateDate());
 			}});
 		msgsSorted.addAll(msgs);
+		if( (lastCount<=0 || lastCount>=msgsSorted.size())&& lastLoadedId == 0)
+			return msgsSorted;
+		
+		List<VoDialogMessage> listPart = new ArrayList<VoDialogMessage>();
+		Iterator<VoDialogMessage> mi = msgsSorted.iterator();
 		boolean startAdd = lastLoadedId == 0 ? true : false; 
-		if( lastCount>0 && msgsSorted.size() > lastCount ){
-			Iterator<VoDialogMessage> mi = msgsSorted.iterator();
-			while( lastCount-- != 0 ) {
-				mi.next();
-			}
+		while( mi.hasNext() && listPart.size()<lastCount){
+			
 			if( startAdd ) {
-				msgsSorted.tailSet(mi.next());
+				listPart.add(mi.next());
 				
 			} else if( lastLoadedId == mi.next().getId() )
 				startAdd = true;
 		}
-		return msgsSorted;
+		return listPart;
 	}
 
 	public VoDialogMessage postMessage(long currentUserId, String content, List<Attach> attachs, PersistenceManager pm) {
