@@ -659,6 +659,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 			}
 			return impScore;
+		} catch(JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No message found by ID:"+messageId);
 		} finally {
 			pm.close();
 		}
@@ -676,6 +678,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markLikes(getCurrentUser(), author, pm);
+		} catch(JDOObjectNotFoundException onfe){
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No message found by ID:"+messageId);
 		} finally {
 			pm.close();
 		}

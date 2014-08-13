@@ -3,7 +3,7 @@
   <cron>
     <url>/tasks/notification?rt=news</url>
     <description>Send news to all subscribed users</description>
-    <schedule>every day 14:20</schedule>
+    <schedule>every day 16:40</schedule>
     <timezone>Europe/Moscow</timezone>
   </cron>
 </cronentries>
