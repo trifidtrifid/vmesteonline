@@ -72,11 +72,12 @@
                             </a>
 
                             <div class="body" ng-switch on="wallItem.topic.metaType">
+                                <div class="message-tools pull-right">
+                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true)">&times;</a>
+                                    <a href="#" title="Редактировать" class="fa fa-pencil pull-right"></a>
+                                </div>
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallItem.tagColor">{{wallItem.label}}</span>
-                                <a class="fa fa-star pull-right" ng-class="{'important' : wallItem.topic.message.important == 1}" title='{{ wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"></a>
-                                <a class="fa fa-heart pull-right" ng-class="{'isLike' : wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallItem.topic.message)"></a>
-                                <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
@@ -133,7 +134,12 @@
 
                                 </div>
 
+
                                 <div class="lenta-item-bottom">
+                                    <a class="pull-right important-status" ng-class="{'important' : wallItem.topic.message.important == 1}" title='{{ wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"><i class="fa fa-star"></i> Важно</a>
+                                    <a class="pull-right like-status" ng-class="{'isLike' : wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallItem.topic.message)"><i class="fa fa-heart"></i> Нравится</a>
+                                    <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
+
                                     <span >{{wallItem.topic.message.createdEdit}}</span>
                                     <a href="#" ng-click="lenta.showAnswerInput($event,wallItem)">Комментировать</a>
                                 </div>
