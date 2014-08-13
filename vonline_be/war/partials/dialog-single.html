@@ -41,14 +41,25 @@
             </div>
 
             <div class="private-message-single"  ng-repeat="message in dialog.privateMessages">
-                <div class="pull-right">{{message.created*1000 | date:'HH:mm dd.MM.yy'}}</div>
-                <div class="private-message-left pull-left">
+                <div class="pull-right">
+                    <div class="message-tools clearfix" ng-show="message.author == base.me.id">
+                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,dialog.privateMessages,false,false,true)">&times;</a>
+                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                    </div>
+                    {{message.created*1000 | date:'HH:mm dd.MM.yy'}}
+                </div>
+                <div class="private-message-left">
                     <div class="private-message-ava pull-left">
                         <div class="avatar short" style="background-image: url({{message.authorProfile.userInfo.avatar}})"></div>
                     </div>
                     <div class="private-message-author">
                         <div><a ui-sref="profile({ userId : {{ message.authorProfile.userInfo.userId }} })">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div> <!--  -->
-                        <p>{{message.content}}</p>
+                        <p ng-hide="message.isEdit">{{message.content}}</p>
+
+                        <div class="edit-message" ng-show="message.isEdit">
+                            <textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
+                            <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,true,true)" href="#">Сохранить</a> <!--  -->
+                        </div>
 
                         <div class="attached">
                             <a href="{{image.URL}}" class="fancybox" ng-click="$event.preventDefault()" rel="attached-group-dialog-{{message.id}}" ng-repeat="image in message.images">

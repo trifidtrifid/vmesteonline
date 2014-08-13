@@ -409,6 +409,8 @@ h1 {
 .topic-item .topic-descr .topic-left .plus-minus {
   font-size: 30px;
   margin-top: 5px;
+  position: relative;
+  z-index: 2;
 }
 .topic-item .topic-descr .topic-left img {
   width: 95px;
@@ -662,14 +664,14 @@ h1 {
 }
 .message-tools .message-delete-link {
   font-size: 20px;
-  margin-top: -11px;
+  margin-top: -4px;
+  line-height: 20px;
 }
 .message-tools .message-delete-link:hover {
   color: #f00;
   text-decoration: none;
 }
 .message-tools .fa-pencil {
-  margin-top: -2px;
   margin-right: 8px;
 }
 .message-tools .fa-pencil:hover {
@@ -863,10 +865,6 @@ h1 {
   padding-top: 15px;
   padding-right: 0;
 }
-.lenta-item .message-textarea {
-  width: 100%;
-  overflow: hidden;
-}
 .lenta-item .lenta-item-bottom {
   position: absolute;
   bottom: 3px;
@@ -874,6 +872,19 @@ h1 {
   margin-left: -95px;
   padding-left: 95px;
   padding-right: 15px;
+}
+.message-textarea {
+  width: 100%;
+  overflow: hidden;
+}
+.edit-message .btn {
+  border-width: 2px;
+}
+.edit-message input {
+  width: 50%;
+}
+.edit-textarea {
+  margin: 5px 0;
 }
 .fa-star,
 .fa-heart {
@@ -1002,7 +1013,11 @@ h1 {
 }
 .talks-block .message-bottom {
   position: absolute;
-  bottom: 5px;
+  bottom: 3px;
+  width: 100%;
+  margin-left: -95px;
+  padding-left: 95px;
+  padding-right: 15px;
 }
 .talks-block .poll {
   padding-bottom: 30px;
@@ -1059,6 +1074,11 @@ h1 {
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
   border-top: 1px solid #ccc;
+}
+.dialog .private-message-single .private-message-left,
+.private-messages .private-message-single .private-message-left {
+  width: 100%;
+  padding-right: 100px;
 }
 .dialog .private-message-single .private-message-ava img,
 .private-messages .private-message-single .private-message-ava img {
@@ -1187,7 +1207,7 @@ h1 {
 }
 .user-body .user-body-left .rating .rating-item {
   display: inline-block;
-  margin: 0 15px;
+  margin: 0 10px;
 }
 .user-body .user-body-left .rating .rating-item a {
   display: inline-block;

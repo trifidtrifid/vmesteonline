@@ -20,18 +20,27 @@
                                 </div>
                                 <div class="topic-right" ng-switch on="talks.fullTalkTopic.metaType">
 
+                                    <div class="message-tools pull-right" ng-show="talks.fullTalkTopic.userInfo.id == base.me.id">
+                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(talks.fullTalkTopic,talks.topics,true,false)">&times;</a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit(talks.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
+                                    </div>
 
                                     <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="talks.fullTalkTopic.tagColor">{{talks.fullTalkTopic.label}}</span>
-                                    <a class="fa fa-star pull-right" ng-class="{'important' : talks.fullTalkTopic.message.important == 1}" title='{{ talks.fullTalkTopic.message.importantText }}' href="#" ng-click="base.markImportant($event,talks.fullTalkTopic.message)"></a>
-                                    <a class="fa fa-heart pull-right" ng-class="{'isLike' : talks.fullTalkTopic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,talks.fullTalkTopic.message)"></a>
-                                    <div class="like-help" id="like-help-{{talks.fullTalkTopic.message.id}}">сообщение уже отмечено</div>
 
+                                    <div ng-hide="talks.fullTalkTopic.isEdit">
                                         <h2>
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                    <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+                                        <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+                                    </div>
+
+                                    <div class="edit-message" ng-show="talks.fullTalkTopic.isEdit">
+                                        <input type="text" ng-model="talks.fullTalkTopic.subject"/>
+                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="talks.fullTalkTopic.message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(talks.fullTalkTopic,true)" href="#">Сохранить</a> <!--  -->
+                                    </div>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
@@ -82,6 +91,11 @@
                                     </div>
 
                                         <div class="message-bottom">
+
+                                            <a class="pull-right important-status" ng-class="{'important' : talks.fullTalkTopic.message.important == 1}" title='{{ talks.fullTalkTopic.message.importantText }}' href="#" ng-click="base.markImportant($event,talks.fullTalkTopic.message)"><i class="fa fa-star"></i> Важно</a>
+                                            <a class="pull-right like-status" ng-class="{'isLike' : talks.fullTalkTopic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,talks.fullTalkTopic.message)"><i class="fa fa-heart"></i> Нравится</a>
+                                            <div class="like-help" id="like-help-{{talks.fullTalkTopic.message.id}}">сообщение уже отмечено</div>
+
                                             <span class="topic-header-date">{{talks.fullTalkTopic.message.createdEdit}}</span>
                                             <a class="answer-link" href="#" ng-click="talks.showTopicAnswerInput($event,talks.fullTalkTopic)">Ответить</a>
                                         </div>
@@ -135,8 +149,18 @@
                                             </div>
                                         </div>
                                         <div class="topic-right">
+                                            <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
+                                                <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,talks.fullTalkFirstMessages,false,false)">&times;</a>
+                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage)" class="fa fa-pencil pull-right"></a>
+                                            </div>
+
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
-                                            <p>{{firstMessage.content}}</p>
+                                            <p ng-hide="firstMessage.isEdit">{{firstMessage.content}}</p>
+
+                                            <div class="edit-message" ng-show="firstMessage.isEdit">
+                                                <textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> <!--  -->
+                                            </div>
 
                                             <div class="attached">
                                                 <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
@@ -203,8 +227,19 @@
                                                     </div>
                                                 </div>
                                                 <div class="topic-right">
+
+                                                    <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
+                                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,talks.fullTalkMessages[firstMessage.id],false,false)">&times;</a>
+                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                                                    </div>
+
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
-                                                    <p>{{message.content}}</p>
+                                                    <p ng-hide="message.isEdit">{{message.content}}</p>
+
+                                                    <div class="edit-message" ng-show="message.isEdit">
+                                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> <!--  -->
+                                                    </div>
 
                                                     <div class="attached">
                                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
