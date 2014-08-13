@@ -217,7 +217,9 @@ public class Defaults {
 			for (String uname : unames) {
 				try {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
-					pm.getObjectById(VoUser.class, uid).setEmailConfirmed(true);
+					VoUser user = pm.getObjectById(VoUser.class, uid);
+					user.setEmailConfirmed(true);
+					pm.makePersistent(user);
 					uids.add(uid);
 					
 				} catch (Exception e) {

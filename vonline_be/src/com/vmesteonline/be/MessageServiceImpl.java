@@ -22,6 +22,7 @@ import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.data.VoDatastoreHelper;
+import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoPoll;
@@ -330,7 +331,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
+					/*VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
 					if (voUserTopic == null) {
 						voUserTopic = new VoUserTopic();
 
@@ -349,9 +350,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					}
 
-					tpc.usertTopic = voUserTopic.getUserTopic();
+					tpc.usertTopic = voUserTopic.getUserTopic();*/
+					
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-					tpc.setMessageNum(voUserTopic.getMessagesCount());
+					tpc.setMessageNum( voTopic.getMessageNum()/*voUserTopic.getMessagesCount()*/);
 					mlp.addToTopics(tpc);
 				}
 			} catch (Exception e) {
@@ -579,7 +581,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
-			pm.makePersistent(storedMsg);
+
 		} catch( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs,
 					"Message not found");
@@ -589,6 +591,29 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	private void updateTopicMessage(VoTopic topic, Message msg, PersistenceManager pm) throws InvalidOperation {
+
+		int now = (int) (System.currentTimeMillis() / 1000);
+	
+		if (topic.getAuthorId().getId() != getCurrentUserId(pm) )
+			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "User is not author of message");
+
+
+		/* Check if content changed, then update edit date */
+		if (!topic.getContent().equals( msg.getContent())) {
+			//int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
+			topic.setEditedAt(now);
+			topic.setLastUpdate(now);
+			topic.setContent(msg.getContent());
+		}
+
+		if (topic.getAuthorId().getId() != msg.getAuthorId() || topic.getCreatedAt() != msg.getCreated() || topic.getType() != msg.getType())
+			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
+					"Parameters: topic, author, recipient, createdAt, type could not be changed!");
+
+		pm.makePersistent(topic);
+	
+	}
 	private void updateTopic(Topic topic) throws InvalidOperation {
 
 		PersistenceManagerFactory pmf = PMF.get();
@@ -609,7 +634,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
 							+ topic.getRubricId());
 				}
-			updateMessage( topic.getMessage() );
+			updateTopicMessage( theTopic, topic.getMessage(), pm );
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
@@ -620,6 +645,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	
 	protected JDBCConnector con;
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
 
