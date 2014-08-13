@@ -875,6 +875,12 @@ h1 {
   padding-left: 95px;
   padding-right: 15px;
 }
+.lenta-item .edit-message .message-textarea {
+  margin: 5px 0;
+}
+.lenta-item .edit-message .btn {
+  border-width: 2px;
+}
 .fa-star,
 .fa-heart {
   color: #ccc;

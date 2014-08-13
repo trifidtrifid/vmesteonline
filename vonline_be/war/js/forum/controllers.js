@@ -162,9 +162,25 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             if(isTopic){
                 var deleteResult = messageClient.deleteTopic(message.id);
+                //alert('0');
                 if(!deleteResult){
-                    // удалено
+                    // удалено чисто
                     var messagesArrayLength = messagesArray.length;
+                    for(var i = 0; i < messagesArrayLength; i++){
+                        if(messagesArray[i].topic.id == message.id){
+                            messagesArray.splice(i,1);
+                        }
+                    }
+
+                }else{
+                    message.message.content = "Тема удалена пользователем";
+                }
+            }else{
+                deleteResult = messageClient.deleteMessage(message.id);
+                //alert('0');
+                if(!deleteResult){
+                    // удалено чисто
+                    messagesArrayLength = messagesArray.length;
                     for(var i = 0; i < messagesArrayLength; i++){
                         if(messagesArray[i].topic.id == message.id){
                             messagesArray.splice(i,1);
@@ -174,12 +190,22 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }else{
                     message.message.content = "Сообщение удалено пользователем";
                 }
-            }else{
-                messageClient.deleteMessage(message.id);
+
             }
+        };
 
+        base.saveEditedMessage = function(message,isTopic){
+          if(isTopic){
+              //var editedTopic = new com.vmesteonline.be.messageservice.Topic();
+              messageClient.postTopic(message);
+          }else{
+              messageClient.postMessage(message);
+          }
+            message.isEdit = false;
+        };
 
-
+        base.setEdit = function(message){
+            (message.isEdit) ? message.isEdit = false : message.isEdit = true;
         };
 
         base.pageTitle = "Новости";
@@ -580,6 +606,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 wallItems[i].answerShow = false;
                 wallItems[i].isFocus = false;
                 wallItems[i].isCreateCommentError = false;
+                wallItems[i].topic.isEdit = false;
+                wallItems[i].topic.isFocus = false;
 
                 //  wallItems[i].topic.message.groupId сейчас не задана почему-то
                 wallItems[i].label = getLabel(lenta.groups,wallItems[i].topic.groupType);
@@ -611,6 +639,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     for(var j = 0; j < mesLen; j++){
                         wallItems[i].messages[j].createdEdit = getTiming(wallItems[i].messages[j].created);
                         wallItems[i].messages[j].authorName = getAuthorName(wallItems[i].messages[j].userInfo);
+                        wallItems[i].messages[j].isEdit = false;
                     }
 
 
@@ -625,7 +654,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
 
         lenta.addMoreItems = function(){
-            //alert(lastLoadedId);
             if(wallItemsLength == 10) {
                 var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
                 if (buff) {
@@ -635,7 +663,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     if (buffLength != 0) {
 
                         lastLoadedId = buff[buffLength - 1].topic.id;
-                        //alert(lastLoadedId+" "+buff[0].topic.id);
                         initWallItem(buff);
 
                         lenta.wallItems = lenta.wallItems.concat(buff);

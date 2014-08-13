@@ -74,7 +74,7 @@
                             <div class="body" ng-switch on="wallItem.topic.metaType">
                                 <div class="message-tools pull-right">
                                     <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true)">&times;</a>
-                                    <a href="#" title="Редактировать" class="fa fa-pencil pull-right"></a>
+                                    <a href="#" title="Редактировать" ng-click="base.setEdit(wallItem.topic)" class="fa fa-pencil pull-right"></a>
                                 </div>
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallItem.tagColor">{{wallItem.label}}</span>
@@ -83,7 +83,12 @@
                                     <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
                                 </div>
 
-                                <div class="text" ng-switch-when="message" >{{wallItem.topic.message.content}}</div>
+                                <div class="text" ng-switch-when="message" ng-hide="wallItem.topic.isEdit">{{wallItem.topic.message.content}}</div>
+
+                                <div class="edit-message" ng-show="wallItem.topic.isEdit">
+                                    <textarea class="no-resize message-textarea" ng-model="wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallItem.topic.isEdit"></textarea>
+                                    <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallItem.topic,true)">Сохранить</a>
+                                </div>
 
                                 <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
                                     <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
@@ -95,7 +100,7 @@
                                 </div>
 
                                 <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" >
-                                    <div class="text" >{{wallItem.topic.message.content}}</div>
+                                    <div class="text">{{wallItem.topic.message.content}}</div>
 
                                     <h5>{{wallItem.topic.poll.subject}}</h5>
 
@@ -155,11 +160,19 @@
                                 </a>
 
                                 <div class="body">
+                                    <div class="message-tools pull-right">
+                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallItem.messages,false)">&times;</a>
+                                        <a href="#" title="Редактировать" ng-click="wallMessage.isEdit = true" class="fa fa-pencil pull-right"></a>
+                                    </div>
 
                                     <div class="name">
                                         <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.authorName}}</a>
                                     </div>
-                                    <div class="text" >{{wallMessage.content}}</div>
+                                    <div class="text" ng-hide="wallMessage.isEdit">{{wallMessage.content}}</div>
+                                    <div class="edit-message" ng-show="wallMessage.isEdit">
+                                        <textarea class="no-resize message-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                        <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>
+                                    </div>
 
                                     <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
                                         <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
