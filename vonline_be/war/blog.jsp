@@ -330,7 +330,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             var comments = $(this).closest('.post').find('.dialogs');
             comments.append(newCommentHTML);
 
-            document.location.replace('/');
+            //document.location.replace('/');
 
             /*initNoLink($(this).closest('.post'));
             initAnswerToComment($('.new .lenta-item-bottom a'));
