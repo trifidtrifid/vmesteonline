@@ -135,6 +135,30 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             base.oldTextLength = textLength;
         };
 
+        base.deleteMessage = function(message,messagesArray,isTopic){
+
+            if(isTopic){
+                var deleteResult = messageClient.deleteTopic(message.id);
+                if(!deleteResult){
+                    // удалено
+                    var messagesArrayLength = messagesArray.length;
+                    for(var i = 0; i < messagesArrayLength; i++){
+                        if(messagesArray[i].topic.id == message.id){
+                            messagesArray.splice(i,1);
+                        }
+                    }
+
+                }else{
+                    message.message.content = "Сообщение удалено пользователем";
+                }
+            }else{
+                messageClient.deleteMessage(message.id);
+            }
+
+
+
+        };
+
         base.pageTitle = "Новости";
 
         base.user = userClient.getShortUserInfo();

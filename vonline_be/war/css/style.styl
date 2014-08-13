@@ -580,9 +580,34 @@ transform()
   .message-input-bottom
     margin-top 15px
 
+.message-tools
+  margin-left 10%
+  a
+    color #CCCCCC
+    font-size 16px
+  .message-delete-link
+    font-size 20px
+    margin-top -11px
+    &:hover
+      color #ff0000
+      text-decoration none
+  .fa-pencil
+    margin-top -2px
+    margin-right 8px
+    &:hover
+      color #438eb9
+
 .hashtag
   margin-left 10px
   margin-right 10px
+
+.label-lg
+  height 18px
+  padding 0.2em 0.6em 0.2em
+  line-height 1
+
+.label-lg.arrowed:before
+  border-width 9px 6px
 
 .attach-area
   .attach-item
@@ -737,22 +762,34 @@ transform()
   .lenta-item-bottom
     position absolute
     bottom 3px
+    width 100%
+    margin-left -95px
+    padding-left 95px
+    padding-right 15px
 
 .fa-star
 .fa-heart
   color #CCCCCC
   font-size 16px
-  margin-right 10px
+  margin-right 3px
   margin-top 4px
+
+.important-status
   &:hover
   &.important
-    color #ffea4a
+    .fa-star
+      color #ffea4a
 
-.fa-heart
-  margin-right 5px
+.like-status
+  margin-right 10px
   &:hover
   &.isLike
-    color #ff0000
+    .fa-heart
+      color #ff0000
+
+.important-status:hover
+.like-status:hover
+  text-decoration none
 
 .like-help
   position absolute
