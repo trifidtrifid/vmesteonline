@@ -90,7 +90,7 @@
 
         transport = new Thrift.Transport("/thrift/UserService");
         protocol = new Thrift.Protocol(transport);
-        var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+        var userClient = new com.vmesteonline.be.userservice.UserServiceClient(protocol);
 
         $('.send-post').click(function(e){
             e.preventDefault();
