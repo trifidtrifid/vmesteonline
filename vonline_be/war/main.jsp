@@ -90,7 +90,7 @@
     <script src="js/forum/angular/ng-infinite-scroll.js"></script>
 
 </head>
-<body ng-controller="baseController as base" ng-cloak ng-class="{'height100': !base.isFooterBottom}">
+<body ng-controller="baseController as base" ng-cloak ng-class="{'height100': !base.isFooterBottom}"> <!--  -->
 <div class="navbar navbar-default" id="navbar">
     <script type="text/javascript">
         try {
