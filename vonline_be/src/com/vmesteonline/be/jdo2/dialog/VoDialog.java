@@ -115,12 +115,8 @@ public class VoDialog {
 		List<VoDialogMessage> listPart = new ArrayList<VoDialogMessage>();
 		Iterator<VoDialogMessage> mi = msgsSorted.iterator();
 		boolean startAdd = lastLoadedId == 0 ? true : false; 
-		
-		while( mi.hasNext()){
+		while( mi.hasNext() && listPart.size()<lastCount){
 			
-			while( lastCount-- != 0 ) {
-				mi.next();
-			}
 			if( startAdd ) {
 				listPart.add(mi.next());
 				
