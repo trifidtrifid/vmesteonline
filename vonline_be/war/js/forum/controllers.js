@@ -1098,7 +1098,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 talk.isCreateFirstMessageError = false;
 
                 if(talk.fullTalkFirstMessages){
-                    if(talk.fullTalkFirstMessages.length < 10 || (buff === null || buff.length == 0) ){
+                    if(talk.fullTalkFirstMessages.length < 10 ){
                         talk.fullTalkFirstMessages.push(newMessage);
                     }
                 } else{
@@ -1555,7 +1555,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 advert.isCreateFirstMessageError = false;
 
                 if(advert.fullAdvertFirstMessages){
-                    if(advert.fullAdvertFirstMessages.length < 10 || (buff === null || buff.length == 0) ){
+                    if(advert.fullAdvertFirstMessages.length < 10){
                         advert.fullAdvertFirstMessages.push(newMessage);
                     }
                 } else{
@@ -2293,8 +2293,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         if ($stateParams.dialogId){
             dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
             var privateMessagesLength = dialog.privateMessages.length;
-                dialog.authors = [];
-            //alert(privateMessagesLength);
 
             if(privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength-1].id;
 
@@ -2334,13 +2332,17 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
 
         dialog.addMoreItems = function(){
-            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId).messages;
+            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
             if(buff) {
                 var buffLength = buff.length;
 
                 if(buffLength != 0) {
 
                     lastLoadedId = buff[buffLength - 1].id;
+
+                    for(var i = 0; i < buffLength; i++){
+                        buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
+                    }
 
                     dialog.privateMessages = dialog.privateMessages.concat(buff);
                 }
