@@ -79,7 +79,7 @@
                                 </div>
 
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                        ng-class="wallItem.tagColor">{{wallItem.label}} {{wallItem.topic.rubricId}}</span>
+                                        ng-class="wallItem.tagColor">{{wallItem.label}}</span>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
@@ -162,7 +162,7 @@
                                 </a>
 
                                 <div class="body">
-                                    <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
+                                    <div class="message-tools pull-right" ng-show="wallMessage.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallItem.messages,false)">&times;</a>
                                         <a href="#" title="Редактировать" ng-click="wallMessage.isEdit = true" class="fa fa-pencil pull-right"></a>
                                     </div>

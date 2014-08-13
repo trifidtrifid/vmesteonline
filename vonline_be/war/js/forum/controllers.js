@@ -195,7 +195,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }else {
                     try {
                         deleteResult = messageClient.deleteMessage(message.id);
-                        message.message.content = "Сообщение удалено пользователем";
+                        message.content = "Сообщение удалено пользователем";
                     }
                     catch (e) {
                         // удалено чисто
