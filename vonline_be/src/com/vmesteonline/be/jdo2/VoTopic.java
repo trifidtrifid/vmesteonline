@@ -59,6 +59,9 @@ public class VoTopic extends VoBaseMessage {
 			VoPoll voPoll = pm.getObjectById(VoPoll.class, pollId);
 			tpc.poll = voPoll.getPoll(userId);
 		}
+		
+		tpc.setRubricId( rubricId );
+		
 		return tpc;
 
 	}

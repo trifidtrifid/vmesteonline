@@ -409,6 +409,8 @@ h1 {
 .topic-item .topic-descr .topic-left .plus-minus {
   font-size: 30px;
   margin-top: 5px;
+  position: relative;
+  z-index: 2;
 }
 .topic-item .topic-descr .topic-left img {
   width: 95px;
@@ -653,9 +655,39 @@ h1 {
 .message-input .message-input-bottom {
   margin-top: 15px;
 }
+.message-tools {
+  margin-left: 10%;
+}
+.message-tools a {
+  color: #ccc;
+  font-size: 16px;
+}
+.message-tools .message-delete-link {
+  font-size: 20px;
+  margin-top: -4px;
+  line-height: 20px;
+}
+.message-tools .message-delete-link:hover {
+  color: #f00;
+  text-decoration: none;
+}
+.message-tools .fa-pencil {
+  margin-right: 8px;
+}
+.message-tools .fa-pencil:hover {
+  color: #438eb9;
+}
 .hashtag {
   margin-left: 10px;
   margin-right: 10px;
+}
+.label-lg {
+  height: 18px;
+  padding: 0.2em 0.6em 0.2em;
+  line-height: 1;
+}
+.label-lg.arrowed:before {
+  border-width: 9px 6px;
 }
 .attach-area .attach-item {
   display: inline-block;
@@ -833,33 +865,48 @@ h1 {
   padding-top: 15px;
   padding-right: 0;
 }
-.lenta-item .message-textarea {
-  width: 100%;
-  overflow: hidden;
-}
 .lenta-item .lenta-item-bottom {
   position: absolute;
   bottom: 3px;
+  width: 100%;
+  margin-left: -95px;
+  padding-left: 95px;
+  padding-right: 15px;
+}
+.message-textarea {
+  width: 100%;
+  overflow: hidden;
+}
+.edit-message .btn {
+  border-width: 2px;
+}
+.edit-message input {
+  width: 50%;
+}
+.edit-textarea {
+  margin: 5px 0;
 }
 .fa-star,
 .fa-heart {
   color: #ccc;
   font-size: 16px;
-  margin-right: 10px;
+  margin-right: 3px;
   margin-top: 4px;
 }
-.fa-star:hover,
-.fa-heart:hover,
-.fa-star.important,
-.fa-heart.important {
+.important-status:hover .fa-star,
+.important-status.important .fa-star {
   color: #ffea4a;
 }
-.fa-heart {
-  margin-right: 5px;
+.like-status {
+  margin-right: 10px;
 }
-.fa-heart:hover,
-.fa-heart.isLike {
+.like-status:hover .fa-heart,
+.like-status.isLike .fa-heart {
   color: #f00;
+}
+.important-status:hover,
+.like-status:hover {
+  text-decoration: none;
 }
 .like-help {
   position: absolute;
@@ -966,7 +1013,11 @@ h1 {
 }
 .talks-block .message-bottom {
   position: absolute;
-  bottom: 5px;
+  bottom: 3px;
+  width: 100%;
+  margin-left: -95px;
+  padding-left: 95px;
+  padding-right: 15px;
 }
 .talks-block .poll {
   padding-bottom: 30px;
@@ -1023,6 +1074,11 @@ h1 {
 .dialog .private-message-single:first-child,
 .private-messages .private-message-single:first-child {
   border-top: 1px solid #ccc;
+}
+.dialog .private-message-single .private-message-left,
+.private-messages .private-message-single .private-message-left {
+  width: 100%;
+  padding-right: 100px;
 }
 .dialog .private-message-single .private-message-ava img,
 .private-messages .private-message-single .private-message-ava img {
@@ -1151,7 +1207,7 @@ h1 {
 }
 .user-body .user-body-left .rating .rating-item {
   display: inline-block;
-  margin: 0 15px;
+  margin: 0 10px;
 }
 .user-body .user-body-left .rating .rating-item a {
   display: inline-block;

@@ -51,20 +51,25 @@
 .user-descr .text-area .user-body {
   margin: 15px 0 0 0;
   line-height: 26px;
+  overflow: auto;
 }
 .user-descr .text-area .user-body .profile-item {
   border-bottom: 1px solid #cecece;
   padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 .user-descr .text-area .user-body .profile-item.last {
   border-bottom: 0;
 }
 .user-descr .text-area .user-body h3 {
   font-size: 20px;
+  margin-top: 0;
+}
+.user-descr .text-area .user-body h4 {
+  font-size: 16px;
 }
 .user-descr .text-area .user-body span {
   display: inline-block;
-  font-weight: bold;
 }
 .user-descr .text-area .user-body .user-addresses {
   padding-bottom: 30px;

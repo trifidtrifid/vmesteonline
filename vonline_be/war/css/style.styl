@@ -373,6 +373,8 @@ transform()
       .plus-minus
         font-size 30px
         margin-top 5px
+        position relative
+        z-index 2
       img
         width 95px
       .topic-author
@@ -580,9 +582,34 @@ transform()
   .message-input-bottom
     margin-top 15px
 
+.message-tools
+  margin-left 10%
+  a
+    color #CCCCCC
+    font-size 16px
+  .message-delete-link
+    font-size 20px
+    margin-top -4px
+    line-height 20px
+    &:hover
+      color #ff0000
+      text-decoration none
+  .fa-pencil
+    margin-right 8px
+    &:hover
+      color #438eb9
+
 .hashtag
   margin-left 10px
   margin-right 10px
+
+.label-lg
+  height 18px
+  padding 0.2em 0.6em 0.2em
+  line-height 1
+
+.label-lg.arrowed:before
+  border-width 9px 6px
 
 .attach-area
   .attach-item
@@ -731,28 +758,50 @@ transform()
     margin 0 0 0 30px
     padding-top 15px
     padding-right 0
-  .message-textarea
-    width 100%
-    overflow hidden
   .lenta-item-bottom
     position absolute
     bottom 3px
+    width 100%
+    margin-left -95px
+    padding-left 95px
+    padding-right 15px
+
+.message-textarea
+  width 100%
+  overflow hidden
+
+.edit-message
+  .btn
+    border-width 2px
+  input
+    width 50%
+
+.edit-textarea
+  margin 5px 0
 
 .fa-star
 .fa-heart
   color #CCCCCC
   font-size 16px
-  margin-right 10px
+  margin-right 3px
   margin-top 4px
+
+.important-status
   &:hover
   &.important
-    color #ffea4a
+    .fa-star
+      color #ffea4a
 
-.fa-heart
-  margin-right 5px
+.like-status
+  margin-right 10px
   &:hover
   &.isLike
-    color #ff0000
+    .fa-heart
+      color #ff0000
+
+.important-status:hover
+.like-status:hover
+  text-decoration none
 
 .like-help
   position absolute
@@ -839,7 +888,11 @@ transform()
     position relative
   .message-bottom
     position absolute
-    bottom 5px
+    bottom 3px
+    width 100%
+    margin-left -95px
+    padding-left 95px
+    padding-right 15px
   .poll
     padding-bottom 30px
     .radio .lbl:before
@@ -879,6 +932,9 @@ transform()
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
+    .private-message-left
+      width 100%
+      padding-right 100px
     .private-message-ava
       img
         width 70px
@@ -985,7 +1041,7 @@ transform()
       z-index 2*/
       .rating-item
         display inline-block
-        margin 0 15px
+        margin 0 10px
         a
           display inline-block
           margin-right 5px
