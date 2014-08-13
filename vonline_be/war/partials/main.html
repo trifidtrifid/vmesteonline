@@ -162,7 +162,7 @@
                                 </a>
 
                                 <div class="body">
-                                    <div class="message-tools pull-right">
+                                    <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallItem.messages,false)">&times;</a>
                                         <a href="#" title="Редактировать" ng-click="wallMessage.isEdit = true" class="fa fa-pencil pull-right"></a>
                                     </div>
