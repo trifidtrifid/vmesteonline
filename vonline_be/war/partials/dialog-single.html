@@ -1,14 +1,12 @@
 
-<section class="dialog page">
+<section class="dialog page" infinite-scroll="dialog.addMoreItems()">
         <div class="clearfix">
             <div class="dialog-send">
                 <div class="dialog-send-left pull-left">
                     <div class="avatar short2" style="background-image: url({{base.me.avatar}})"></div>
-                    <!--<img src="../../i/avatars/avatar.png" alt="аватар"/>-->
                 </div>
                 <div class="dialog-send-right pull-right">
                     <div class="avatar short2" style="background-image: url({{user.avatar}})" ng-repeat="user in dialog.users"></div>
-                    <!--<img src="../../i/avatars/avatar3.png" alt="аватар"/>-->
                 </div>
                 <div class="dialog-send-center">
                     <textarea ng-model="dialog.messageText" class="no-resize" ng-keyup="base.messageChange($event,1)"
@@ -41,7 +39,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="private-message-single"  ng-repeat="message in dialog.privateMessages">
                 <div class="pull-right">{{message.created*1000 | date:'HH:mm dd.MM.yy'}}</div>
                 <div class="private-message-left pull-left">

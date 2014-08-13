@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('baseController',function($rootScope) {
         $rootScope.isTopSearchShow = true;
         var base = this;
@@ -278,6 +278,10 @@ angular.module('forum.controllers', ['ui.select2'])
                     $rootScope.currentGroup = groups[i];
                 }
             }
+            if(!$rootScope.currentGroup){
+                groups[0].selected = true;
+                $rootScope.currentGroup = groups[0];
+            }
         }
 
 
@@ -339,10 +343,14 @@ angular.module('forum.controllers', ['ui.select2'])
         initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
         initFancyBox($('.forum'));
 
-        var lenta = this;
+        var lenta = this,
+            lastLoadedId = 0,
+            loadedLength = 10;
+
         lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
             lenta.selectedGroupInTop = $rootScope.currentGroup;
+
         lenta.isPollShow = false;
         lenta.pollSubject = "";
         lenta.pollInputs = [
@@ -362,11 +370,14 @@ angular.module('forum.controllers', ['ui.select2'])
         lenta.wallMessageContent = TEXT_DEFAULT_1;
         lenta.isCreateMessageError = false;
 
-        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id);
+        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
+
+        if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
+        //alert(lastLoadedId+" "+lenta.wallItems[0].topic.id);
 
         initWallItem();
 
@@ -509,7 +520,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         $rootScope.wallChangeGroup = function(groupId){
 
-            lenta.wallItems = messageClient.getWallItems(groupId);
+            lenta.wallItems = messageClient.getWallItems(groupId, lastLoadedId, loadedLength);
 
             if(lenta.wallItems.length) {
                 initWallItem();
@@ -569,6 +580,26 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         }
 
+        lenta.addMoreItems = function(){
+            //alert(lastLoadedId);
+            if(wallItemsLength == 10) {
+                var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
+                if (buff) {
+
+                    var buffLength = buff.length;
+                    //alert(buffLength);
+
+                    if (buffLength != 0) {
+
+                        lastLoadedId = buff[buffLength - 1].topic.id;
+                        //alert(lastLoadedId+" "+buff[0].topic.id);
+
+                        lenta.wallItems = lenta.wallItems.concat(buff);
+                    }
+                }
+            }
+        };
+
         $('.ng-cloak').removeClass('ng-cloak');
 
     })
@@ -579,7 +610,7 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.isFooterBottom = false;
 
         // временно, нужна функция getWallItem(topicId)
-        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id),
+        var wallItems = messageClient.getWallItems($rootScope.currentGroup.id,0,1000),
         wallItemsLength = wallItems.length;
         for(var i = 0; i < wallItemsLength; i++){
             if(wallItems[i].topic.id == $stateParams.topicId){
@@ -880,6 +911,7 @@ angular.module('forum.controllers', ['ui.select2'])
 
         var talk = this,
             fullTalkMessagesLength,
+            lastLoadedId = 0,
             talkId = $stateParams.talkId;
 
         talk.selectedGroup = $rootScope.currentGroup;
@@ -919,11 +951,14 @@ angular.module('forum.controllers', ['ui.select2'])
                 talk.fullTalkTopic.metaType = "message";
             }
 
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,0,0,1000).messages;
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
 
             talk.fullTalkFirstMessages ?
                 fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
                 fullTalkFirstMessagesLength = 0;
+
+            if(fullTalkFirstMessagesLength != 0) lastLoadedId = talk.fullTalkFirstMessages[fullTalkFirstMessagesLength-1].id
+
             if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
 
             for(var i = 0; i < fullTalkFirstMessagesLength; i++){
@@ -1237,6 +1272,21 @@ angular.module('forum.controllers', ['ui.select2'])
                     afterCurrentIndex = true;
                 }
             }
+        };
+
+        talk.addMoreItems = function(){
+            var buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            if(buff) {
+                var buffLength = buff.length;
+
+                if(buffLength != 0) {
+
+                    lastLoadedId = buff[buffLength - 1].id;
+
+                    talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                }
+            }
+
         };
 
 
@@ -1927,6 +1977,8 @@ angular.module('forum.controllers', ['ui.select2'])
 
         };
 
+        settings.profileInfo = "Сохранено";
+
         settings.isProfileError = false;
         settings.isProfileResult = false;
         settings.updateUserInfo = function(){
@@ -1947,6 +1999,9 @@ angular.module('forum.controllers', ['ui.select2'])
             settings.profileInfo = "Сохранено";
 
         };
+
+        settings.isPasswError = false;
+        settings.isPasswResult = false;
         settings.updatePassword = function(){
             if (settings.newPassw.length < 3){
                 settings.isPasswResult = true;
@@ -1965,15 +2020,31 @@ angular.module('forum.controllers', ['ui.select2'])
             }
         };
 
+
+        settings.isPrivacyError = false;
+        settings.isPrivacyResult = false;
         settings.updatePrivacy = function(){
             userClient.updatePrivacy(settings.userPrivacy);
+
+            settings.isPrivacyResult = true;
+            settings.isPrivacyError = false;
         };
+
+
+        settings.isContactsError = false;
+        settings.isContactsResult = false;
         settings.updateContacts = function(){
             var temp = new com.vmesteonline.be.UserContacts();
             temp.email = settings.userContacts.email;
             temp.mobilePhone = settings.userContacts.mobilePhone;
             userClient.updateContacts(temp);
+
+            settings.isContactsError = false;
+            settings.isContactsResult = true;
         };
+
+        settings.isAlertsError = false;
+        settings.isAlertsResult = false;
         settings.updateNotifications = function(){
             if(settings.userNotifications && (settings.userNotifications.email || settings.userNotifications.freq) ){
                 var temp = new com.vmesteonline.be.Notifications();
@@ -1981,8 +2052,14 @@ angular.module('forum.controllers', ['ui.select2'])
                 temp.freq = settings.userNotifications.freq;
 
                 userClient.updateNotifications(temp);
+
+                settings.isAlertsError = false;
+                settings.isAlertsResult = true;
             }
         };
+
+        settings.isFamilyError = false;
+        settings.isFamilyResult = false;
         settings.updateFamily = function(){
             var temp = new com.vmesteonline.be.UserFamily();
             temp.relations = settings.family.relations;
@@ -2008,12 +2085,21 @@ angular.module('forum.controllers', ['ui.select2'])
                 }
             }
             userClient.updateFamily(temp);
+
+            settings.isFamilyError = false;
+            settings.isFamilyResult = true;
         };
+
+        settings.isInterestsError = false;
+        settings.isInterestsResult = false;
         settings.updateInterests = function(){
             var temp = new com.vmesteonline.be.UserInterests();
             temp.job = settings.interests.job;
             temp.userInterests = settings.interests.userInterests;
             userClient.updateInterests(temp);
+
+            settings.isInterestsError = false;
+            settings.isInterestsResult = true;
         };
 
         settings.childAdd = function(event){
@@ -2151,8 +2237,12 @@ angular.module('forum.controllers', ['ui.select2'])
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
 
-        var dialog = this;
-        var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
+        var dialog = this,
+            lastLoadedId = 0,
+            loadedLength = 20,
+            currentDialog = dialogClient.getDialogById($stateParams.dialogId),
+            currentDialogLength = currentDialog.length;
+
         dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
@@ -2165,9 +2255,12 @@ angular.module('forum.controllers', ['ui.select2'])
         initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
 
         if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId);
+            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,loadedLength,lastLoadedId);
             var privateMessagesLength = dialog.privateMessages.length;
                 dialog.authors = [];
+
+            if(privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength-1].id;
+
             for(var i = 0; i < privateMessagesLength; i++){
                 dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
             }
@@ -2195,13 +2288,28 @@ angular.module('forum.controllers', ['ui.select2'])
                 newDialogMessage.images = tempMessage.images;
                 newDialogMessage.documents = tempMessage.documents;
 
-                dialog.privateMessages.push(newDialogMessage);
+                dialog.privateMessages.unshift(newDialogMessage);
 
                 dialog.messageText = TEXT_DEFAULT_1;
                 cleanAttached($('#attach-area-000'));
                 cleanAttached($('#attach-doc-area-000'));
             }
         }
+
+        dialog.addMoreItems = function(){
+            var buff = dialogClient.getDialogMessages($stateParams.dialogId,loadedLength,lastLoadedId).messages;
+            if(buff) {
+                var buffLength = buff.length;
+
+                if(buffLength != 0) {
+
+                    lastLoadedId = buff[buffLength - 1].id;
+
+                    dialog.privateMessages = dialog.privateMessages.concat(buff);
+                }
+            }
+
+        };
 
     })
     .controller('changeAvatarController',function($state,$rootScope){
@@ -2401,18 +2509,18 @@ var dialogClient = new com.vmesteonline.be.messageservice.DialogServiceClient(pr
 
 transport = new Thrift.Transport("/thrift/UserService");
 protocol = new Thrift.Protocol(transport);
-var userClient = new com.vmesteonline.be.UserServiceClient(protocol);
+var userClient = new com.vmesteonline.be.userservice.UserServiceClient(protocol);
 
 var userClientGroups = userClient.getUserGroups();
 var shortUserInfo = userClient.getShortUserInfo();
 
 transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
-var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
 
 transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
-var fileClient = new com.vmesteonline.be.FileServiceClient(protocol);
+var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
 function resetPages(base){
     base.neighboursIsActive = false;

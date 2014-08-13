@@ -36,8 +36,9 @@ transform()
 .header-color-blue2
   background-color #438eb9 !important
 
-.overflow-auto
+.top-overflow-auto
   overflow auto
+  border-bottom 1px solid #ccc
 
 .container
   padding 0
@@ -228,8 +229,8 @@ transform()
   padding 15px 0 0 10px
   font-size 20px
 
-.main-content-top
-  border-bottom 1px solid #ccc
+/*.main-content-top
+  border-bottom 1px solid #ccc*/
 .submenu
   padding 15px 10px 15px 0
   .btn
@@ -866,6 +867,8 @@ transform()
     padding 0
   .dialogs-container
     margin-top 15px
+    .private-message-single:hover
+      background-color #f6fcff
   h2
     margin-top 0
   .private-message-single
@@ -874,8 +877,6 @@ transform()
     padding-left 0
     overflow auto
     border-bottom 1px solid #CCCCCC
-    &:hover
-      background-color #f6fcff
     &:first-child
       border-top 1px solid #CCCCCC
     .private-message-ava
@@ -916,6 +917,8 @@ transform()
     margin-bottom 20px
     width 100%
     clear both
+    .icon-search:hover
+      text-decoration none
   .nextdoor-single
     padding 10px
     overflow auto

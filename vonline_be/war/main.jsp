@@ -65,7 +65,7 @@
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
 <%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
-<script src="js/lib/jquery-2.0.3.js"></script>
+    <script src="js/lib/jquery-2.0.3.js"></script>
     <script src="js/forum/angular/angular.js"></script>
 <!--[if lt IE 9]>
     <script>
@@ -87,6 +87,7 @@
     <script src="js/lib/jquery.Jcrop.min.js"></script>
     <script src="js/forum/bower_components/select2/select2.min.js"></script>
     <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
+    <script src="js/forum/angular/ng-infinite-scroll.js"></script>
 
 </head>
 <body ng-controller="baseController as base" ng-cloak ng-class="{'height100': !base.isFooterBottom}">
@@ -111,10 +112,10 @@
                                                                   ui-sref="maps">Карты</a></li>
 
                 <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
-                                                                  ui-sref="dialogs">Личные сообщения </a></li>
+                                                                  ui-sref="dialogs">Личные сообщения</a></li>
 
-                <li ng-class="navbar.nextdoorsBtnStatus"><a class="btn btn-info no-border nextdoors-link"
-                                                            ui-sref="neighbours"> Соседи</a></li>
+                <li ng-class="navbar.neighboursBtnStatus"><a class="btn btn-info no-border nextdoors-link"
+                                                            ui-sref="neighbours">Соседи</a></li>
 
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
@@ -213,7 +214,7 @@
 				<div class="main-content dynamic">
 
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
-                         ng-class="{'overflow-auto' : base.pageTitle.length}" ng-cloak>
+                         ng-class="{'top-overflow-auto' : base.pageTitle.length}" ng-cloak>
 
                         <div class="ng-cloak">
                         <div class="page-title pull-left" ng-show="base.pageTitle.length">{{base.pageTitle}}</div>
@@ -244,9 +245,9 @@
             <div class="pull-left">(c) Вместе Онлайн 2014</div>
             <div class="pull-right">
                 <ul>
-                    <li><a href="about">О сайте</a></li>
-                    <li><a href="contacts">Контакты</a></li>
-                    <li><a href="blog">Блог</a></li>
+                    <li><a href="about" target="_blank">О сайте</a></li>
+                    <li><a href="blog" target="_blank">Блог</a></li>
+                    <li><a href="contacts" target="_blank">Контакты</a></li>
                 </ul>
             </div>
         </div>

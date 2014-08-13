@@ -21,6 +21,7 @@ public class MessagesTree {
 		Query q = pm.newQuery(VoMessage.class);
 		q.setFilter("topicId == " + topicId);
 		List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
+		Collections.sort(voMsgs, voMessageAgeComparator);
 		MessagesTree tree = new MessagesTree(voMsgs);
 		return tree;
 	}
@@ -189,4 +190,12 @@ public class MessagesTree {
 	protected List<VoMessage> msgs;
 
 	Filters filters;
+	
+	static Comparator<VoMessage> voMessageAgeComparator = new Comparator<VoMessage>(){
+
+		@Override
+		public int compare(VoMessage o1, VoMessage o2) {
+			return Integer.compare(o1.getCreatedAt(),o2.getCreatedAt());
+		}
+	};
 }

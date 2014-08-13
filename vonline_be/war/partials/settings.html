@@ -107,6 +107,8 @@
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(2),'btn-primary' : settings.canSave(2)}"
                                         href="#" ng-disabled="!settings.canSave(2)" ng-click="settings.updatePrivacy()">Сохранить</button>
+                                <span ng-class="{'info-good': !settings.isPrivacyError, 'error-info': settings.isPrivacyError}" ng-show="settings.isPrivacyResult">{{ settings.profileInfo}}</span>
+
                             </form>
                         </div>
 
@@ -134,6 +136,7 @@
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(3),'btn-primary' : settings.canSave(3)}"
                                         href="#" ng-disabled="!settings.canSave(3)" ng-click="settings.updateNotifications()">Сохранить</button>
+                                <span ng-class="{'info-good': !settings.isAlertsError, 'error-info': settings.isAlertsError}" ng-show="settings.isAlertsResult">{{ settings.profileInfo}}</span>
                             </form>
                         </div>
 
@@ -152,6 +155,8 @@
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(4),'btn-primary' : settings.canSave(4)}"
                                         href="#" ng-disabled="!settings.canSave(4)" ng-click="settings.updateContacts()">Сохранить</button>
+                                <span ng-class="{'info-good': !settings.isContactsError, 'error-info': settings.isContactsError}" ng-show="settings.isContactsResult">{{ settings.profileInfo}}</span>
+
                             </form>
                         </div>
 
@@ -226,6 +231,7 @@
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(5),'btn-primary' : settings.canSave(5)}"
                                         href="#" ng-disabled="!settings.canSave(5)" ng-click="settings.updateFamily()">Сохранить</button>
+                                <span ng-class="{'info-good': !settings.isFamilyError, 'error-info': settings.isFamilyError}" ng-show="settings.isFamilyResult">{{ settings.profileInfo}}</span>
                             </form>
 
                         </div>
@@ -243,6 +249,7 @@
 
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(6),'btn-primary' : settings.canSave(6)}"
                                         href="#" ng-disabled="!settings.canSave(6)" ng-click="settings.updateInterests()">Сохранить</button>
+                                <span ng-class="{'info-good': !settings.isInterestsError, 'error-info': settings.isInterestsError}" ng-show="settings.isInterestsResult">{{ settings.profileInfo}}</span>
                             </form>
                         </div>
 
