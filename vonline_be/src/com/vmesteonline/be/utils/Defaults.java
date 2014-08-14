@@ -80,8 +80,8 @@ public class Defaults {
 	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass, user4pass, user5pass };
 
 	public static int radiusStarecase = 0;
-	public static int radiusHome = 20;
-	public static int radiusSmall = 500;
+	public static int radiusHome = 50;
+	public static int radiusSmall = 350;
 	public static int radiusMedium = 1500;
 	public static int radiusLarge = 5000;
 
