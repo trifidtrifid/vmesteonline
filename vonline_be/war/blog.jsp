@@ -2,18 +2,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.Date"%>
-<%@ page import="java.text.SimpleDateFormat"%>
-
-<%@ page import="com.vmesteonline.be.messageservice.Message"%>
 <%@ page import="com.vmesteonline.be.messageservice.TopicListPart"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageType"%>
-<%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="com.vmesteonline.be.messageservice.MessageListPart" %>
 
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
@@ -36,13 +28,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
     TopicListPart Blog = messageService.getBlog(0,1000);
 
-        //out.print(Blog.topics.get(0).message.content);
-
-        pageContext.setAttribute("blog",Blog.topics);
-
-    SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-
-
+    pageContext.setAttribute("blog",Blog.topics);
 
 %>
 
@@ -98,17 +84,12 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                 <% if(Blog.topics != null){
                     int topicsSize = Blog.topics.size();
                     for(int i = 0; i < topicsSize; i++){
-
-
                 %>
-                <div class="post" data-postlink="<%=Blog.topics.get(i).message.content%>" >
+                <div class="post" data-postlink="<%=Blog.topics.get(i).message.content%>" data-topicid="<%=Blog.topics.get(i).id%>" >
                     <div class="post-avatar pull-left">
-                        <%--<div style="background-image: url(<%=Blog.topics.get(i).userInfo%>)"><%=Blog.topics.get(i).userInfo%></div>--%>
+                        <div style="background-image: url(<%=Blog.topics.get(i).userInfo%>)"></div>
                     </div>
                     <div class="post-date" data-date="<%=Blog.topics.get(i).message.created%>">
-                        <%--<%=format1.format(Blog.topics.get(i).message.created)%>
-                        <%=new Date()%>
-                        <%=Blog.topics.get(i).message.created * 1000%>--%>
                     </div>
                     <div class="topic"></div>
                     <div class="topic-stuff">
@@ -117,59 +98,6 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                     </div>
 
                     <div class="dialogs">
-                        <%
-                            Long topicId = Blog.topics.get(i).id;
-                            //MessageType mesType = new com.vmesteonline.be.MessageType.BLOG();
-                            //List<Message> comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000);
-                            MessageListPart comments = messageService.getMessagesAsList(topicId, MessageType.BLOG , 0,false,1000);
-                            out.print(comments);
-
-                            /*if(comments != null && comments.size() != 0){
-                                
-                                int commentsSize = comments.size();
-                                for(int j = 0; j < commentsSize; j++){
-
-                                    String classNoLink = "";
-                                    String messageAvatar;
-                                    String messageName;
-                                    Long messageUserId;
-
-                                    if(!isAuth){
-                                        messageAvatar = "data/da.gif";
-                                        messageName = comments.get(j).anonName;
-                                        messageUserId = (long)(0);
-                                        classNoLink = "no-link";
-                                    }else{
-                                        messageAvatar = comments.get(j).userInfo.avatar;
-                                        messageName = comments.get(j).userInfo.firstName+" "+comments.get(j).userInfo.lastName;
-                                        messageUserId = comments.get(j).userInfo.id;
-                                    }*/
-                        %>
-
-                        <%--<div class="itemdiv dialogdiv">
-                            <a href="profile-<%=messageUserId%>" class="user <%=classNoLink%>">
-                                <div class="avatar short2" style="background-image: url(<%=messageAvatar%>)"></div>
-                            </a>
-
-                            <div class="body">
-
-                                <div class="name">
-                                    <a href="profile-<%=messageUserId%>" class="<%=classNoLink%>"><%=messageName%></a>
-                                </div>
-                                <div class="text"><%=comments.get(j).content%></div>
-
-                                <div class="lenta-item-bottom">
-                                    <span data-crated="<%=comments.get(j).created%>"> </span>
-                                    <a href="#"> Ответить</a>
-                                </div>
-                            </div>
-                        </div>--%>
-
-                        <%
-                           //}}
-                        %>
-
-
                     </div>
 
                     <div class="input-group">
@@ -240,6 +168,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             });
         });
 
+        var isCommentsLoaded = [];
         $('.show-comment').click(function(e){
             e.preventDefault();
 
@@ -249,22 +178,85 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                 $(this).text("Показать комментарии");
             }
 
-            $(this).closest('.post').find('.dialogs').slideToggle(200);
+            var topicId = $(this).closest('.post').attr('data-topicid'),
+                dialogs = $(this).closest('.post').find('.dialogs');
+
+            if(!isCommentsLoaded[topicId]){
+            var comments = messageClient.getMessagesAsList(topicId, 7, 0,false,1000).messages;
+
+            if(comments){
+                var commentsLength = comments.length,
+                    commentsHTML = "",
+                    isAuth = true;
+
+                if($('.blog').attr('data-auth') == 'false') isAuth = false;
+
+                for(var i = 0; i < commentsLength; i++){
+                    var classNoLink = "",
+                    messageAvatar,
+                    messageName,
+                    messageUserId;
+
+                    if(!isAuth){
+                        messageAvatar = "data/da.gif";
+                        messageName = comments[i].anonName;
+                        messageUserId = 0;
+                        classNoLink = "no-link";
+                    }else{
+                        messageAvatar = comments[i].userInfo.avatar;
+                        messageName = comments[i].userInfo.firstName+" "+comments[i].userInfo.lastName;
+                        messageUserId = comments[i].userInfo.id;
+                    }
+
+                    commentsHTML += '<div class="itemdiv dialogdiv new">'+
+                            '<a href="profile-'+messageUserId+'" class="user '+classNoLink+'">'+
+                            '<div class="avatar short2" style="background-image: url('+messageAvatar+')"></div>'+
+                    '</a>'+
+                    '<div class="body">'+
+                            '<div class="name">'+
+                            '<a href="profile-'+messageUserId+'" class="'+classNoLink+'">'+messageName+'</a>'+
+                    '</div>'+
+                    '<div class="text">'+comments[i].content+'</div>'+
+                    '<div class="lenta-item-bottom">'+
+                            '<span>'+ getTiming(comments[i].created) +'</span>'+
+                    '<a href="#"> Ответить</a>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>';
+                }
+            }
+
+            dialogs.append(commentsHTML);
+
+            initNoLink($(this).closest('.post'));
+            initAnswerToComment($('.new .lenta-item-bottom a'));
+            $('.new').removeClass('new');
+
+            isCommentsLoaded[topicId] = true;
+
+            }
+
+            dialogs.slideToggle(200);
         });
 
         function initAnswerToComment(selector){
             selector.click(function(e){
                 e.preventDefault();
 
-                $(this).closest('.post').find('.make-comment').trigger('click');
+                var userName = $(this).closest('.body').find('.name a').text()+", ";
+                $(this).closest('.post').find('.make-comment').trigger('click',userName);
             });
         }
         initAnswerToComment($('.lenta-item-bottom a'));
 
-        $('.make-comment').click(function(e){
+        $('.make-comment').click(function(e,userName){
             e.preventDefault();
 
             $(this).closest('.post').find('.input-group').slideToggle(200,function(){
+                if(userName){
+                    $(this).find('textarea').val(userName);
+                    setCaretToPos($(this).find('textarea')[0],userName.length);
+                }
                $(this).find('textarea').focus();
             });
         });
@@ -283,7 +275,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             var message = new com.vmesteonline.be.messageservice.Message();
 
             message.id = 0;
-            message.topicId = 0;
+            message.topicId = $(this).closest('.post').attr('data-topicid');
             message.type = com.vmesteonline.be.messageservice.MessageType.BLOG;//7;
             message.groupId = 0;
             message.content = $(this).closest('.input-group').find('.message-textarea').val();
@@ -332,7 +324,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             //document.location.replace('/');
 
-            /*initNoLink($(this).closest('.post'));
+            initNoLink($('.new'));
             initAnswerToComment($('.new .lenta-item-bottom a'));
             $('.new').removeClass('new');
 
@@ -341,7 +333,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             if(comments.css('display') == 'none'){
                 $(this).closest('.post').find('.show-comment').trigger('click');
-            }*/
+            }
         });
 
         function getTiming(messageObjDate){
@@ -385,6 +377,25 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             }
 
             return timing;
+        }
+
+
+        function setSelectionRange(input, selectionStart, selectionEnd) {
+            if (input.setSelectionRange) {
+                input.focus();
+                input.setSelectionRange(selectionStart, selectionEnd);
+            }
+            else if (input.createTextRange) {
+                var range = input.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', selectionEnd);
+                range.moveStart('character', selectionStart);
+                range.select();
+            }
+        }
+
+        function setCaretToPos (input, pos) {
+            setSelectionRange(input, pos, pos);
         }
 
     });
