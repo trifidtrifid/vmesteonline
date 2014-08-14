@@ -1842,6 +1842,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.neighboursChangeGroup = function(groupId){
             neighbours.neighboors = userClient.getNeighboursByGroup(groupId);
+            initAutoFill();
         };
 
         neighbours.neighboorsSize = neighbours.neighboors.length;
@@ -1853,6 +1854,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             $state.go('dialog-single',{ 'dialogId' : dialog.id});
         };
+
+        function initAutoFill(){
+            var data = [],
+                neighboursLength = neighbours.neighboors.length;
+            for(var i = 0; i < neighboursLength; i++){
+                data[i] = {};
+                data[i].label = neighbours.neighboors[i].firstName+" "+neighbours.neighboors[i].lastName;
+                data[i].value = neighbours.neighboors[i].id;
+                data[i].category = "";
+            }
+            $("#search-neighbours" ).catcomplete({
+                delay: 0,
+                source: data,
+                select: function(event,ui){
+                    //alert(ui.item.value);
+                    $state.go('profile',{ 'userId' : ui.item.value});
+
+                }
+            });
+        }
+        initAutoFill();
 
         /*function usersToInt(users){
             var usersLength = users.length,
@@ -3150,3 +3172,18 @@ function base64encode(str) {
     }
     return b64encoded;
 }
+
+$.widget( "custom.catcomplete", $.ui.autocomplete, {
+    _renderMenu: function( ul, items ) {
+        var that = this,
+            currentCategory = "";
+        $.each( items, function( index, item ) {
+            if ( item.category != currentCategory ) {
+                ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+                currentCategory = item.category;
+            }
+            that._renderItemData( ul, item );
+        });
+    }
+});
+

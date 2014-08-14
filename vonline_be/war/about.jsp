@@ -2,16 +2,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>О нас</title>
-    <link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
-    <link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
-    <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
+<meta charset="utf-8" />
+<title>О нас</title>
+<link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" href="css/lib/jquery.Jcrop.css" />
+<link rel="stylesheet" href="js/forum/bower_components/select2/select2.css" />
 
-    <script src="js/lib/jquery-2.0.3.js"></script>
-    <!--[if lt IE 9]>
+<script src="js/lib/jquery-2.0.3.js"></script>
+<!--[if lt IE 9]>
     <script>
         document.createElement('header');
         document.createElement('section');
@@ -22,61 +22,93 @@
     <![endif]-->
 
 </head>
-<body class="height100 height100-2">
-<div class="navbar navbar-default" id="navbar">
+<body>
+	<div class="navbar navbar-default" id="navbar">
 
-    <div class="navbar-container" id="navbar-container">
-        <div class="navbar-header pull-left">
-            <a href="/" class="navbar-brand">
-                <img src="i/logo.png" alt="логотип"/>
-            </a>
+		<div class="navbar-container" id="navbar-container">
+			<div class="navbar-header pull-left">
+				<a href="/" class="navbar-brand"> <img src="i/logo.png" alt="логотип" />
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="container coming-soon about">
+
+		<div class="main-container" id="main-container">
+			<div class="main-container-inner">
+
+                <br/>
+				<h1>Что такое ВместеОнлайн</h1>
+				<p>ВместеОнлайн - это закрытая социальная сеть только для соседей. ВместеОнлайн - это самый простой и безопасный способ для Вас и Ваших соседей общаться онлайн и сделать Вашу реальную жизнь
+					немного комфортней. Люди используют ВместеОнлайн для того чтобы:</p>
+				<ul>
+					<li>получить отзыв о детском саде или школе по близости</li>
+					<li>создать инициативную группу для решения проблемы</li>
+					<li>обсудить работу управляющей компании</li>
+					<li>организовать групповую закупку</li>
+					<li>выбрать интернет-провайдера</li>
+					<li>узнать как зовут соседей</li>
+				</ul>
+				<p>Используя современные технологии мы создаем добрососедские отношения!</p>
+                <br/>
+
+				<h1>Во что мы верим</h1>
+				<p>Мы создали ВместеОнлайн, потому что мы верим, что добрососедские отношения - это очень важный шаг на пути к более комфортной и более безопасной жизни. Мы верим, что вокруг нас живет много
+					хороших и не безразличных людей, которые вместе смогут сделать окружающий мир лучше. ВместеОнлайн - это удобный и современный способ общения. Мы сделали ВместеОнлайн для Вас.</p>
+                <br/>
+
+				<h1>Приватность</h1>
+				<p>Онлайн приватность никогда не бывает лишней. На сайте ВместеОнлайн Вы можете обсуждать с соседями онлай все, что обсуждаете лично, встречаясь у лифта.</p>
+                <p>Мы гарантируем, что:</p>
+				<ul>
+					<li>Доступ на сайт возможен только по коду-приглашению, который доставляется в почтовый ящик.</li>
+					<li>Вся информация передается по шифрованному протоколу HTTPS</li>
+					<li>Мы никогда не дадим рекламодателям доступ к Вашим данным</li>
+					<li>Содержимое сайта никогда не будет доступно поисковым системам</li>
+				</ul>
+
+			</div>
+		</div>
+
+        <div class="footer footer-bottom clearfix">
+            <div class="pull-left">(c) Вместе Онлайн 2014</div>
+            <div class="pull-right">
+                <ul>
+                    <li><a href="about">О сайте</a></li>
+                    <li><a href="blog">Блог</a></li>
+                    <li><a href="contacts">Контакты</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="container coming-soon">
-
-    <div class="main-container" id="main-container">
-        <div class="main-container-inner">
-            <br/>
-            <h1>О нас</h1>
-
-        </div>
-    </div>
-
-    <div class="footer footer-bottom clearfix">
-        <div class="pull-left">(c) Вместе Онлайн 2014</div>
-        <div class="pull-right">
-            <ul>
-                <li><a href="about">О сайте</a></li>
-                <li><a href="blog">Блог</a></li>
-                <li><a href="contacts">Контакты</a></li>
-            </ul>
-        </div>
-    </div>
-
-</div>
+	</div>
 
 
-<!-- файлы thrift -->
-<script src="js/thrift.js" type="text/javascript"></script>
-<script src="gen-js/bedata_types.js" type="text/javascript"></script>
-<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
-<script src="gen-js/MessageService.js" type="text/javascript"></script>
-<!-- -->
-<script type="text/javascript">
-    $(document).ready(function(){
-        var transport = new Thrift.Transport("/thrift/MessageService");
-        var protocol = new Thrift.Protocol(transport);
-        var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
+	<!-- файлы thrift -->
+	<script src="js/thrift.js" type="text/javascript"></script>
+	<script src="gen-js/bedata_types.js" type="text/javascript"></script>
+	<script src="gen-js/messageservice_types.js" type="text/javascript"></script>
+	<script src="gen-js/MessageService.js" type="text/javascript"></script>
+	<!-- -->
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							var transport = new Thrift.Transport(
+									"/thrift/MessageService");
+							var protocol = new Thrift.Protocol(transport);
+							var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(
+									protocol);
 
+                            var h = $(window).height()-105;
+                            $('.container.coming-soon .main-container').css({'min-height': h});
 
-        $('.send-in-blog').click(function(){
-            //userClient.postMessage();
-        })
-    });
-</script>
-
+							$('.send-in-blog').click(function() {
+								//userClient.postMessage();
+							})
+						});
+	</script>
 
 </body>
 

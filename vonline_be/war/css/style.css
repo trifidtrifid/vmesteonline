@@ -1455,3 +1455,11 @@ h1 {
 .blog .itemdiv.dialogdiv > .body {
   padding-bottom: 0;
 }
+.about {
+  text-align: left;
+  padding-top: 10px;
+}
+.about p,
+.about li {
+  font-size: 14px;
+}
