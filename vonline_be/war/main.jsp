@@ -1,5 +1,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
@@ -9,7 +10,6 @@
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
 
@@ -120,10 +120,9 @@
                 <li class="user-short light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
                         <div class="nav-user-photo" style="background-image: url('{{ base.user.avatar }}')"></div> <!-- -->
-                        <%--<img class="nav-user-photo" ng-src="<c:out value="${userAvatar}"/>" alt="аватар" />--%>
                         <span class="user-info">
-                            <small><c:out value="${firstName}" /></small>
-                            <c:out value="${lastName}" />
+                            <small>{{base.me.firstName}}</small>
+                            {{ base.me.lastName }}
                         </span>
                         <i class="icon-caret-down"></i>
                     </a>
@@ -146,7 +145,7 @@
         </div>
 
     </div>
-    <div class="container">
+    <%--<div class="container">
 
         <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
             <span class="block input-icon input-icon-right">
@@ -154,7 +153,7 @@
                 <a href="#" class="icon-search icon-on-right bigger-110"></a>
             </span>
         </form>
-    </div>
+    </div>--%>
 </div>
 
 	<div class="container">
