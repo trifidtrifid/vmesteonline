@@ -1887,11 +1887,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         //alert($stateParams.userId+" "+shortUserInfo.id);
         if ($stateParams.userId && $stateParams.userId != 0 && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
-            profile.userContacts = userClient.getUserContactsExt(userId);
+            //profile.userContacts = userClient.getUserContactsExt(userId);
         }else{
             userId = 0;
             profile.isMayEdit = true;
-            profile.userContacts = userClient.getUserContacts();
+            profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
+            //profile.userContacts = userClient.getUserContacts();
         }
 
         profile.userProfile = userClient.getUserProfile(userId);
@@ -1935,7 +1936,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         }
 
-        profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
+
 
         $rootScope.chageIndex = 0;
 
@@ -2592,8 +2593,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     });
     /*.controller('BlogController',function($state,$rootScope) {
         var blog = this;
-
-        blog = messageClient.getBlog();
 
     });*/
 

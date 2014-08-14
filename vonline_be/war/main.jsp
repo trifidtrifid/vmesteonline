@@ -175,10 +175,11 @@
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">
                         (c) Вместе Онлайн 2014
+                        <!-- временная обработка ссылок пока не адаптирован блог, о нас и контакты под ангуляр -->
                         <ul>
-                            <li><a href="about" target="_blank">О сайте</a></li>
-                            <li><a href="blog" target="_blank">Блог</a></li>
-                            <li><a href="contacts" target="_blank">Контакты</a></li>
+                            <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>
+                            <li><a href="blog" onclick="document.location.replace('blog');">Блог</a></li>
+                            <li><a href="contacts" onclick="document.location.replace('contacts');">Контакты</a></li>
                         </ul>
                     </div>
 				</aside>
@@ -244,9 +245,9 @@
             <div class="pull-left">(c) Вместе Онлайн 2014</div>
             <div class="pull-right">
                 <ul>
-                    <li><a href="about" target="_blank">О сайте</a></li>
-                    <li><a href="blog" target="_blank">Блог</a></li>
-                    <li><a href="contacts" target="_blank">Контакты</a></li>
+                    <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>
+                    <li><a href="blog" onclick="document.location.replace('blog');">Блог</a></li>
+                    <li><a href="contacts" onclick="document.location.replace('contacts');">Контакты</a></li>
                 </ul>
             </div>
         </div>

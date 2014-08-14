@@ -48,9 +48,9 @@
         <div class="pull-left">(c) Вместе Онлайн 2014</div>
         <div class="pull-right">
             <ul>
-                <li><a href="about" target="_blank">О сайте</a></li>
-                <li><a href="blog" target="_blank">Блог</a></li>
-                <li><a href="contacts" target="_blank">Контакты</a></li>
+                <li><a href="about">О сайте</a></li>
+                <li><a href="blog">Блог</a></li>
+                <li><a href="contacts">Контакты</a></li>
             </ul>
         </div>
     </div>
