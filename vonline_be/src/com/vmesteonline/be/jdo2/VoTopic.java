@@ -23,7 +23,7 @@ public class VoTopic extends VoBaseMessage {
 	public VoTopic(Topic topic) throws InvalidOperation, IOException {
 
 		super(topic.getMessage());
-		subject = topic.getSubject().getBytes();
+		subject = topic.getSubject();
 		messageNum = 0;
 		usersNum = 1;
 		viewers = 1;
@@ -52,7 +52,7 @@ public class VoTopic extends VoBaseMessage {
 					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId));
 
 
-		Topic tpc = new Topic(getId(), new String(subject), msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
+		Topic tpc = new Topic(getId(), subject, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
 				null, null, getGroupType(pm));
 
 		if (pollId != 0) {
@@ -169,7 +169,7 @@ public class VoTopic extends VoBaseMessage {
 
 	@Persistent
 	@Unindexed
-	protected byte[] subject;
+	protected String subject;
 	
 	public boolean isImportant;
 
