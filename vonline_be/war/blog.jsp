@@ -129,6 +129,17 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
         </div>
     </div>
 
+    <div class="footer footer-bottom clearfix">
+        <div class="pull-left">(c) Вместе Онлайн 2014</div>
+        <div class="pull-right">
+            <ul>
+                <li><a href="about" target="_blank">О сайте</a></li>
+                <li><a href="blog" target="_blank">Блог</a></li>
+                <li><a href="contacts" target="_blank">Контакты</a></li>
+            </ul>
+        </div>
+    </div>
+
 </div>
 
 
@@ -160,6 +171,9 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             span.text(getTiming(created));
         });
+
+        var h = $(window).height()-125;
+        $('.coming-soon').css({'min-height': h});
 
         $('.post').each(function(){
             var link = $(this).attr('data-postlink');
