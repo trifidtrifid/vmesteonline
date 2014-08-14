@@ -1971,10 +1971,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
 
         settings.userContacts = clone(userContatcsMeta);
-        settings.userProfile = clone(userProfileMeta);
         settings.userInfo = clone(userInfoMeta);
         settings.userPrivacy = clone(userPrivacyMeta);
         settings.userNotifications = clone(userNotificationsMeta);
+        if(!settings.userNotifications){
+            settings.userNotifications = new com.vmesteonline.be.Notifications();
+            settings.userNotifications.freq = 4;
+        }
+
         settings.family = clone(userFamilyMeta);
         settings.interests = clone(userInterestsMeta);
 
@@ -2083,8 +2087,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             //alert(temp.birthday+" "+new Date(temp.birthday));
 
             temp.gender = settings.userInfo.gender;
-            temp.firstName = settings.userInfo.firstName;
-            temp.lastName = settings.userInfo.lastName;
+            temp.firstName = $rootScope.base.me.firstName = settings.userInfo.firstName;
+            temp.lastName = $rootScope.base.me.lastName = settings.userInfo.lastName;
 
             userClient.updateUserInfo(temp);
             settings.isProfileResult = true;

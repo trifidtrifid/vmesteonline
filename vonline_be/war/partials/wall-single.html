@@ -12,17 +12,26 @@
                             </a>
 
                             <div class="body" ng-switch on="wallSingle.wallItem.topic.metaType">
+                                <div class="message-tools pull-right" ng-show="wallSingle.wallItem.topic.userInfo.id == base.me.id">
+                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallSingle.wallItem.topic,wallSingle.wallItems,true,true)">&times;</a>
+                                    <a href="#" title="Редактировать" ng-click="base.setEdit(wallSingle.wallItem.topic)" class="fa fa-pencil pull-right"></a>
+                                </div>
+
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallSingle.wallItem.tagColor">{{wallSingle.wallItem.label}}</span>
-                                <a class="fa fa-star pull-right" ng-class="{'important' : wallSingle.wallItem.topic.message.important == 1}" title='{{ wallSingle.wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallSingle.wallItem.topic.message)"></a>
-                                <a class="fa fa-heart pull-right" ng-class="{'isLike' : wallSingle.wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallSingle.wallItem.topic.message)"></a>
-                                <div class="like-help" id="like-help-{{wallSingle.wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
                                 <div class="name">
                                     <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })">{{wallSingle.wallItem.topic.userInfo.firstName+" "+wallSingle.wallItem.topic.userInfo.lastName}}</a>
                                 </div>
 
-                                <div class="text" ng-switch-when="message" >{{wallSingle.wallItem.topic.message.content}}</div>
+                                <div class="text" ng-switch-when="message" ng-hide="wallSingle.wallItem.topic.isEdit">{{wallSingle.wallItem.topic.message.content}}</div>
+
+                                <div class="edit-message" ng-show="wallSingle.wallItem.topic.isEdit">
+                                    <textarea class="no-resize message-textarea edit-textarea" ng-model="wallSingle.wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallSingle.wallItem.topic.isFocus"></textarea>
+
+                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallSingle.wallItem.topic,true)" href="#">Сохранить</a>
+
+                                </div>
 
                                 <div class="attached" ng-show="wallSingle.wallItem.topic.message.images.length || wallSingle.wallItem.topic.message.documents.length">
                                     <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
@@ -72,6 +81,10 @@
                                 </div>
 
                                 <div class="lenta-item-bottom">
+                                    <a class="pull-right important-status" ng-class="{'important' : wallSingle.wallItem.topic.message.important == 1}" title='{{ wallSingle.wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallSingle.wallItem.topic.message)"><i class="fa fa-star"></i> Важно</a>
+                                    <a class="pull-right like-status" ng-class="{'isLike' : wallSingle.wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallSingle.wallItem.topic.message)"><i class="fa fa-heart"></i> Нравится</a>
+                                    <div class="like-help" id="like-help-{{wallSingle.wallItem.topic.message.id}}">сообщение уже отмечено</div>
+
                                     <span >{{wallSingle.wallItem.topic.message.createdEdit}}</span>
                                     <a href="#" ng-click="wallSingle.showAnswerInput($event,wallSingle.wallItem)">Комментировать</a>
                                 </div>

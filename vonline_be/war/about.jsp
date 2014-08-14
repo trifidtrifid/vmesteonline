@@ -22,7 +22,7 @@
     <![endif]-->
 
 </head>
-<body>
+<body class="height100 height100-2">
 <div class="navbar navbar-default" id="navbar">
 
     <div class="navbar-container" id="navbar-container">
@@ -38,8 +38,20 @@
 
     <div class="main-container" id="main-container">
         <div class="main-container-inner">
+            <br/>
             <h1>О нас</h1>
 
+        </div>
+    </div>
+
+    <div class="footer footer-bottom clearfix">
+        <div class="pull-left">(c) Вместе Онлайн 2014</div>
+        <div class="pull-right">
+            <ul>
+                <li><a href="about" target="_blank">О сайте</a></li>
+                <li><a href="blog" target="_blank">Блог</a></li>
+                <li><a href="contacts" target="_blank">Контакты</a></li>
+            </ul>
         </div>
     </div>
 

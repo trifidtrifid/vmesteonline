@@ -25,6 +25,12 @@ angular.module('forum.directives', []).
             });
         }
     });
+    /*.directive('createTopic',function(){
+        return{
+            restrict: 'E',
+            templateUrl: 'templates/createTopic.html'
+        }
+    });*/
 
 
 
