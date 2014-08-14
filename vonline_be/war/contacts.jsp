@@ -62,7 +62,7 @@
 
     <div class="navbar-container" id="navbar-container">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
             </a>
         </div>

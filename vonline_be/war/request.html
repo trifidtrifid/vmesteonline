@@ -110,7 +110,7 @@
 					var action = $(this).attr('action');
                     var transport = new Thrift.Transport("/thrift/AuthService");
                     var protocol = new Thrift.Protocol(transport);
-                    var authClient = new com.vmesteonline.be.AuthServiceClient(protocol);
+                    var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
 
                     var address = $('#address').val()+", "+$('#flat-number').val(),
                             email = $('#email').val();
