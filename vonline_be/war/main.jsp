@@ -101,7 +101,7 @@
 
     <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
             </a>
         </div>
@@ -191,11 +191,11 @@
                     <ul>
                         <li ng-repeat="importantTopic in importantTopics.topics" class="clearfix">
                             <div class="importantly-left">
-                                <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
+                                <div class="avatar short" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
                             <div class="importantly-right">
-                                <h3>{{importantTopic.userInfo.firstName +" "+ importantTopic.userInfo.lastName}}</h3>
-                                <p>{{ importantTopic.message.content }}</p>
+                                <h3>{{importantTopic.userInfo.firstName}}</h3>
+                                <p>{{ importantTopic.message.content.slice(0,50)+"..." }}</p>
 
                                 <div ng-switch on="importantTopic.message.type" >
 

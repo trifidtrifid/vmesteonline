@@ -1463,3 +1463,6 @@ h1 {
 .about li {
   font-size: 14px;
 }
+.about .footer li {
+  font-size: 13px;
+}
