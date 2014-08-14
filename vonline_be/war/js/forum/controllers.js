@@ -195,7 +195,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }else {
                     try {
                         deleteResult = messageClient.deleteMessage(message.id);
-                        message.message.content = "Сообщение удалено пользователем";
+                        message.content = "Сообщение удалено пользователем";
                     }
                     catch (e) {
                         // удалено чисто
@@ -994,6 +994,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
+        $('.ng-cloak').removeClass('ng-cloak');
 
     })
     .controller('TalksSingleController',function($rootScope,$stateParams){
@@ -1359,6 +1360,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
+        $('.ng-cloak').removeClass('ng-cloak');
 
     })
     .controller('AdvertsController',function($rootScope) {
@@ -1477,6 +1479,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
 
         };
+
+        $('.ng-cloak').removeClass('ng-cloak');
 
     })
     .controller('AdvertsSingleController',function($rootScope,$stateParams) {
@@ -1813,6 +1817,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
 
         };
+
+        $('.ng-cloak').removeClass('ng-cloak');
     })
     .controller('neighboursController',function($rootScope,$state) {
         $rootScope.currentPage = "neighbours";
@@ -1932,6 +1938,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
 
         $rootScope.chageIndex = 0;
+
+        angular.element($('.profile')).css({'min-height': $(window).height()-125});
+
+        $('.ng-cloak').removeClass('ng-cloak');
 
 })
     .controller('SettingsController',function($rootScope,$scope) {
@@ -2265,6 +2275,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,dateFormat: "mm.dd.yy",yearRange:'c-100:+c'});
         $.datepicker.setDefaults($.datepicker.regional['ru']);
 
+        angular.element($('.settings')).css({'min-height': $(window).height()-125});
 
     })
     .controller('dialogsController', function($rootScope,$state){
