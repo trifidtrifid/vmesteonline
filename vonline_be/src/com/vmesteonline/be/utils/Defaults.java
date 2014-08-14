@@ -81,9 +81,9 @@ public class Defaults {
 
 	public static int radiusStarecase = 0;
 	public static int radiusHome = 20;
-	public static int radiusSmall = 200;
-	public static int radiusMedium = 2000;
-	public static int radiusLarge = 5000;
+	public static int radiusSmall = 500;
+	public static int radiusMedium = 1500;
+	//public static int radiusLarge = 5000;
 
 	public static String defaultAvatarTopicUrl = "/data/da.gif";
 	public static String defaultAvatarMessageUrl = "/data/da.gif";
@@ -198,8 +198,9 @@ public class Defaults {
 			for (VoGroup dg : new VoGroup[] { 
 					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
 					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
-					new VoGroup("Мои соседи", radiusMedium, GroupType.NEIGHBORS, true), 
-					new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) }) {
+					new VoGroup("Мои двор", radiusSmall, GroupType.NEIGHBORS, true), 
+					//new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) 
+					}) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);

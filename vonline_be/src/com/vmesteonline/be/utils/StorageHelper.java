@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
 import org.datanucleus.util.Base64;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
@@ -37,7 +38,9 @@ import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ServiceImpl;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
@@ -492,6 +495,23 @@ public class StorageHelper {
 			
 			return new FileSource( fname, contentType, is);
 		}
+	}
+
+	public static VoFileAccessRecord loadAttach(PersistenceManager pm, long userId, Attach attach) throws InvalidOperation {
+		VoFileAccessRecord cfar;
+		try {
+			FileSource fs = createFileSource( attach );
+			if( fs == null ){
+				cfar = pm.getObjectById(VoFileAccessRecord.class, getFileId(attach.getURL()));
+				cfar.updateContentParams(attach.contentType, attach.fileName);
+			}	else {	
+				cfar = saveAttach( fs.fname, fs.contentType, userId, true, fs.is, pm);
+			}
+			
+		} catch (IOException e) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to upload content. "+e);
+		}
+		return cfar;
 	}
 
 }
