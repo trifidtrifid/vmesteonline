@@ -83,7 +83,7 @@ public class Defaults {
 	public static int radiusHome = 20;
 	public static int radiusSmall = 500;
 	public static int radiusMedium = 1500;
-	//public static int radiusLarge = 5000;
+	public static int radiusLarge = 5000;
 
 	public static String defaultAvatarTopicUrl = "/data/da.gif";
 	public static String defaultAvatarMessageUrl = "/data/da.gif";

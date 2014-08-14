@@ -863,18 +863,26 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				int radius;
 				if(0!= (radius = userGroup.getRadius())){
 					
-					double ws = VoHelper.roundDouble(0.0000002*radius*width, 5);
-					double hs = VoHelper.roundDouble(0.0000002*radius*height, 5);
-					
-						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
-								+"&size="+width+","+height+"&spn="+ws+","+hs +
-									"&pl=c:" + color + ",f:" + color + ",w:1";	
-		
 					double lad = userGroup.getLatitude().doubleValue();
 					double lod = userGroup.getLongitude().doubleValue();
 		
 					double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
 					double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
+					double ws,hs;
+				
+					if(radius < 100){
+						double k = 0.0000002*radius;
+						ws = VoHelper.roundDouble(k*width, 5);
+						hs = VoHelper.roundDouble(k*height, 5);
+					} else {
+						ws = VoHelper.roundDouble(laDelta, 5);
+						hs = VoHelper.roundDouble(loDelta, 5);
+					}
+					
+						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
+								+"&size="+width+","+height+"&spn="+ws+","+hs +
+									"&pl=c:" + color + ",f:" + color + ",w:1";	
+		
 		
 					for ( double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
 						url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
