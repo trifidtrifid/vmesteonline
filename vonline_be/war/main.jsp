@@ -1,6 +1,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.Group"%>
@@ -9,14 +10,13 @@
 <%@ page import="com.vmesteonline.be.messageservice.Topic"%>
 <%@ page import="com.vmesteonline.be.ShortUserInfo"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
-<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="java.util.ArrayList"%>
 
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>--%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <%
-	/*HttpSession sess = request.getSession();
+	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
 
 	try {
@@ -45,7 +45,7 @@
         pageContext.setAttribute("auth",false);
 		response.sendRedirect("/index.html");
 		return;
-	}*/
+	}
 
 
 %>

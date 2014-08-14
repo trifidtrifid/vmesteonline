@@ -2019,7 +2019,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             settings.family.childs[0].name = "";
             var nowYear = new Date();
             nowYear = nowYear.getFullYear();
-            settings.family.childs[0].birthday = Date.parse('01.15.'+nowYear);
+            //settings.family.childs[0].birthday = Date.parse('01.15.'+nowYear);
+            settings.family.childs[0].birthday = null;
             settings.family.childs[0].isNotRemove = true;
         }
         var childsLength = settings.family.childs.length;
@@ -2084,6 +2085,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             settings.userInfo.birthdayMeta ?
                 temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
+
             //alert(temp.birthday+" "+new Date(temp.birthday));
 
             temp.gender = settings.userInfo.gender;
@@ -2168,16 +2170,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             var childsLength = settings.family.childs.length;
             for(var i = 0; i < childsLength; i++){
-                if(settings.family.childs[i].name && settings.family.childs[i].month && settings.family.childs[i].year){
+                if(settings.family.childs[i].name && settings.family.childs[i].name != ""){ <!--  && settings.family.childs[i].month && settings.family.childs[i].year -->
 
                     var tempMonth = parseInt(settings.family.childs[i].month)+1;
-                    temp.childs[i].birthday = Date.parse(tempMonth+".15."+ settings.family.childs[i].year)/1000;
+
+                    if(settings.family.childs[i].year && settings.family.childs[i].year != '1911' && settings.family.childs[i].month) {
+                        temp.childs[i].birthday = Date.parse(tempMonth + ".15." + settings.family.childs[i].year) / 1000;
+                    }else{
+                        temp.childs[i].birthday = null;
+                    }
                 }
             }
             var petsLength = settings.family.pets.length;
             for(var i = 0; i < petsLength; i++){
-                if(!temp.pets[i].name){
-
+                if(temp.pets[i] && !temp.pets[i].name){
                     //temp.pets.splice(i,1);
                 }
             }
@@ -2209,13 +2215,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             newChild.birthday = Date.parse('01.15.'+nowYear);
 
             var birthDate = new Date(newChild.birthday);
-            //alert(settings.family.childs[i].birthday);
-            newChild.month = ""+birthDate.getMonth();
+            //newChild.month = ""+birthDate.getMonth();
+            newChild.month = "";
 
             if(newChild.length == 1)
                 newChild.month = "0"+newChild.month;
 
-            newChild.year = birthDate.getFullYear();
+            //newChild.year = birthDate.getFullYear();
+            newChild.year = "";
 
 
             if(settings.family == null){
