@@ -727,6 +727,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
 			topic.setMessageNum( topic.getMessageNum() - 1 );
 			topic.setChildMessageNum( topic.getChildMessageNum() - 1);
+			topic.setLastUpdate((int) (System.currentTimeMillis()/1000L));
 			
 			
 			deleteAttachments(pm, msg.getImages());
@@ -800,6 +801,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 			} else {
 				tpc.setContent("Тема удалена пользователем.");
+				tpc.setLastUpdate((int) (System.currentTimeMillis()/1000L));
 				return tpc.getTopic(cu, pm);
 			}
 			

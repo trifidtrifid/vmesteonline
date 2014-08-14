@@ -1399,7 +1399,7 @@ h1 {
   text-align: left;
 }
 .blog .post {
-  padding: 15px 0;
+  padding: 15px 0 5px 0;
   border-top: 1px solid #ccc;
 }
 .blog .post:first-child {
@@ -1408,6 +1408,9 @@ h1 {
 .blog .dialogs,
 .blog .input-group {
   display: none;
+}
+.blog .dialogs {
+  padding: 0;
 }
 .blog .anonName {
   width: 100%;
@@ -1437,6 +1440,7 @@ h1 {
 .blog .topic,
 .blog .topic-stuff {
   margin-left: 210px;
+  padding-bottom: 10px;
 }
 .blog .lenta-item-bottom span,
 .blog .lenta-item-bottom a {
