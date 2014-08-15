@@ -247,7 +247,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		}
 
-		req += " order by createTime desc";
+		req += " order by updateTime desc";
 
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
@@ -401,9 +401,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					votopic.setLatitude(ug.getLatitude());
 
 					topic.userInfo = user.getShortUserInfo();
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`, `messageType`) values ("
+					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`, updateTime, `messageType`) values ("
 							+ votopic.getId() + "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
-							+ votopic.getCreatedAt() + "," + votopic.getType().getValue() + ");");
+							+ votopic.getCreatedAt() + "," + + votopic.getLastUpdate() + ","
+							+ votopic.getType().getValue() + ");");
 
 				} else {
 					updateTopic(topic);
@@ -509,12 +510,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		con = new MySQLJDBCConnector();
 		try {
 			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
-					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null, `messageType` integer not null);");
+					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null, `updateTime` integer not null, `messageType` integer not null);");
 		} catch (Exception e) {
 			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
 		}
+		con.close();
 	}
 
 	@Override
@@ -831,8 +833,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			if(0==tpc.getMessageNum()){
 				try {
-					new MySQLJDBCConnector()
-						.execute("delete from topic where `id`="+tpc.getId());
+					MySQLJDBCConnector mcon = new MySQLJDBCConnector();
+					mcon.execute("delete from topic where `id`="+tpc.getId());
+					mcon.close();
 					pm.deletePersistent(tpc);
 					return null;
 				} catch (Exception e) {

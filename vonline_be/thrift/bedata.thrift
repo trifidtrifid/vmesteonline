@@ -57,6 +57,7 @@ struct ShortUserInfo{
 	3: string lastName,
 	4: i32 rating
 	5: string avatar,
+	6:optional set<i64> moderationGroups;
 }
 
 struct ShortProfile{
