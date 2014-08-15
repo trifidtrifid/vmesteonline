@@ -169,14 +169,13 @@ a:hover, a:focus {
 	margin:50px auto;
 }
 .highlight {
-	background:#f4f4f4;
-	margin-top:40px;
+	background: #e8e8e8;
 }
 /*========== 2. HEADER ==============*/
 
 .masthead {
 	position: relative;
-	padding: 80px 15px;
+	padding: 80px 15px 0 15px;
 	color: #FFF;
 	text-align: center;
 	text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
@@ -434,6 +433,7 @@ to {
 .thumbnail {
 	border:0;
 	text-align:center;
+    margin-bottom: 0;
 }
 .thumbnail .caption p {
 	color: #353738;

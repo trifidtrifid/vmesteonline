@@ -54,6 +54,7 @@ $(document).ready(function(){
             var address = URLArray[2].split('=')[1],
                 code = URLArray[3].split('=')[1];
 
+            $('#vk_state').val('inviteCode:'+code);
             var mapUrlTemp = URLArray[1].split('=');
             mapUrlTemp.shift();
             var mapUrl = mapUrlTemp.join('=');

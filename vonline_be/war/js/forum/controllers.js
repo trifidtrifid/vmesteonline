@@ -345,7 +345,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('rightBarController',function($rootScope) {
         //var rightbar = this;
 
-        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[0].id);
+        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[1].id);
         //alert(rightbar.importantTopics.totalSize);
     })
     .controller('mainContentTopController',function($rootScope) {
