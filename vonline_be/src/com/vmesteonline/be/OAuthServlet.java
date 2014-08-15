@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
-import com.vmesteonline.be.authservice.LoginResult;
-import com.vmesteonline.be.utils.EMailHelper;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
