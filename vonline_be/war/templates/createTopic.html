@@ -1,41 +1,72 @@
 <div class="message-input clearfix">
-    <textarea ng-model="lenta.wallMessageContent" class="no-resize" ng-keyup="base.messageChange($event,1)"
+
+    <textarea ng-model="ctrl.message.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
               onblur="if(this.value=='') this.value='Написать сообщение';"
               onfocus="if(this.value=='Написать сообщение') this.value='';"></textarea>
 
-    <div class="create-poll" ng-show="lenta.isPollShow">
-        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="lenta.isPollShow = false;lenta.isPollAvailable = true;">&times;</a>
+    <div class="create-poll" ng-show="ctrl.isPollShow">
+        <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="ctrl.isPollShow = false;ctrl.isPollAvailable = true;">&times;</a>
         <h5>Тема опроса:</h5>
-        <input type="text" ng-model="lenta.pollSubject"/>
+        <input type="text" ng-model="ctrl.pollSubject"/>
         <h5>Варианты ответов:</h5>
-        <div ng-repeat="input in lenta.pollInputs">
+        <div ng-repeat="input in ctrl.pollInputs">
             <input ng-model="input.name" type="text"/>
         </div>
-        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,lenta)"/>
+        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,ctrl)"/>
     </div>
 
-    <div class="attach-area" id="attach-area-0">
-        <div class="loading hidden">
-            <img ng-src="i/loading2.gif" alt="картинка"/>
+    <div ng-switch="ctrl.isEdit">
+        <div ng-swith-when="true">
+            <div class="attach-area" id="attach-area-edit-{{ctrl.id}}">
+
+                <span class="attach-item" ng-repeat="image in ctrl.message.images">
+                    <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrl.message,$index,true)">×</a>
+                    <img data-title="{{image.fileName}}" data-type="{{image.contentType}}" class="attached-img" style="background-image:url('{{image.URL}}')">
+                </span>
+
+                <div class="loading hidden">
+                    <img ng-src="i/loading2.gif" alt="картинка"/>
+                </div>
+            </div>
+            <div class="attach-area attach-area-doc" id="attach-doc-area-edit-{{ctrl.id}}">
+                <span class="attach-item" data-fakepath="{{doc.fileName}}"  ng-repeat="doc in ctrl.message.documents">
+                    <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrl.message,$index,false)">×</a>
+                    {{doc.fileName}}
+                </span>
+            </div>
+        </div>
+        <div ng-swith-default>
+            <div class="attach-area" id="attach-area-0">
+                <div class="loading hidden">
+                    <img ng-src="i/loading2.gif" alt="картинка"/>
+                </div>
+            </div>
+            <div class="attach-area attach-area-doc" id="attach-doc-area-0"></div>
         </div>
     </div>
-    <div class="attach-area attach-area-doc" id="attach-doc-area-0"></div>
 
     <div class="message-input-bottom">
 
         <div class="btn-group attach-dropdown pull-right">
             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                <span class="btn-group-text">Прикрепить</span>
+                <span class="btn-group-text">Прикрепить </span>
                 <span class="icon-caret-down icon-on-right"></span>
             </button>
 
-            <ul class="dropdown-menu dropdown-blue">
-                <li><input id="attachImage-0" type="file"/></li>
-                <li><input id="attachDoc-0" type="file"/></li>
-                <li><a href="#" ng-click="base.showPoll($event,lenta)" ng-show="lenta.isPollAvailable">Опрос</a></li>
-            </ul>
+                    <ul class="dropdown-menu dropdown-blue" ng-show="ctrl.isEdit">
+                        <li><input id="attachImage-edit-{{ctrl.id}}" type="file"/></li>
+                        <li><input id="attachDoc-edit-{{ctrl.id}}" type="file"/></li>
+                        <li><a href="#" ng-click="base.showPoll($event,ctrl)" ng-show="ctrl.isPollAvailable">Опрос</a></li>
+                    </ul>
+
+                    <ul class="dropdown-menu dropdown-blue" ng-hide="ctrl.isEdit">
+                        <li><input id="attachImage-0" type="file"/></li>
+                        <li><input id="attachDoc-0" type="file"/></li>
+                        <li><a href="#" ng-click="base.showPoll($event,ctrl)" ng-show="ctrl.isPollAvailable">Опрос</a></li>
+                    </ul>
+
         </div>
-        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="lenta.createWallMessage($event)">Отправить</a>
+        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createWallMessage($event,ctrl)">Отправить</a>
 
         <div class="hashtag pull-left">
             <span>группа</span>
@@ -46,12 +77,12 @@
                 </button>
 
                 <ul class="dropdown-menu dropdown-blue">
-                    <li ng-repeat="group in lenta.groups"><a href="#" ng-click="selectGroupInDropdown_lenta(group.id)"># {{group.visibleName}}</a></li>
+                    <li ng-repeat="group in base.groups"><a href="#" ng-click="base.selectGroupInDropdown(group.id,ctrl)"># {{group.visibleName}}</a></li>
                 </ul>
             </div>
         </div>
 
-        <span class="error-info" ng-show="lenta.isCreateMessageError">{{lenta.createMessageErrorText}}</span>
+        <span class="error-info" ng-show="ctrl.isCreateMessageError">{{ctrl.createMessageErrorText}}</span>
 
     </div>
 
