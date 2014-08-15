@@ -5,7 +5,9 @@ import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -32,6 +34,7 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserTopic;
+import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageService.Iface;
@@ -635,6 +638,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 							+ topic.getRubricId());
 				}
 			updateTopicMessage( theTopic, topic.getMessage(), pm );
+			theTopic.setImages( updateAttachments( theTopic.getImages(), topic.getMessage().getImages(),  theTopic.getAuthorId().getId(), pm ));
+			theTopic.setDocuments( updateAttachments( theTopic.getDocuments(), topic.getMessage().getDocuments(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
@@ -645,7 +650,44 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+//======================================================================================================================
 	
+	private List<Long> updateAttachments(List<Long> oldFileIds, List<Attach> updatedAttaches, long userId, PersistenceManager pm) {
+		
+		Set<Attach> onlyNewAttaches = new HashSet<Attach>();
+		onlyNewAttaches.addAll(updatedAttaches);
+		ArrayList<Long> updatedFileIdList = new ArrayList<Long>();
+		
+		//delete old files
+		for( long fileId: oldFileIds){
+			VoFileAccessRecord far = pm.getObjectById(VoFileAccessRecord.class,fileId);
+			String url = far.getURL();
+
+			for(Attach attach: updatedAttaches){
+				if( null!=attach.getURL() && attach.getURL().startsWith(url)){
+					onlyNewAttaches.remove(attach); //it's not a new one
+					updatedFileIdList.add(fileId);  //leave it in updated version
+					break;
+				}
+			}
+		}
+		
+		//upload new Files
+		for(Attach attach: onlyNewAttaches){
+			try {
+				VoFileAccessRecord cfar = StorageHelper.loadAttach(pm, userId, attach);
+				updatedFileIdList.add(cfar.getId());
+			} catch (InvalidOperation e) {
+				logger.severe("Failed to load Attach. "+e);
+				e.printStackTrace();
+			}
+		}
+		
+		return updatedFileIdList;
+		
+	}
+//======================================================================================================================
+
 	protected JDBCConnector con;
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.MessageServceImpl");
 

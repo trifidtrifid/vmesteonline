@@ -65,7 +65,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			VoUser u = getUserByEmail(email, pm);
 			if (u != null) {
 				if (u.getPassword().equals(pwd) || !checkPwd) {
-					if( !u.isEmailConfirmed() )
+					if (!u.isEmailConfirmed())
 						return LoginResult.EMAIL_NOT_CONFIRMED;
 					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
 					saveUserInSession(pm, u);
@@ -130,7 +130,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		try {
 			AddressInfo resolvedAddress = VoGeocoder.resolveAddressString(address);
-			EMailHelper.sendSimpleEMail("trifid@gmail.com", email + "wants to register", email + " "+resolvedAddress.getAddresText()+"(" + address + ") wants to join");
+			EMailHelper.sendSimpleEMail("trifid@gmail.com", email + "wants to register", email + " " + resolvedAddress.getAddresText() + "(" + address
+					+ ") wants to join");
 			return VoGeocoder.createMapImageURL(resolvedAddress.getLongitude(), resolvedAddress.getLattitude(), 450, 450);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,6 +164,11 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	@Override
 	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender)
 			throws InvalidOperation {
+		return registerNewUser(firstname, lastname, password, email, inviteCode, gender, true);
+	}
+
+	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender,
+			boolean needConfirmEmail) throws InvalidOperation {
 
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
@@ -178,6 +184,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 			VoUser user = new VoUser(firstname, lastname, email, password);
 			user.setGender(gender);
+			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
 
@@ -192,9 +199,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
 
 			// Add the send welcomeMessage Task to the default queue.
-      Queue queue = QueueFactory.getDefaultQueue();
-      queue.add(withUrl("/tasks/notification").param("rt", "swm").param("uid", ""+user.getId()));
-			//Notification.welcomeMessageNotification(user);
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(withUrl("/tasks/notification").param("rt", "swm").param("uid", "" + user.getId()));
+			// Notification.welcomeMessageNotification(user);
 			return user.getId();
 
 		} finally {
@@ -318,30 +325,28 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		}
 	}
 
-	// TODO what is this? This is a part of the method access restrictions implementation 
+	// TODO what is this? This is a part of the method access restrictions implementation
 	@Override
 	public boolean isPublicMethod(String method) {
 		return true;// publicMethods.contains(method);
 	}
 
 	// ======================================================================================================================
-	
+
 	@Override
 	public long categoryId() {
 		return ServiceCategoryID.AUTH_SI.ordinal();
 	}
 
-
 	@Override
 	public boolean remindPassword(String emal) throws TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser user = getUserByEmail(emal,pm);
-			if( null!= user ){
-				user.setConfirmCode( System.currentTimeMillis() % 998765 );
+			VoUser user = getUserByEmail(emal, pm);
+			if (null != user) {
+				user.setConfirmCode(System.currentTimeMillis() % 998765);
 				Queue queue = QueueFactory.getDefaultQueue();
-				queue.add(withUrl("/tasks/notification").param("rt", "pwdrem")
-				    		.param("user", ""+user.getId()));
+				queue.add(withUrl("/tasks/notification").param("rt", "pwdrem").param("user", "" + user.getId()));
 				return true;
 			}
 		} finally {
@@ -354,9 +359,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public boolean checkRemindCode(String remindeCode, String emal) throws TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser user = getUserByEmail(emal,pm);
-			if( null!= user ){
-				if( remindeCode!=null && remindeCode.equals( ""+user.getConfirmCode()))
+			VoUser user = getUserByEmail(emal, pm);
+			if (null != user) {
+				if (remindeCode != null && remindeCode.equals("" + user.getConfirmCode()))
 					return true;
 			}
 		} finally {
@@ -369,12 +374,12 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public boolean changePasswordByRemidCode(String remindCode, String emal, String newPwd) throws TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser user = getUserByEmail(emal,pm);
-			if( null!= user ){
-				if( remindCode!=null && remindCode.equals( ""+user.getConfirmCode())){
-					
+			VoUser user = getUserByEmail(emal, pm);
+			if (null != user) {
+				if (remindCode != null && remindCode.equals("" + user.getConfirmCode())) {
+
 					user.setPassword(newPwd);
-					user.setConfirmCode(System.currentTimeMillis()); //just to reset
+					user.setConfirmCode(System.currentTimeMillis()); // just to reset
 					pm.makePersistent(user);
 					saveUserInSession(pm, user);
 					return true;

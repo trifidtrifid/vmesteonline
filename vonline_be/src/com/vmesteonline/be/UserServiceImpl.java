@@ -289,7 +289,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				uProfile.contacts = new UserContacts();
 			}
 
-			if (uPrivacy.profile.getValue() < relation.getValue()) {// remove contacts
+			if (uPrivacy.profile.getValue() < relation.getValue()) {// remove interest and family
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 			}
@@ -312,18 +312,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		if (null == cuAddr || null == (uAddr = user.getAddress())) {
 			relation = PrivacyType.EVERYBODY;
 
-		} else if (cuAddr.getBuilding() == uAddr.getBuilding() && 0 == cuAddr.getBuilding()) { // the same building
+		} else if (cuAddr.getBuilding() == uAddr.getBuilding() && 0 != cuAddr.getBuilding()) { // the same building
 
 			relation = PrivacyType.HOME;
 
-			if (cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase())
+			if (cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase()){
 				relation = PrivacyType.STAIRCASE;
 
-			else if (cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor())
-				relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
-
-			else if (cuAddr.getFlatNo() == uAddr.getFlatNo() && 0 != uAddr.getFlatNo())
-				relation = PrivacyType.STAIRCASE; // TODO could be a Flat privacy
+				if (cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor()) {
+					relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
+				}
+			}
 
 		} else { // lets determine the relation as according to the distance
 
@@ -856,17 +855,34 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
+			int width = 450, height = 450;
+			
 				VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
 				String los = userGroup.getLongitude().toPlainString();
 				String las = userGroup.getLatitude().toPlainString();
-				if(0!=userGroup.getRadius()){
-						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" + "&pl=c:" + color + ",f:" + color + ",w:1";	
-		
+				int radius;
+				if(0!= (radius = userGroup.getRadius())){
+					
 					double lad = userGroup.getLatitude().doubleValue();
 					double lod = userGroup.getLongitude().doubleValue();
 		
 					double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
 					double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
+					double ws,hs;
+				
+					if(radius < 100){
+						double k = 0.0000002*radius;
+						ws = VoHelper.roundDouble(k*width, 5);
+						hs = VoHelper.roundDouble(k*height, 5);
+					} else {
+						ws = VoHelper.roundDouble(laDelta, 5);
+						hs = VoHelper.roundDouble(loDelta, 5);
+					}
+					
+						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
+								+"&size="+width+","+height+"&spn="+ws+","+hs +
+									"&pl=c:" + color + ",f:" + color + ",w:1";	
+		
 		
 					for ( double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
 						url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);

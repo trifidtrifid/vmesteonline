@@ -18,7 +18,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Mark;
@@ -51,19 +50,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 			if (msg.images != null) {
 				List<Attach> savedImages = new ArrayList<Attach>();
 				for (Attach img : msg.images) {
-					VoFileAccessRecord cfar;
-					try {
-						FileSource fs = StorageHelper.createFileSource( img );
-						if( fs == null ){
-							cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(img.getURL()));
-							cfar.updateContentParams(img.contentType, img.fileName);
-						}	else {	
-							cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
-						}
-						
-					} catch (IOException e) {
-						throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to upload content. "+e);
-					}
+					VoFileAccessRecord cfar = StorageHelper.loadAttach(pm, msg.getAuthorId(), img);
 					images.add( cfar.getId());
 					savedImages.add(cfar.getAttach());
 				}
@@ -156,6 +143,14 @@ public abstract class VoBaseMessage extends GeoLocation {
 		return null==likes ? 0 : likes.size();
 	}
 
+
+	public void setImages(List<Long> images) {
+		this.images = images;
+	}
+
+	public void setDocuments(List<Long> documents) {
+		this.documents = documents;
+	}
 
 	public int markLikes( VoUser user, VoUser author, PersistenceManager pm) {
 		if( null == likes ) likes = new HashSet<Long>();

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.Random;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
+import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.utils.EMailHelper;
 
 /*import com.restfb.DefaultFacebookClient;
@@ -26,53 +27,89 @@ public class OAuthServlet extends HttpServlet {
 	private static final long serialVersionUID = -6391276180341584453L;
 	private static final String domain = "https://1-dot-algebraic-depot-657.appspot.com/";
 
+	private String generatePassword() {
+		StringBuilder sb = new StringBuilder();
+		int n = 8; // how many characters in password
+		String set = "ABCDEFJHIJKLMNOPQRSTUVWXYZabcdefjhijklmnopqrstuvwxyz1234567890"; // characters to choose from
+
+		for (int i = 0; i < n; i++) {
+			Random rand = new Random(System.nanoTime());
+			int k = rand.nextInt(set.length()); // random number between 0 and set.length()-1 inklusive
+			sb.append(set.charAt(k));
+		}
+		return sb.toString();
+	}
+
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		resp.setContentType("text/html; charset=utf-8");
 
 		String authCode = req.getParameter("code");
+
 		String inviteCode = req.getParameter("state");
 
 		resp.getWriter().println("<head><meta charset=\"utf-8\">");
 		resp.getWriter().println("request " + req.toString());
 		resp.getWriter().println("try authorize in " + inviteCode + " with code=" + authCode);
 
-		URL obj = new URL("https://oauth.vk.com/access_token?client_id=4463293&redirect_uri=" + domain + "oauth&client_secret=S8wYzpGUtzomnv1Pvcpv&code="
-				+ authCode);
-		String response = runUrl(obj);
-
 		try {
+			String response = runUrl(new URL("https://oauth.vk.com/access_token?client_id=4429306&redirect_uri=" + domain
+					+ "oauth&client_secret=oQBV8uO3tHyBONHcNsxe&code=" + authCode));
 			JSONObject jsonObj = new JSONObject(response.toString());
+
 			AuthServiceImpl authServiceImpl = new AuthServiceImpl();
 			authServiceImpl.setSession(req.getSession());
-			resp.getWriter().println("<br><br>" + jsonObj.getString("email") + " find");
-
 			String email = jsonObj.getString("email");
 
-			if (inviteCode.isEmpty()) {
-				authServiceImpl.allowUserAccess(email, "", false);
+			resp.getWriter().println("<br><br>" + email + " find");
+
+			if (inviteCode == null || inviteCode.isEmpty()) {
+				try {
+					switch (authServiceImpl.allowUserAccess(email, "", false)) {
+					case SUCCESS:
+						resp.sendRedirect(domain + "main");
+						break;
+					case EMAIL_NOT_CONFIRMED:
+						resp.sendRedirect(domain + "login.html?invalid_email=" + email);
+						break;
+					default:
+						break;
+					}
+				} catch (Exception e) {
+					resp.sendRedirect(domain + "login.html?invalid_email=" + email);
+					return;
+				}
+
 			} else {
-				String resp2 = runUrl(new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
-						+ jsonObj.getString("access_token")));
-				JSONObject jsonObj2 = new JSONObject(resp2);
 
-				resp.getWriter().println("<br><br>  sdfsdf " + resp2);
+				if (inviteCode.startsWith("inviteCode:")) {
+					inviteCode = inviteCode.substring(inviteCode.lastIndexOf(":") + 1);
 
-				JSONArray vkResp = jsonObj2.getJSONArray("response");
-				JSONObject o = (JSONObject) vkResp.get(0);
+					String resp2 = runUrl(new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
+							+ jsonObj.getString("access_token")));
+					JSONObject jsonObj2 = new JSONObject(resp2);
 
-				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, inviteCode, 0);
-				authServiceImpl.allowUserAccess(email, "", false);
-				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте vmesteonline.ru",
-						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email + ". Ваш пароль: 123456. Рекомендуем изменить. Также вы всегда сможете войти используя аккаунта Вконтакте.");
+					resp.getWriter().println("<br><br>  sdfsdf " + resp2);
+
+					JSONArray vkResp = jsonObj2.getJSONArray("response");
+					JSONObject o = (JSONObject) vkResp.get(0);
+
+					String password = generatePassword();
+					authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), password, email, inviteCode, 0, false);
+					authServiceImpl.allowUserAccess(email, "", false);
+					resp.sendRedirect(domain + "main");
+
+				} else {
+
+					resp.sendRedirect(domain + "main?importdata");
+
+				}
 			}
-
-			resp.sendRedirect(domain + "main.jsp");
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.sendRedirect(domain + "coming-soon.html");
+			resp.sendRedirect(domain + "login.html?error=" + e.toString());
 		}
 
 	}
@@ -89,47 +126,4 @@ public class OAuthServlet extends HttpServlet {
 		in.close();
 		return response.toString();
 	}
-
-	/*
-	 * else if (state.equals("facebook")) {
-	 * 
-	 * 
-	 * AccessToken accessToken = new DefaultFacebookClient().obtainAppAccessToken("293608184137183", "0b93bf9f2c099da8503497d908c5aabd");
-	 * 
-	 * 
-	 * URL obj = new URL(
-	 * "https://graph.facebook.com/oauth/access_token?client_id=293608184137183&redirect_uri=https://1-dot-vmesteonline.appspot.com/oauth&client_secret=0b93bf9f2c099da8503497d908c5aabd&code="
-	 * + authCode); HttpURLConnection con = (HttpURLConnection) obj.openConnection(); int responseCode = con.getResponseCode();
-	 * resp.getWriter().println("Response Code : " + responseCode);
-	 * 
-	 * BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream())); String inputLine; StringBuffer response = new
-	 * StringBuffer();
-	 * 
-	 * while ((inputLine = in.readLine()) != null) { response.append(inputLine); } in.close();
-	 * 
-	 * String[] pairs = response.toString().split("&"); HashMap<String, String> respVals = new HashMap<String, String>(); for (String data : pairs) {
-	 * String[] p = data.split("="); if (p.length == 2) { respVals.put(p[0], p[1]); } } resp.getWriter().println("token is '" + response.toString() +
-	 * "'");
-	 * 
-	 * resp.getWriter().println("token is '" + respVals.get("access_token") + "'");
-	 * 
-	 * FacebookClient facebookClient = new DefaultFacebookClient(respVals.get("access_token")); User user = facebookClient.fetchObject("me",
-	 * User.class); resp.getWriter().println("email is " + user.getEmail()); resp.getWriter().println("name is " + user.getName() + " " +
-	 * user.getLastName()); resp.getWriter().println("avatar is https://graph.facebook.com/" + user.getId() + "/picture?type=large"); }
-	 */
-
-	/*
-	 * if (state.equals("google")) { GoogleAuthorizationCodeFlow flow = Utils.initializeFlow("290786477692.apps.googleusercontent.com",
-	 * "IiK6TuzttYzupLD7vlAVWr5P"); GoogleTokenResponse response = flow.newTokenRequest
-	 * (authCode).setRedirectUri("https://1-dot-vmesteonline.appspot.com/oauth" ).execute(); final Credential credential =
-	 * flow.createAndStoreCredential(response, "userid"); final HttpRequestFactory requestFactory =
-	 * Utils.HTTP_TRANSPORT.createRequestFactory(credential); // Make an authenticated request final GenericUrl url = new
-	 * GenericUrl("https://www.googleapis.com/oauth2/v1/userinfo"); final HttpRequest request = requestFactory.buildGetRequest(url);
-	 * request.getHeaders().setContentType("application/json"); final String jsonIdentity = request.execute().parseAsString();
-	 * 
-	 * resp.getWriter().println("Hello, world " + jsonIdentity); try { JSONObject jsonObj = new JSONObject(jsonIdentity);
-	 * resp.getWriter().println("<br><br>" + jsonObj.getString("email"));
-	 * 
-	 * } catch (JSONException e) { // TODO Auto-generated catch block e.printStackTrace(); } }
-	 */
 }
