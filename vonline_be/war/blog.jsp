@@ -86,11 +86,10 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                     for(int i = 0; i < topicsSize; i++){
                 %>
                 <div class="post" data-postlink="<%=Blog.topics.get(i).message.content%>" data-topicid="<%=Blog.topics.get(i).id%>" >
-                    <div class="post-avatar pull-left">
+                    <%--<div class="post-avatar pull-left">
                         <div style="background-image: url(<%=Blog.topics.get(i).userInfo%>)"></div>
-                    </div>
-                    <div class="post-date" data-date="<%=Blog.topics.get(i).message.created%>">
-                    </div>
+                    </div>--%>
+                    <%--<div class="post-date" data-date="<%=Blog.topics.get(i).message.created%>"></div>--%>
                     <div class="topic"></div>
                     <div class="topic-stuff">
                         <a href="#" class="show-comment">Показать комментарии</a>
@@ -155,7 +154,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
         var protocol = new Thrift.Protocol(transport);
         var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
 
-        $('.post-date').each(function(){
+        /*$('.post-date').each(function(){
 
             var dateNumber = $(this).attr('data-date');
 
@@ -163,7 +162,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             $(this).text(dateStr.toLocaleDateString()+" "+dateStr.toLocaleTimeString());
 
-        });
+        });*/
 
         $('.itemdiv').each(function(){
            var span = $(this).find('.lenta-item-bottom span');

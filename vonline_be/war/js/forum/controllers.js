@@ -2,7 +2,7 @@
 
 /* Controllers */
 angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
-    .controller('baseController',function($rootScope) {
+    .controller('baseController',function($rootScope,$state) {
         $rootScope.isTopSearchShow = true;
         var base = this;
         base.neighboursLoadStatus = "";
@@ -280,6 +280,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             $rootScope.base.bufferSelectedGroup = $rootScope.groups[0];
         };
 
+        base.goToDialog = function(userId){
+            var users = [];
+            users[0] = userId;
+            var dialog = dialogClient.getDialog(users,0);
+
+            $state.go('dialog-single',{ 'dialogId' : dialog.id});
+        };
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
 
@@ -298,6 +306,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             document.location.replace("login.html");
 
         }
+
+        //$('.ng-cloak').removeClass('ng-cloak');
 
   })
   .controller('leftBarController',function($rootScope) {
@@ -1847,14 +1857,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         neighbours.neighboorsSize = neighbours.neighboors.length;
 
-        neighbours.goToDialog = function(userId){
-            var users = [];
-            users[0] = userId;
-            var dialog = dialogClient.getDialog(users,0);
-
-            $state.go('dialog-single',{ 'dialogId' : dialog.id});
-        };
-
         function initAutoFill(){
             var data = [],
                 neighboursLength = neighbours.neighboors.length;
@@ -1919,7 +1921,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         profile.userProfile = userClient.getUserProfile(userId);
 
-        //alert(userId+" "+profile.userProfile.family.relations);
+        if(profile.userProfile.userInfo){
+            (profile.userProfile.userInfo.gender == 0) ?
+                profile.userProfile.userInfo.genderMeta = "Жен" :
+                profile.userProfile.userInfo.genderMeta = "Муж";
+        }
 
         $rootScope.base.avatarBuffer = profile.userProfile.userInfo.avatar;
 
@@ -1957,8 +1963,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             }
         }
-
-
 
         $rootScope.chageIndex = 0;
 

@@ -99,7 +99,7 @@
         }
     </script>
 
-    <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
+    <div class="navbar-container ng-cloak" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
             <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
