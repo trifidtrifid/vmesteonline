@@ -28,10 +28,10 @@
                             <div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол:</span>{{profile.userProfile.userInfo.gender}}</div>
                         </div>
 
-                        <div class="profile-item" ng-show="profile.userContacts != null">
+                        <div class="profile-item" ng-show="profile.userProfile.contacts.mobilePhone != null || profile.userProfile.contacts.email != null">
                             <h3>Контактная информация</h3>
-                            <div ng-show="profile.userContacts.mobilePhone != null"><span>Телефон:</span> {{ profile.userContacts.mobilePhone }}</div>
-                            <div><span>Email:</span> {{ profile.userContacts.email }}</div>
+                            <div ng-show="profile.userProfile.contacts.mobilePhone != null"><span>Телефон:</span> {{ profile.userProfile.contacts.mobilePhone }}</div>
+                            <div ng-show="profile.userProfile.contacts.email != null"><span>Email:</span> {{ profile.userProfile.contacts.email }}</div>
                         </div>
 
                         <div class="profile-item" ng-show="profile.userProfile.family.relations != null ||
@@ -71,9 +71,9 @@
                             </div>
                         </div>
 
-                        <div class="profile-item last" ng-show="profile.userContacts.homeAddress != null">
+                        <div class="profile-item last" ng-show="profile.userProfile.contacts.homeAddress != null">
                             <h3>Домашний адрес</h3>
-                            <div>{{profile.userContacts.homeAddress.street.name + " "+ profile.userContacts.homeAddress.building.fullNo}}</div>
+                            <div>{{profile.userProfile.contacts.homeAddress.street.name + " "+ profile.userProfile.contacts.homeAddress.building.fullNo}}</div>
                         </div>
 
                         <div class="home-map" ng-show="profile.isMayEdit">

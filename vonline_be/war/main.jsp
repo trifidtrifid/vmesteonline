@@ -101,7 +101,7 @@
 
     <div class="navbar-container" id="navbar-container" ng-controller="navbarController as navbar">
         <div class="navbar-header pull-left">
-            <a href="#" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>
             </a>
         </div>
@@ -175,10 +175,11 @@
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">
                         (c) Вместе Онлайн 2014
+                        <!-- временная обработка ссылок пока не адаптирован блог, о нас и контакты под ангуляр -->
                         <ul>
-                            <li><a href="about" target="_blank">О сайте</a></li>
-                            <li><a href="blog" target="_blank">Блог</a></li>
-                            <li><a href="contacts" target="_blank">Контакты</a></li>
+                            <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>
+                            <li><a href="blog" onclick="document.location.replace('blog');">Блог</a></li>
+                            <li><a href="contacts" onclick="document.location.replace('contacts');">Контакты</a></li>
                         </ul>
                     </div>
 				</aside>
@@ -190,11 +191,11 @@
                     <ul>
                         <li ng-repeat="importantTopic in importantTopics.topics" class="clearfix">
                             <div class="importantly-left">
-                                <div class="avatar short2" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
+                                <div class="avatar short" style="background-image: url({{importantTopic.userInfo.avatar}})"></div>
                             </div>
                             <div class="importantly-right">
-                                <h3>{{importantTopic.userInfo.firstName +" "+ importantTopic.userInfo.lastName}}</h3>
-                                <p>{{ importantTopic.message.content }}</p>
+                                <h3>{{importantTopic.userInfo.firstName}}</h3>
+                                <p>{{ importantTopic.message.content.slice(0,50)+"..." }}</p>
 
                                 <div ng-switch on="importantTopic.message.type" >
 
@@ -244,9 +245,9 @@
             <div class="pull-left">(c) Вместе Онлайн 2014</div>
             <div class="pull-right">
                 <ul>
-                    <li><a href="about" target="_blank">О сайте</a></li>
-                    <li><a href="blog" target="_blank">Блог</a></li>
-                    <li><a href="contacts" target="_blank">Контакты</a></li>
+                    <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>
+                    <li><a href="blog" onclick="document.location.replace('blog');">Блог</a></li>
+                    <li><a href="contacts" onclick="document.location.replace('contacts');">Контакты</a></li>
                 </ul>
             </div>
         </div>

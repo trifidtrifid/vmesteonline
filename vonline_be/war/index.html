@@ -114,8 +114,8 @@
 					<div class="pull-right">
 						<ul>
 							<li><a href="about">О сайте</a></li>
-							<li><a href="contacts">Контакты</a></li>
 							<li><a href="blog">Блог</a></li>
+							<li><a href="contacts">Контакты</a></li>
 						</ul>
 					</div>
 				</div>
@@ -127,6 +127,17 @@
 	<!-- // End Grey Highlight Section -->
 
 	<!-- Container -->
+
+
+
+
+
+
+
+
+
+
+
 
 	<script src="js/forum/landing/jquery.js"></script>
 	<script src="js/forum/landing/bootstrap.js"></script>
@@ -244,129 +255,6 @@
 																					.show();
 																		}
 
-																		/*$('body').hide(0).addClass('poll').load('poll.html .masthead',function(){
-																		    var marginLeft = 0;
-																		    var item = $('.item');
-																		    var itemWidth = item.width()+15;
-																		    var itemLen = item.length;
-																		    var sliderWidth = itemWidth*itemLen;
-																		    $('.slider').width(sliderWidth);
-																		    var itemActive = $('.item.active');
-
-																		    var temp = new Date().toString();
-																		    var date = temp.split(" ");
-																		    var dateStr = date[0]+" "+date[1]+" "+date[2]+" "+date[3]+" "+date[4];
-																		    itemActive.find('.timeAsk').val(dateStr);
-
-																		    $('.poll .btn').click(function(e){
-																		        e.preventDefault();
-																		        itemActive = $('.item.active');
-
-																		        if(itemActive.find('.checkbox.active').length == 0){
-																		            // юзер не выбрал ответ
-																		        $('.no-answer').show();
-																		        }else{
-																		        $('.no-answer').hide();
-																		        var ind = itemActive.index();
-
-																		        var temp = new Date().toString();
-																		        var date = temp.split(" ");
-																		        var dateStr = date[0]+" "+date[1]+" "+date[2]+" "+date[3]+" "+date[4];
-
-																		        itemActive.find('.timeAnswer').val(dateStr);
-																		        itemActive.removeClass('active');
-
-																		        if (ind == itemLen-1){
-																		            // конец
-																		             temp = new Date().toString();
-																		             date = temp.split(" ");
-																		             dateStr = date[0]+" "+date[1]+" "+date[2]+" "+date[3]+" "+date[4];
-																		            $('.item:eq('+ --ind +')').find('.timeAnswer').val(dateStr);
-
-																		            $('.poll-section, .poll .btn').fadeOut(200,function(){
-																		                $('.thanks').fadeIn(200);
-																		            });
-
-																		            // отправка на сервер
-
-																		            var answersHash="";
-																		            $('.item').each(function(){
-																		                var timeAsk = $(this).find('.timeAsk').val();
-																		                var timeAnswer = $(this).find('.timeAnswer').val();
-
-																		                var answer = $(this).find('.checkbox').index($(this).find('.active')) + 1;
-
-																		                answersHash += answer+","+timeAsk+","+timeAnswer+";";
-																		            });
-
-																		            $.ajax({
-																		                url : 'subscribe.php',
-																		                type : 'POST',
-																		                data : {
-																		                    email : email,
-																		                    code : code,
-																		                    answersHash : answersHash,
-																		                    userAgent : navigator.userAgent
-																		                },
-																		                success : function(data) {
-																		                }
-																		            });
-
-																		        }else{
-																		            ind++;
-																		            temp = new Date().toString();
-																		            date = temp.split(" ");
-																		            dateStr = date[0]+" "+date[1]+" "+date[2]+" "+date[3]+" "+date[4];
-																		            $('.item:eq('+ ind +')').addClass('active').find('.timeAsk').val(dateStr);
-
-																		            marginLeft -= 385;
-																		            $('.slider').animate({marginLeft: marginLeft},200);
-																		        }
-																		    }
-																		    });
-
-																		    // заполнение анкеты вопросами и вариантаим ответов
-																		        $.ajax({
-																		            url : 'getPoll.php',
-																		            type : 'POST',
-																		            data : {
-																		            },
-																		            success : function(data) {
-																		            var questions = data.split('#'),
-																		                    question = [],
-																		                    answer = [];
-																		            var qLen = questions.length;
-																		                for(var i = 0; i < qLen; i++){
-																		                    var parts = questions[i].split('\\');
-																		                    question[i] = parts[0];
-																		                    answer[i] = parts[1];
-																		                }
-
-																		                var count = 0;
-																		            $('.item').each(function(){
-																		                $(this).find('h3').text(question[count]);
-																		                var answersVariables = answer[count].split(';');
-																		                var answLen = answersVariables.length;
-																		                var answersHtml = "<ul>";
-																		                for(var i = 0; i < answLen; i++){
-																		                    answersHtml += "<li><label>" +
-																		                            "<input class='checkbox' type='checkbox'>"+
-																		                            "<span>"+ answersVariables[i] +"</span>"+
-																		                            "</label>"+
-																		                            "</li>";
-																		                }
-																		                answersHtml += "</ul>";
-																		                $(this).find('h3').after(answersHtml);
-																		                count++;
-
-																		            });
-																		                $('.item .checkbox').change(function(){
-																		                    $(this).toggleClass('active');
-																		                });
-																		            }
-																		        });
-
-																		}).show(0);*/
 																	}
 
 																},
