@@ -9,23 +9,22 @@
                 <div class="user-body">
                     <div class="user-body-left pull-left">
                         <label class="block clearfix logo-container">
-                            <!--<img ng-src="{{profile.userProfile.userInfo.avatar}}" alt=""/>-->
                             <div class="avatar big" style="background-image: url({{base.avatarBuffer}})"></div> <!-- base.user.avatar -->
                             <a ui-sref="profile.change-avatar" class="change-avatar-link" ng-show="profile.isMayEdit">Изменить аватар</a>
-                            <!--<input type="file" id="profile-ava" ng-show="profile.isMayEdit">-->
                         </label>
 
-                        <div class="rating">
+                        <!--<div class="rating">
                             <div class="rating-item popularity"><a href="#" title="Популярность" class="fa fa-heart"></a><span>{{profile.userProfile.populatity}}</span></div>
                             <div class="rating-item importancy"><a href="#" title="Важность" class="fa fa-star"></a><span>{{profile.userProfile.importancy}}</span></div>
-                        </div>
+                        </div>-->
+                        <a class="btn btn-sm btn-primary no-border" href="#" ng-click="base.goToDialog(profile.userProfile.userInfo.userId)">Написать сообщение</a>
 
                     </div>
                     
                     <div class="user-body-right">
-                        <div class="profile-item" ng-show="">
-                            <div ng-show="profile.userProfile.userInfo.birthday != null"><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
-                            <div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол:</span>{{profile.userProfile.userInfo.gender}}</div>
+                        <div class="profile-item" ng-show="profile.userProfile.userInfo.birthday != null || profile.userProfile.userInfo.gender != null">
+                            <div ng-show="profile.userProfile.userInfo.birthday != null && profile.userProfile.userInfo.birthday != 0"><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
+                            <div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол: </span> {{profile.userProfile.userInfo.genderMeta}}</div>
                         </div>
 
                         <div class="profile-item" ng-show="profile.userProfile.contacts.mobilePhone != null || profile.userProfile.contacts.email != null">

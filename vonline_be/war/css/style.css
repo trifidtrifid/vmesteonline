@@ -1412,6 +1412,23 @@ h1 {
 .blog .post li {
   font-size: 14px;
 }
+.blog .post .post-team {
+  text-align: center;
+}
+.blog .post .post-team li {
+  list-style: none;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 15px;
+  width: 200px;
+}
+.blog .post .post-team li img {
+  max-width: 200px;
+  max-height: 200px;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 5px;
+}
 .blog .dialogs,
 .blog .input-group {
   display: none;
@@ -1446,7 +1463,7 @@ h1 {
 }
 .blog .topic,
 .blog .topic-stuff {
-  margin-left: 210px;
+  margin-left: 10px;
   padding-bottom: 10px;
 }
 .blog .lenta-item-bottom span,
