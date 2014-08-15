@@ -886,9 +886,6 @@ h1 {
 .edit-message .btn {
   border-width: 2px;
 }
-.edit-message input {
-  width: 50%;
-}
 .edit-textarea {
   margin: 5px 0;
 }

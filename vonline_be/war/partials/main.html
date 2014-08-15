@@ -171,25 +171,31 @@
                                 <div class="body">
                                     <div class="message-tools pull-right" ng-show="wallMessage.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallItem.messages,false)">&times;</a>
-                                        <a href="#" title="Редактировать" ng-click="wallMessage.isEdit = true" class="fa fa-pencil pull-right"></a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit(wallMessage)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
                                     <div class="name">
                                         <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.authorName}}</a>
                                     </div>
-                                    <div class="text" ng-hide="wallMessage.isEdit">{{wallMessage.content}}</div>
-                                    <div class="edit-message" ng-show="wallMessage.isEdit">
-                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
-                                        <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>
+
+                                    <div ng-hide="wallMessage.isEdit">
+                                        <div class="text">{{wallMessage.content}}</div>
+
+                                        <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
+                                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                            </a>
+                                            <div class="docs">
+                                                <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
-                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
-                                            <img ng-src="{{image.URL}}" alt="картинка"/>
-                                        </a>
-                                        <div class="docs">
-                                            <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
-                                        </div>
+                                    <div class="edit-message" ng-show="wallMessage.isEdit">
+                                        <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                        <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>-->
+
+                                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId);"></div>
                                     </div>
 
                                     <div class="lenta-item-bottom">
@@ -199,8 +205,9 @@
                                 </div>
                             </div>
                         </div>
+                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallItem; ctrlId = wallItem.topic.id;initCreateMessage(ctrlId);"></div>
 
-                        <div class="input-group">
+                        <!--<div class="input-group">
                             <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
                                       ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                 onblur="if(this.value=='') this.value='Ваш ответ';"
@@ -232,7 +239,7 @@
                                         </ul>
                                     </div>
                                 </span>
-                        </div>
+                        </div>-->
                     </div>
 
 
