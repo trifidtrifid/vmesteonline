@@ -27,7 +27,7 @@
 
 	<div class="navbar navbar-default" id="navbar">
 
-		<div class="navbar-container" id="navbar-container">
+		<div class="navbar-container coming-soon" id="navbar-container">
 			<div class="navbar-header pull-left">
 				<a href="/" class="navbar-brand"> <img src="i/logo.png" alt="логотип" />
 				</a>
@@ -68,17 +68,6 @@
 					<li>Вся информация передается по шифрованному протоколу HTTPS</li>
 					<li>Мы никогда не дадим рекламодателям доступ к Вашим данным</li>
 					<li>Содержимое сайта никогда не будет доступно поисковым системам</li>
-				</ul>
-			</div>
-		</div>
-
-		<div class="footer footer-bottom clearfix">
-			<div class="pull-left">(c) Вместе Онлайн 2014</div>
-			<div class="pull-right">
-				<ul>
-					<li><a href="about" target="_blank">О сайте</a></li>
-					<li><a href="blog" target="_blank">Блог</a></li>
-					<li><a href="contacts" target="_blank">Контакты</a></li>
 				</ul>
 			</div>
 		</div>

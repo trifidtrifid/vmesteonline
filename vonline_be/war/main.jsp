@@ -55,8 +55,8 @@
 <head>
 <meta charset="utf-8" />
 <title>Главная</title>
-    <link rel="icon" href="i/home1.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="i/home1.ico" type="image/x-icon" />
+    <link rel="icon" href="i/landing/vmesteonline.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="i/landing/vmesteonline.png" type="image/x-icon" />
 
     <link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
 <link rel="stylesheet" href="css/style.css" />

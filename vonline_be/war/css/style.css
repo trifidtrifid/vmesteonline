@@ -1340,7 +1340,7 @@ h1 {
 .coming-soon {
   text-align: center;
   min-height: 0;
-  width: 1024px;
+  width: 768px;
   margin: 0 auto;
   padding-left: 0;
 }
@@ -1407,6 +1407,10 @@ h1 {
 }
 .blog .post:first-child {
   border-top: 0;
+}
+.blog .post p,
+.blog .post li {
+  font-size: 14px;
 }
 .blog .dialogs,
 .blog .input-group {

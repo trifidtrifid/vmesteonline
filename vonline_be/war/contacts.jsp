@@ -60,7 +60,7 @@
 <body class="height100 height100-2">
 <div class="navbar navbar-default" id="navbar">
 
-    <div class="navbar-container" id="navbar-container">
+    <div class="navbar-container coming-soon" id="navbar-container">
         <div class="navbar-header pull-left">
             <a href="/" class="navbar-brand">
                 <img src="i/logo.png" alt="логотип"/>

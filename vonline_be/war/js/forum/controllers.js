@@ -232,7 +232,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.user = userClient.getShortUserInfo();
 
-        base.bufferSelectedGroup = userClientGroups[0];
+        base.bufferSelectedGroup = userClientGroups[1];
 
         base.markImportant = function(event,message){
             event.preventDefault();
@@ -345,7 +345,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('rightBarController',function($rootScope) {
         //var rightbar = this;
 
-        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[0].id);
+        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[1].id);
         //alert(rightbar.importantTopics.totalSize);
     })
     .controller('mainContentTopController',function($rootScope) {
@@ -363,7 +363,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         if(!lsGroupId){
             groups[0].selected = true;
-            $rootScope.currentGroup = groups[0];
+            $rootScope.currentGroup = groups[1];
         }else{
             for(var i = 0; i < groupsLength; i++){
                 if(groups[i].id == lsGroupId){
@@ -373,7 +373,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
             if(!$rootScope.currentGroup){
                 groups[0].selected = true;
-                $rootScope.currentGroup = groups[0];
+                $rootScope.currentGroup = groups[1];
             }
         }
 

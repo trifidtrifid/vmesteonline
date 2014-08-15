@@ -134,7 +134,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
         <div class="pull-right">
             <ul>
                 <li><a href="about">О сайте</a></li>
-                <li><a href="/">На главную</a></li>
+                <li><a href="blog">Блог</a></li>
                 <li><a href="contacts">Контакты</a></li>
             </ul>
         </div>
