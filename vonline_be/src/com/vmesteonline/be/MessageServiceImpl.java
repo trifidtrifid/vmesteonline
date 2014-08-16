@@ -509,8 +509,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
-			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
-					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null, `updateTime` integer not null, `messageType` integer not null);");
+			con.execute("create table if not exists topic ("
+					+ "`id` bigint not null primary key,"
+					+ "`longitude` decimal(10,7) not null,"
+					+ "`lattitude` decimal(10,7) not null,"
+					+ "`radius` integer not null, "
+					+ "`rubricId` bigint not null, "
+					+ "`createTime` integer not null, "
+					+ "`updateTime` integer not null, "
+					+ "`messageType` integer not null, "
+					+ "index pos_idx(`longitude`,`lattitude`), "
+					+ "index grp_idx(`radius`,`longitude`,`lattitude`,`messageType`), "
+					+ "index type_idx(`messageType`),"
+					+ "index update_idx(`updateTime`))");
+			
 		} catch (Exception e) {
 			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
