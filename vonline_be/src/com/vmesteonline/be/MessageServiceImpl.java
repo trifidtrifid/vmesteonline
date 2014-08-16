@@ -685,6 +685,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			newPoll.setId(theTopic.getPollId());
 			pm.makePersistent(newPoll);
 		}
+		if( null!=topic.poll ) topic.poll.pollId = theTopic.getPollId();
 	}
 
 //======================================================================================================================
