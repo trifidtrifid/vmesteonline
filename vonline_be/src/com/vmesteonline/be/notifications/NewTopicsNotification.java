@@ -29,7 +29,6 @@ import com.vmesteonline.be.notifications.Notification.NotificationMessage;
 
 public class NewTopicsNotification extends Notification {
 
-	private JDBCConnector con = new MySQLJDBCConnector();
 	
 	public NewTopicsNotification( Map< VoUser, List<NotificationMessage>> ntf ) {
 		this.messagesToSend = ntf;
@@ -80,11 +79,13 @@ public class NewTopicsNotification extends Notification {
 		Map<VoUserGroup, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
 		Map<VoUserGroup, Set<VoTopic>> groupTopicMap = new TreeMap<VoUserGroup, Set<VoTopic>>(ugComp);
 		
+		JDBCConnector con = new MySQLJDBCConnector();
 		for (VoUserGroup ug : groupUserMap.keySet()) {
 			Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
 			topics.addAll(MessageServiceImpl.getTopics(ug, MessageType.BASE, 0, 10, false, con, pm));
 			groupTopicMap.put(ug, topics);
 		}
+		con.close();
 		return groupTopicMap;
 	}
 

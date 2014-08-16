@@ -13,8 +13,10 @@ import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoMessage;
@@ -23,6 +25,8 @@ import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserTopic;
+import com.vmesteonline.be.jdo2.dialog.VoDialog;
+import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
@@ -101,14 +105,15 @@ public class Defaults {
 			clearRubrics(pm);
 			clearGroups(pm);
 			clearLocations(pm);
-
+			clearFiles(pm);
+			
 			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
 			MySQLJDBCConnector con = new MySQLJDBCConnector();
 			con.execute("drop table if exists topic");
-
+			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -117,6 +122,22 @@ public class Defaults {
 		}
 		return true;
 
+	}
+
+	
+
+	private static void clearFiles(PersistenceManager pm) {
+		Extent<VoFileAccessRecord> ext = pm.getExtent(VoFileAccessRecord.class);
+		if (null != ext)
+			for (VoFileAccessRecord far : ext) {
+				try {
+					StorageHelper.deleteImage(far.getGSFileName());
+					pm.deletePersistent(far);
+				} catch (Exception rte ) {
+					// e.printStackTrace();
+				}
+			}
+		
 	}
 
 	public static boolean initDefaultData() {
@@ -145,6 +166,8 @@ public class Defaults {
 		deletePersistentAll(pm, VoMessage.class);
 		deletePersistentAll(pm, VoUser.class);
 		deletePersistentAll(pm, VoInviteCode.class);
+		deletePersistentAll(pm, VoDialog.class);
+		deletePersistentAll(pm, VoDialogMessage.class);
 	}
 
 	// ======================================================================================================================
@@ -220,6 +243,10 @@ public class Defaults {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
 					VoUser user = pm.getObjectById(VoUser.class, uid);
 					user.setEmailConfirmed(true);
+					
+					if(counter==1) for( VoUserGroup ug: user.getGroups()) //the first user would moderate all of groups
+						user.setGroupModerator(ug.getId(), true);
+					
 					pm.makePersistent(user);
 					uids.add(uid);
 					

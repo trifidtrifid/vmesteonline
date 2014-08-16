@@ -11,6 +11,8 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.data.JDBCConnector;
+import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Mark;
 import com.vmesteonline.be.messageservice.Message;
@@ -100,6 +102,13 @@ public class VoTopic extends VoBaseMessage {
 
 	public void setLastUpdate(int lastUpdate) {
 		this.lastUpdate = lastUpdate;
+		try {
+			JDBCConnector con = new MySQLJDBCConnector();
+			con.execute("update topic set `updateTime`="+lastUpdate+" where id='"+id.getAppId()+"'");
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public long getRubricId() {

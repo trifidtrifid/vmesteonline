@@ -2,7 +2,9 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,7 +96,9 @@ public class VoUser extends GeoLocation {
 	}
 
 	public ShortUserInfo getShortUserInfo() {
-		return new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
+		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
+		if( null!=moderationGroups ) shortUserInfo.moderationGroups = moderationGroups;
+		return shortUserInfo;
 	}
 
 	public UserInfo getUserInfo() {
@@ -420,6 +424,11 @@ public class VoUser extends GeoLocation {
 	@Unindexed
 	private int lastNotified;
 	
+	@Persistent
+	@Unindexed
+	private Set<Long> moderationGroups;
+	
+	
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE ) : privacy;
 	}
@@ -586,6 +595,17 @@ public class VoUser extends GeoLocation {
 
 	public void setPopularuty(int popularuty) {
 		this.popularuty = popularuty;
+	}
+	
+	public boolean isGroupModerator(long groupId){
+		return null!=moderationGroups && moderationGroups.contains(groupId);
+	}
+	
+	public void setGroupModerator(long groupId, boolean makeModerator){
+		if( null==moderationGroups ) 
+			moderationGroups = new HashSet<Long>();
+		if( makeModerator ) moderationGroups.add(groupId);
+		else moderationGroups.remove(groupId);
 	}
 	
 }
