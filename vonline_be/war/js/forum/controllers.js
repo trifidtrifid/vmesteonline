@@ -267,6 +267,48 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             messageClient.markMessageLike(message.id);
         };
 
+        base.initStartParamsForCreateTopic = function(ctrl){
+            ctrl.selectedGroup = $rootScope.base.bufferSelectedGroup = $rootScope.currentGroup;
+
+            ctrl.isEdit = false;
+            ctrl.isCreateMessageError = false;
+            ctrl.isPollAvailable = true;
+
+            if(ctrl.id){
+                // если редактирование
+                if(ctrl.poll && ctrl.poll.pollId){
+                    ctrl.isPollShow = true;
+
+                    ctrl.pollSubject = ctrl.poll.subject;
+                    var namesLength = ctrl.poll.names.length;
+                    ctrl.pollInputs = [];
+                    for(var i = 0; i < namesLength; i++){
+                        ctrl.pollInputs[i] = {};
+                        ctrl.pollInputs[i].counter = i;
+                        ctrl.pollInputs[i].name = ctrl.poll.names[i];
+                    }
+                    ctrl.isPollAvailable = false;
+                }
+            }else{
+                // если создание
+
+                ctrl.isPollShow = false;
+                ctrl.pollSubject = "";
+                ctrl.pollInputs = [
+                    {
+                        counter : 0,
+                        name:""
+                    },
+                    {
+                        counter : 1,
+                        name:""
+                    }
+                ];
+                ctrl.attachedImages = [];
+            }
+
+        }
+
         var hideLikeHelp = function(messageId){
             $('#like-help-'+messageId).fadeOut(200);
         };
@@ -304,6 +346,231 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             message.images.splice(index,1) :
             message.documents.splice(index,1);
         };
+
+        $rootScope.initCreateTopic = function(ctrl){
+
+            if(ctrl.id){
+                // значит редактирование
+
+                setTimeout(pollAttach,200,ctrl.id,true); // ждем пока загрузится
+
+            }else{
+                // значит создание
+
+                setTimeout(pollAttach,200,ctrl.attachId,false);
+
+            }
+
+        };
+
+        $rootScope.initCreateMessage = function(ctrlId){
+
+            if(ctrlId){
+
+                setTimeout(pollAttach,200,ctrlId); // ждем пока загрузится
+
+            }else{
+
+                initAttachImage($('#attachImage-'+ctrlId),$('#attach-area-'+ctrlId)); // для ленты новостей
+                initAttachDoc($('#attachDoc-'+ctrlId),$('#attach-doc-area-'+ctrlId));
+            }
+
+        };
+
+        function pollAttach(ctrlId,isEdit){
+
+            if(isEdit) {
+                if ($('#attachImage-edit-' + ctrlId).length) {
+                    initAttachImage($('#attachImage-edit-' + ctrlId), $('#attach-area-edit-' + ctrlId)); // для ленты новостей
+                    initAttachDoc($('#attachDoc-edit-' + ctrlId), $('#attach-doc-area-edit-' + ctrlId), isEdit);
+                } else {
+                    setTimeout(pollAttach, 200, ctrlId,true);
+                }
+            }else{
+                if ($('#attachImage-' + ctrlId).length) {
+                    initAttachImage($('#attachImage-' + ctrlId), $('#attach-area-' + ctrlId)); // для ленты новостей
+                    initAttachDoc($('#attachDoc-' + ctrlId), $('#attach-doc-area-' + ctrlId));
+                } else {
+                    setTimeout(pollAttach, 200, ctrlId,false);
+                }
+            }
+        }
+
+        function addSingleTalk(talk){
+            if (talk.isEdit) {
+                talk.attachedImages = getAttachedImages($('#attach-area-edit-' + talk.id));
+                talk.attachedDocs = getAttachedDocs($('#attach-doc-area-edit-' + talk.id),talk.isEdit);
+            } else {
+                talk.attachedImages = getAttachedImages($('#attach-area-'+talk.attachId));
+                talk.attachedDocs = getAttachedDocs($('#attach-doc-area-'+talk.attachId));
+            }
+
+            if(talk.subject == TEXT_DEFAULT_4 || talk.subject == ""){
+
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не указали заголовок";
+
+            }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
+                && talk.content == TEXT_DEFAULT_3){
+
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не ввели сообщение";
+
+            }else if(talk.isPollShow && (!talk.pollSubject || talk.pollInputs[0].name == "" || talk.pollInputs[1].name == "")){
+
+                talk.isCreateTalkError = true;
+                talk.createTalkErrorText = "Вы не указали данные для опроса";
+
+            }else {
+
+                if (talk.content == TEXT_DEFAULT_3 && (talk.attachedImages || talk.attachedDocs || talk.isPollShow)) {
+                    talk.content = "";
+                }
+                talk.isCreateTalkError = false;
+
+                var isWall = 0, isAdvert = false;
+                if(talk.isAdvert) isAdvert = true;
+
+                var newTopic = postTopic(talk, isWall,isAdvert);
+
+                newTopic.label = getLabel(base.groups,newTopic.groupType);
+                newTopic.tagColor = getTagColor(newTopic.label);
+
+                /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
+                 newTopic.message = new com.vmesteonline.be.messageservice.Message;
+                 newTopic.message.groupId = talk.selectedGroup.id;
+                 newTopic.message.type = 1;
+                 newTopic.message.content = talk.content;
+                 newTopic.message.id = 0;
+                 newTopic.message.created = Date.parse(new Date());
+
+                 newTopic.subject = talk.subject;
+                 newTopic.id = 0;
+
+                 var poll;
+                 if(talk.isPollShow){
+                 poll = new com.vmesteonline.be.messageservice.Poll;
+                 poll.pollId = 0;
+                 poll.names = [];
+                 var pollInputsLength = talk.pollInputs.length;
+                 for(var i = 0; i < pollInputsLength; i++){
+                 poll.names[i] = talk.pollInputs[i].name;
+                 }
+                 newTopic.poll = poll;
+                 newTopic.metaType = "poll";
+                 }
+
+                 newTopic = messageClient.postTopic(newTopic);
+
+                 if(talk.isPollShow){
+                 poll.pollId = newTopic.poll.pollId;
+                 talk.isPollShow = false;
+                 talk.pollSubject= "";
+                 talk.isPollAvailable = true;
+                 }*/
+
+                $rootScope.base.createTopicIsHide = true;
+
+                if(talk.isEdit){
+                    cleanAttached($('#attach-area-edit-' + talk.id));
+                    cleanAttached($('#attach-doc-area-edit-' + talk.id));
+                    talk.isEdit = false;
+                }else{
+                    cleanAttached($('#attach-area-'+talk.attachId));
+                    cleanAttached($('#attach-doc-area-'+talk.attachId));
+                    $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
+                    talk.subject = TEXT_DEFAULT_4;
+                }
+            }
+        };
+
+        function createWallMessage(ctrl){
+            if (ctrl.isEdit) {
+                ctrl.attachedImages = getAttachedImages($('#attach-area-edit-' + ctrl.id));
+                ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-edit-' + ctrl.id),ctrl.isEdit);
+            } else {
+                ctrl.attachedImages = getAttachedImages($('#attach-area-'+ctrl.attachId));
+                ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-'+ctrl.attachId));
+            }
+
+            if (ctrl.attachedImages.length == 0 && ctrl.attachedDocs && ctrl.attachedDocs.length == 0 && !ctrl.isPollShow
+                && ctrl.message.content == TEXT_DEFAULT_1) {
+
+                ctrl.isCreateMessageError = true;
+                ctrl.createMessageErrorText = "Вы не ввели сообщение";
+
+            } else if (ctrl.isPollShow && (!ctrl.pollSubject || ctrl.pollInputs[0].name == "" || ctrl.pollInputs[1].name == "")) {
+
+                ctrl.isCreateMessageError = true;
+                ctrl.createMessageErrorText = "Вы не указали данные для опроса";
+
+            } else {
+
+                if (ctrl.message.content == TEXT_DEFAULT_1 && (ctrl.attachedImages || ctrl.attachedDocs || ctrl.isPollShow)) {
+                    ctrl.message.content = "";
+                }
+                ctrl.isCreateMessageError = false;
+
+                var isWall = 1,
+                newTopic = postTopic(ctrl, isWall);
+
+                /*var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
+                 newWallItem.topic = newTopic;
+                 newWallItem.topic.authorName = getAuthorName();
+                 newWallItem.messages = [];
+                 newWallItem.commentText = TEXT_DEFAULT_2;
+                 newWallItem.answerShow = false;
+                 newWallItem.isFocus = false;
+                 newWallItem.label = getLabel($rootScope.base.groups, $rootScope.base.bufferSelectedGroup.type);
+                 newWallItem.tagColor = getTagColor(newWallItem.label);*/
+
+                if (ctrl.isEdit) {
+                    cleanAttached($('#attach-area-edit-' + ctrl.id));
+                    cleanAttached($('#attach-doc-area-edit-' + ctrl.id));
+                    ctrl.isEdit = false;
+                } else {
+                    cleanAttached($('#attach-area-'+ctrl.attachId));
+                    cleanAttached($('#attach-doc-area-'+ctrl.attachId));
+                }
+
+                $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
+                /*if (lenta.selectedGroupInTop.id == $rootScope.base.bufferSelectedGroup.id) {
+                 lenta.wallItems ?
+                 lenta.wallItems.unshift(newWallItem) :
+                 lenta.wallItems[0] = newWallItem;
+
+                 }*/
+            }
+        }
+
+        $rootScope.createTopic = function(event,ctrl){
+            event.preventDefault();
+
+            if(ctrl.isTalk){
+                // значит это talk
+                addSingleTalk(ctrl);
+            }else {
+                // значит это wall
+                createWallMessage(ctrl);
+            }
+        };
+
+        base.initStartParamsForCreateComment = function(ctrl){
+
+            ctrl.commentText = TEXT_DEFAULT_2;
+            ctrl.answerShow = false;
+            ctrl.isFocus = false;
+            ctrl.isCreateCommentError = false;
+
+            if(ctrl.id){
+                // занчит редактирование
+                ctrl.commentText = ctrl.content;
+                ctrl.answerShow = true;
+            }else{
+                // значит создание
+            }
+
+        }
 
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
@@ -463,32 +730,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             lastLoadedId = 0,
             loadedLength = 10;
 
-        //lenta.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
         lenta.selectedGroupInTop = $rootScope.currentGroup;
 
-        /*lenta.selectedGroup = $rootScope.base.bufferSelectedGroup =
-            lenta.selectedGroupInTop = $rootScope.currentGroup;*/
+        lenta.attachId = "0";
+        $rootScope.base.initStartParamsForCreateTopic(lenta);
 
-        /*lenta.isPollShow = false;
-        lenta.pollSubject = "";
-        lenta.pollInputs = [
-            {
-            counter : 0,
-            name:""
-            },
-            {
-            counter : 1,
-            name:""
-            }
-        ];
-        lenta.isPollAvailable = true;
-
-        lenta.isCreateMessageError = false;
-
-        lenta.attachedImages = [];*/
-        initStartParamsForCreateTopic(lenta);
-
-        //lenta.wallMessageContent = TEXT_DEFAULT_1;
         lenta.message = {};
         lenta.message.content = TEXT_DEFAULT_1;
 
@@ -499,7 +745,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             wallItemsLength = 0;
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
-        //alert(lastLoadedId+" "+lenta.wallItems[0].topic.id);
 
         initWallItem(lenta.wallItems);
 
@@ -509,67 +754,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.goToAnswerInput = function(event){
             event.preventDefault();
-        };
-
-        $rootScope.createWallMessage = function(event,ctrl){
-            event.preventDefault();
-
-            if(ctrl.isEdit){
-                ctrl.attachedImages = getAttachedImages($('#attach-area-edit-'+ctrl.id));
-                ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-edit-'+ctrl.id));
-            }else{
-                ctrl.attachedImages = getAttachedImages($('#attach-area-0'));
-                ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-0'));
-            }
-
-            if(ctrl.attachedImages.length == 0 && ctrl.attachedDocs && ctrl.attachedDocs.length == 0 && !ctrl.isPollShow
-                && ctrl.message.content == TEXT_DEFAULT_1){
-
-                ctrl.isCreateMessageError = true;
-                ctrl.createMessageErrorText = "Вы не ввели сообщение";
-
-            }else if(ctrl.isPollShow && (!ctrl.pollSubject || ctrl.pollInputs[0].name == "" || ctrl.pollInputs[1].name == "")){
-
-                ctrl.isCreateMessageError = true;
-                ctrl.createMessageErrorText = "Вы не указали данные для опроса";
-
-            }else{
-
-                if(ctrl.message.content == TEXT_DEFAULT_1 && (ctrl.attachedImages || ctrl.attachedDocs || ctrl.isPollShow)){
-                    ctrl.message.content = "";
-                }
-                ctrl.isCreateMessageError = false;
-
-                var isWall = 1,
-                    newTopic = postTopic(ctrl, isWall);
-
-                /*var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
-                newWallItem.topic = newTopic;
-                newWallItem.topic.authorName = getAuthorName();
-                newWallItem.messages = [];
-                newWallItem.commentText = TEXT_DEFAULT_2;
-                newWallItem.answerShow = false;
-                newWallItem.isFocus = false;
-                newWallItem.label = getLabel($rootScope.base.groups, $rootScope.base.bufferSelectedGroup.type);
-                newWallItem.tagColor = getTagColor(newWallItem.label);*/
-
-                if(ctrl.isEdit){
-                    cleanAttached($('#attach-area-edit-'+ctrl.id));
-                    cleanAttached($('#attach-doc-area-edit-'+ctrl.id));
-                    ctrl.isEdit = false;
-                }else {
-                    cleanAttached($('#attach-area-0'));
-                    cleanAttached($('#attach-doc-area-0'));
-                }
-
-                $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
-                /*if (lenta.selectedGroupInTop.id == $rootScope.base.bufferSelectedGroup.id) {
-                    lenta.wallItems ?
-                        lenta.wallItems.unshift(newWallItem) :
-                        lenta.wallItems[0] = newWallItem;
-
-                }*/
-            }
         };
 
         lenta.createWallComment = function(event,wallItem){
@@ -658,110 +842,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        function pollAttach(ctrlId){
-            if($('#attachImage-edit-'+ctrlId).length){
-                initAttachImage($('#attachImage-edit-'+ctrlId),$('#attach-area-edit-'+ctrlId)); // для ленты новостей
-                initAttachDoc($('#attachDoc-edit-'+ctrlId),$('#attach-doc-area-edit-'+ctrlId));
-            }else{
-                setTimeout(pollAttach,200,ctrlId);
-            }
-
-        }
-        $rootScope.initCreateTopic = function(ctrl){
-
-            if(ctrl.id){
-                // значит редактирование
-
-                setTimeout(pollAttach,200,ctrl.id); // ждем пока загрузится
-
-            }else{
-                // значит создание
-
-                initAttachImage($('#attachImage-0'),$('#attach-area-0')); // для ленты новостей
-                initAttachDoc($('#attachDoc-0'),$('#attach-doc-area-0'));
-            }
-
-        };
-        $rootScope.initCreateMessage = function(ctrlId){
-
-            if(ctrlId){
-
-                setTimeout(pollAttach,200,ctrlId); // ждем пока загрузится
-
-            }else{
-
-                initAttachImage($('#attachImage-'+ctrlId),$('#attach-area-'+ctrlId)); // для ленты новостей
-                initAttachDoc($('#attachDoc-'+ctrlId),$('#attach-doc-area-'+ctrlId));
-            }
-
-        };
-
-        function initStartParamsForCreateTopic(ctrl){
-            ctrl.selectedGroup = $rootScope.base.bufferSelectedGroup = $rootScope.currentGroup;
-
-            ctrl.isEdit = false;
-            ctrl.isCreateMessageError = false;
-            ctrl.isPollAvailable = true;
-
-            if(ctrl.id){
-                // если редактирование
-                if(ctrl.poll && ctrl.poll.pollId){
-                    ctrl.isPollShow = true;
-
-                    ctrl.pollSubject = ctrl.poll.subject;
-                    var namesLength = ctrl.poll.names.length;
-                    ctrl.pollInputs = [];
-                    for(var i = 0; i < namesLength; i++){
-                        ctrl.pollInputs[i] = {};
-                        ctrl.pollInputs[i].counter = i;
-                        ctrl.pollInputs[i].name = ctrl.poll.names[i];
-                    }
-                    ctrl.isPollAvailable = false;
-                }
-            }else{
-                // если создание
-
-                ctrl.isPollShow = false;
-                ctrl.pollSubject = "";
-                ctrl.pollInputs = [
-                    {
-                        counter : 0,
-                        name:""
-                    },
-                    {
-                        counter : 1,
-                        name:""
-                    }
-                ];
-                ctrl.attachedImages = [];
-            }
-
-        }
-
-        function initStartParamsForCreateComment(ctrl){
-
-            ctrl.commentText = TEXT_DEFAULT_2;
-            ctrl.answerShow = false;
-            ctrl.isFocus = false;
-            ctrl.isCreateCommentError = false;
-
-            if(ctrl.id){
-                // занчит редактирование
-                ctrl.commentText = ctrl.content;
-                ctrl.answerShow = true;
-            }else{
-                // значит создание
-            }
-
-        }
-
         function initWallItem(wallItems){
             wallItemsLength = wallItems.length;
             for(var i = 0; i < wallItemsLength; i++){
 
-                initStartParamsForCreateComment(wallItems[i]);
+                $rootScope.base.initStartParamsForCreateComment(wallItems[i]);
 
-                initStartParamsForCreateTopic(wallItems[i].topic);
+                $rootScope.base.initStartParamsForCreateTopic(wallItems[i].topic);
 
                 //  wallItems[i].topic.message.groupId сейчас не задана почему-то
                 wallItems[i].label = getLabel($rootScope.base.groups,wallItems[i].topic.groupType);
@@ -795,7 +882,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                         wallItems[i].messages[j].authorName = getAuthorName(wallItems[i].messages[j].userInfo);
                         wallItems[i].messages[j].isEdit = false;
 
-                        initStartParamsForCreateComment(wallItems[i].messages[j]);
+                        $rootScope.base.initStartParamsForCreateComment(wallItems[i].messages[j]);
                     }
 
 
@@ -980,22 +1067,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         * сообщения.
         * */
             $rootScope.setTab(2);
+            var talk = this;
 
-            initAttachImage($('#attachImage-00'), $('#attach-area-00')); // для обсуждений
-            initAttachDoc($('#attachDoc-00'), $('#attach-doc-area-00')); // для обсуждений
+            talk.attachId = "00";
+            /*initAttachImage($('#attachImage-'+talk.attachId), $('#attach-area-'+talk.attachId));
+            initAttachDoc($('#attachDoc-'+talk.attachId), $('#attach-doc-area-'+talk.attachId));*/
             initFancyBox($('.talks'));
+
             $rootScope.base.showAllGroups();
             $rootScope.base.isFooterBottom = false;
 
             $rootScope.base.createTopicIsHide = true;
-            var talk = this;
+
             talk.isTalksLoaded = false;
             talk.groups = userClientGroups;
 
-            talk.content = TEXT_DEFAULT_3;
+            talk.message = {};
+            talk.message.content = TEXT_DEFAULT_3;
             talk.subject = TEXT_DEFAULT_4;
 
-            talk.isPollShow = false;
+            $rootScope.base.initStartParamsForCreateTopic(talk);
+            /*talk.isPollShow = false;
             talk.pollSubject = "";
             talk.pollInputs = [
                 {
@@ -1007,7 +1099,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     name: ""
                 }
             ];
-            talk.isPollAvailable = true;
+            talk.isPollAvailable = true;*/
+
+            talk.isTalk = true;
 
             talk.fullTalkTopic = {};
             talk.fullTalkTopic.answerInputIsShow = false;
@@ -1029,81 +1123,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             $rootScope.selectGroupInDropdown_talks = function(groupId){
                 talk.selectedGroup = $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(groupId);
             };
-
-        talk.addSingleTalk = function(){
-            talk.attachedImages = getAttachedImages($('#attach-area-00'));
-            talk.attachedDocs = getAttachedDocs($('#attach-doc-area-00'));
-            if(talk.subject == TEXT_DEFAULT_4 || talk.subject == ""){
-
-                talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "Вы не указали заголовок";
-
-            }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
-                && talk.content == TEXT_DEFAULT_3){
-
-                talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "Вы не ввели сообщение";
-
-            }else if(talk.isPollShow && (!talk.pollSubject || talk.pollInputs[0].name == "" || talk.pollInputs[1].name == "")){
-
-                talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "Вы не указали данные для опроса";
-
-            }else {
-
-                if (talk.content == TEXT_DEFAULT_3 && (talk.attachedImages || talk.attachedDocs || talk.isPollShow)) {
-                    talk.content = "";
-                }
-                talk.isCreateTalkError = false;
-                var isWall = 0,
-                    newTopic = postTopic(talk, isWall);
-                newTopic.label = getLabel(talk.groups,newTopic.groupType);
-                newTopic.tagColor = getTagColor(newTopic.label);
-
-                /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
-                 newTopic.message = new com.vmesteonline.be.messageservice.Message;
-                 newTopic.message.groupId = talk.selectedGroup.id;
-                 newTopic.message.type = 1;
-                 newTopic.message.content = talk.content;
-                 newTopic.message.id = 0;
-                 newTopic.message.created = Date.parse(new Date());
-
-                 newTopic.subject = talk.subject;
-                 newTopic.id = 0;
-
-                 var poll;
-                 if(talk.isPollShow){
-                 poll = new com.vmesteonline.be.messageservice.Poll;
-                 poll.pollId = 0;
-                 poll.names = [];
-                 var pollInputsLength = talk.pollInputs.length;
-                 for(var i = 0; i < pollInputsLength; i++){
-                 poll.names[i] = talk.pollInputs[i].name;
-                 }
-                 newTopic.poll = poll;
-                 newTopic.metaType = "poll";
-                 }
-
-                 newTopic = messageClient.postTopic(newTopic);
-
-                 if(talk.isPollShow){
-                 poll.pollId = newTopic.poll.pollId;
-                 talk.isPollShow = false;
-                 talk.pollSubject= "";
-                 talk.isPollAvailable = true;
-                 }*/
-
-                $rootScope.base.createTopicIsHide = true;
-
-                //talk.topics.unshift(newTopic);
-                $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
-            }
-
-            cleanAttached($('#attach-area-00'));
-            cleanAttached($('#attach-doc-area-00'));
-            talk.subject = TEXT_DEFAULT_4;
-
-        };
 
         function initTalks(){
             var topicLength;
@@ -1144,6 +1163,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             lastLoadedId = 0,
             talkId = $stateParams.talkId;
 
+        talk.attachId = "00";
         talk.selectedGroup = $rootScope.currentGroup;
         talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
         talk.fullTalkTopic = {};
@@ -1156,13 +1176,15 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             initFancyBox($('.talks-single'));
             var topicLength;
             talk.topics ? topicLength = talk.topics.length : topicLength = 0;
-            //talk.fullTalkTopic = talkOutside;
 
-            var talkId = talkOutsideId,
-                fullTalkFirstMessagesLength;
+            var talkId = talkOutsideId;
             for(var i = 0; i < topicLength; i++){
                 if(talkId == talk.topics[i].id){
                     talk.fullTalkTopic = talk.topics[i];
+
+                    $rootScope.base.initStartParamsForCreateTopic(talk.fullTalkTopic);
+
+                    talk.fullTalkTopic.isTalk = true;
                     talk.fullTalkTopic.message.createdEdit = getTiming(talk.fullTalkTopic.message.created);
                     talk.fullTalkTopic.label = getLabel(talk.groups,talk.fullTalkTopic.groupType);
                     talk.fullTalkTopic.tagColor = getTagColor(talk.fullTalkTopic.label);
@@ -1183,29 +1205,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
 
-            /*talk.fullTalkFirstMessages ?
-                fullTalkFirstMessagesLength = talk.fullTalkFirstMessages.length:
-                fullTalkFirstMessagesLength = 0;
-
-            if(fullTalkFirstMessagesLength != 0) lastLoadedId = talk.fullTalkFirstMessages[fullTalkFirstMessagesLength-1].id
-
-            if(talk.fullTalkFirstMessages === null) talk.fullTalkFirstMessages = [];
-
-            for(var i = 0; i < fullTalkFirstMessagesLength; i++){
-                talk.fullTalkFirstMessages[i].answerInputIsShow = false;
-                talk.fullTalkFirstMessages[i].isTreeOpen = false;
-                talk.fullTalkFirstMessages[i].isLoaded = false;
-                talk.fullTalkFirstMessages[i].answerMessage = TEXT_DEFAULT_2;
-                talk.fullTalkFirstMessages[i].createdEdit = getTiming(talk.fullTalkFirstMessages[i].created);
-            }*/
             lastLoadedId = $rootScope.base.initFirstMessages(talk.fullTalkFirstMessages);
 
             $rootScope.base.isTalkTitles = false;
-            //alert($rootScope.base.isTalkTitles);
             $rootScope.base.mainContentTopIsHide = true;
             $rootScope.base.createTopicIsHide = true;
-
-            var talksBlock = $('.talks').find('.talks-block');
 
             $rootScope.base.talk = talk;
 
@@ -1504,34 +1508,28 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('AdvertsController',function($rootScope) {
         var adverts = this;
 
+        adverts.attachId = "00000";
         $rootScope.setTab(3);
         $rootScope.base.showAllGroups();
         $rootScope.base.isFooterBottom = false;
 
-        initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
-        initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений
+        /*initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
+        initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений*/
         initFancyBox($('.adverts'));
 
         $rootScope.base.createTopicIsHide = true;
         adverts.isAdvertsLoaded = false;
         adverts.groups = userClientGroups;
 
-        adverts.content = TEXT_DEFAULT_3;
+        adverts.isTalk = true;
+        adverts.isAdvert = true;
+
+        adverts.message = {};
+        adverts.message.content = TEXT_DEFAULT_3;
         adverts.subject = TEXT_DEFAULT_4;
 
-        adverts.isPollShow = false;
-        adverts.pollSubject = "";
-        adverts.pollInputs = [
-            {
-                counter: 0,
-                name: ""
-            },
-            {
-                counter: 1,
-                name: ""
-            }
-        ];
-        adverts.isPollAvailable = true;
+        $rootScope.base.initStartParamsForCreateTopic(adverts);
+
         adverts.answerFirstMessage = TEXT_DEFAULT_2;
 
        /* adverts.fullAdvertsTopic = {};
@@ -1555,7 +1553,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             adverts.selectedGroup = $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(groupId);
         };
 
-        adverts.addSingleAdverts = function(){
+/*        adverts.addSingleAdverts = function(){
             adverts.attachedImages = getAttachedImages($('#attach-area-00000'));
             adverts.attachedDocs = getAttachedDocs($('#attach-doc-area-00000'));
             if(adverts.subject == TEXT_DEFAULT_4 || adverts.subject == ""){
@@ -1595,7 +1593,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             cleanAttached($('#attach-doc-area-00000'));
             adverts.subject = TEXT_DEFAULT_4;
 
-        };
+        };*/
 
         function initAdverts(){
             var topicLength;
@@ -1629,6 +1627,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.base.isFooterBottom = false;
 
+        advert.attachId = "00000";
         advert.selectedGroup = $rootScope.currentGroup;
         advert.topics = messageClient.getAdverts(advert.selectedGroup.id, 0, 1000).topics;
         advert.fullAdvertTopic = {};
@@ -1647,6 +1646,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             for(var i = 0; i < topicLength; i++){
                 if(advertId == advert.topics[i].id){
                     advert.fullAdvertTopic = advert.topics[i];
+
+                    $rootScope.base.initStartParamsForCreateTopic(advert.fullAdvertTopic);
+
+                    advert.fullAdvertTopic.isTalk = true;
                     advert.fullAdvertTopic.message.createdEdit = getTiming(advert.fullAdvertTopic.message.created);
                     advert.fullAdvertTopic.label = getLabel(advert.groups,advert.fullAdvertTopic.groupType);
                     advert.fullAdvertTopic.tagColor = getTagColor(advert.fullAdvertTopic.label);
@@ -2882,10 +2885,11 @@ function initAttachImage(selector,attachAreaSelector){
 
 var docsBase64 = [],
     docsInd = [];
-function initAttachDoc(selector,attachAreaSelector){
+function initAttachDoc(selector,attachAreaSelector,isEdit){
     var title;
         docsBase64[attachAreaSelector] = [];
         docsInd[attachAreaSelector] = 0;
+
 
     selector.ace_file_input({
         style:'well',
@@ -2921,9 +2925,9 @@ function initAttachDoc(selector,attachAreaSelector){
                 var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
                 docsInd[attachAreaSelector]++;
 
-                attachAreaSelector.append("<span class='attach-item new-attached' data-fakepath='"+ docName +"'>" +
+                attachAreaSelector.append("<span class='attach-item new-attached' data-href='"+ url +"' data-type='"+ dataType +"'>" +
                     "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                    docName+
+                    '<span>'+docName+'</span>'+
                     "</span>");
 
                 $('.new-attached .remove-attach-img').click(function(e){
@@ -3073,6 +3077,8 @@ function postTopic(obj,isWall,isAdverts){
             }
         }
 
+
+
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
@@ -3080,6 +3086,7 @@ function postTopic(obj,isWall,isAdverts){
         var newTopic = messageClient.postTopic(obj);
     }else {
         // значит создание
+
         var messageType,
             messageContent,
             subject;
@@ -3094,11 +3101,12 @@ function postTopic(obj,isWall,isAdverts){
             } else {
                 messageType = 6; // adverts
             }
-            messageContent = obj.content;
-            obj.content = TEXT_DEFAULT_3;
+            messageContent = obj.message.content;
+            obj.message.content = TEXT_DEFAULT_3;
             subject = obj.subject;
+
         }
-        console.log(messageContent + " " + messageType + " " + subject);
+        //console.log(messageContent + " " + messageType + " " + subject);
 
         newTopic = new com.vmesteonline.be.messageservice.Topic();
         newTopic.message = new com.vmesteonline.be.messageservice.Message();
@@ -3177,7 +3185,7 @@ function postMessage(obj,isWall,isFirstLevel){
 
         obj.content = obj.commentText;
         obj.images = getAttachedImages($('#attach-area-edit-' + obj.id));
-        obj.documents = getAttachedDocs($('#attach-doc-area-edit-' + obj.id));
+        obj.documents = getAttachedDocs($('#attach-doc-area-edit-' + obj.id),true);
 
         var newMessage = messageClient.postMessage(obj);
 
@@ -3315,20 +3323,24 @@ function getAttachedImages(selector){
 
     return imgList;
 }
-function getAttachedDocs(selector){
-    /*var docsBase64Length = docsBase64[selector].length;
+function getAttachedDocs(selector,isEdit){
+    if(isEdit){
+        var docList = [], ind = 0;
+        docsBase64[selector] = [];
 
-    for(var i = 0; i < docsBase64Length; i++){
-        docList
+        selector.find('.attach-item').each(function(){
+            docsBase64[selector][ind] = new com.vmesteonline.be.messageservice.Attach();
+            docsBase64[selector][ind].fileName = $(this).find('span').text();
+            docsBase64[selector][ind].contentType = $(this).attr('data-type');
+            docsBase64[selector][ind].URL = $(this).attr('data-href');
+
+            ind++;
+        });
     }
-    var docList = [], ind = 0;
 
-    selector.find('.attach-item').each(function(){
-        docList[ind++] = $(this).attr('data-fakepath');
-    });*/
-    //alert(selector+" "+docsBase64[selector]);
+        return docsBase64[selector];
 
-    return docsBase64[selector];
+
 }
 function cleanAttached(selector){
     //selector.html('').append('<div class="loading hidden"><img src="i/loading2.gif"></div>');

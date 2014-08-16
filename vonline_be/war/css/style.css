@@ -307,6 +307,10 @@ h1 {
   padding: 0;
   padding-bottom: 5px;
 }
+.talks-single .widget-main,
+.adverts-single .widget-main {
+  overflow: inherit;
+}
 .fa:hover {
   text-decoration: none;
 }
@@ -661,6 +665,11 @@ h1 {
 .message-input .message-input-bottom {
   margin-top: 15px;
 }
+.talks-single .message-input,
+.adverts-single .message-input {
+  padding-left: 0;
+  padding-top: 25px;
+}
 .message-tools {
   margin-left: 10%;
 }
@@ -952,9 +961,6 @@ h1 {
 .create-topic-btn a {
   float: right;
   margin: 15px 10px 15px 0;
-}
-.create-topic {
-  padding: 15px 10px;
 }
 .talks-title {
   padding: 10px;

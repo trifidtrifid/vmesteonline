@@ -1,7 +1,9 @@
 
     <section class="talks page ng-cloak" ng-show="base.talksIsActive">
 
-        <div ng-include="'templates/createTopic.html'" onload="var ctrl = talks; ctrl.isTalks = true; initCreateTopic(talks);"></div>
+        <section class="create-topic" ng-hide="base.createTopicIsHide">
+            <div ng-include="'templates/createTopic.html'" onload="ctrl = talks; initCreateTopic(talks);"></div>
+        </section>
 
         <!--<section class="create-topic" ng-hide="base.createTopicIsHide">
             <div class="has-info form-group">

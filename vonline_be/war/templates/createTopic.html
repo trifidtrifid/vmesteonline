@@ -23,6 +23,7 @@
 
     <div ng-switch="ctrl.isEdit">
         <div ng-swith-when="true">
+
             <div class="attach-area" id="attach-area-edit-{{ctrl.id}}">
 
                 <span class="attach-item" ng-repeat="image in ctrl.message.images">
@@ -34,20 +35,22 @@
                     <img ng-src="i/loading2.gif" alt="картинка"/>
                 </div>
             </div>
+
             <div class="attach-area attach-area-doc" id="attach-doc-area-edit-{{ctrl.id}}">
-                <span class="attach-item" data-fakepath="{{doc.fileName}}"  ng-repeat="doc in ctrl.message.documents">
+                <span class="attach-item" data-href="{{doc.URL}}" data-type="{{doc.contentType}}"  ng-repeat="doc in ctrl.message.documents">
                     <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrl.message,$index,false)">×</a>
-                    {{doc.fileName}}
+                    <span>{{doc.fileName}}</span>
                 </span>
             </div>
+
         </div>
         <div ng-swith-default>
-            <div class="attach-area" id="attach-area-0">
+            <div class="attach-area" id="attach-area-{{ctrl.attachId}}">
                 <div class="loading hidden">
                     <img ng-src="i/loading2.gif" alt="картинка"/>
                 </div>
             </div>
-            <div class="attach-area attach-area-doc" id="attach-doc-area-0"></div>
+            <div class="attach-area attach-area-doc" id="attach-doc-area-{{ctrl.attachId}}"></div>
         </div>
     </div>
 
@@ -55,7 +58,7 @@
 
         <div class="btn-group attach-dropdown pull-right">
             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                <span class="btn-group-text">Прикрепить </span>
+                <span class="btn-group-text">Прикрепить</span>
                 <span class="icon-caret-down icon-on-right"></span>
             </button>
 
@@ -66,13 +69,14 @@
                     </ul>
 
                     <ul class="dropdown-menu dropdown-blue" ng-hide="ctrl.isEdit">
-                        <li><input id="attachImage-0" type="file"/></li>
-                        <li><input id="attachDoc-0" type="file"/></li>
+                        <li><input id="attachImage-{{ctrl.attachId}}" type="file"/></li>
+                        <li><input id="attachDoc-{{ctrl.attachId}}" type="file"/></li>
                         <li><a href="#" ng-click="base.showPoll($event,ctrl)" ng-show="ctrl.isPollAvailable">Опрос</a></li>
                     </ul>
 
         </div>
-        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createWallMessage($event,ctrl)">Отправить</a>
+        <!--<a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createWallMessage($event,ctrl)">Отправить</a>-->
+        <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createTopic($event,ctrl)">Отправить</a>
 
         <div class="hashtag pull-left">
             <span>группа</span>
