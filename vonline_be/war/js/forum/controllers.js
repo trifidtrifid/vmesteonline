@@ -2053,25 +2053,31 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         profile.userProfile = userClient.getUserProfile(userId);
 
         if(profile.userProfile.userInfo){
-            (profile.userProfile.userInfo.gender == 0) ?
-                profile.userProfile.userInfo.genderMeta = "Жен" :
+            if (profile.userProfile.userInfo.gender == 1){
+                profile.userProfile.userInfo.genderMeta = "Жен";
+            }else if(profile.userProfile.userInfo.gender == 2){
                 profile.userProfile.userInfo.genderMeta = "Муж";
+            }else{
+                profile.userProfile.userInfo.genderMeta = "";
+            }
+
+
         }
 
         $rootScope.base.avatarBuffer = profile.userProfile.userInfo.avatar;
 
         if(profile.userProfile.family && profile.userProfile.family.relations == 0){
 
-            if(profile.userProfile.userInfo.gender == 0){
+            if(profile.userProfile.userInfo.gender == 1){
                 profile.userProfile.family.relationsMeta = "За мужем";
-            }else if(profile.userProfile.userInfo.gender == 1){
+            }else if(profile.userProfile.userInfo.gender == 2){
                 profile.userProfile.family.relationsMeta = "Женат";
             }
 
         }else if(profile.userProfile.family && profile.userProfile.family.relations == 1){
-            if(profile.userProfile.userInfo.gender == 0){
+            if(profile.userProfile.userInfo.gender == 1){
                 profile.userProfile.family.relationsMeta = "Не замужем";
-            }else if(profile.userProfile.userInfo.gender == 1){
+            }else if(profile.userProfile.userInfo.gender == 2){
                 profile.userProfile.family.relationsMeta = "Холост";
             }
         }
@@ -2140,12 +2146,15 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         settings.family = clone(userFamilyMeta);
         settings.interests = clone(userInterestsMeta);
 
-        if (settings.userInfo.gender == 0) {
+        if (settings.userInfo.gender == 1) {
             settings.married = "Замужем";
             settings.notMarried = "Не замужем";
-        }else{
+        }else if(settings.userInfo.gender == 2){
             settings.married = "Женат";
             settings.notMarried = "Не женат";
+        }else{
+            settings.married = "В браке";
+            settings.notMarried = "Не состою в браке";
         }
 
         settings.years= [];
