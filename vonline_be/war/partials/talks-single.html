@@ -34,13 +34,6 @@
                                         </h2>
 
                                         <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
-                                    </div>
-
-                                    <div class="edit-message" ng-show="talks.fullTalkTopic.isEdit">
-                                        <input type="text" ng-model="talks.fullTalkTopic.subject"/>
-                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="talks.fullTalkTopic.message.content" ng-keyup="base.messageChange($event)"></textarea>
-                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(talks.fullTalkTopic,true)" href="#">Сохранить</a> <!--  -->
-                                    </div>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
@@ -88,6 +81,12 @@
 
                                         </div>
 
+                                    </div>
+
+                                    </div>
+
+                                    <div class="edit-message" ng-show="talks.fullTalkTopic.isEdit">
+                                        <div ng-include="'templates/createTopic.html'" onload="ctrl = talks.fullTalkTopic; initCreateTopic(talks.fullTalkTopic);"></div>
                                     </div>
 
                                         <div class="message-bottom">

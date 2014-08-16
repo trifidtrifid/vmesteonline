@@ -1,0 +1,68 @@
+<div class="input-group">
+    <textarea class="message-textarea no-resize" ng-model="ctrlMessage.commentText"
+              ng-hasfocus="ctrlMessage.isFocus" ng-show="ctrlMessage.answerShow" ng-keyup="base.messageChange($event,1)"
+              onblur="if(this.value=='') this.value='Ваш ответ';"
+              onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+
+    <div ng-switch="ctrlMessage.isEdit">
+        <div ng-swith-when="true">
+            <div class="attach-area" id="attach-area-edit-{{ctrlId}}">
+
+                <span class="attach-item" ng-repeat="image in ctrlMessage.images">
+                    <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrlMessage,$index,true)">×</a>
+                    <img data-title="{{image.fileName}}" data-type="{{image.contentType}}" class="attached-img" style="background-image:url('{{image.URL}}')">
+                </span>
+
+                <div class="loading hidden">
+                    <img ng-src="i/loading2.gif" alt="картинка"/>
+                </div>
+            </div>
+            <div class="attach-area attach-area-doc" id="attach-doc-area-edit-{{ctrlId}}">
+                <span class="attach-item" data-fakepath="{{doc.fileName}}"  ng-repeat="doc in ctrlMessage.documents">
+                    <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrlMessage,$index,false)">×</a>
+                    {{doc.fileName}}
+                </span>
+            </div>
+        </div>
+        <div ng-swith-default>
+            <div id="attach-area-{{ctrlId}}" class="attach-area">
+                <div class="loading hidden">
+                    <img ng-src="i/loading2.gif" alt="картинка"/>
+                </div>
+            </div>
+            <div id="attach-doc-area-{{ctrlId}}" class="attach-area attach-area-doc"></div>
+        </div>
+    </div>
+
+    <!--<div id="attach-area-{{ctrlId}}" class="attach-area">
+        <div class="loading hidden">
+            <img ng-src="i/loading2.gif" alt="картинка"/>
+        </div>
+    </div>
+    <div id="attach-doc-area-{{ctrlId}}" class="attach-area attach-area-doc"></div>-->
+
+    <span class="input-group-btn" ng-show="ctrlMessage.answerShow">
+        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,ctrlMessage)">
+            <i class="icon-share-alt"></i>
+            Отправить
+        </button>
+        <span class="error-info" ng-show="ctrlMessage.isCreateCommentError" ng-click>{{ctrlMessage.createCommentErrorText}}</span>
+
+        <div class="btn-group attach-dropdown pull-right">
+            <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
+                <span class="btn-group-text">Прикрепить</span>
+                <span class="icon-caret-down icon-on-right"></span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-blue" ng-show="ctrlMessage.isEdit">
+                <li><input id="attachImage-edit-{{ctrlId}}" type="file"/></li>
+                <li><input id="attachDoc-edit-{{ctrlId}}" type="file"/></li>
+            </ul>
+
+            <ul class="dropdown-menu dropdown-blue" ng-hide="ctrlMessage.isEdit">
+                <li><input id="attachImage-{{ctrlId}}" type="file"/></li>
+                <li><input id="attachDoc-{{ctrlId}}" type="file"/></li>
+            </ul>
+        </div>
+    </span>
+</div>

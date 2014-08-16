@@ -34,13 +34,7 @@
                                         </h2>
 
                                         <p ng-switch-when="message">{{adverts.fullAdvertTopic.message.content}}</p>
-                                    </div>
 
-                                    <div class="edit-message" ng-show="adverts.fullAdvertTopic.isEdit">
-                                        <input type="text" ng-model="adverts.fullAdvertTopic.subject"/>
-                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="adverts.fullAdvertTopic.message.content" ng-keyup="base.messageChange($event)"></textarea>
-                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(adverts.fullAdvertTopic,true)" href="#">Сохранить</a> <!--  -->
-                                    </div>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id}}" ng-repeat="image in adverts.fullAdvertTopic.message.images">
@@ -88,6 +82,12 @@
 
                                         </div>
 
+                                    </div>
+
+                                    </div>
+
+                                    <div class="edit-message" ng-show="adverts.fullAdvertTopic.isEdit">
+                                        <div ng-include="'templates/createTopic.html'" onload="ctrl = adverts.fullAdvertTopic; initCreateTopic(adverts.fullAdvertTopic);"></div>
                                     </div>
 
                                         <div class="message-bottom">
