@@ -509,8 +509,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	private void initDb() throws InvalidOperation {
 		con = new MySQLJDBCConnector();
 		try {
-			con.execute("create table if not exists topic (`id` bigint not null, `longitude` decimal(10,7) not null,"
-					+ " `lattitude` decimal(10,7) not null, `radius` integer not null, `rubricId` bigint not null, `createTime` integer not null, `updateTime` integer not null, `messageType` integer not null);");
+			con.execute("create table if not exists topic ("
+					+ "`id` bigint not null primary key,"
+					+ "`longitude` decimal(10,7) not null,"
+					+ "`lattitude` decimal(10,7) not null,"
+					+ "`radius` integer not null, "
+					+ "`rubricId` bigint not null, "
+					+ "`createTime` integer not null, "
+					+ "`updateTime` integer not null, "
+					+ "`messageType` integer not null, "
+					+ "index pos_idx(`longitude`,`lattitude`), "
+					+ "index grp_idx(`radius`,`longitude`,`lattitude`,`messageType`), "
+					+ "index type_idx(`messageType`),"
+					+ "index update_idx(`updateTime`))");
+			
 		} catch (Exception e) {
 			logger.severe("Failed to connect to database." + e.getMessage());
 			e.printStackTrace();
@@ -645,11 +657,35 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
+			theTopic.setUserGroupId(topic.getMessage().getGroupId());
+			
+			updatePoll(theTopic, topic, pm); 
+					
 			pm.makePersistent(theTopic);
 
 		} finally {
 			pm.close();
 		}
+	}
+
+	private void updatePoll(VoTopic theTopic, Topic topic, PersistenceManager pm) throws InvalidOperation {
+		if( topic.poll == null && 0!=theTopic.getPollId() || topic.poll.pollId != theTopic.getPollId()){
+			if( theTopic.getPollId() == 0 ) {//poll changed so the old one should be removed
+				pm.deletePersistent(pm.getObjectById(VoPoll.class, theTopic.getPollId()));
+				theTopic.setPollId(0L);
+			} 
+			if( topic.poll!=null ){
+				VoPoll poll = VoPoll.create(topic.poll);
+				pm.makePersistent(poll);
+				theTopic.setPollId(poll.getId());
+				topic.poll.pollId = poll.getId();
+			}
+		} else if( topic.poll != null && topic.poll.pollId == theTopic.getPollId()) { //check changes
+			VoPoll newPoll = VoPoll.create(topic.poll);
+			newPoll.setId(theTopic.getPollId());
+			pm.makePersistent(newPoll);
+		}
+		if( null!=topic.poll ) topic.poll.pollId = theTopic.getPollId();
 	}
 
 //======================================================================================================================
@@ -763,12 +799,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, msgId);
-			long cuId = getCurrentUserId();
-			if( msg.getAuthorId().getId() != cuId )
-				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
-			
+			VoUser cu = getCurrentUser();
 			long topicId = msg.getTopicId();
 			VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
+			
+			if( msg.getAuthorId().getId() != cu.getId() && 
+					cu.isGroupModerator(topic.getUserGroupId()))
+				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author and not moderator");
+			
 			topic.setMessageNum( topic.getMessageNum() - 1 );
 			topic.setChildMessageNum( topic.getChildMessageNum() - 1);
 			topic.setLastUpdate((int) (System.currentTimeMillis()/1000L));
@@ -791,7 +829,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				return null;
 			} else {
 				msg.setContent("Сообщение удалено пользователем.");
-				return msg.getMessage(cuId, pm);
+				return msg.getMessage(cu.getId(), pm);
 			}
 			
 		} catch( JDOObjectNotFoundException onfe ){
@@ -824,9 +862,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic tpc = pm.getObjectById(VoTopic.class, topicId);
-			long cu = getCurrentUserId();
-			if( tpc.getAuthorId().getId() != cu )
-				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author");
+			VoUser cu = getCurrentUser();
+			if( tpc.getAuthorId().getId() != cu.getId() && cu.isGroupModerator(tpc.getUserGroupId()))
+				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author and not a moderator");
 			
 			deleteAttachments(pm, tpc.getImages());
 			deleteAttachments(pm, tpc.getDocuments());
@@ -847,7 +885,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			} else {
 				tpc.setContent("Тема удалена пользователем.");
 				tpc.setLastUpdate((int) (System.currentTimeMillis()/1000L));
-				return tpc.getTopic(cu, pm);
+				return tpc.getTopic(cu.getId(), pm);
 			}
 			
 		} catch( JDOObjectNotFoundException onfe ){

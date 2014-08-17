@@ -2,6 +2,10 @@
     <section class="talks page ng-cloak" ng-show="base.talksIsActive">
 
         <section class="create-topic" ng-hide="base.createTopicIsHide">
+            <div ng-include="'templates/createTopic.html'" onload="ctrl = talks; initCreateTopic(talks);"></div>
+        </section>
+
+        <!--<section class="create-topic" ng-hide="base.createTopicIsHide">
             <div class="has-info form-group">
                 <input type="text" class="width-100 head" value="Заголовок"
                        onblur="if(this.value=='') this.value='Заголовок';"
@@ -74,7 +78,7 @@
 
             </div>
 
-        </section>
+        </section>-->
 
         <section class="talks-title-block">
 

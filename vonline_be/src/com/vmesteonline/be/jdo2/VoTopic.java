@@ -104,7 +104,8 @@ public class VoTopic extends VoBaseMessage {
 		this.lastUpdate = lastUpdate;
 		try {
 			JDBCConnector con = new MySQLJDBCConnector();
-			con.execute("update topic set `updateTime`="+lastUpdate+" where id='"+id.getAppId()+"'");
+			String query = "update topic set `updateTime`="+lastUpdate+" where id='"+id.getId()+"'";
+			con.execute(query);
 			con.close();
 		} catch (Exception e) {
 			e.printStackTrace();
