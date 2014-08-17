@@ -62,6 +62,7 @@
             </div>-->
 
             <div class="lenta">
+                <div ng-if="lenta.wallItems.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
                 <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
                         ng-switch on="wallItem.topic.message.type">
 

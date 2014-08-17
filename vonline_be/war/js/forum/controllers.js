@@ -21,6 +21,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         resetPages(base);
         base.lentaIsActive = true;
+        base.emptyMessage = "Сообщений пока нет";
 
         base.addPollInput = function(event,obj){
             event.preventDefault();
@@ -3197,12 +3198,11 @@ function postTopic(obj,isWall,isAdverts){
             }
         }
 
-
-
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
 
+        //alert(obj.message.groupId);
         var newTopic = messageClient.postTopic(obj);
     }else {
         // значит создание
