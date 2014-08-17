@@ -64,7 +64,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		try {
 			VoUser u = getUserByEmail(email, pm);
 			if (u != null) {
-				if (u.getPassword().equals(pwd) || !checkPwd) {
+				if (u.getPassword().equalsIgnoreCase(pwd) || !checkPwd) {
 					if (!u.isEmailConfirmed())
 						return LoginResult.EMAIL_NOT_CONFIRMED;
 					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
@@ -182,7 +182,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			VoInviteCode voInviteCode = VoInviteCode.getInviteCode(inviteCode, pm);
 			voInviteCode.registered();
 
-			VoUser user = new VoUser(firstname, lastname, email, password);
+			VoUser user = new VoUser(firstname, lastname, email.toLowerCase(), password);
 			user.setGender(gender);
 			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
@@ -233,7 +233,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public VoUser getUserByEmail(String email, PersistenceManager pm) {
 
 		Query q = pm.newQuery(VoUser.class);
-		q.setFilter("email == '" + email + "'");
+		q.setFilter("email == '" + email.toLowerCase() + "'");
 		List<VoUser> users = (List<VoUser>) q.execute();
 		if (users.isEmpty())
 			return null;

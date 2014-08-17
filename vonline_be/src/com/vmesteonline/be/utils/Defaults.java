@@ -264,6 +264,12 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
+	//inviteCode 1 addr zan 32 k 3 kv 5 staircase 1 
+	//inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 
+	//inviteCode 3 addr zan 32 k 3 kv 51 staircase 2 
+	//inviteCode 1 addr zan 35 kv 35 staircase 1 
+	//inviteCode 1 addr resp 6 kv s5 staircase 1 
+
 	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 
@@ -282,7 +288,7 @@ public class Defaults {
 					// хардкодится выше
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
 					new VoPostalAddress(new VoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 

@@ -2,7 +2,9 @@ package com.vmesteonline.be;
 
 import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -476,7 +478,12 @@ public class MessageServiceTests extends TestWorkAround {
 	@Test
 	public void testBlogMessages() {
 		try {
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+			Date date = formatter.parse("18.7.1984");
+			long ts = date.getTime() / 1000L;
 
+			
 			Topic topic = createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase), MessageType.BLOG);
 
 			Message msg = createMessage(topic.getId(), 0, MessageType.BLOG, "");
