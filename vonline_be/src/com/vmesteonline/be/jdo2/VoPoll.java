@@ -74,10 +74,10 @@ public class VoPoll {
 	}
 
 	public long getId() {
-		return id.getId();
+		return id;
 	}
 
-	public void setId(Key id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -91,7 +91,7 @@ public class VoPoll {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key id;
+	private Long id;
 
 	@Persistent
 	@Unindexed
