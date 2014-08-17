@@ -125,7 +125,7 @@
 
                                     <div class="edit-message" ng-show="wallMessage.isEdit">
 
-                                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId);"></div>
+                                        <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId,true);"></div>
                                     </div>
 
                                     <div class="lenta-item-bottom">

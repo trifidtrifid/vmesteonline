@@ -305,7 +305,7 @@ h1 {
 .widget-main {
   overflow: auto;
   padding: 0;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 .talks-single .widget-main,
 .adverts-single .widget-main {
@@ -371,9 +371,6 @@ h1 {
 .topic-item .topic-descr header span {
   float: left;
   vertical-align: middle;
-}
-.topic-item .topic-descr .topic-right {
-  margin-left: 95px;
 }
 .topic-item .topic-descr .topic-right h2 {
   margin-top: 0;
@@ -494,8 +491,11 @@ h1 {
   margin-bottom: 10px;
   font-size: 14px;
 }
-.topic-item .dd-list .topic-right {
+.dd-list .topic-right {
   margin-left: 60px;
+}
+.dd .topic-right {
+  margin-left: 95px;
 }
 .dd-list .dd-list {
   padding-left: 37px;
@@ -636,7 +636,7 @@ h1 {
   border-radius: 0;
 }
 .itemdiv.dialogdiv > .body {
-  padding-bottom: 28px;
+  padding-bottom: 20px;
 }
 .itemdiv {
   padding-right: 0;
@@ -908,9 +908,6 @@ h1 {
 }
 .edit-message .btn {
   border-width: 2px;
-}
-.edit-message .answer-block {
-  padding-bottom: 20px;
 }
 .edit-textarea {
   margin: 5px 0;
