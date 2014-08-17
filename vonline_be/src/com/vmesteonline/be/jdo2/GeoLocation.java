@@ -10,6 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 
 @PersistenceCapable
@@ -19,9 +20,7 @@ public abstract class GeoLocation {
 	public GeoLocation() {
 		longitude = "0";
 		latitude = "0";
-
 	}
-	
 
 	/*
 	 * GeoLocation(float longitude, float latitude) { this.longitude = longitude; this.latitude = latitude; }
@@ -46,8 +45,8 @@ public abstract class GeoLocation {
 		return id.getId();
 	}
 
-	public void setId(Key id) {
-		this.id = id;
+	public void setId(long id) {
+		this.id = 0==id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
 	}
 
 	@PrimaryKey
@@ -55,11 +54,8 @@ public abstract class GeoLocation {
 	protected Key id;
 
 	@Persistent
-	@Unindexed
 	private String longitude;
 
 	@Persistent
-	@Unindexed
 	private String latitude;
-
 }

@@ -187,37 +187,43 @@ public class UserServiceImplTest extends TestWorkAround {
 
 				asi.login(Defaults.user1email, Defaults.user1pass);
 				VoUser uA = asi.getCurrentUser(pmA);
-				List<VoUserGroup> voUserGroupsA = uA.getGroups();
+				List<Long> voUserGroupsA = uA.getGroups();
 
 				asi.login(Defaults.user3email, Defaults.user3pass);
 				VoUser uB = asi.getCurrentUser(pmB);
-				List<VoUserGroup> voUserGroupsB = uB.getGroups();
+				List<Long> voUserGroupsB = uB.getGroups();
 
+						
 				Assert.assertEquals(5, voUserGroupsB.size());
-				Assert.assertEquals(0, voUserGroupsB.get(0).getRadius());
-				Assert.assertEquals(20, voUserGroupsB.get(1).getRadius());
-				Assert.assertEquals(200, voUserGroupsB.get(2).getRadius());
-				Assert.assertEquals(2000, voUserGroupsB.get(3).getRadius());
-				Assert.assertEquals(5000, voUserGroupsB.get(4).getRadius());
+				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(0)).getRadius());
+				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(1)).getRadius());
+				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(2)).getRadius());
+				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(3)).getRadius());
+				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(4)).getRadius());
 
 				Assert.assertEquals(5, voUserGroupsA.size());
-				Assert.assertEquals(0, voUserGroupsA.get(0).getRadius());
-				Assert.assertEquals(20, voUserGroupsA.get(1).getRadius());
-				Assert.assertEquals(200, voUserGroupsA.get(2).getRadius());
-				Assert.assertEquals(2000, voUserGroupsA.get(3).getRadius());
-				Assert.assertEquals(5000, voUserGroupsA.get(4).getRadius());
+				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getRadius());
+				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(1)).getRadius());
+				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(2)).getRadius());
+				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(3)).getRadius());
+				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(4)).getRadius());
 
 				/*
 				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new
 				 * BigDecimal("59.9331461"));
 				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new
 				 * BigDecimal("59.9331462"));
-				 */System.out.print("max = " + VoHelper.getLongitudeMax(voUserGroupsA.get(0).getLatitude(), voUserGroupsA.get(0).getLongitude(), 200).toPlainString() + " origin = "
-				 	+ voUserGroupsA.get(0).getLongitude() + "\n");
-				System.out.print("lat max = " + VoHelper.getLatitudeMax(voUserGroupsA.get(0).getLatitude(), 200).toPlainString() + " origin = "
-						+ voUserGroupsA.get(0).getLatitude() + "\n");
+				 */System.out.print("max = " + VoHelper.getLongitudeMax(
+						 pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude(), 
+						 pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLongitude(), 200).toPlainString() + " origin = "
+				 	+ pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLongitude() + "\n");
+				System.out.print("lat max = " + VoHelper.getLatitudeMax(
+						pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude(), 200).toPlainString() + " origin = "
+						+ pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude() + "\n");
 
-				System.out.print("delta = " + VoHelper.calculateRadius(voUserGroupsA.get(0), voUserGroupsB.get(0)));
+				System.out.print("delta = " + VoHelper.calculateRadius(
+						pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)), 
+						pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(0))));
 			} finally {
 				pmA.close();
 				pmB.close();
@@ -504,8 +510,8 @@ public class UserServiceImplTest extends TestWorkAround {
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 			
-			for( VoUserGroup vug : usi.getCurrentUser(pm).getGroups()) {
-				String map = usi.getGroupMap( vug.getId(), "8822DDC0");
+			for( Long vug : usi.getCurrentUser(pm).getGroups()) {
+				String map = usi.getGroupMap( vug, "8822DDC0");
 				System.out.println(map);
 			}
 

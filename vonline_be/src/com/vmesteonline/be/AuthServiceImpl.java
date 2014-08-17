@@ -194,9 +194,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
-			List<VoUserGroup> groups = user.getGroups();
+			List<Long> groups = user.getGroups();
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
-					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
+					+ (0 == groups.size() ? "Undefined!" : pm.getObjectById(VoUserGroup.class, groups.get(0)).getName()+"["+
+			pm.getObjectById(VoPostalAddress.class,user.getAddress()).getAddressText(pm)+"]"));
 
 			// Add the send welcomeMessage Task to the default queue.
 			Queue queue = QueueFactory.getDefaultQueue();

@@ -1,10 +1,13 @@
 package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
 import com.vmesteonline.be.GroupType;
@@ -12,23 +15,33 @@ import com.vmesteonline.be.GroupType;
 @PersistenceCapable
 public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
 
-	public VoUserGroup(VoUser user, VoGroup grp) {
-		setLongitude(user.getLongitude());
-		setLatitude(user.getLatitude());
-		radius = grp.getRadius();
-		name = grp.getVisibleName();
-		importantScore = grp.getImportantScore();
-		groupType = grp.getGroupType();
-	}
-
-	
-	public VoUserGroup(String visibleName, int radius, BigDecimal longitude, BigDecimal lattitude) {
-		this.radius = radius;
+	public VoUserGroup(BigDecimal longitude,BigDecimal latitude, int radius, String name, int impScore, int gType, PersistenceManager pm){
 		setLongitude(longitude);
-		setLatitude(lattitude);
-		this.name = visibleName;
+		setLatitude(latitude);
+		this.radius = radius;
+		this.name = name;
+		importantScore = impScore;
+		groupType = gType;
+		
+		String queryStr = "longitude=='"+longitude.toPlainString()+
+				"' && latitude=='"+latitude.toPlainString()+"' && "
+				+ "radius=="+radius
+				+" && groupType=="+groupType;
+		List<VoUserGroup> ugl =  (List<VoUserGroup>)pm.newQuery(VoUserGroup.class,queryStr).execute();
+		
+		if( 0!=ugl.size() ) {
+			id = KeyFactory.createKey(this.getClass().getSimpleName(), ugl.get(0).getId());
+			
+		} else {
+			id = null;
+			
+		}
+	} 
+	
+	public VoUserGroup(VoUser user, VoGroup grp, PersistenceManager pm) {
+		this(user.getLongitude(),user.getLatitude(),grp.getRadius(),grp.getVisibleName(),grp.getImportantScore(),grp.getGroupType(), pm);
 	}
-
+	
 	public int getRadius() {
 		return radius;
 	}
@@ -79,7 +92,6 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	}
 
 	@Persistent
-	@Unindexed
 	private int groupType;
 	
 	public int getGroupType() {

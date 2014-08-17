@@ -35,7 +35,7 @@ public class MessagesTreeTests extends MessagesTree {
 
 	VoMessage createVoMsg(long id, long parentId, long recepientId) {
 		VoMessage msg = new VoMessage();
-		msg.setId(KeyFactory.createKey(VoMessage.class.toString(), id));
+		msg.setId(id);
 		msg.setParentId(parentId);
 		msg.setRecipient(recepientId);
 		msg.setAuthorId(KeyFactory.createKey(VoUser.class.getSimpleName(), 1));

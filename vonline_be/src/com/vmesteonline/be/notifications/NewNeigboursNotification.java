@@ -32,7 +32,7 @@ public class NewNeigboursNotification extends Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			Map< VoUserGroup, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
+			Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 			// create message for each user
 			String body = "Новые соседи<br/><br/>";
@@ -40,7 +40,7 @@ public class NewNeigboursNotification extends Notification {
 			for (VoUser u : users) {
 				Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
 				
-				for (VoUserGroup ug : u.getGroups()) {
+				for (Long ug : u.getGroups()) {
 					Set<VoUser> ggoupNeighbors = groupUsersMap.get(ug);
 					ggoupNeighbors.removeAll(neghbors);
 					if (ggoupNeighbors.size() != 0) {
@@ -65,7 +65,8 @@ public class NewNeigboursNotification extends Notification {
 		}
 	}
 	
-	private String createNeighborsContent(PersistenceManager pm, VoUserGroup ug, Set<VoUser> neghbors) {
+	private String createNeighborsContent(PersistenceManager pm, Long ugId, Set<VoUser> neghbors) {
+		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
 		String groupContent = "В группе '" + ug.getName() + "' подкрепление <br/>";
 		for (VoUser vuc : neghbors) {
 			String contactTxt = createUserContactContent(pm, ug, vuc);
@@ -76,7 +77,7 @@ public class NewNeigboursNotification extends Notification {
 
 	private String createUserContactContent(PersistenceManager pm, VoUserGroup ug, VoUser vuc) {
 		
-		VoPostalAddress address = vuc.getAddress();
+		VoPostalAddress address = pm.getObjectById(VoPostalAddress.class,vuc.getAddress());
 		String contactTxt = "<a href=\"http://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
 		
 		if( ug.getRadius() == 0 ) 
@@ -97,7 +98,7 @@ public class NewNeigboursNotification extends Notification {
 	}
 
 	//новые соседи зарегестрировавшиеся за последнюю неделю
-	private Map< VoUserGroup, Set<VoUser>> getNewNeighbors( PersistenceManager pm ){
+	private Map< Long, Set<VoUser>> getNewNeighbors( PersistenceManager pm ){
 		
 		Map< VoUserGroup, List<VoUser>> nuMap = new TreeMap<VoUserGroup, List<VoUser>>( super.ugComp );
 

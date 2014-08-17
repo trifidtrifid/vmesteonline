@@ -244,8 +244,8 @@ public class Defaults {
 					VoUser user = pm.getObjectById(VoUser.class, uid);
 					user.setEmailConfirmed(true);
 					
-					if(counter==1) for( VoUserGroup ug: user.getGroups()) //the first user would moderate all of groups
-						user.setGroupModerator(ug.getId(), true);
+					if(counter==1) for( Long ug: user.getGroups()) //the first user would moderate all of groups
+						user.setGroupModerator(ug, true);
 					
 					pm.makePersistent(user);
 					uids.add(uid);

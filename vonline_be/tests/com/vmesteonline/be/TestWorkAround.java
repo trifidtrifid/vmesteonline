@@ -76,7 +76,8 @@ public class TestWorkAround {
 
 	protected long getUserGroupId(String email, int radius) {
 		VoUser user = asi.getUserByEmail(email, pm);
-		for (VoUserGroup ug : user.getGroups()) {
+		for (Long ugid : user.getGroups()) {
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class,ugid);
 			if (ug.getRadius() == radius) {
 				return ug.getId();
 			}

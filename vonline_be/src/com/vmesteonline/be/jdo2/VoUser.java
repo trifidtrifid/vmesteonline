@@ -2,20 +2,19 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.Inheritance;
+import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
 import com.google.appengine.datanucleus.annotations.Unindexed;
-import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.Notifications;
@@ -31,6 +30,7 @@ import com.vmesteonline.be.UserProfile;
 import com.vmesteonline.be.UserServiceImpl;
 import com.vmesteonline.be.UserStatus;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
@@ -41,7 +41,16 @@ public class VoUser extends GeoLocation {
 	
 	public static int BASE_USER_SCORE = 100;
 
-	private static VoUserGroup defaultGroup = new VoUserGroup("Мой Город", 10000, new BigDecimal("60.0"), new BigDecimal("30.0"));
+	private static VoUserGroup defaultGroup;
+	static {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			defaultGroup = new VoUserGroup( new BigDecimal("60.0"), new BigDecimal("30.0"), 10000, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
+		} finally {
+			pm.close();
+		}
+		
+	}
 
 	public VoUser(String name, String lastName, String email, String password) {
 		this.name = name;
@@ -52,8 +61,6 @@ public class VoUser extends GeoLocation {
 		this.topicsNum = 0;
 		this.likesNum = 0;
 		this.unlikesNum = 0;
-		this.rubrics = new ArrayList<VoRubric>();
-		this.deliveryAddresses = new HashMap<String, VoPostalAddress>();
 		this.confirmCode = 0;
 		this.emailConfirmed = false;
 		this.avatarMessage = Defaults.defaultAvatarTopicUrl;
@@ -105,22 +112,6 @@ public class VoUser extends GeoLocation {
 		return new UserInfo(getId(), name, lastName, birthday, gender, avatarProfile);
 	}
 
-	public VoUserGroup getGroupById(long id) throws InvalidOperation {
-		for (VoUserGroup g : groups) {
-			if (g.getId() == id)
-				return g;
-		}
-		throw new InvalidOperation(VoError.IncorrectParametrs, "user with id " + getId() + " have no group with id " + id);
-	}
-
-	public List<VoRubric> getRubrics() {
-		return rubrics;
-	}
-
-	public void setRubrics(List<VoRubric> rubrics) {
-		this.rubrics = rubrics;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -153,11 +144,11 @@ public class VoUser extends GeoLocation {
 		this.password = password;
 	}
 
-	public List<VoUserGroup> getGroups() {
+	public List<Long> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<VoUserGroup> groups) {
+	public void setGroups(List<Long> groups) {
 		this.groups = groups;
 	}
 
@@ -177,7 +168,7 @@ public class VoUser extends GeoLocation {
 		topicsNum += topicsDelta;
 	}
 
-	public VoPostalAddress getAddress() {
+	public long getAddress() {
 		return address;
 	}
 
@@ -189,9 +180,6 @@ public class VoUser extends GeoLocation {
 		this.confirmCode = confirmCode;
 	}
 
-	public VoPostalAddress getDeliveryAddress(String key) {
-		return deliveryAddresses != null ? deliveryAddresses.get(key) : null;
-	}
 	
 	public int getLastNotified() {
 		return lastNotified;
@@ -229,65 +217,33 @@ public class VoUser extends GeoLocation {
 		if (null == building.getLatitude() || 0 == building.getLatitude().intValue()) {
 			try {
 				VoGeocoder.getPosition(building, false);
+				pm.makePersistent(building);
+
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
 			}
 		}
-
-		this.address = userAddress;
-
-		this.setLatitude(building.getLatitude());
-		this.setLongitude(building.getLongitude());
-		if (null != groups && !groups.isEmpty()) {
-			for (VoUserGroup ug : groups) {
-				ug.setLatitude(building.getLatitude());
-				ug.setLongitude(building.getLongitude());
+		this.address = userAddress.getId();
+		
+		groups = new ArrayList<Long>();
+		for (VoGroup group : Defaults.defaultGroups) {
+				VoUserGroup ug = new VoUserGroup(this, group, pm);
 				pm.makePersistent(ug);
+				groups.add(ug.getId());
 			}
-		} else {
-			groups = new ArrayList<VoUserGroup>();
-			for (VoGroup group : Defaults.defaultGroups) {
-				VoUserGroup ug = new VoUserGroup(this, group);
-				ug.setLatitude(building.getLatitude());
-				ug.setLongitude(building.getLongitude());
-				pm.makePersistent(ug);
-				groups.add(ug);
-			}
-		}
-
+		
 		pm.makePersistent(this);
-		pm.makePersistent(building);
 	}
 
 	// *****
 	public void setDefaultUserLocation(PersistenceManager pm) {
-
-		groups = new ArrayList<VoUserGroup>();
-		groups.add(defaultGroup);
+		
+		groups = new ArrayList<Long>();
+		groups.add(defaultGroup.getId());
 		this.setLatitude(defaultGroup.getLatitude());
 		this.setLongitude(defaultGroup.getLongitude());
 
 		pm.makePersistent(this);
-	}
-
-	public void addDeliveryAddress(VoPostalAddress pa, String textKey) throws InvalidOperation {
-		if (deliveryAddresses == null)
-			deliveryAddresses = new HashMap<String, VoPostalAddress>();
-		deliveryAddresses.put(textKey, pa);
-	}
-
-	public boolean removeDeliveryAddress(String key) {
-		return null == deliveryAddresses ? false : deliveryAddresses.remove(key) != null;
-	}
-
-	public List<String> getAddresses() {
-		List<String> out = new ArrayList<String>();
-		if (null != deliveryAddresses && deliveryAddresses.size() > 0) {
-			Set<String> keySet = deliveryAddresses.keySet();
-			if (null != keySet && keySet.size() > 0)
-				out.addAll(keySet);
-		}
-		return out;
 	}
 
 	public boolean isEmailConfirmed() {
@@ -299,28 +255,14 @@ public class VoUser extends GeoLocation {
 	}
 
 	@Persistent
-	@Unindexed
-	@Unowned
-	private VoPostalAddress address;
+	private Long address;
 
 	@Persistent
 	@Unindexed
 	private int birthday;
 
 	@Persistent
-	@Unindexed
-	@Unowned
-	private Map<String, VoPostalAddress> deliveryAddresses;
-
-	@Persistent
-	@Unindexed
-	@Unowned
-	private List<VoUserGroup> groups;
-
-	@Persistent
-	@Unowned
-	@Unindexed
-	private List<VoRubric> rubrics;
+	private List<Long> groups;
 
 	@Persistent
 	private int registered;
@@ -519,10 +461,6 @@ public class VoUser extends GeoLocation {
 
 	public void setUnlikesNum(int unlikesNum) {
 		this.unlikesNum = unlikesNum;
-	}
-
-	public void addRubric(VoRubric rubric) {
-		rubrics.add(rubric);
 	}
 
 	public int getGender() {

@@ -93,7 +93,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			try {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
-				VoUserGroup group = user.getGroupById(groupId);
+				VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
 				// todo add last loaded and length
 				List<VoTopic> topics = getTopics(group, MessageType.WALL, lastLoadedIdTopicId, length, false, pm);
 
@@ -162,7 +162,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoUser user = getCurrentUser(pm);
 			MessagesTree tree = MessagesTree.createMessageTree(topicId, pm);
-			List<VoMessage> voMsgs = tree.getTreeMessagesFirstLevel(new MessagesTree.Filters(user.getId(), user.getGroupById(groupId)));
+			List<VoMessage> voMsgs = tree.getTreeMessagesFirstLevel(new MessagesTree.Filters(user.getId(), 
+					pm.getObjectById(VoUserGroup.class,groupId)));
 
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
@@ -199,7 +200,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			VoUser user = getCurrentUser(pm);
 			MessagesTree tree = MessagesTree.createMessageTree(topicId, pm);
-			List<VoMessage> voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, new MessagesTree.Filters(user.getId(), user.getGroupById(groupId)));
+			List<VoMessage> voMsgs = tree.getTreeMessagesAfter(lastLoadedMsgId, new MessagesTree.Filters(user.getId(), 
+					pm.getObjectById(VoUserGroup.class,groupId)));
 			MessageListPart mlp = createMlp(voMsgs, user.getId(), pm, length);
 			putObjectToCache(key, new VoHelper.CacheObjectUnit<MessageListPart>(lastUpdate,mlp));
 			return mlp;
@@ -323,7 +325,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			try {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
-				VoUserGroup group = user.getGroupById(groupId);
+				VoUserGroup group = pm.getObjectById(VoUserGroup.class,groupId);
 				List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, importantOnly, pm);
 
 				if (topics.isEmpty()) {
@@ -396,7 +398,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setId(votopic.getId());
 
 					VoUser user = getCurrentUser(pm);
-					VoUserGroup ug = user.getGroupById(votopic.getUserGroupId());
+					VoUserGroup ug = pm.getObjectById( VoUserGroup.class, votopic.getUserGroupId() );
 					votopic.setLongitude(ug.getLongitude());
 					votopic.setLatitude(ug.getLatitude());
 
@@ -669,7 +671,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private void updatePoll(VoTopic theTopic, Topic topic, PersistenceManager pm) throws InvalidOperation {
-		if( topic.poll == null && 0!=theTopic.getPollId() || topic.poll.pollId != theTopic.getPollId()){
+		if( topic.poll == null && 0!=theTopic.getPollId() || topic.poll !=null && topic.poll.pollId != theTopic.getPollId()){
 			if( theTopic.getPollId() == 0 ) {//poll changed so the old one should be removed
 				pm.deletePersistent(pm.getObjectById(VoPoll.class, theTopic.getPollId()));
 				theTopic.setPollId(0L);
@@ -682,8 +684,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 		} else if( topic.poll != null && topic.poll.pollId == theTopic.getPollId()) { //check changes
 			VoPoll newPoll = VoPoll.create(topic.poll);
-			newPoll.setId(theTopic.getPollId());
+			if(0!=theTopic.getPollId()) newPoll.setId(theTopic.getPollId());
 			pm.makePersistent(newPoll);
+			theTopic.setPollId( newPoll.getId() );
 		}
 		if( null!=topic.poll ) topic.poll.pollId = theTopic.getPollId();
 	}
