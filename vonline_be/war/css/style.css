@@ -305,7 +305,7 @@ h1 {
 .widget-main {
   overflow: auto;
   padding: 0;
-  padding-bottom: 5px;
+  padding-bottom: 15px;
 }
 .talks-single .widget-main,
 .adverts-single .widget-main {
@@ -371,9 +371,6 @@ h1 {
 .topic-item .topic-descr header span {
   float: left;
   vertical-align: middle;
-}
-.topic-item .topic-descr .topic-right {
-  margin-left: 95px;
 }
 .topic-item .topic-descr .topic-right h2 {
   margin-top: 0;
@@ -494,8 +491,11 @@ h1 {
   margin-bottom: 10px;
   font-size: 14px;
 }
-.topic-item .dd-list .topic-right {
+.dd-list .topic-right {
   margin-left: 60px;
+}
+.dd .topic-right {
+  margin-left: 95px;
 }
 .dd-list .dd-list {
   padding-left: 37px;
@@ -546,6 +546,7 @@ h1 {
 .dd>.dd-list>.topic-item >.topic-descr {
   background: #ddedf6;
   padding: 5px;
+  padding-bottom: 0;
 }
 .dd>.dd-list>.topic-item.list-view>.dd-list {
   padding-left: 30px;
@@ -556,6 +557,11 @@ h1 {
 }
 .wysiwyg-editor a {
   cursor: pointer;
+}
+.empty-messages {
+  font-size: 20px;
+  text-align: center;
+  color: #ccc;
 }
 @media all and (max-width: 1280px) {
   .navbar .form-search {
@@ -635,7 +641,7 @@ h1 {
   border-radius: 0;
 }
 .itemdiv.dialogdiv > .body {
-  padding-bottom: 28px;
+  padding-bottom: 20px;
 }
 .itemdiv {
   padding-right: 0;
@@ -664,6 +670,9 @@ h1 {
 }
 .message-input .message-input-bottom {
   margin-top: 15px;
+}
+.message-input .talk-subject {
+  margin-bottom: 10px;
 }
 .talks-single .message-input,
 .adverts-single .message-input {
@@ -888,9 +897,19 @@ h1 {
   padding-left: 95px;
   padding-right: 15px;
 }
+.answer-block {
+  width: 100%;
+}
+.answer-block .input-group-btn {
+  display: block;
+  width: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .message-textarea {
   width: 100%;
   overflow: hidden;
+  display: block;
 }
 .edit-message .btn {
   border-width: 2px;

@@ -187,7 +187,7 @@
                     <div class="importantly-top">
                         Важно
                     </div>
-                    <div class="importantly-middle" ng-show="importantTopics.topics == null || importantTopics.topics.length == 0">Пока нет сообщений</div>
+                    <div class="importantly-middle" ng-show="importantTopics.topics == null || importantTopics.topics.length == 0">{{base.emptyMessage}}</div>
                     <ul>
                         <li ng-repeat="importantTopic in importantTopics.topics" class="clearfix">
                             <div class="importantly-left">

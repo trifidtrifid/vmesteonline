@@ -1,5 +1,5 @@
 
-<section class="talks-block ng-cloak">
+<section class="adverts-block ng-cloak">
 
     <section class="forum adverts-single" infinite-scroll="adverts.addMoreItems()">
 
@@ -11,55 +11,55 @@
                         <div class="widget-body">
                             <div class="widget-main">
                                 <div class="topic-left">
-                                    <a ui-sref="profile({ userId : {{ adverts.fullAdvertTopic.userInfo.id }} })">
-                                        <div class="avatar" style="background-image: url({{adverts.fullAdvertTopic.userInfo.avatar}})"></div>
-                                        <!--<img ng-src="{{adverts.fullAdvertTopic.userInfo.avatar}}" alt="картинка" />-->
+                                    <a ui-sref="profile({ userId : {{ adverts.fullTalkTopic.userInfo.id }} })">
+                                        <div class="avatar" style="background-image: url({{adverts.fullTalkTopic.userInfo.avatar}})"></div>
+                                        <!--<img ng-src="{{adverts.fullTalkTopic.userInfo.avatar}}" alt="картинка" />-->
                                     </a>
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right" ng-switch on="adverts.fullAdvertTopic.metaType">
+                                <div class="topic-right" ng-switch on="adverts.fullTalkTopic.metaType">
 
-                                    <div class="message-tools pull-right" ng-show="adverts.fullAdvertTopic.userInfo.id == base.me.id">
-                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(adverts.fullAdvertTopic,adverts.topics,true,false)">&times;</a>
-                                        <a href="#" title="Редактировать" ng-click="base.setEdit(adverts.fullAdvertTopic)" class="fa fa-pencil pull-right"></a>
+                                    <div class="message-tools pull-right" ng-show="adverts.fullTalkTopic.userInfo.id == base.me.id">
+                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(adverts.fullTalkTopic,adverts.topics,true,false)">&times;</a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit(adverts.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
                                     <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                      ng-class="adverts.fullAdvertTopic.tagColor">{{adverts.fullAdvertTopic.label}}</span>
+                                      ng-class="adverts.fullTalkTopic.tagColor">{{adverts.fullTalkTopic.label}}</span>
 
-                                    <div ng-hide="adverts.fullAdvertTopic.isEdit">
+                                    <div ng-hide="adverts.fullTalkTopic.isEdit">
                                         <h2>
-                                            <span>{{adverts.fullAdvertTopic.subject}}</span>
+                                            <span>{{adverts.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                        <p ng-switch-when="message">{{adverts.fullAdvertTopic.message.content}}</p>
+                                        <p ng-switch-when="message">{{adverts.fullTalkTopic.message.content}}</p>
 
 
                                     <div class="attached">
-                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id}}" ng-repeat="image in adverts.fullAdvertTopic.message.images">
+                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id}}" ng-repeat="image in adverts.fullTalkTopic.message.images">
                                             <img ng-src="{{image.URL}}" alt="картинка"/>
                                         </a>
                                         <div class="docs">
-                                            <div ng-repeat="document in adverts.fullAdvertTopic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                            <div ng-repeat="document in adverts.fullTalkTopic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
                                         </div>
                                     </div>
 
-                                    <div class="poll" ng-switch-when="poll"  ng-switch on="adverts.fullAdvertTopic.poll.alreadyPoll" ng-cloak>
-                                        <div class="text" ng-cloak>{{adverts.fullAdvertTopic.message.content}}</div>
+                                    <div class="poll" ng-switch-when="poll"  ng-switch on="adverts.fullTalkTopic.poll.alreadyPoll" ng-cloak>
+                                        <div class="text" ng-cloak>{{adverts.fullTalkTopic.message.content}}</div>
 
-                                        <h5>{{adverts.fullAdvertTopic.poll.subject}}</h5>
+                                        <h5>{{adverts.fullTalkTopic.poll.subject}}</h5>
 
                                         <div class="poll-do" ng-switch-when="false">
 
-                                            <div class="radio" ng-repeat="variant in adverts.fullAdvertTopic.poll.editNames">
+                                            <div class="radio" ng-repeat="variant in adverts.fullTalkTopic.poll.editNames">
                                                 <label>
-                                                    <input name="poll-variant-{{adverts.fullAdvertTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                    <input name="poll-variant-{{adverts.fullTalkTopic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
                                                     <span class="lbl">{{variant.name}}</span>
                                                 </label>
                                             </div>
 
-                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,adverts.fullAdvertTopic.poll)">Голосовать</button>
+                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,adverts.fullTalkTopic.poll)">Голосовать</button>
 
                                         </div>
 
@@ -67,7 +67,7 @@
 
                                         <div class="poll-results" ng-switch-when="true">
 
-                                            <div class="poll-result-item"  ng-repeat="variant in adverts.fullAdvertTopic.poll.editNames">
+                                            <div class="poll-result-item"  ng-repeat="variant in adverts.fullTalkTopic.poll.editNames">
                                                 <div class="poll-result-variant">{{variant.name}}</div>
                                                 <div class="poll-row">
                                                     <div class="poll-row-line">
@@ -78,7 +78,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="poll-result-amount">Проголосовало <span>{{adverts.fullAdvertTopic.poll.amount}}</span> человек</div>
+                                            <div class="poll-result-amount">Проголосовало <span>{{adverts.fullTalkTopic.poll.amount}}</span> человек</div>
 
                                         </div>
 
@@ -86,27 +86,29 @@
 
                                     </div>
 
-                                    <div class="edit-message" ng-show="adverts.fullAdvertTopic.isEdit">
-                                        <div ng-include="'templates/createTopic.html'" onload="ctrl = adverts.fullAdvertTopic; initCreateTopic(adverts.fullAdvertTopic);"></div>
+                                    <div class="edit-message" ng-show="adverts.fullTalkTopic.isEdit">
+                                        <div ng-include="'templates/createTopic.html'" onload="ctrl = adverts.fullTalkTopic; initCreateTopic(adverts.fullTalkTopic);"></div>
                                     </div>
 
                                         <div class="message-bottom">
-                                            <span class="topic-header-date">{{adverts.fullAdvertTopic.message.createdEdit}}</span>
-                                            <a class="answer-link" href="#" ng-click="adverts.showTopicAnswerInput($event,adverts.fullAdvertTopic)">Ответить</a>
+                                            <span class="topic-header-date">{{adverts.fullTalkTopic.message.createdEdit}}</span>
+                                            <a class="answer-link" href="#" ng-click="adverts.showTopicAnswerInput($event,adverts.fullTalkTopic)">Ответить</a>
                                         </div>
                                 </div>
                             </div>
-                            <div class="answer-input" ng-show="adverts.fullAdvertTopic.answerInputIsShow">
-                                <textarea ng-model="adverts.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                            <div class="answer-input" ng-show="adverts.fullTalkTopic.answerInputIsShow">
+                                <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=adverts; ctrlId = adverts.fullTalkTopic.id; initCreateMessage(ctrlId);"></div>
+
+                                <!--<textarea ng-model="adverts.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                <div id="attach-area-{{adverts.fullAdvertTopic.id}}" class="attach-area">
+                                <div id="attach-area-{{adverts.fullTalkTopic.id}}" class="attach-area">
                                     <div class="loading hidden">
                                         <img ng-src="i/loading2.gif" alt="картинка"/>
                                     </div>
                                 </div>
-                                <div id="attach-doc-area-{{adverts.fullAdvertTopic.id}}" class="attach-area attach-area-doc"></div>
+                                <div id="attach-doc-area-{{adverts.fullTalkTopic.id}}" class="attach-area attach-area-doc"></div>
 
                                 <div class="answer-input-bottom">
                                     <div class="btn-group attach-dropdown pull-right">
@@ -116,21 +118,21 @@
                                         </button>
 
                                         <ul class="dropdown-menu dropdown-blue">
-                                            <li><input id="attachImage-{{adverts.fullAdvertTopic.id}}" type="file"/></li>
-                                            <li><input id="attachDoc-{{adverts.fullAdvertTopic.id}}" type="file"/></li>
+                                            <li><input id="attachImage-{{adverts.fullTalkTopic.id}}" type="file"/></li>
+                                            <li><input id="attachDoc-{{adverts.fullTalkTopic.id}}" type="file"/></li>
                                         </ul>
                                     </div>
 
-                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleFirstMessage($event,adverts.fullAdvertTopic.id)">Отправить</a>
+                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleFirstMessage($event,adverts.fullTalkTopic.id)">Отправить</a>
                                     <span class="error-info" ng-show="adverts.isCreateFirstMessageError">{{adverts.createFirstMessageErrorText}}</span>
-                                </div>
+                                </div>-->
 
                             </div>
                         </div>
                     </div>
                     <ol class="dd-list">
 
-                        <li class="dd-item dd2-item topic-item" ng-repeat="firstMessage in adverts.fullAdvertFirstMessages" id="{{firstMessage.id}}">
+                        <li class="dd-item dd2-item topic-item" ng-repeat="firstMessage in adverts.fullTalkFirstMessages" id="{{firstMessage.id}}">
                             <div class="dd2-content widget-box topic-descr">
                                 <div class="widget-body">
                                     <div class="widget-main">
@@ -146,45 +148,53 @@
                                         <div class="topic-right">
 
                                             <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
-                                                <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,adverts.fullAdvertFirstMessages,false,false)">&times;</a>
-                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage)" class="fa fa-pencil pull-right"></a>
+                                                <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,adverts.fullTalkFirstMessages,false,false)">&times;</a>
+                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage,true)" class="fa fa-pencil pull-right"></a>
                                             </div>
 
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
-                                            <p ng-hide="firstMessage.isEdit">{{firstMessage.content}}</p>
 
-                                            <div class="edit-message" ng-show="firstMessage.isEdit">
-                                                <textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
-                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> <!--  -->
+                                            <div ng-hide="firstMessage.isEdit">
+                                                <p>{{firstMessage.content}}</p>
+
+                                                <div class="attached">
+                                                    <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                        <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                    </a>
+                                                    <div class="docs">
+                                                        <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div class="attached">
-                                                <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
-                                                    <img ng-src="{{image.URL}}" alt="картинка"/>
-                                                </a>
-                                                <div class="docs">
-                                                    <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
-                                                </div>
+                                            <div class="edit-message" ng-show="firstMessage.isEdit">
+                                                <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=firstMessage; ctrlId = adverts.fullTalkTopic.id+'-'+firstMessage.id; initCreateMessage(ctrlId,true);"></div>
+
+                                                <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> &lt;!&ndash;  &ndash;&gt;-->
                                             </div>
 
                                             <div class="message-bottom">
                                                 <span class="topic-header-date">{{firstMessage.createdEdit}}</span>
-                                                <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullAdvertTopic,firstMessage)">Ответить</a>
+                                                <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullTalkTopic,firstMessage)">Ответить</a>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
-                                        <textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=firstMessage; ctrlTopicId = adverts.fullTalkTopic.id;
+                                         ctrlParent=adverts;ctrlId = adverts.fullTalkTopic.id+'-'+firstMessage.id; initCreateMessage(ctrlId);"></div>
+
+                                        <!--<textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                                   onblur="if(this.value=='') this.value='Ваш ответ';"
                                                   onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                        <div id="attach-area-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" class="attach-area">
+                                        <div id="attach-area-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area">
                                             <div class="loading hidden">
                                                 <img ng-src="i/loading2.gif" alt="картинка"/>
                                             </div>
                                         </div>
-                                        <div id="attach-doc-area-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" class="attach-area attach-area-doc"></div>
+                                        <div id="attach-doc-area-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" class="attach-area attach-area-doc"></div>
 
                                         <div class="answer-input-bottom">
                                             <div class="btn-group attach-dropdown pull-right">
@@ -194,21 +204,21 @@
                                                 </button>
 
                                                 <ul class="dropdown-menu dropdown-blue">
-                                                    <li><input id="attachImage-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" type="file"/></li>
-                                                    <li><input id="attachDoc-{{adverts.fullAdvertTopic.id+'-'+firstMessage.id}}" type="file"/></li>
+                                                    <li><input id="attachImage-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" type="file"/></li>
+                                                    <li><input id="attachDoc-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" type="file"/></li>
                                                 </ul>
                                             </div>
 
-                                            <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullAdvertTopic.id,firstMessage)">Отправить</a>
+                                            <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullTalkTopic.id,firstMessage)">Отправить</a>
                                             <span class="error-info" ng-show="adverts.isCreateMessageToFirstError">{{adverts.createMessageToFirstErrorText}}</span>
-                                        </div>
+                                        </div>-->
 
                                     </div>
                                 </div>
                             </div>
                             <ol class="dd-list" ng-show="firstMessage.isTreeOpen">
 
-                                <li class="dd-item dd2-item topic-item" ng-repeat="message in adverts.fullAdvertMessages[firstMessage.id]"
+                                <li class="dd-item dd2-item topic-item" ng-repeat="message in adverts.fullTalkMessages[firstMessage.id]"
                                     ng-style="{'margin-left': {{message.offset*30-30}}}" ng-show="message.isOpen && message.isParentOpen">
                                     <div class="dd2-content widget-box topic-descr">
                                         <div class="widget-body">
@@ -224,45 +234,55 @@
                                                 </div>
                                                 <div class="topic-right">
                                                     <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
-                                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,adverts.fullAdvertMessages[firstMessage.id],false,false)">&times;</a>
-                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,adverts.fullTalkMessages[firstMessage.id],false,false)">&times;</a>
+                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message,true)" class="fa fa-pencil pull-right"></a>
                                                     </div>
 
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
-                                                    <p ng-hide="message.isEdit">{{message.content}}</p>
 
-                                                    <div class="edit-message" ng-show="message.isEdit">
-                                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
-                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> <!--  -->
+                                                    <div ng-hide="message.isEdit">
+                                                        <p>{{message.content}}</p>
+
+                                                        <div class="attached">
+                                                            <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                            </a>
+                                                            <div class="docs">
+                                                                <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                    <div class="attached">
-                                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullAdvertTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
-                                                            <img ng-src="{{image.URL}}" alt="картинка"/>
-                                                        </a>
-                                                        <div class="docs">
-                                                            <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
-                                                        </div>
+                                                    <div class="edit-message" ng-show="message.isEdit">
+                                                        <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=message; ctrlId = adverts.fullTalkTopic.id+'-'+message.id;
+                                                        ctrlTopicId = adverts.fullTalkTopic.id;ctrlParent=adverts; initCreateMessage(ctrlId,true);"></div>
+
+                                                        <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> &lt;!&ndash;  &ndash;&gt;-->
                                                     </div>
 
                                                     <div class="message-bottom">
                                                         <span class="topic-header-date">{{message.createdEdit}}</span>
-                                                        <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullAdvertTopic,firstMessage,message)">Ответить</a>
+                                                        <a class="answer-link" href="#" ng-click="adverts.showMessageAnswerInput($event,adverts.fullTalkTopic,firstMessage,message)">Ответить</a>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div class="answer-input" ng-show="message.answerInputIsShow">
-                                                <textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                                <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=message; ctrlTopicId = adverts.fullTalkTopic.id;
+                                         ctrlParent=adverts;ctrlId = adverts.fullTalkTopic.id+'-'+message.id;
+                                         ctrlFirstMessage=firstMessage; initCreateMessage(ctrlId);"></div>
+
+                                                <!--<textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
-                                                <div id="attach-area-{{adverts.fullAdvertTopic.id+'-'+message.id}}" class="attach-area">
+                                                <div id="attach-area-{{adverts.fullTalkTopic.id+'-'+message.id}}" class="attach-area">
                                                     <div class="loading hidden">
                                                         <img ng-src="i/loading2.gif" alt="картинка"/>
                                                     </div>
                                                 </div>
-                                                <div id="attach-doc-area-{{adverts.fullAdvertTopic.id+'-'+message.id}}" class="attach-area attach-area-doc"></div>
+                                                <div id="attach-doc-area-{{adverts.fullTalkTopic.id+'-'+message.id}}" class="attach-area attach-area-doc"></div>
 
 
                                                 <div class="answer-input-bottom">
@@ -273,14 +293,14 @@
                                                         </button>
 
                                                         <ul class="dropdown-menu dropdown-blue">
-                                                            <li><input id="attachImage-{{adverts.fullAdvertTopic.id+'-'+message.id}}" type="file"/></li>
-                                                            <li><input id="attachDoc-{{adverts.fullAdvertTopic.id+'-'+message.id}}" type="file"/></li>
+                                                            <li><input id="attachImage-{{adverts.fullTalkTopic.id+'-'+message.id}}" type="file"/></li>
+                                                            <li><input id="attachDoc-{{adverts.fullTalkTopic.id+'-'+message.id}}" type="file"/></li>
                                                         </ul>
                                                     </div>
 
-                                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullAdvertTopic.id,firstMessage,message)">Отправить</a>
+                                                    <a class="btn btn-sm no-border btn-primary" href="#" ng-click="adverts.addSingleMessage($event,adverts.fullTalkTopic.id,firstMessage,message)">Отправить</a>
                                                     <span class="error-info" ng-show="adverts.isCreateMessageError">{{adverts.createMessageErrorText}}</span>
-                                                </div>
+                                                </div>-->
 
                                             </div>
                                         </div>

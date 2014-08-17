@@ -289,7 +289,7 @@ transform()
 .widget-main
   overflow auto
   padding 0
-  padding-bottom 5px
+  padding-bottom 15px
 
 .talks-single .widget-main
 .adverts-single .widget-main
@@ -347,7 +347,6 @@ transform()
         float left
         vertical-align middle
     .topic-right
-      margin-left 95px
       h2
         margin-top 0
         font-size 20px
@@ -445,8 +444,12 @@ transform()
         margin-bottom 10px
         font-size 14px
 
-.topic-item .dd-list .topic-right
+
+.dd-list .topic-right //.topic-item
   margin-left 60px
+
+.dd .topic-right
+    margin-left 95px
 
 .dd-list .dd-list
   padding-left 37px
@@ -496,6 +499,7 @@ transform()
   >.topic-descr
     background #ddedf6
     padding 5px
+    padding-bottom 0
 
 .dd>.dd-list>.topic-item.list-view>.dd-list
   padding-left 30px
@@ -507,6 +511,11 @@ transform()
 .wysiwyg-editor
   a
     cursor pointer
+
+.empty-messages
+  font-size 20px
+  text-align center
+  color #ccc
 
 @media all and (max-width: 1280px)
   .navbar .form-search
@@ -566,7 +575,7 @@ transform()
 .itemdiv > .user > img
   border-radius 0
 .itemdiv.dialogdiv > .body
-  padding-bottom 28px
+  padding-bottom 20px
 .itemdiv
   padding-right 0
 .btn.active:after
@@ -590,6 +599,8 @@ transform()
     overflow hidden
   .message-input-bottom
     margin-top 15px
+  .talk-subject
+    margin-bottom 10px
 
 .talks-single .message-input
 .adverts-single .message-input
@@ -780,9 +791,18 @@ transform()
     padding-left 95px
     padding-right 15px
 
+.answer-block
+  width 100%
+  .input-group-btn
+    display block
+    width auto
+    margin-top 10px
+    margin-bottom 10px
+
 .message-textarea
   width 100%
   overflow hidden
+  display block
 
 .edit-message
   .btn

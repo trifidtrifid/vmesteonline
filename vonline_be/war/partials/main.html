@@ -62,6 +62,7 @@
             </div>-->
 
             <div class="lenta">
+                <div ng-if="lenta.wallItems.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
                 <div class="lenta-item" ng-repeat="wallItem in lenta.wallItems"
                         ng-switch on="wallItem.topic.message.type">
 
@@ -73,7 +74,7 @@
                                 <!--<img alt="аватар" ng-src="{{wallItem.topic.userInfo.avatar}}">-->
                             </a>
 
-                            <div class="body" ng-switch on="wallItem.topic.metaType">
+                            <div class="body"> <!-- ng-switch on="wallItem.topic.metaType" -->
 
                                 <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
                                     <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true,true)">&times;</a>
@@ -88,7 +89,8 @@
                                 </div>
 
                                 <div ng-hide="wallItem.topic.isEdit">
-                                    <div class="text" ng-switch-when="message">{{wallItem.topic.message.content}}</div>
+
+                                    <div class="text">{{wallItem.topic.message.content}}</div> <!-- ng-switch-when="message" -->
 
                                     <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
                                         <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
@@ -99,8 +101,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="poll" ng-switch-when="poll" ng-switch on="wallItem.topic.poll.alreadyPoll" >
-                                        <div class="text">{{wallItem.topic.message.content}}</div>
+                                    <div class="poll" ng-if="wallItem.topic.metaType == 'poll'" ng-switch on="wallItem.topic.poll.alreadyPoll" >
+                                        <!--<div class="text">{{wallItem.topic.message.content}}</div>-->
 
                                         <h5>{{wallItem.topic.poll.subject}}</h5>
 
@@ -141,9 +143,6 @@
                                 </div>
 
                                 <div class="edit-message" ng-show="wallItem.topic.isEdit">
-                                    <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallItem.topic.isFocus"></textarea>
-
-                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallItem.topic,true)" href="#">Сохранить</a>-->
 
                                     <div ng-include="'templates/createTopic.html'" onload="ctrl=wallItem.topic; initCreateTopic(wallItem.topic);"></div>
 
@@ -165,7 +164,6 @@
                             <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
                                     <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
-                                    <!--<img alt="аватар" ng-src="{{wallMessage.userInfo.avatar}}">-->
                                 </a>
 
                                 <div class="body">
@@ -192,10 +190,8 @@
                                     </div>
 
                                     <div class="edit-message" ng-show="wallMessage.isEdit">
-                                        <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
-                                        <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>-->
 
-                                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId);"></div>
+                                        <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId,true);"></div>
                                     </div>
 
                                     <div class="lenta-item-bottom">
