@@ -47,8 +47,8 @@
                                 <label for="settings-select-1">Пол</label>
 
                                 <select class="form-control" id="settings-select-1" ng-model="settings.userInfo.gender">
-                                    <option value="1" ng-selected="settings.userInfo.gender == 2 ">Муж</option>
-                                    <option value="0" ng-selected="settings.userInfo.gender == 1 ">Жен</option>
+                                    <option value="1" ng-selected="settings.userInfo.gender == 2 ">Мужской</option>
+                                    <option value="0" ng-selected="settings.userInfo.gender == 1 ">Женский</option>
                                 </select>
                             </div>
                                 <button class="btn btn-sm no-border" ng-class="{'btn-cancel': !settings.canSave(1),'btn-primary' : settings.canSave(1)}"

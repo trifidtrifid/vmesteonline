@@ -101,7 +101,9 @@
                                 </div>
                             </div>
                             <div class="answer-input" ng-show="talks.fullTalkTopic.answerInputIsShow">
-                                <textarea ng-model="talks.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=talks; ctrlId = talks.fullTalkTopic.id; initCreateMessage(ctrlId);"></div>
+
+                                <!--<textarea ng-model="talks.answerFirstMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
@@ -126,7 +128,7 @@
                                     </div>
 
                                     <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleFirstMessage($event,talks.fullTalkTopic.id)">Отправить</a>
-                                    <span class="error-info" ng-show="talks.isCreateFirstMessageError">{{talks.createFirstMessageErrorText}}</span>
+                                    <span class="error-info" ng-show="talks.isCreateFirstMessageError">{{talks.createFirstMessageErrorText}}</span>-->
                                 </div>
 
                             </div>
@@ -150,24 +152,33 @@
                                         <div class="topic-right">
                                             <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
                                                 <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,talks.fullTalkFirstMessages,false,false)">&times;</a>
-                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage)" class="fa fa-pencil pull-right"></a>
+                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage,true)" class="fa fa-pencil pull-right"></a>
                                             </div>
 
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
-                                            <p ng-hide="firstMessage.isEdit">{{firstMessage.content}}</p>
 
-                                            <div class="edit-message" ng-show="firstMessage.isEdit">
-                                                <textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
-                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> <!--  -->
+                                            <div ng-hide="firstMessage.isEdit">
+                                                <p>{{firstMessage.content}}</p>
+
+                                                <div class="attached">
+                                                    <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
+                                                        <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                    </a>
+                                                    <div class="docs">
+                                                        <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div class="attached">
-                                                <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
-                                                    <img ng-src="{{image.URL}}" alt="картинка"/>
-                                                </a>
-                                                <div class="docs">
-                                                    <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
-                                                </div>
+                                            <div class="edit-message" ng-show="firstMessage.isEdit">
+
+                                                <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=firstMessage; ctrlId = talks.fullTalkTopic.id+'-'+firstMessage.id; initCreateMessage(ctrlId,true);"></div>
+
+                                                <!--<div ng-include="'templates/editMessage.html'" onload="ctrlMessage=firstMessage; ctrlTopicId = talks.fullTalkTopic.id;
+                                         ctrlParent=talks;ctrlId = talks.fullTalkTopic.id+'-'+firstMessage.id; ctrlMessage.isFirstMessage = true; initCreateMessage(ctrlId,true);"></div>-->
+
+                                                <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="firstMessage.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(firstMessage,false)" href="#">Сохранить</a> &lt;!&ndash;  &ndash;&gt;-->
                                             </div>
 
                                             <div class="message-bottom">
@@ -178,7 +189,11 @@
                                     </div>
 
                                     <div class="answer-input" ng-show="firstMessage.answerInputIsShow">
-                                        <textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+
+                                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=firstMessage; ctrlTopicId = talks.fullTalkTopic.id;
+                                         ctrlParent=talks;ctrlId = talks.fullTalkTopic.id+'-'+firstMessage.id; initCreateMessage(ctrlId);"></div>
+
+                                        <!--<textarea ng-model="firstMessage.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                                   onblur="if(this.value=='') this.value='Ваш ответ';"
                                                   onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
@@ -204,7 +219,7 @@
 
                                             <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage)">Отправить</a>
                                             <span class="error-info" ng-show="talks.isCreateMessageToFirstError">{{talks.createMessageToFirstErrorText}}</span>
-                                        </div>
+                                        </div>-->
 
                                     </div>
                                 </div>
@@ -229,24 +244,35 @@
 
                                                     <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
                                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,talks.fullTalkMessages[firstMessage.id],false,false)">&times;</a>
-                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message,true)" class="fa fa-pencil pull-right"></a>
                                                     </div>
 
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
-                                                    <p ng-hide="message.isEdit">{{message.content}}</p>
 
-                                                    <div class="edit-message" ng-show="message.isEdit">
-                                                        <textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
-                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> <!--  -->
+                                                    <div ng-hide="message.isEdit">
+                                                        <p>{{message.content}}</p>
+
+                                                        <div class="attached">
+                                                            <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
+                                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                            </a>
+                                                            <div class="docs">
+                                                                <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                    <div class="attached">
-                                                        <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
-                                                            <img ng-src="{{image.URL}}" alt="картинка"/>
-                                                        </a>
-                                                        <div class="docs">
-                                                            <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
-                                                        </div>
+                                                    <div class="edit-message" ng-show="message.isEdit">
+
+                                                        <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=message; ctrlId = talks.fullTalkTopic.id+'-'+message.id;
+                                                        ctrlTopicId = talks.fullTalkTopic.id;ctrlParent=talks; initCreateMessage(ctrlId,true);"></div>
+
+                                                        <!--<div ng-include="'templates/editMessage.html'" onload="ctrlMessage=message; ctrlTopicId = talks.fullTalkTopic.id;
+                                         ctrlParent=talks;ctrlId = talks.fullTalkTopic.id+'-'+message.id;  ctrlMessage.isFirstMessage = false;
+                                         ctrlFirstMessage=firstMessage; initCreateMessage(ctrlId,true);"></div>-->
+
+                                                        <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="message.content" ng-keyup="base.messageChange($event)"></textarea>
+                                                        <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(message,false)" href="#">Сохранить</a> &lt;!&ndash;  &ndash;&gt;-->
                                                     </div>
 
                                                     <div class="message-bottom">
@@ -257,7 +283,12 @@
                                             </div>
 
                                             <div class="answer-input" ng-show="message.answerInputIsShow">
-                                                <textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
+                                                <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=message; ctrlTopicId = talks.fullTalkTopic.id;
+                                         ctrlParent=talks;ctrlId = talks.fullTalkTopic.id+'-'+message.id;
+                                         ctrlFirstMessage=firstMessage; initCreateMessage(ctrlId);"></div>
+                                                <!--ctrlMessage.isFirstMessage = false;-->
+
+                                                <!--<textarea ng-model="message.answerMessage" class="no-resize" ng-keyup="base.messageChange($event,2)"
                                                           onblur="if(this.value=='') this.value='Ваш ответ';"
                                                           onfocus="if(this.value=='Ваш ответ') this.value='';"></textarea>
 
@@ -284,7 +315,7 @@
 
                                                     <a class="btn btn-sm no-border btn-primary" href="#" ng-click="talks.addSingleMessage($event,talks.fullTalkTopic.id,firstMessage,message)">Отправить</a>
                                                     <span class="error-info" ng-show="talks.isCreateMessageError">{{talks.createMessageErrorText}}</span>
-                                                </div>
+                                                </div>-->
 
                                             </div>
                                         </div>

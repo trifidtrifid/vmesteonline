@@ -5,16 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
+import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
-import com.vmesteonline.be.authservice.LoginResult;
-import com.vmesteonline.be.utils.EMailHelper;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUser;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
@@ -74,6 +77,7 @@ public class OAuthServlet extends HttpServlet {
 						resp.sendRedirect(domain + "login.html?invalid_email=" + email);
 						break;
 					default:
+						resp.sendRedirect(domain + "login.html?cantlogin=" + email);
 						break;
 					}
 				} catch (Exception e) {
@@ -86,20 +90,42 @@ public class OAuthServlet extends HttpServlet {
 				if (inviteCode.startsWith("inviteCode:")) {
 					inviteCode = inviteCode.substring(inviteCode.lastIndexOf(":") + 1);
 
-					String resp2 = runUrl(new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
-							+ jsonObj.getString("access_token")));
+					URL url = new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
+							+ jsonObj.getString("access_token") + "&fields=first_name,last_name,sex,bdate,photo_medium");
+					String resp2 = runUrl(url);
 					JSONObject jsonObj2 = new JSONObject(resp2);
 
-					resp.getWriter().println("<br><br>  sdfsdf " + resp2);
+					resp.getWriter().println("<br><br>  sdfsdf " + resp2 + " access token " + jsonObj.getString("access_token") + " req " + url.toString());
 
 					JSONArray vkResp = jsonObj2.getJSONArray("response");
 					JSONObject o = (JSONObject) vkResp.get(0);
-
 					String password = generatePassword();
-					authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), password, email, inviteCode, 0, false);
+					authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), password, email, inviteCode, o.getInt("sex"), false);
 					authServiceImpl.allowUserAccess(email, "", false);
-					resp.sendRedirect(domain + "main");
 
+					PersistenceManager pm = PMF.getPm();
+					try {
+						VoUser user = authServiceImpl.getUserByEmail(email, pm);
+						if (user != null) {
+							resp.getWriter().println("<br>find user " + email + " avatar " + o.getString("photo_medium"));
+							user.setAvatarTopic(o.getString("photo_medium"));
+							user.setAvatarMessage(o.getString("photo_medium"));
+							user.setAvatarProfileShort(o.getString("photo_medium"));
+							user.setAvatarProfile(o.getString("photo_medium"));
+							SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+							Date date = formatter.parse(o.getString("bdate"));
+							long ts = date.getTime() / 1000L;
+							user.setBirthday((int) ts);
+
+						} else {
+							resp.getWriter().println("<br>can't find user " + email);
+
+						}
+						resp.sendRedirect(domain + "main");
+
+					} finally {
+						pm.close();
+					}
 				} else {
 
 					resp.sendRedirect(domain + "main?importdata");

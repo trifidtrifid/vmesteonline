@@ -24,59 +24,63 @@
                                     <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })">{{wallSingle.wallItem.topic.userInfo.firstName+" "+wallSingle.wallItem.topic.userInfo.lastName}}</a>
                                 </div>
 
-                                <div class="text" ng-switch-when="message" ng-hide="wallSingle.wallItem.topic.isEdit">{{wallSingle.wallItem.topic.message.content}}</div>
+                                <div ng-hide="wallSingle.wallItem.topic.isEdit">
+                                    <div class="text" ng-switch-when="message" ng-hide="wallSingle.wallItem.topic.isEdit">{{wallSingle.wallItem.topic.message.content}}</div>
+
+                                    <div class="attached" ng-show="wallSingle.wallItem.topic.message.images.length || wallSingle.wallItem.topic.message.documents.length">
+                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
+                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                        </a>
+                                        <div class="docs">
+                                            <div ng-repeat="document in wallSingle.wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="poll" ng-switch-when="poll" ng-switch on="wallSingle.wallItem.topic.poll.alreadyPoll" >
+                                        <div class="text" >{{wallSingle.wallItem.topic.message.content}}</div>
+
+                                        <h5>{{wallSingle.wallItem.topic.poll.subject}}</h5>
+
+
+                                        <div class="poll-do" ng-switch-when="false">
+
+                                            <div class="radio" ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
+                                                <label>
+                                                    <input name="poll-variant-{{wallSingle.wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                    <span class="lbl">{{variant.name}}</span>
+                                                </label>
+                                            </div>
+
+                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallSingle.wallItem.topic.poll)">Голосовать</button>
+
+                                        </div>
+
+                                        <div class="poll-results" ng-switch-when="true">
+
+                                            <div class="poll-result-item"  ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
+                                                <div class="poll-result-variant">{{variant.name}}</div>
+                                                <div class="poll-row">
+                                                    <div class="poll-row-line">
+                                                        <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
+                                                        <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
+                                                    </div>
+                                                    <div class="poll-row-percent">{{variant.votersPercent}}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="poll-result-amount">Проголосовало <span>{{wallSingle.wallItem.topic.poll.amount}}</span> человек</div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
 
                                 <div class="edit-message" ng-show="wallSingle.wallItem.topic.isEdit">
-                                    <textarea class="no-resize message-textarea edit-textarea" ng-model="wallSingle.wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallSingle.wallItem.topic.isFocus"></textarea>
+                                    <div ng-include="'templates/createTopic.html'" onload="ctrl=wallSingle.wallItem.topic; initCreateTopic(wallSingle.wallItem.topic);"></div>
 
-                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallSingle.wallItem.topic,true)" href="#">Сохранить</a>
+                                    <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallSingle.wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallSingle.wallItem.topic.isFocus"></textarea>
 
-                                </div>
-
-                                <div class="attached" ng-show="wallSingle.wallItem.topic.message.images.length || wallSingle.wallItem.topic.message.documents.length">
-                                    <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
-                                        <img ng-src="{{image.URL}}" alt="картинка"/>
-                                    </a>
-                                    <div class="docs">
-                                        <div ng-repeat="document in wallSingle.wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
-                                    </div>
-                                </div>
-
-                                <div class="poll" ng-switch-when="poll" ng-switch on="wallSingle.wallItem.topic.poll.alreadyPoll" >
-                                    <div class="text" >{{wallSingle.wallItem.topic.message.content}}</div>
-
-                                    <h5>{{wallSingle.wallItem.topic.poll.subject}}</h5>
-
-
-                                    <div class="poll-do" ng-switch-when="false">
-
-                                        <div class="radio" ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
-                                            <label>
-                                                <input name="poll-variant-{{wallSingle.wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
-                                                <span class="lbl">{{variant.name}}</span>
-                                            </label>
-                                        </div>
-
-                                        <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallSingle.wallItem.topic.poll)">Голосовать</button>
-
-                                    </div>
-
-                                    <div class="poll-results" ng-switch-when="true">
-
-                                        <div class="poll-result-item"  ng-repeat="variant in wallSingle.wallItem.topic.poll.editNames">
-                                            <div class="poll-result-variant">{{variant.name}}</div>
-                                            <div class="poll-row">
-                                                <div class="poll-row-line">
-                                                    <div class="poll-line-percent" ng-style="{width: variant.votersPercent}"></div>
-                                                    <div class="poll-line-number" style="width: 100%">{{variant.votersNum}}</div>
-                                                </div>
-                                                <div class="poll-row-percent">{{variant.votersPercent}}</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="poll-result-amount">Проголосовало <span>{{wallSingle.wallItem.topic.poll.amount}}</span> человек</div>
-
-                                    </div>
+                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallSingle.wallItem.topic,true)" href="#">Сохранить</a>-->
 
                                 </div>
 
@@ -103,15 +107,25 @@
                                     <div class="name">
                                         <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.userInfo.firstName+" "+wallMessage.userInfo.lastName}}</a>
                                     </div>
-                                    <div class="text" >{{wallMessage.content}}</div>
 
-                                    <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
-                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
-                                            <img ng-src="{{image.URL}}" alt="картинка"/>
-                                        </a>
-                                        <div class="docs">
-                                            <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                    <div ng-hide="wallMessage.isEdit">
+
+                                        <div class="text" >{{wallMessage.content}}</div>
+
+                                        <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
+                                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                            </a>
+                                            <div class="docs">
+                                                <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                            </div>
                                         </div>
+
+                                    </div>
+
+                                    <div class="edit-message" ng-show="wallMessage.isEdit">
+
+                                        <div ng-include="'templates/editMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId,true);"></div>
                                     </div>
 
                                     <div class="lenta-item-bottom">
@@ -122,7 +136,10 @@
                             </div>
                         </div>
 
-                        <div class="input-group">
+                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallSingle.wallItem; ctrlId = wallSingle.wallItem.topic.id;initCreateMessage(ctrlId);"></div>
+
+<!--                        <div class="input-group">
+
                             <textarea name="answerInput{{wallSingle.wallItem.topic.id}}" id="name{{wallSingle.wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallSingle.wallItem.commentText"
                                       ng-hasfocus="wallSingle.wallItem.isFocus" ng-show="wallSingle.wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
                                 onblur="if(this.value=='') this.value='Ваш ответ';"
@@ -154,7 +171,7 @@
                                         </ul>
                                     </div>
                                 </span>
-                        </div>
+                        </div>-->
                     </div>
 
                 </div>

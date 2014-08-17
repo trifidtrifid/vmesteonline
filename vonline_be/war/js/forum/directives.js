@@ -7,15 +7,17 @@ angular.module('forum.directives', []).
   directive('ngHasfocus', function() {
         return function(scope, element, attrs) {
             scope.$watch(attrs.ngHasfocus, function (nVal, oVal) {
-                if (nVal) {
+                if (nVal && scope.wallItem) {
                     element[0].focus();
                     setCaretToPos(element[0],scope.wallItem.commentText.length);
                 }
             });
 
             element.bind('blur', function() {
-                scope.wallItem.isFocus = false;
-                scope.$apply(attrs.ngHasfocus + " = false");
+                if(scope.wallItem){
+                    scope.wallItem.isFocus = false;
+                    scope.$apply(attrs.ngHasfocus + " = false");
+                }
                 //scope.$apply(attrs.ngShow + " = false");
             });
 
