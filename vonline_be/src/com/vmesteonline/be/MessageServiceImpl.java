@@ -797,6 +797,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public Message deleteMessage(long msgId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
+		boolean isModerator = false;
 		try {
 			VoMessage msg = pm.getObjectById(VoMessage.class, msgId);
 			VoUser cu = getCurrentUser();
@@ -804,7 +805,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
 			
 			if( msg.getAuthorId().getId() != cu.getId() && 
-					cu.isGroupModerator(topic.getUserGroupId()))
+					(isModerator = cu.isGroupModerator(topic.getUserGroupId())))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author and not moderator");
 			
 			topic.setMessageNum( topic.getMessageNum() - 1 );
@@ -828,7 +829,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.deletePersistent(msg);
 				return null;
 			} else {
-				msg.setContent("Сообщение удалено пользователем.");
+				msg.setContent("Сообщение удалено "+ (isModerator ? "модератором." : "пользователем."));
 				return msg.getMessage(cu.getId(), pm);
 			}
 			
@@ -859,11 +860,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public Topic deleteTopic(long topicId) throws InvalidOperation, TException {
+		boolean isModerator = false;
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic tpc = pm.getObjectById(VoTopic.class, topicId);
 			VoUser cu = getCurrentUser();
-			if( tpc.getAuthorId().getId() != cu.getId() && cu.isGroupModerator(tpc.getUserGroupId()))
+			if( tpc.getAuthorId().getId() != cu.getId() && (isModerator = cu.isGroupModerator(tpc.getUserGroupId())))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author and not a moderator");
 			
 			deleteAttachments(pm, tpc.getImages());
@@ -883,7 +885,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 							"Topic not deleted. "+e.getMessage());
 				}
 			} else {
-				tpc.setContent("Тема удалена пользователем.");
+				tpc.setContent("Тема удалена пользователем "+ (isModerator ? "модератором." : "пользователем."));
 				tpc.setLastUpdate((int) (System.currentTimeMillis()/1000L));
 				return tpc.getTopic(cu.getId(), pm);
 			}
