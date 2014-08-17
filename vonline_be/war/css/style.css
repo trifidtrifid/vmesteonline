@@ -546,6 +546,7 @@ h1 {
 .dd>.dd-list>.topic-item >.topic-descr {
   background: #ddedf6;
   padding: 5px;
+  padding-bottom: 0;
 }
 .dd>.dd-list>.topic-item.list-view>.dd-list {
   padding-left: 30px;
@@ -664,6 +665,9 @@ h1 {
 }
 .message-input .message-input-bottom {
   margin-top: 15px;
+}
+.message-input .talk-subject {
+  margin-bottom: 10px;
 }
 .talks-single .message-input,
 .adverts-single .message-input {
@@ -894,7 +898,8 @@ h1 {
 .answer-block .input-group-btn {
   display: block;
   width: auto;
-  margin-top: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .message-textarea {
   width: 100%;

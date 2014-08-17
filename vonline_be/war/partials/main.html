@@ -88,6 +88,7 @@
                                 </div>
 
                                 <div ng-hide="wallItem.topic.isEdit">
+
                                     <div class="text" ng-switch-when="message">{{wallItem.topic.message.content}}</div>
 
                                     <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
@@ -192,8 +193,6 @@
                                     </div>
 
                                     <div class="edit-message" ng-show="wallMessage.isEdit">
-                                        <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallMessage.content" ng-keyup="base.messageChange($event)"></textarea>
-                                        <a class="btn btn-sm btn-primary no-border edit-save" href="#" ng-click="base.saveEditedMessage(wallMessage,false)">Сохранить</a>-->
 
                                         <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallMessage; ctrlId = wallMessage.id; initCreateMessage(ctrlId);"></div>
                                     </div>
