@@ -91,13 +91,4 @@ main.config(function($locationProvider){
     $locationProvider.html5Mode(true);
 });
 
-   /* .config(['$routeProvider', function($routeProvider,$locationProvider) {
-    $routeProvider.when('/main', {templateUrl: 'ajax/forum/profile.html', controller: 'baseController'});
-    $routeProvider.when('/settings', {templateUrl: 'ajax/forum/settings.html', controller: 'SettingsController'});
-    $routeProvider.otherwise({redirectTo: '/main'});
-
-
-}]).config(function($locationProvider){
-    $locationProvider.html5Mode(true);
-});*/
 
