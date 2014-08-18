@@ -923,6 +923,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             wallItemsLength = 0;
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
+        //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
 
         initWallItem(lenta.wallItems);
 
@@ -3086,16 +3087,16 @@ function getAuthorName(userInfo){
 function getTagColor(labelName){
     var color;
     switch(labelName){
-        case "Мой район":
+        case userClientGroups[0].visibleName:
             color = 'label-pink';
             break;
-        case "Мои соседи":
+        case userClientGroups[1].visibleName:
             color = 'label-success';
             break;
-        case "Мой дом":
+        case userClientGroups[2].visibleName:
             color = 'label-yellow';
             break;
-        case "Мой подъезд":
+        case userClientGroups[3].visibleName:
             color = 'label-purple';
             break;
         default :

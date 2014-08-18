@@ -99,15 +99,9 @@
 
 	</div>
 
-	<!-- Grey Highlight Section -->
 	<div class="highlight testimonials">
 		<div class="container">
 			<section class="row breath">
-				<!--<div class="col-md-12 footerlinks">
-				<p>
-					&copy; 2014 ВместеОнлайн<br><a href="mailto:info@vmesteonline.ru">info@vmesteonline.ru</a><br>Санкт-Петербург
-				</p>
-			</div>-->
 
 				<div class="footer footer-bottom clearfix">
 					<div class="pull-left">(c) Вместе Онлайн 2014</div>
@@ -120,23 +114,9 @@
 					</div>
 				</div>
 			</section>
-			<!-- // End Client Logos -->
 
 		</div>
 	</div>
-	<!-- // End Grey Highlight Section -->
-
-	<!-- Container -->
-
-
-
-
-
-
-
-
-
-
 
 
 	<script src="js/forum/landing/jquery.js"></script>
@@ -153,7 +133,6 @@
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
 	<!-- -->
 
-	<!-- Typer -->
 
 	<script>
 		$(function() {
@@ -161,7 +140,6 @@
 		});
 	</script>
 
-	<!-- Scroll to Explore -->
 
 	<script>
 		$(function() {
@@ -238,13 +216,14 @@
 																		try {
 																			var userLocation = authClient
 																					.checkInviteCode(code);
+                                                                            var address = encodeURIComponent(userLocation.address);
 																			document.location
 																					.replace('registration.html#email='
 																							+ email
 																							+ ';mapUrl='
 																							+ userLocation.mapUrl
 																							+ ";address="
-																							+ userLocation.address
+																							+ address
 																							+ ";code="
 																							+ code);
 																		} catch (e) {
