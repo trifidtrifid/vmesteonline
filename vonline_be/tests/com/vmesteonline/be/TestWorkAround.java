@@ -36,9 +36,6 @@ public class TestWorkAround {
 	protected TreeMap<Long, String> noTags = new TreeMap<Long, String>();
 	protected PersistenceManager pm;
 
-	protected Group homeGroup;
-	protected Group group200m;
-	protected Group group2000m;
 
 	protected String topicSubject = "Test topic";
 
@@ -55,11 +52,6 @@ public class TestWorkAround {
 			usi = new UserServiceImpl(sessionId);
 			msi = new MessageServiceImpl(sessionId);
 
-			List<Group> userGroups = usi.getUserGroups();
-			Assert.assertTrue(userGroups.size() > 0);
-			Assert.assertTrue(userGroups.get(0) != null);
-			homeGroup = userGroups.get(1);
-			group200m = userGroups.get(2);
 			return true;
 
 		} catch (Exception e) {

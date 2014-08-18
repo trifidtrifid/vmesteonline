@@ -49,15 +49,15 @@ public class VoHelper {
 		if (!isInclude(a, Defaults.radiusStarecase, b)) {
 			if (!isInclude(a, Defaults.radiusHome, b)) {
 				if (!isInclude(a, Defaults.radiusSmall, b)) {
-					if (!isInclude(a, Defaults.radiusMedium, b)) {
+/*					if (!isInclude(a, Defaults.radiusMedium, b)) {
 						if (!isInclude(a, Defaults.radiusLarge, b)) {
-							return 100000;
+*/							return 100000;
 						} else
-							return Defaults.radiusLarge;
+/*							return Defaults.radiusLarge;
 					} else
 						return Defaults.radiusMedium;
 				} else
-					return Defaults.radiusSmall;
+*/					return Defaults.radiusSmall;
 			} else
 				return Defaults.radiusHome;
 		} else

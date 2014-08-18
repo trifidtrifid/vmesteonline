@@ -86,9 +86,9 @@ public class Defaults {
 	public static int radiusStarecase = 0;
 	public static int radiusHome = 50;
 	public static int radiusSmall = 350;
-	public static int radiusMedium = 1500;
+/*	public static int radiusMedium = 1500;
 	public static int radiusLarge = 5000;
-
+*/
 	public static String defaultAvatarTopicUrl = "/data/da.gif";
 	public static String defaultAvatarMessageUrl = "/data/da.gif";
 	public static String defaultAvatarProfileUrl = "/data/da.gif";
@@ -262,11 +262,11 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	//inviteCode 1 addr zan 32 k 3 kv 5 staircase 1 
-	//inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 
-	//inviteCode 3 addr zan 32 k 3 kv 51 staircase 2 
-	//inviteCode 1 addr zan 35 kv 35 staircase 1 
-	//inviteCode 1 addr resp 6 kv s5 staircase 1 
+	//inviteCode 1 addr zan 32 k 3 kv 5 staircase 1 user a
+	//inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 user b 
+	//inviteCode 3 addr zan 32 k 3 kv 51 staircase 2  user c
+	//inviteCode 1 addr zan 35 kv 35 staircase 1 user d
+	//inviteCode 1 addr resp 6 kv s5 staircase 1 user e
 
 	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
