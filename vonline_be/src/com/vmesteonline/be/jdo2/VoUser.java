@@ -41,25 +41,25 @@ import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
-public class VoUser /*extends GeoLocation*/ {
-	
+public class VoUser /* extends GeoLocation */{
+
 	public static int BASE_USER_SCORE = 100;
 
 	private static VoUserGroup defaultGroup;
 	static {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			defaultGroup = new VoUserGroup( new BigDecimal("60.0"), new BigDecimal("30.0"), 10000, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
+			defaultGroup = new VoUserGroup(new BigDecimal("60.0"), new BigDecimal("30.0"), 10000, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
 		} finally {
 			pm.close();
 		}
-		
+
 	}
-	
-	public Long getGroup( GroupType gt ){
-		int i=0;
-		for (VoGroup group : Defaults.defaultGroups){
-			if( group.getGroupType() == gt.getValue() )
+
+	public Long getGroup(GroupType gt) {
+		int i = 0;
+		for (VoGroup group : Defaults.defaultGroups) {
+			if (group.getGroupType() == gt.getValue())
 				return groups.get(i);
 			else
 				i++;
@@ -86,8 +86,8 @@ public class VoUser /*extends GeoLocation*/ {
 		this.notificationsFreq = NotificationFreq.DAYLY.getValue();
 		this.importancy = BASE_USER_SCORE;
 		this.popularuty = BASE_USER_SCORE;
-		this.lastNotified = this.registered = (int)(System.currentTimeMillis()/1000L);
-		}
+		this.lastNotified = this.registered = (int) (System.currentTimeMillis() / 1000L);
+	}
 
 	public UserProfile getUserProfile() {
 		UserProfile up = new UserProfile();
@@ -95,7 +95,7 @@ public class VoUser /*extends GeoLocation*/ {
 		up.userInfo = getUserInfo();
 		up.family = getUserFamily();
 		up.privacy = getPrivacy();
-		up.interests = new UserInterests( getInterests(), getJob() );
+		up.interests = new UserInterests(getInterests(), getJob());
 		up.importancy = getImportancy();
 		up.populatity = getPopularuty();
 		return up;
@@ -119,7 +119,8 @@ public class VoUser /*extends GeoLocation*/ {
 
 	public ShortUserInfo getShortUserInfo() {
 		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
-		if( null!=moderationGroups ) shortUserInfo.moderationGroups = moderationGroups;
+		if (null != moderationGroups)
+			shortUserInfo.moderationGroups = moderationGroups;
 		return shortUserInfo;
 	}
 
@@ -195,7 +196,6 @@ public class VoUser /*extends GeoLocation*/ {
 		this.confirmCode = confirmCode;
 	}
 
-	
 	public int getLastNotified() {
 		return lastNotified;
 	}
@@ -239,21 +239,21 @@ public class VoUser /*extends GeoLocation*/ {
 			}
 		}
 		this.address = userAddress.getId();
-		
+
 		groups = new ArrayList<Long>();
 		for (VoGroup group : Defaults.defaultGroups) {
-				VoUserGroup ug = new VoUserGroup(building.getLongitude(), building.getLatitude(), group.getRadius(), 
-						group.getVisibleName(), group.getImportantScore(), group.getGroupType(), pm);
-				pm.makePersistent(ug);
-				groups.add(ug.getId());
-			}
-		
+			VoUserGroup ug = new VoUserGroup(building.getLongitude(), building.getLatitude(), group.getRadius(), group.getVisibleName(),
+					group.getImportantScore(), group.getGroupType(), pm);
+			pm.makePersistent(ug);
+			groups.add(ug.getId());
+		}
+
 		pm.makePersistent(this);
 	}
 
 	// *****
 	public void setDefaultUserLocation(PersistenceManager pm) {
-		
+
 		groups = new ArrayList<Long>();
 		groups.add(defaultGroup.getId());
 		pm.makePersistent(this);
@@ -272,13 +272,13 @@ public class VoUser /*extends GeoLocation*/ {
 	}
 
 	public void setId(long id) {
-		this.id = 0==id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
+		this.id = 0 == id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
 	}
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	protected Key id;
-	
+
 	@Persistent
 	private Long address;
 
@@ -291,7 +291,7 @@ public class VoUser /*extends GeoLocation*/ {
 
 	@Persistent
 	private int registered;
-	
+
 	@Persistent
 	@Unindexed
 	private String name;
@@ -354,16 +354,15 @@ public class VoUser /*extends GeoLocation*/ {
 	@Persistent
 	@Unindexed
 	private String interests;
-	
+
 	@Persistent
 	@Unindexed
 	private String job;
-	
-	
-	@Persistent(serialized="true")
+
+	@Persistent(serialized = "true")
 	@Unindexed
 	private UserFamily userFamily;
-	
+
 	@Persistent
 	@Unindexed
 	private String mobilePhone;
@@ -371,33 +370,32 @@ public class VoUser /*extends GeoLocation*/ {
 	@Persistent
 	@Unindexed
 	private RelationsType relations;
-	
-	@Persistent(serialized="true")
+
+	@Persistent(serialized = "true")
 	@Unindexed
 	private UserPrivacy privacy;
-	
+
 	@Persistent
 	private int notificationsFreq;
-	
+
 	@Persistent
 	@Unindexed
 	private int importancy;
-	
+
 	@Persistent
 	@Unindexed
 	private int popularuty;
-	
+
 	@Persistent
 	@Unindexed
 	private int lastNotified;
-	
+
 	@Persistent
 	@Unindexed
 	private Set<Long> moderationGroups;
-	
-	
+
 	public UserPrivacy getPrivacy() {
-		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE ) : privacy;
+		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE) : privacy;
 	}
 
 	public void setPrivacy(UserPrivacy privacy) {
@@ -516,20 +514,21 @@ public class VoUser /*extends GeoLocation*/ {
 	public String toString() {
 		return "VoUser [id=" + getId() + ", name=" + name + ", email=" + email + "]";
 	}
-	
-	public Notifications getNotificationFreq(){
-		return new Notifications( email, NotificationFreq.findByValue(notificationsFreq));
+
+	public Notifications getNotificationFreq() {
+		return new Notifications(email, NotificationFreq.findByValue(notificationsFreq));
 	}
-	
-	public void setNotifications( Notifications ntf ) throws InvalidOperation{
-		if( null != ntf.email && ntf.email.trim().length() != 0 && !ntf.email.trim().equals( email ) ){ 
-			if( !ntf.email.trim().matches(UserServiceImpl.emailreg))
-				throw new InvalidOperation( VoError.IncorrectParametrs, "Invalid email '"+ntf.email+"'");
-			setEmail( ntf.email.trim() );
+
+	public void setNotifications(Notifications ntf) throws InvalidOperation {
+		if (null != ntf.email && ntf.email.trim().length() != 0 && !ntf.email.trim().equals(email)) {
+			if (!ntf.email.trim().matches(UserServiceImpl.emailreg))
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid email '" + ntf.email + "'");
+			setEmail(ntf.email.trim());
 		}
-		if( NotificationFreq.findByValue(notificationsFreq) != ntf.freq ) setNotificationsFreq(ntf.freq.getValue());
+		if (NotificationFreq.findByValue(notificationsFreq) != ntf.freq)
+			setNotificationsFreq(ntf.freq.getValue());
 	}
-	
+
 	public int getNotificationsFreq() {
 		return notificationsFreq;
 	}
@@ -539,9 +538,8 @@ public class VoUser /*extends GeoLocation*/ {
 	}
 
 	public String toFullString() {
-		return "VoUser [id=" + getId() + ", address=" + address + ", name=" + name
-				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
-				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
+		return "VoUser [id=" + getId() + ", address=" + address + ", name=" + name + ", lastName=" + lastName + ", email=" + email + ", password="
+				+ password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum + ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
 
 	public int getImportancy() {
@@ -559,16 +557,18 @@ public class VoUser /*extends GeoLocation*/ {
 	public void setPopularuty(int popularuty) {
 		this.popularuty = popularuty;
 	}
-	
-	public boolean isGroupModerator(long groupId){
-		return null!=moderationGroups && moderationGroups.contains(groupId);
+
+	public boolean isGroupModerator(long groupId) {
+		return null != moderationGroups && moderationGroups.contains(groupId);
 	}
-	
-	public void setGroupModerator(long groupId, boolean makeModerator){
-		if( null==moderationGroups ) 
+
+	public void setGroupModerator(long groupId, boolean makeModerator) {
+		if (null == moderationGroups)
 			moderationGroups = new HashSet<Long>();
-		if( makeModerator ) moderationGroups.add(groupId);
-		else moderationGroups.remove(groupId);
+		if (makeModerator)
+			moderationGroups.add(groupId);
+		else
+			moderationGroups.remove(groupId);
 	}
-	
+
 }
