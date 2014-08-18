@@ -51,7 +51,7 @@ $(document).ready(function(){
             URLArray = URL.split(';');
 
             email = URLArray[0].split('=')[1];
-            var address = URLArray[2].split('=')[1],
+            var address = decodeURIComponent(URLArray[2].split('=')[1]),
                 code = URLArray[3].split('=')[1];
 
             $('#vk_state').val('inviteCode:'+code);
@@ -66,7 +66,6 @@ $(document).ready(function(){
             document.location.hash = "";
         }
     }
-
 
 
     $('#login-box .btn-login').click(function(e){
@@ -113,21 +112,16 @@ $(document).ready(function(){
     var resourcefileName = "mailTemplates/changePasswordConfirm.html";
 
     function login(selector) {
-        var result = $('#result');
         try {
-            var accessGranted = authClient.login($("#uname").val(), $("#password").val());
-            if (accessGranted) {
+            var loginResult = authClient.login($("#uname").val(), $("#password").val());
+            if (loginResult == 1) {
                 $('.login-error').hide();
-                if (selector.closest('.modal-auth').length > 0){
-                    AuthRealTime(selector);
-                }else{
-                    document.location.replace("/");
-                }
-            } else {
-                result.val(session.error);
-                result.css('color', 'black');
+                document.location.replace("/");
+            } else if(loginResult == 3){
+                $('.login-error').text('Ваш email не потвержден').removeClass('info-good').show();
+            }else{
+                $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
             }
-
         } catch (e) {
             $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
         }

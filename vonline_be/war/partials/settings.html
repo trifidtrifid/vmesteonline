@@ -87,10 +87,10 @@
 
                                 <select class="form-control" id="settings-select-2" ng-model="settings.userPrivacy.profile">
                                     <option value="0" ng-selected="settings.userPrivacy.profile == 0 ">Никому</option>
-                                    <option value="1" ng-selected="settings.userPrivacy.profile == 1 ">Подъезд</option>
-                                    <option value="2" ng-selected="settings.userPrivacy.profile == 2 ">Дом</option>
-                                    <option value="3" ng-selected="settings.userPrivacy.profile == 3 ">Район</option>
-                                    <option value="4" ng-selected="settings.userPrivacy.profile == 4 ">Всем</option>
+
+                                    <option value="{{$index+1}}" ng-selected="settings.userPrivacy.profile == {{$index+1}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
+
+                                    <option value="{{base.groups.length + 1}}" ng-selected="settings.userPrivacy.profile == {{base.groups.length + 1}} ">Всем</option>
                                 </select>
                             </div>
                             <div>
@@ -98,10 +98,10 @@
 
                                 <select class="form-control" id="settings-select-3" ng-model="settings.userPrivacy.contacts">
                                     <option value="0" ng-selected="settings.userPrivacy.contacts == 0 ">Никому</option>
-                                    <option value="1" ng-selected="settings.userPrivacy.contacts == 1 ">Подъезд</option>
-                                    <option value="2" ng-selected="settings.userPrivacy.contacts == 2 ">Дом</option>
-                                    <option value="3" ng-selected="settings.userPrivacy.contacts == 3 ">Район</option>
-                                    <option value="4" ng-selected="settings.userPrivacy.contacts == 4 ">Всем</option>
+
+                                    <option value="{{$index+1}}" ng-selected="settings.userPrivacy.contacts == {{$index+1}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
+
+                                    <option value="{{base.groups.length + 1}}" ng-selected="settings.userPrivacy.contacts == {{base.groups.length + 1}} ">Всем</option>
                                 </select>
                             </div>
 

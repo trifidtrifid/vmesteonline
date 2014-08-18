@@ -1,8 +1,12 @@
 <div class="input-group answer-block">
-    <textarea class="message-textarea no-resize" ng-model="ctrlMessage.commentText"
+    <!--<textarea class="message-textarea no-resize" ng-model="ctrlMessage.commentText"
               ng-hasfocus="ctrlMessage.isFocus" ng-show="ctrlMessage.answerShow" ng-keyup="base.messageChange($event,1)"
               onblur="if(this.value=='') this.value='Ваш ответ';"
-              onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+              onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>-->
+
+    <textarea class="message-textarea no-resize" ng-model="ctrlMessage.commentText"
+              ng-hasfocus="ctrlMessage.isFocus" ng-show="ctrlMessage.answerShow" ng-keyup="base.messageChange($event,1)"
+              ng-blur="base.textareaBlur(ctrlMessage.commentText,ctrlMessage.default,ctrlMessage)" ng-focus="base.textareaFocus(ctrlMessage.commentText,ctrlMessage.default,ctrlMessage)"></textarea>
 
 
             <div id="attach-area-{{ctrlId}}" class="attach-area">
