@@ -70,22 +70,29 @@ public class AuthServiceImpTests {
 
 	@Test
 	public void testDefaultsUserCreation() {
-		VoUser user = asi.getUserByEmail(Defaults.user1email, pm);
-		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
-		Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 1, user.getGroups().get(0).getLongitude(), 0F);
-		System.out.print("a: " + user.getGroups().get(0).getLongitude());
-
-		user = asi.getUserByEmail(Defaults.user2email, pm);
-		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Парадная 2", user.getGroups().get(0).getName());
-		Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 2, user.getGroups().get(0).getLongitude(), 0F);
-		System.out.print("b: " + user.getGroups().get(0).getLongitude());
-
-		user = asi.getUserByEmail(Defaults.user3email, pm);
-		Assert.assertEquals(0, user.getGroups().get(0).getRadius());
-		Assert.assertEquals("Парадная 1", user.getGroups().get(0).getName());
-
+		PersistenceManager pm = PMF.getPm();
+		try {
+			
+			VoUser user = asi.getUserByEmail(Defaults.user1email, pm);
+			VoUserGroup ug0Id = pm.getObjectById( VoUserGroup.class, user.getGroups().get(0));
+			Assert.assertEquals(0, ug0Id.getRadius());
+			Assert.assertEquals("Парадная 1", ug0Id.getName());
+			Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 1, ug0Id.getLongitude(), 0F);
+			System.out.print("a: " + ug0Id.getLongitude());
+		
+			user = asi.getUserByEmail(Defaults.user2email, pm);
+			Assert.assertEquals(0, ug0Id.getRadius());
+			Assert.assertEquals("Парадная 2", ug0Id.getName());
+			Assert.assertEquals(Defaults.zan32k3Long + 0.000002F * 2, ug0Id.getLongitude(), 0F);
+			System.out.print("b: " + ug0Id.getLongitude());
+		
+			user = asi.getUserByEmail(Defaults.user3email, pm);
+			Assert.assertEquals(0, ug0Id.getRadius());
+			Assert.assertEquals("Парадная 1", ug0Id.getName());
+		} finally {
+			pm.close();
+		}
+		
 	}
 
 	@Test
@@ -150,11 +157,11 @@ public class AuthServiceImpTests {
 			assertEquals(user.getLongitude(), longitude);
 			BigDecimal latitude = postalAddress.getBuilding().getLatitude();
 			assertEquals(user.getLatitude(), latitude);
-*/
 			List<VoRubric> rubrics = user.getRubrics();
 			assertEquals(rubrics.isEmpty(), false);
+*/
 
-			List<VoUserGroup> groups = user.getGroups();
+			List<Long> groups = user.getGroups();
 			assertEquals(groups.isEmpty(), false);
 /*			for (VoUserGroup ug : groups) {
 				assertEquals(ug.getLatitude(), latitude);

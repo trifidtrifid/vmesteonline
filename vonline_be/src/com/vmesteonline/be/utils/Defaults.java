@@ -111,9 +111,7 @@ public class Defaults {
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
-			MySQLJDBCConnector con = new MySQLJDBCConnector();
-			con.execute("drop table if exists topic");
-			con.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -244,8 +242,8 @@ public class Defaults {
 					VoUser user = pm.getObjectById(VoUser.class, uid);
 					user.setEmailConfirmed(true);
 					
-					if(counter==1) for( VoUserGroup ug: user.getGroups()) //the first user would moderate all of groups
-						user.setGroupModerator(ug.getId(), true);
+					if(counter==1) for( Long ug: user.getGroups()) //the first user would moderate all of groups
+						user.setGroupModerator(ug, true);
 					
 					pm.makePersistent(user);
 					uids.add(uid);

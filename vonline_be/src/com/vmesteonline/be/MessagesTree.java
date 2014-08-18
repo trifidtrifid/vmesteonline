@@ -119,11 +119,12 @@ public class MessagesTree {
 
 	boolean isInGroup(VoMessage voMsg) {
 
-		if (VoHelper.isInclude(voMsg, voMsg.getRadius(), filters))
+		/*if (VoHelper.isInclude(voMsg, voMsg.getRadius(), filters))
 			if (voMsg.getRadius() >= filters.radius)
 				if (voMsg.getMinimunVisibleRadius() <= filters.radius)
 					return true;
-		return false;
+		return false;*/
+		return true;
 	}
 
 	private int parseLevel(List<VoMessage> levelMsgs, int level) {

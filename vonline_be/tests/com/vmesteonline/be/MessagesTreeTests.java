@@ -27,23 +27,23 @@ public class MessagesTreeTests extends MessagesTree {
 
 	VoMessage createVoMsg(long id, long parentId, int radius, String longitude, String latitude) {
 		VoMessage msg = createVoMsg(id, parentId, 0);
-		msg.setRadius(radius);
+		/*msg.setRadius(radius);
 		msg.setLongitude(new BigDecimal(longitude));
-		msg.setLatitude(new BigDecimal(latitude));
+		msg.setLatitude(new BigDecimal(latitude))*/;
 		return msg;
 	}
 
 	VoMessage createVoMsg(long id, long parentId, long recepientId) {
 		VoMessage msg = new VoMessage();
-		msg.setId(KeyFactory.createKey(VoMessage.class.toString(), id));
+		msg.setId(id);
 		msg.setParentId(parentId);
 		msg.setRecipient(recepientId);
 		msg.setAuthorId(KeyFactory.createKey(VoUser.class.getSimpleName(), 1));
 		msgCreateTime += 10;
 		msg.setCreatedAt(msgCreateTime);
-		msg.setRadius(radiusDef);
+		/*msg.setRadius(radiusDef);
 		msg.setLongitude(new BigDecimal(lgDef));
-		msg.setLatitude(new BigDecimal(ltDef));
+		msg.setLatitude(new BigDecimal(ltDef));*/
 
 		return msg;
 	}

@@ -22,16 +22,17 @@ import com.vmesteonline.be.messageservice.Topic;
 public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
-	public VoTopic(Topic topic) throws InvalidOperation, IOException {
-
-		super(topic.getMessage());
+	public VoTopic(Topic topic, PersistenceManager pm) throws InvalidOperation, IOException {
+		
+		super(topic.getMessage(), pm);
 		subject = topic.getSubject();
 		messageNum = 0;
 		usersNum = 1;
 		viewers = 1;
 		rubricId = topic.getRubricId();
 		userGroupId = topic.getMessage().getGroupId();
-		lastUpdate = (int) (System.currentTimeMillis() / 1000);
+		visibleGroups = pm.getObjectById(VoUserGroup.class, userGroupId ).getVisibleGroups( pm );
+		createDate = lastUpdate = (int) (System.currentTimeMillis() / 1000);
 	}
 
 	public Topic getTopic(long userId, PersistenceManager pm) {
@@ -102,14 +103,6 @@ public class VoTopic extends VoBaseMessage {
 
 	public void setLastUpdate(int lastUpdate) {
 		this.lastUpdate = lastUpdate;
-		try {
-			JDBCConnector con = new MySQLJDBCConnector();
-			String query = "update topic set `updateTime`="+lastUpdate+" where id='"+id.getId()+"'";
-			con.execute(query);
-			con.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	public long getRubricId() {
@@ -164,14 +157,20 @@ public class VoTopic extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	private int lastUpdate;
+	
+	@Persistent
+	private int createDate;
 
 	@Persistent
 	@Unindexed
 	private Long rubricId;
 
 	@Persistent
-	@Unindexed
 	private Long userGroupId;
+	
+	@Persistent
+	private List<Long> visibleGroups;
+	
 
 	@Persistent
 	@Unindexed
@@ -181,6 +180,7 @@ public class VoTopic extends VoBaseMessage {
 	@Unindexed
 	protected String subject;
 	
-	public boolean isImportant;
+	@Persistent
+	private boolean isImportant;
 
 }

@@ -12,10 +12,12 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
@@ -30,6 +32,9 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	}
 
+	public VoUserGroup getUserHomeGroup() {
+		return userGroup;
+	}
 
 	@SuppressWarnings("unchecked")
 	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
@@ -192,4 +197,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	@Persistent
 	private String comment;
 
+	@Persistent
+	@Unowned
+	private VoUserGroup userGroup;
 }

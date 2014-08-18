@@ -83,9 +83,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser voUser = getCurrentUser(pm);
 			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
-			VoPostalAddress pa = voUser.getAddress();
+			
+			if (voUser.getAddress() != 0) {
+				VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class,voUser.getAddress());
 
-			if (pa != null) {
 				VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
 				sp.setAddress(building.getAddressString());
 			}
@@ -137,9 +138,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
 				}
 				List<Group> groups = new ArrayList<Group>();
-				for (VoUserGroup group : user.getGroups()) {
-					logger.info("return group " + group.getName());
-					groups.add(group.createGroup());
+				for (Long group : user.getGroups()) {
+					VoUserGroup ug = pm.getObjectById(VoUserGroup.class, group);
+					logger.info("return group " + ug.getName());
+					groups.add( ug.createGroup());
 				}
 
 				return groups;
@@ -152,35 +154,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	@Override
-	public List<Rubric> getUserRubrics() throws InvalidOperation, TException {
-		long userId = getCurrentUserId();
-		PersistenceManager pm = PMF.getPm();
-		try {
-
-			VoUser user = pm.getObjectById(VoUser.class, userId);
-			if (user == null) {
-				logger.severe("can't find user by id " + Long.toString(userId));
-				throw new InvalidOperation(VoError.NotAuthorized, "can't find user bu id");
-			}
-
-			logger.info("find user name " + user.getEmail());
-
-			if (user.getRubrics() == null) {
-				logger.warning("user with id " + Long.toString(userId) + " has no any rubrics");
-				throw new InvalidOperation(VoError.GeneralError, "No Rubrics are initialized for user=" + userId);
-			}
-
-			List<Rubric> rubrics = new ArrayList<Rubric>();
-			for (VoRubric r : user.getRubrics()) {
-				rubrics.add(r.createRubric());
-			}
-			return rubrics;
-		} finally {
-			pm.close();
-		}
-	}
-
+	
 	public static List<String> getLocationCodesForRegistration() throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
@@ -206,27 +180,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public void deleteUserAddress(PostalAddress newAddress) throws InvalidOperation, TException {
-
-		PersistenceManager pm = PMF.getPm();
-		try {
-
-			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
-			VoUser currentUser = getCurrentUser(pm);
-
-			List<String> addresses = currentUser.getAddresses();
-
-			for (String addrName : addresses) {
-				if (currentUser.getDeliveryAddress(addrName).equals(addr)) {
-					currentUser.removeDeliveryAddress(addrName);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to deleteUserAddress. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
 
 	}
 
@@ -282,7 +235,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 
 			// otherwise lets determine users relations that would be stored as PrivacyType
-			PrivacyType relation = determineProvacyByAddresses(currentUser, user);
+			PrivacyType relation = determineProvacyByAddresses(currentUser, user, pm);
 
 			// filter information according to relations
 			if (uPrivacy.contacts.getValue() < relation.getValue()) {// remove contacts
@@ -304,15 +257,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	private PrivacyType determineProvacyByAddresses(VoUser currentUser, VoUser user) {
+	private PrivacyType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
 		PrivacyType relation = PrivacyType.EVERYBODY;
 
-		VoPostalAddress cuAddr = currentUser.getAddress();
+		VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+		long uAddrId;
 		VoPostalAddress uAddr;
-		if (null == cuAddr || null == (uAddr = user.getAddress())) {
+		if (null == cuAddr || 0 == (uAddrId = user.getAddress())) {
 			relation = PrivacyType.EVERYBODY;
 
-		} else if (cuAddr.getBuilding() == uAddr.getBuilding() && 0 != cuAddr.getBuilding()) { // the same building
+		} else if ( null!=(uAddr = pm.getObjectById(VoPostalAddress.class, uAddrId))
+				&& cuAddr.getBuilding() == uAddr.getBuilding() && 0 != cuAddr.getBuilding()) { // the same building
 
 			relation = PrivacyType.HOME;
 
@@ -326,7 +281,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		} else { // lets determine the relation as according to the distance
 
-			int maxRadius = VoHelper.calculateRadius(user, currentUser);
+			int maxRadius = VoHelper.calculateRadius(
+					pm.getObjectById( VoPostalAddress.class, user.getAddress()).getUserHomeGroup(),
+					pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getUserHomeGroup());
 			if (maxRadius <= Defaults.radiusStarecase)
 				relation = PrivacyType.STAIRCASE;
 			else if (maxRadius <= Defaults.radiusHome)
@@ -343,10 +300,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser u = getCurrentUser(pm);
 			UserContacts uc = new UserContacts();
-			if (u.getAddress() == null) {
+			if (u.getAddress() == 0) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
 			} else {
-				uc.setHomeAddress(u.getAddress().getPostalAddress());
+				uc.setHomeAddress(pm.getObjectById(VoPostalAddress.class, u.getAddress()).getPostalAddress());
 			}
 			uc.setEmail(u.getEmail());
 			uc.setMobilePhone(u.getMobilePhone());
@@ -408,7 +365,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (null != contacts.getHomeAddress()) {
 				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
 
-				if (user.getAddress() == null || pa.getId() != user.getAddress().getId()) {
+				if (user.getAddress() == 0 || pa.getId() != user.getAddress()) {
 					try {
 						user.setLocation(pa.getAddressCode(), pm);
 					} catch (InvalidOperation e) {
@@ -459,10 +416,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser u = pm.getObjectById(VoUser.class, userId);
 			UserContacts uc = new UserContacts();
-			if (u.getAddress() == null) {
+			if (u.getAddress() == 0) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
 			} else {
-				uc.setHomeAddress(u.getAddress().getPostalAddress());
+				uc.setHomeAddress( pm.getObjectById( VoPostalAddress.class, u.getAddress()).getPostalAddress());
 			}
 			uc.setEmail(u.getEmail());
 			uc.setMobilePhone(u.getMobilePhone());
@@ -713,37 +670,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public boolean addUserAddress(PostalAddress newAddress) throws TException {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser currentUser = getCurrentUser(pm);
-			pm.retrieve(currentUser);
-			currentUser.addDeliveryAddress(new VoPostalAddress(newAddress, pm), null);
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		return false;
 
 	}
 
 	@Override
 	public Set<PostalAddress> getUserAddresses() throws TException {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser currentUser = getCurrentUser(pm);
-			Set<PostalAddress> pas = new HashSet<PostalAddress>();
-			for (String pa : currentUser.getAddresses()) {
-				pas.add(currentUser.getDeliveryAddress(pa).getPostalAddress());
-			}
-			return pas;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		return null;
 	}
 
 	@Override
@@ -753,11 +686,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			VoUser currentUser = getCurrentUser(pm);
 			if (null == currentUser)
 				throw new InvalidOperation(VoError.NotAuthorized, "No currnet user is set.");
-			VoPostalAddress address = currentUser.getAddress();
-			if (null == address) {
+			if (0 == currentUser.getAddress()) {
 				return null;
 			}
-			return address.getPostalAddress(pm);
+			return pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getPostalAddress(pm);
 		} finally {
 			pm.close();
 		}
@@ -790,7 +722,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser();
-			List<VoUser> users = getUsersByLocation(currentUser, 30, pm);
+			
+			List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING), pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
@@ -801,27 +734,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser currentUser = getCurrentUser();
-			VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
-			List<VoUser> users = getUsersByLocation(currentUser, group.getRadius(), pm);
+			List<VoUser> users = getUsersByLocation(groupId, pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
 		}
 	}
 
-	public static List<VoUser> getUsersByLocation(GeoLocation loc, int radius, PersistenceManager pm) {
+	public static List<VoUser> getUsersByLocation(Long userGroupId, PersistenceManager pm) {
 		List<VoUser> users = new ArrayList<VoUser>();
-
-		// BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);
-
-		List<VoUser> allUsers = (List<VoUser>) pm.newQuery(VoUser.class, "").execute();
-		for (VoUser user : allUsers) {
-			if (VoHelper.findMinimumGroupRadius(loc, user) <= radius) {
-				if (loc.getId() != user.getId())
-					users.add(user);
-			}
-		}
+		for( Long g : pm.getObjectById( VoUserGroup.class, userGroupId ).getVisibleGroups(pm))
+			users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, "groups=="+g).execute());
 		return users;
 	}
 
@@ -901,4 +824,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		return (String) url;
 	}
 
+	private static List<Rubric> tmpRubrics = Arrays.asList( new Rubric[]{ new Rubric(0L,"","","")});
+	
+	@Override
+	public List<Rubric> getUserRubrics() throws InvalidOperation, TException {
+		return tmpRubrics;
+	}
 }

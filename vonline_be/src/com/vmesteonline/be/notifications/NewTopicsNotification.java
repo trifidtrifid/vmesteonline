@@ -40,7 +40,7 @@ public class NewTopicsNotification extends Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			Map<VoUserGroup, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
+			Map<Long, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
 
 			// create message for each user
 			String body = "Близкие события<br/><br/>";
@@ -48,7 +48,7 @@ public class NewTopicsNotification extends Notification {
 			for (VoUser u : users) {
 				Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
 				
-				for (VoUserGroup ug : u.getGroups()) {
+				for (Long ug : u.getGroups()) {
 					Set<VoTopic> topics = groupTopicMap.get(ug);
 					topics.removeAll(userTopics);
 					if (topics.size() != 0) {
@@ -74,22 +74,25 @@ public class NewTopicsNotification extends Notification {
 		}
 	}
 
-	private Map<VoUserGroup, Set<VoTopic>> collectTopicsByGroups(Set<VoUser> users, PersistenceManager pm) {
+	private Map<Long, Set<VoTopic>> collectTopicsByGroups(Set<VoUser> users, PersistenceManager pm) {
 		// collect topics by group
-		Map<VoUserGroup, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
-		Map<VoUserGroup, Set<VoTopic>> groupTopicMap = new TreeMap<VoUserGroup, Set<VoTopic>>(ugComp);
+		Map<Long, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
+		Map<Long, Set<VoTopic>> groupTopicMap = new TreeMap<Long, Set<VoTopic>>();
 		
 		JDBCConnector con = new MySQLJDBCConnector();
-		for (VoUserGroup ug : groupUserMap.keySet()) {
+		for (Long ug : groupUserMap.keySet()) {
 			Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
-			topics.addAll(MessageServiceImpl.getTopics(ug, MessageType.BASE, 0, 10, false, con, pm));
+			topics.addAll(MessageServiceImpl.getTopics( 
+					pm.getObjectById(VoUserGroup.class,ug), MessageType.BASE, 0, 10, false, con, pm));
 			groupTopicMap.put(ug, topics);
 		}
 		con.close();
 		return groupTopicMap;
 	}
 
-	private String createGroupContent(PersistenceManager pm, VoUserGroup ug, Set<VoTopic> topics) {
+	private String createGroupContent(PersistenceManager pm, Long ugId, Set<VoTopic> topics) {
+		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
+		
 		String groupContent = "Пишут в группе '" + ug.getName() + "<br/>";
 		Set<VoTopic> orderedTopics = new TreeSet<VoTopic>( topicCreatedDateComp );
 		for (VoTopic tpc : orderedTopics) {

@@ -125,11 +125,11 @@ public abstract class Notification {
 		messagesToSend.put(u, uns);
 	}
 
-	protected static Map<VoUserGroup, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
+	protected static Map<Long, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
 		// group users by groups and group types
-		Map<VoUserGroup, Set<VoUser>> groupUserMap = new TreeMap<VoUserGroup, Set<VoUser>>(ugComp);
+		Map<Long, Set<VoUser>> groupUserMap = new TreeMap<Long, Set<VoUser>>();
 		for (VoUser u : users) {
-			for (VoUserGroup ug : u.getGroups()) {
+			for (Long ug : u.getGroups()) {
 				Set<VoUser> ul;
 				if (null == (ul = groupUserMap.get(ug))) {
 					ul = new TreeSet<VoUser>(vuComp);
@@ -145,7 +145,7 @@ public abstract class Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(group.getId(), pm);
 
 			String subject = "важное сообщение";
 			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";
