@@ -157,9 +157,6 @@ public class VoUser extends GeoLocation {
 		return groups;
 	}
 
-	public void setGroups(List<VoUserGroup> groups) {
-		this.groups = groups;
-	}
 
 	public void updateLikes(int likesDelta) {
 		likesNum += likesDelta;
