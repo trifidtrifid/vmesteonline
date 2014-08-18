@@ -78,10 +78,6 @@
                                 <div class="edit-message" ng-show="wallSingle.wallItem.topic.isEdit">
                                     <div ng-include="'templates/createTopic.html'" onload="ctrl=wallSingle.wallItem.topic; initCreateTopic(wallSingle.wallItem.topic);"></div>
 
-                                    <!--<textarea class="no-resize message-textarea edit-textarea" ng-model="wallSingle.wallItem.topic.message.content" ng-keyup="base.messageChange($event)" ng-hasfocus="wallSingle.wallItem.topic.isFocus"></textarea>
-
-                                    <a class="btn btn-sm btn-primary no-border message-edit-save" ng-click="base.saveEditedMessage(wallSingle.wallItem.topic,true)" href="#">Сохранить</a>-->
-
                                 </div>
 
                                 <div class="lenta-item-bottom">
@@ -138,40 +134,6 @@
 
                         <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallSingle.wallItem; ctrlId = wallSingle.wallItem.topic.id;initCreateMessage(ctrlId);"></div>
 
-<!--                        <div class="input-group">
-
-                            <textarea name="answerInput{{wallSingle.wallItem.topic.id}}" id="name{{wallSingle.wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallSingle.wallItem.commentText"
-                                      ng-hasfocus="wallSingle.wallItem.isFocus" ng-show="wallSingle.wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
-                                onblur="if(this.value=='') this.value='Ваш ответ';"
-                                onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
-
-                                <div id="attach-area-{{wallSingle.wallItem.topic.id}}" class="attach-area">
-                                    <div class="loading hidden">
-                                        <img ng-src="i/loading2.gif" alt="картинка"/>
-                                    </div>
-                                </div>
-                                <div id="attach-doc-area-{{wallSingle.wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
-
-                                <span class="input-group-btn" ng-show="wallSingle.wallItem.answerShow">
-                                    <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="wallSingle.createWallComment($event,wallSingle.wallItem)">
-                                        <i class="icon-share-alt"></i>
-                                        Отправить
-                                    </button>
-                                    <span class="error-info" ng-show="wallSingle.wallItem.isCreateCommentError" ng-click>{{wallSingle.wallItem.createCommentErrorText}}</span>
-
-                                    <div class="btn-group attach-dropdown pull-right">
-                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                            <span class="btn-group-text">Прикрепить</span>
-                                            <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-blue">
-                                            <li><input id="attachImage-{{wallSingle.wallItem.topic.id}}" type="file"/></li>
-                                            <li><input id="attachDoc-{{wallSingle.wallItem.topic.id}}" type="file"/></li>
-                                        </ul>
-                                    </div>
-                                </span>
-                        </div>-->
                     </div>
 
                 </div>

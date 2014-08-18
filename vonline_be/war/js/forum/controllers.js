@@ -144,7 +144,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 fullTalkFirstMessagesLength = firstMessages.length:
                 fullTalkFirstMessagesLength = 0;
 
-            if(fullTalkFirstMessagesLength != 0) lastLoadedId = firstMessages[fullTalkFirstMessagesLength-1].id
+            if(fullTalkFirstMessagesLength != 0) lastLoadedId = firstMessages[fullTalkFirstMessagesLength-1].id;
 
             if(firstMessages === null) firstMessages = [];
 
@@ -622,13 +622,25 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                 if(talk.fullTalkTopic) {
                     if (talk.fullTalkFirstMessages) {
-                        if (talk.fullTalkFirstMessages.length < 10) {
-                            //talk.fullTalkFirstMessages.push(newMessage);
-                            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talk.topicId,talk.selectedGroup.id,1,0,0,10).messages;
+                        //if (talk.fullTalkFirstMessages.length < 10) {
+                        //alert($rootScope.base.isEarliestMessages+" "+$rootScope.base.endOfLoaded);
+                        
+                        if (talk.fullTalkFirstMessages.length < 10 ||
+                            $rootScope.base.isEarliestMessages ||
+                            $rootScope.base.endOfLoaded ) {
+
+                            $rootScope.base.lastLoadedId = newMessage.id;
+                            talk.fullTalkFirstMessages.push(newMessage);
+
                         }
+
+                            //talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talk.topicId,talk.selectedGroup.id,1,0,0,10).messages;
+                        //}
                     } else {
                         talk.fullTalkFirstMessages = [];
                         talk.fullTalkFirstMessages[0] = newMessage;
+                        $rootScope.base.lastLoadedId = newMessage.id;
+                        $rootScope.base.isEarliestMessages = true;
                     }
                 }
 
@@ -949,32 +961,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             event.preventDefault();
         };
 
-        /*lenta.createWallComment = function(event,wallItem){
-            event.preventDefault();
-
-            wallItem.groupId = lenta.selectedGroupInTop.id;
-
-                var isWall = true,
-                    message = postMessage(wallItem, isWall);
-
-            if(message == 0){
-                wallItem.isCreateCommentError = true;
-                wallItem.createCommentErrorText = "Вы не ввели сообщение";
-            }else {
-                wallItem.isCreateCommentError = false;
-
-                if (wallItem.messages) {
-                    wallItem.messages.push(message);
-                } else {
-                    wallItem.messages = [];
-                    wallItem.messages[0] = message;
-                }
-
-                wallItem.answerShow = false;
-            }
-
-        };*/
-
         var initFlagsArray = [];
         lenta.showAnswerInput = function(event,wallItem,wallMessage){
             event.preventDefault();
@@ -985,7 +971,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 wallItem.isFocus = true ;
 
             if(wallMessage){
-                //var authorName = userClient.getUserInfoExt(wallMessage.authorId).firstName;
                 var authorName;
                 wallMessage.userInfo ?
                     authorName = wallMessage.userInfo.firstName :
@@ -997,8 +982,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             if(!initFlagsArray[wallItem.topic.id]) {
                 // инифицализацмю AttachImage нужно делать только один раз для каждого сообщения
-                //initAttachImage($('#attachImage-' + wallItem.topic.id), $('#attach-area-' + wallItem.topic.id));
-                //initAttachDoc($('#attachDoc-' + wallItem.topic.id), $('#attach-doc-area-' + wallItem.topic.id));
                 initFlagsArray[wallItem.topic.id] = true;
             }
 
@@ -1007,7 +990,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId, 0, 10);
-            //alert(lenta.wallItems.length);
 
             if(lenta.wallItems.length) {
                 initWallItem(lenta.wallItems);
@@ -1252,8 +1234,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             var talk = this;
 
             talk.attachId = "00";
-            /*initAttachImage($('#attachImage-'+talk.attachId), $('#attach-area-'+talk.attachId));
-            initAttachDoc($('#attachDoc-'+talk.attachId), $('#attach-doc-area-'+talk.attachId));*/
             initFancyBox($('.talks'));
 
             $rootScope.base.showAllGroups();
@@ -1269,19 +1249,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             talk.subject = TEXT_DEFAULT_4;
 
             $rootScope.base.initStartParamsForCreateTopic(talk);
-            /*talk.isPollShow = false;
-            talk.pollSubject = "";
-            talk.pollInputs = [
-                {
-                    counter: 0,
-                    name: ""
-                },
-                {
-                    counter: 1,
-                    name: ""
-                }
-            ];
-            talk.isPollAvailable = true;*/
 
             talk.isTalk = true;
 
@@ -1289,12 +1256,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             talk.fullTalkTopic.answerInputIsShow = false;
             talk.fullTalkMessages = [];
             talk.fullTalkFirstMessages = [];
-            //talk.answerFirstMessage = TEXT_DEFAULT_2;
+
             talk.commentText = TEXT_DEFAULT_2;
             var fullTalkFirstMessagesLength,
                 talkId;
 
-            //$rootScope.currentGroup = talk.selectedGroup = talk.groups[0];
             $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
 
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
@@ -1343,8 +1309,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var talk = this,
             fullTalkMessagesLength,
-            lastLoadedId = 0,
             talkId = $stateParams.talkId;
+
+        $rootScope.base.lastLoadedId = 0;
+        $rootScope.base.isEarliestMessages = false;
+        $rootScope.base.endOfLoaded = false;
 
         talk.attachId = "00";
         talk.selectedGroup = $rootScope.currentGroup;
@@ -1390,9 +1359,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 talk.fullTalkTopic.metaType = "message";
             }
 
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10).messages;
 
-            lastLoadedId = $rootScope.base.initFirstMessages(talk.fullTalkFirstMessages);
+            $rootScope.base.lastLoadedId = $rootScope.base.initFirstMessages(talk.fullTalkFirstMessages);
 
             $rootScope.base.isTalkTitles = false;
             $rootScope.base.mainContentTopIsHide = true;
@@ -1411,8 +1380,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             talk.answerShow = true;
 
             if(!initFlagsTopic[fullTalkTopic.id]) {
-                //initAttachImage($('#attachImage-' + fullTalkTopic.id), $('#attach-area-' + fullTalkTopic.id));
-                //initAttachDoc($('#attachDoc-' + fullTalkTopic.id), $('#attach-doc-area-' + fullTalkTopic.id));
                 initFlagsTopic[fullTalkTopic.id] = true;
             }
 
@@ -1570,7 +1537,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var buff;
         talk.addMoreItems = function(){
-            var temp = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10),
+            var temp = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
                 size = temp.totalSize;
                 buff = temp.messages;
             if(buff) {
@@ -1578,21 +1545,26 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                 if(buffLength != 0) {
 
+                    $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
                     $rootScope.base.initFirstMessages(buff);
 
                     //alert(buffLength+" "+size);
-                    if(size < 10 && (lastLoadedId == 0 || lastLoadedId === undefined)){
+                    //if(size < 10 && (lastLoadedId == 0 || lastLoadedId === undefined)){
+
+                    /*if(lastLoadedId == 0 || lastLoadedId === undefined){
                         talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
-                    }else{
-                        lastLoadedId = buff[buffLength - 1].id;
+                    }else{*/
+                        //lastLoadedId = buff[buffLength - 1].id;
                         //if(!lastLoadedId) buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages,
                         talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
-                    }
+                    //}
                     /*if(size >= 10){
                         talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
                     }*/
 
                 }
+            }else{
+                $rootScope.base.endOfLoaded = true;
             }
 
         };
@@ -1717,10 +1689,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('AdvertsSingleController',function($rootScope,$stateParams) {
         var advert = this,
             fullTalkMessagesLength,
-            lastLoadedId = 0,
             advertId = $stateParams.advertId;
 
         $rootScope.base.isFooterBottom = false;
+
+        $rootScope.base.lastLoadedId = 0;
+        $rootScope.base.isEarliestMessages = false;
+        $rootScope.base.endOfLoaded = false;
 
         advert.attachId = "00000";
         advert.selectedGroup = $rootScope.currentGroup;

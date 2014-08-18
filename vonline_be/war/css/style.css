@@ -159,6 +159,9 @@ h1 {
   display: inline-block;
   margin: 0 5px;
 }
+.footer ul li:first-child {
+  margin-left: 0;
+}
 .footer ul li a {
   color: #a6a6a6;
 }
