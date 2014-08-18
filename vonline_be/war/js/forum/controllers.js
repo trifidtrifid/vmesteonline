@@ -23,12 +23,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         base.lentaIsActive = true;
         base.emptyMessage = "Сообщений пока нет";
 
-        base.textareaBlur = function(message,defaultText,ctrl){
-            if(message == "") ctrl.message.content = defaultText;
+        base.textareaBlur = function(message,defaultText,ctrl,isTopic){
+            if(isTopic){
+                if(message == "") ctrl.message.content = defaultText;
+            }else{
+                if(message == "") ctrl.commentText = defaultText;
+            }
         };
 
-        base.textareaFocus = function(message, defaultText,ctrl){
-            if(message == defaultText) ctrl.message.content = "";
+        base.textareaFocus = function(message, defaultText,ctrl,isTopic){
+            if(isTopic){
+                if(message == defaultText) ctrl.message.content = "";
+            }else{
+                if(message == defaultText) ctrl.commentText = "";
+            }
+
         };
 
         base.addPollInput = function(event,obj){
@@ -368,7 +377,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             if(isEdit){
 
-                setTimeout(pollAttach,200,ctrlId,true); // ждем пока загрузится
+                setTimeout(pollAttach,200,ctrlId,true);
 
             }else{
 
@@ -708,6 +717,60 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         }
 
+        function addDialogMessage(ctrl){
+            var attach = [];
+
+            if ((ctrl.commentText != TEXT_DEFAULT_1 && ctrl.commentText != "") || attach.length != 0) {
+
+                if(ctrl.isEdit){
+                    // значит редактирование
+
+                    attach = getAttachedImages($('#attach-area-edit'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-edit'+ctrl.attachId)));
+
+                    // еще attach
+                    dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText);
+
+                    cleanAttached($('#attach-area-edit'+ctrl.attachId));
+                    cleanAttached($('#attach-doc-area-edit'+ctrl.attachId));
+
+                    ctrl.content = ctrl.commentText;
+                    ctrl.isEdit = false;
+
+                }else {
+                    // значит создание
+
+                    attach = getAttachedImages($('#attach-area-'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-'+ctrl.attachId)));
+
+                    var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
+
+                    (ctrl.commentText == TEXT_DEFAULT_1) ?
+                        newDialogMessage.content = "" :
+                        newDialogMessage.content = ctrl.commentText;
+
+                    newDialogMessage.author = $rootScope.base.me.id;
+
+                    newDialogMessage.created = Date.parse(new Date()) / 1000;
+                    newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
+
+                    var tempMessage = dialogClient.postMessage(ctrl.dialogId, newDialogMessage.content, attach);
+
+                    newDialogMessage.images = tempMessage.images;
+                    newDialogMessage.documents = tempMessage.documents;
+                    newDialogMessage.id = tempMessage.id;
+
+                    ctrl.privateMessages.unshift(newDialogMessage);
+
+                    ctrl.commentText = TEXT_DEFAULT_1;
+
+                    cleanAttached($('#attach-area-'+ctrl.attachId));
+                    cleanAttached($('#attach-doc-area-'+ctrl.attachId));
+                }
+
+
+            }
+
+        }
+
         $rootScope.createMessage = function(e,ctrl,topicId,talk,message){
             e.preventDefault();
             if(ctrl.isTalk){
@@ -725,6 +788,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     }
                 }
 
+            }else if(ctrl.isDialog){
+                addDialogMessage(ctrl);
             }else{
                 createWallMessage(ctrl);
             }
@@ -734,12 +799,17 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         base.initStartParamsForCreateMessage = function(ctrl){
 
             ctrl.isEdit = false;
-            ctrl.commentText = TEXT_DEFAULT_2;
             ctrl.answerShow = false;
             ctrl.isFocus = false;
             ctrl.isCreateCommentError = false;
 
-            if(ctrl.id){
+            if(ctrl.isDialog){
+                ctrl.default = ctrl.commentText = TEXT_DEFAULT_1;
+            }else{
+                ctrl.default = ctrl.commentText = TEXT_DEFAULT_2;
+            }
+
+            if(ctrl.id || ctrl.isDialog){
                 // занчит редактирование
                 if(!ctrl.isTalk) ctrl.commentText = ctrl.content;
                 ctrl.answerShow = true;
@@ -2063,17 +2133,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
         initAutoFill();
 
-        /*function usersToInt(users){
-            var usersLength = users.length,
-                usersInt = [];
-            for(var i = 0; i < usersLength; i++){
-                usersInt[i] = parseInt(writeMessage.users[i]);
-            }
-
-            return usersInt;
-        }*/
-
-
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
 
@@ -2155,9 +2214,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         }
 
-        $rootScope.chageIndex = 0;
+        //$rootScope.chageIndex = 0;
 
-        angular.element($('.profile')).css({'min-height': $(window).height()-125});
+        angular.element($('.profile')).css({'min-height': $(window).height()-135});
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -2569,6 +2628,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             currentDialog = dialogClient.getDialogById($stateParams.dialogId),
             currentDialogLength = currentDialog.length;
 
+        dialog.isDialog = true;
+        dialog.attachId = '000';
+        dialog.dialogId = $stateParams.dialogId;
+
         dialog.users = currentDialog.users;
         var dialogUsersLength = dialog.users.length;
         for(var i = 0; i < dialogUsersLength; i++){
@@ -2577,8 +2640,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 dialog.users.splice(i,1);
             }
         }
-        initAttachImage($('#attachImage-000'),$('#attach-area-000'));
-        initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
+        //initAttachImage($('#attachImage-000'),$('#attach-area-000'));
+        //initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
 
         if ($stateParams.dialogId){
             dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
@@ -2588,11 +2651,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             for(var i = 0; i < privateMessagesLength; i++){
                 dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
+                dialog.privateMessages[i].isDialog = true;
+                dialog.privateMessages[i].attachId = dialog.dialogId+"-"+dialog.privateMessages[i].id;
+                $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
             }
         }
 
-        dialog.messageText = TEXT_DEFAULT_1;
-        dialog.sendMessage = function(){
+        //dialog.messageText = TEXT_DEFAULT_1;
+        $rootScope.base.initStartParamsForCreateMessage(dialog);
+
+/*        dialog.sendMessage = function(){
             var attach = [];
             attach = getAttachedImages($('#attach-area-000')).concat(getAttachedDocs($('#attach-doc-area-000')));
 
@@ -2620,7 +2688,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 cleanAttached($('#attach-area-000'));
                 cleanAttached($('#attach-doc-area-000'));
             }
-        }
+        };*/
 
         dialog.addMoreItems = function(){
             var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
