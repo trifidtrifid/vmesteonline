@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -11,6 +12,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
 import com.vmesteonline.be.GroupType;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
@@ -37,10 +39,6 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			
 		}
 	} 
-	
-	public VoUserGroup(VoUser user, VoGroup grp, PersistenceManager pm) {
-		this(user.getLongitude(),user.getLatitude(),grp.getRadius(),grp.getVisibleName(),grp.getImportantScore(),grp.getGroupType(), pm);
-	}
 	
 	public int getRadius() {
 		return radius;
@@ -79,12 +77,15 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	private String name;
 
 	@Persistent
-	@Unindexed
 	private int radius;
 	
 	@Persistent
 	@Unindexed
 	private int importantScore;
+
+	@Persistent
+	@Unindexed
+	private List<Long> visibleGroups;
 
 	
 	public int getImportantScore() {
@@ -112,5 +113,36 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	public int compareTo(VoUserGroup that) {
 		return that.getLatitude().compareTo(this.getLatitude()) != 0 ? that.getLatitude().compareTo(this.getLatitude()) : that.getLongitude().compareTo(
 				this.getLongitude()) != 0 ? that.getLongitude().compareTo(this.getLongitude()) : Integer.compare(that.radius, this.radius);
+	}
+
+	
+	public List<Long> getVisibleGroups(PersistenceManager pm) {
+		if( null==visibleGroups){
+			visibleGroups = findAllVisibleGroups(pm);
+		}
+		return visibleGroups;
+	}
+
+	private List<Long> findAllVisibleGroups(PersistenceManager pm) {
+		List<Long> vg = new ArrayList<Long>();
+		
+		if( groupType > GroupType.BUILDING.getValue() ){
+			BigDecimal latMax = VoHelper.getLatitudeMax( new BigDecimal(latitude), radius);
+			BigDecimal latMin = VoHelper.getLatitudeMin( new BigDecimal(latitude), radius);
+			BigDecimal longMax = VoHelper.getLongitudeMax( new BigDecimal(longitude), new BigDecimal(latitude), radius);
+			BigDecimal longMin = VoHelper.getLongitudeMin( new BigDecimal(longitude), new BigDecimal(latitude), radius);
+			
+			List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery( VoUserGroup.class, "groupType=="+groupType).execute();
+			for( VoUserGroup ug: groups ){
+				if( ug.getLatitude().compareTo( latMax ) <=0 && ug.getLatitude().compareTo( latMin ) >=0 
+						&& ug.getLongitude().compareTo( longMax ) <= 0 && ug.getLongitude().compareTo( longMin ) >= 0)
+					
+					vg.add( ug.getId() );
+			}
+			pm.makePersistent(this);
+		} else {
+			vg.add( this.getId() );
+		}
+		return vg;
 	}
 }

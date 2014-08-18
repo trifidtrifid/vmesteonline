@@ -111,9 +111,7 @@ public class Defaults {
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
-			MySQLJDBCConnector con = new MySQLJDBCConnector();
-			con.execute("drop table if exists topic");
-			con.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

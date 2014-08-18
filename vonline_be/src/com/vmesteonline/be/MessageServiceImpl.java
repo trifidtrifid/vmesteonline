@@ -2,9 +2,9 @@ package com.vmesteonline.be;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +23,6 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.vmesteonline.be.data.JDBCConnector;
 import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.data.VoDatastoreHelper;
-import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoMessage;
 import com.vmesteonline.be.jdo2.VoPoll;
@@ -33,7 +31,6 @@ import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
@@ -218,67 +215,49 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
 			JDBCConnector con, PersistenceManager pm) {
 
-		String req = "select `id` from topic where";
-		if (group != null)
-			req += " radius >= " + group.getRadius() + " and longitude <= "
-					+ VoHelper.getLongitudeMax(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and longitude >= "
-					+ VoHelper.getLongitudeMin(group.getLongitude(), group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude <= "
-					+ VoHelper.getLatitudeMax(group.getLatitude(), group.getRadius()).toPlainString() + " and lattitude >= "
-					+ VoHelper.getLatitudeMin(group.getLatitude(), group.getRadius()).toPlainString();
-		else if (type != MessageType.BLOG)
-			return null;
-
-		switch (type) {
-
-		case BASE:
-			req += " and messageType = " + Integer.toString(MessageType.BASE.getValue());
-			break;
-		case ADVERT:
-			req += " and messageType = " + Integer.toString(MessageType.ADVERT.getValue());
-			break;
-		case WALL:
-			req += " and messageType != " + Integer.toString(MessageType.ADVERT.getValue()) + " and messageType != "
-					+ Integer.toString(MessageType.BLOG.getValue());
-			break;
-		case BLOG:
-			req += " messageType = " + Integer.toString(MessageType.BLOG.getValue());
-			break;
-
-		default:
-			break;
-
-		}
-
-		req += " order by updateTime desc";
-
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
-			ResultSet rs = con.executeQuery(req);
-
+		
+			Query tQuery = pm.newQuery( VoTopic.class );
+			String filter = "";
+			
+			if( group.getGroupType() > GroupType.BUILDING.getValue()){
+				filter = "visibleGroups=="+group.getId();
+			} else {
+				filter = "userGroupId=="+group.getId();
+			}
+			if( importantOnly ){
+				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
+				filter = " isImportant == true && createDate > "+minimumCreateDate+" && " + filter;
+			}
+			filter += " && type=="+type;
+			
+			tQuery.setFilter(filter);
+			List<VoTopic> allTopics = (List<VoTopic>) tQuery.execute( );
 			boolean addTopic = 0 == lastLoadedTopicId ? true : false;
-			while (rs.next() && topics.size() < length) {
-				long topicId = rs.getLong(1);
-				VoTopic topic = pm.getObjectById(VoTopic.class, topicId);
-
-				boolean isImportant = false;
-				if (group != null) {
-					isImportant = group.getImportantScore() <= topic.getImportantScore();
-					topic.setImportant(isImportant);
-				}
-				if (addTopic && (!importantOnly || isImportant)) {
+			for (VoTopic topic : allTopics) {
+				
+				if (addTopic ) {
 					topics.add(topic);
-					long topicAge = (System.currentTimeMillis() / 1000L) - topic.getLastUpdate();
-					if (importantOnly && (topics.size() > 4 || topicAge > 86400 * 7)) // в запросе важных возвращается не более 5 и не старше недели
-						break;
+					
 				} else if (topic.getId() == lastLoadedTopicId) {
 					addTopic = true;
 				}
+				
+				if( topics.size() == length)
+					break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			con.close();
 		}
+		Collections.sort( topics, new Comparator<VoTopic>(){
+
+			@Override
+			public int compare(VoTopic o1, VoTopic o2) {
+				return -Integer.compare( o1.getLastUpdate(), o2.getLastUpdate());
+			}
+			
+		});
 		return topics;
 	}
 
@@ -317,12 +296,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type,
 			boolean importantOnly) {
 
+		
 		TopicListPart mlp = new TopicListPart();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 
 		try {
 
-			try {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
 				VoUserGroup group = pm.getObjectById(VoUserGroup.class,groupId);
@@ -336,34 +315,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					/*VoUserTopic voUserTopic = VoDatastoreHelper.<VoUserTopic> getUserMsg(VoUserTopic.class, user.getId(), tpc.getId(), pm);
-					if (voUserTopic == null) {
-						voUserTopic = new VoUserTopic();
-
-						Query q = pm.newQuery(VoMessage.class);
-						q.setFilter("topicId == " + voTopic.getId());
-						List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-						MessagesTree tree = new MessagesTree(voMsgs);
-						voUserTopic.setMessagesCount(tree.getTopicChildMessagesCount(new MessagesTree.Filters(user.getId(), group)));
-
-					} else if (voUserTopic.getLastUpdateMessageCount() != voTopic.getLastUpdate()) {
-						Query q = pm.newQuery(VoMessage.class);
-						q.setFilter("topicId == " + voTopic.getId());
-						List<VoMessage> voMsgs = (List<VoMessage>) q.execute();
-						MessagesTree tree = new MessagesTree(voMsgs);
-						voUserTopic.setMessagesCount(tree.getTopicChildMessagesCount(new MessagesTree.Filters(user.getId(), group)));
-
-					}
-
-					tpc.usertTopic = voUserTopic.getUserTopic();*/
-					
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
 					tpc.setMessageNum( voTopic.getMessageNum()/*voUserTopic.getMessagesCount()*/);
 					mlp.addToTopics(tpc);
 				}
-			} catch (Exception e) {
+		} catch (Exception e) {
 				e.printStackTrace();
-			}
 
 		} finally {
 			pm.close();
@@ -384,7 +341,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.message.created = now;
 					topic.message.authorId = getCurrentUserId();
 
-					VoTopic votopic = new VoTopic(topic);
+					VoTopic votopic = new VoTopic(topic, pm);
 
 					if (topic.poll != null) {
 
@@ -398,15 +355,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.setId(votopic.getId());
 
 					VoUser user = getCurrentUser(pm);
-					VoUserGroup ug = pm.getObjectById( VoUserGroup.class, votopic.getUserGroupId() );
-					votopic.setLongitude(ug.getLongitude());
-					votopic.setLatitude(ug.getLatitude());
-
+					pm.getObjectById( VoUserGroup.class, votopic.getUserGroupId() );
 					topic.userInfo = user.getShortUserInfo();
-					con.execute("insert into topic (`id`, `longitude`, `lattitude`, `radius`, `rubricId`, `createTime`, updateTime, `messageType`) values ("
-							+ votopic.getId() + "," + ug.getLongitude() + "," + ug.getLatitude() + "," + ug.getRadius() + "," + votopic.getRubricId() + ","
-							+ votopic.getCreatedAt() + "," + + votopic.getLastUpdate() + ","
-							+ votopic.getType().getValue() + ");");
+
 
 				} else {
 					updateTopic(topic);
@@ -484,7 +435,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			try {
 				try {
 
-					vomsg = new VoMessage(msg);
+					vomsg = new VoMessage(msg, pm);
 					VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
 					topic.setMessageNum(topic.getMessageNum() + 1);
 					topic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
@@ -509,28 +460,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	private void initDb() throws InvalidOperation {
-		con = new MySQLJDBCConnector();
-		try {
-			con.execute("create table if not exists topic ("
-					+ "`id` bigint not null primary key,"
-					+ "`longitude` decimal(10,7) not null,"
-					+ "`lattitude` decimal(10,7) not null,"
-					+ "`radius` integer not null, "
-					+ "`rubricId` bigint not null, "
-					+ "`createTime` integer not null, "
-					+ "`updateTime` integer not null, "
-					+ "`messageType` integer not null, "
-					+ "index pos_idx(`longitude`,`lattitude`), "
-					+ "index grp_idx(`radius`,`longitude`,`lattitude`,`messageType`), "
-					+ "index type_idx(`messageType`),"
-					+ "index update_idx(`updateTime`))");
-			
-		} catch (Exception e) {
-			logger.severe("Failed to connect to database." + e.getMessage());
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to connect to database." + e.getMessage());
-		}
-		con.close();
+		
 	}
 
 	@Override
@@ -750,23 +680,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public int markMessageImportant(long messageId, boolean isImportant) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoTopic msg = pm.getObjectById(VoTopic.class, messageId);
-			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
-			int impScore = msg.markImportant(getCurrentUser(), author, isImportant, pm);
+			VoTopic topic = pm.getObjectById(VoTopic.class, messageId);
+			VoUser author = null == topic.getAuthorId() ? null : pm.getObjectById(VoUser.class, topic.getAuthorId());
+			int impScore = topic.markImportant(getCurrentUser(), author, isImportant, pm);
+
+			VoUserGroup topicGroup = pm.getObjectById(VoUserGroup.class, topic.getUserGroupId());
+			boolean isReallyImportant = (impScore >= topicGroup.getImportantScore());
+			topic.setImportant( isReallyImportant );
+			pm.makePersistent( topic );
 
 			// time to send notification if not sent?
-			if (isImportant && 0 == msg.getImportantNotificationSentDate()) {
-				VoUserGroup topicGroup = pm.getObjectById(VoUserGroup.class, msg.getUserGroupId());
-				if (impScore >= topicGroup.getImportantScore()) {
-					
-					Queue queue = QueueFactory.getDefaultQueue();
-		      queue.add(withUrl("/tasks/notification").param("rt", "mbi")
-		      		.param("it", ""+msg.getId())
-		      		.param("ug", ""+topicGroup.getId()));
-					
-					//Notification.messageBecomeImportantNotification(msg, topicGroup);
-					msg.setImportantNotificationSentDate((int) (System.currentTimeMillis() / 1000L));
-				}
+			if (isReallyImportant && 0 == topic.getImportantNotificationSentDate()) {
+				
+				topic.setImportant( true );
+				pm.makePersistent( topic );
+				
+				Queue queue = QueueFactory.getDefaultQueue();
+	      queue.add(withUrl("/tasks/notification").param("rt", "mbi")
+	      		.param("it", ""+topic.getId())
+	      		.param("ug", ""+topicGroup.getId()));
+				
+				//Notification.messageBecomeImportantNotification(msg, topicGroup);
+				topic.setImportantNotificationSentDate((int) (System.currentTimeMillis() / 1000L));
 			}
 			return impScore;
 		} catch(JDOObjectNotFoundException onfe){
@@ -788,6 +723,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			VoUser author = null == msg.getAuthorId() ? null : pm.getObjectById(VoUser.class, msg.getAuthorId());
 			return msg.markLikes(getCurrentUser(), author, pm);
+			
 		} catch(JDOObjectNotFoundException onfe){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No message found by ID:"+messageId);
 		} finally {
@@ -876,9 +812,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			if(0==tpc.getMessageNum()){
 				try {
-					MySQLJDBCConnector mcon = new MySQLJDBCConnector();
-					mcon.execute("delete from topic where `id`="+tpc.getId());
-					mcon.close();
 					pm.deletePersistent(tpc);
 					return null;
 				} catch (Exception e) {

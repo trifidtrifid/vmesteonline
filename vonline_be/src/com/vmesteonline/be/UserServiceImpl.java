@@ -281,7 +281,9 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		} else { // lets determine the relation as according to the distance
 
-			int maxRadius = VoHelper.calculateRadius(user, currentUser);
+			int maxRadius = VoHelper.calculateRadius(
+					pm.getObjectById( VoPostalAddress.class, user.getAddress()).getUserHomeGroup(),
+					pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getUserHomeGroup());
 			if (maxRadius <= Defaults.radiusStarecase)
 				relation = PrivacyType.STAIRCASE;
 			else if (maxRadius <= Defaults.radiusHome)
@@ -720,7 +722,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser();
-			List<VoUser> users = getUsersByLocation(currentUser, 30, pm);
+			
+			List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING), pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
@@ -731,27 +734,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoUser currentUser = getCurrentUser();
-			VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
-			List<VoUser> users = getUsersByLocation(currentUser, group.getRadius(), pm);
+			List<VoUser> users = getUsersByLocation(groupId, pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
 		}
 	}
 
-	public static List<VoUser> getUsersByLocation(GeoLocation loc, int radius, PersistenceManager pm) {
+	public static List<VoUser> getUsersByLocation(Long userGroupId, PersistenceManager pm) {
 		List<VoUser> users = new ArrayList<VoUser>();
-
-		// BigDecimal latMin = VoHelper.getLatitudeMin(loc.getLatitude(), radius).setScale(6, RoundingMode.HALF_UP);
-
-		List<VoUser> allUsers = (List<VoUser>) pm.newQuery(VoUser.class, "").execute();
-		for (VoUser user : allUsers) {
-			if (VoHelper.findMinimumGroupRadius(loc, user) <= radius) {
-				if (loc.getId() != user.getId())
-					users.add(user);
-			}
-		}
+		for( Long g : pm.getObjectById( VoUserGroup.class, userGroupId ).getVisibleGroups(pm))
+			users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, "groups=="+g).execute());
 		return users;
 	}
 

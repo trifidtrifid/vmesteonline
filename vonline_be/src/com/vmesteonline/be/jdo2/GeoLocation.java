@@ -54,8 +54,8 @@ public abstract class GeoLocation {
 	protected Key id;
 
 	@Persistent
-	private String longitude;
+	protected String longitude;
 
 	@Persistent
-	private String latitude;
+	protected String latitude;
 }

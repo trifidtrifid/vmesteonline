@@ -145,7 +145,7 @@ public abstract class Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(it, group.getRadius(), pm);
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(group.getId(), pm);
 
 			String subject = "важное сообщение";
 			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";

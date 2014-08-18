@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,16 +8,17 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Mark;
 import com.vmesteonline.be.messageservice.Message;
@@ -28,55 +28,50 @@ import com.vmesteonline.be.utils.StorageHelper.FileSource;
 
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class VoBaseMessage extends GeoLocation {
+public abstract class VoBaseMessage /*extends GeoLocation*/ {
 	
-	public VoBaseMessage(Message msg) throws IOException, InvalidOperation {
+	public VoBaseMessage(Message msg, PersistenceManager pm) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
 		content = msg.getContent();
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
 		createdAt = msg.getCreated();
-		images = new ArrayList<Long>();
 		
 		images = new ArrayList<Long>();
 		documents = new ArrayList<Long>();
+		
 		importantNotificationSentDate = 0;
 		importantScore = 0;
 		popularityScore = 0;
-
-		PersistenceManager pm = PMF.getPm();
-		try {
-			if (msg.images != null) {
-				List<Attach> savedImages = new ArrayList<Attach>();
-				for (Attach img : msg.images) {
-					VoFileAccessRecord cfar = StorageHelper.loadAttach(pm, msg.getAuthorId(), img);
-					images.add( cfar.getId());
-					savedImages.add(cfar.getAttach());
-				}
-				msg.images = savedImages;
+		
+		if (msg.images != null) {
+			List<Attach> savedImages = new ArrayList<Attach>();
+			for (Attach img : msg.images) {
+				VoFileAccessRecord cfar = StorageHelper.loadAttach(pm, msg.getAuthorId(), img);
+				images.add( cfar.getId());
+				savedImages.add(cfar.getAttach());
 			}
-
-			if (msg.documents != null) {
-				List<Attach> savedDocs = new ArrayList<Attach>();
-				for (Attach doc : msg.documents) {
-					FileSource fs = StorageHelper.createFileSource( doc );
-					VoFileAccessRecord cfar;
-					if( fs == null ){
-						cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(doc.getURL()));
-						cfar.updateContentParams(doc.contentType, doc.fileName);
-					}	else {	
-						cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
-					}
-					documents.add( cfar.getId());
-					savedDocs.add(cfar.getAttach());
-				}
-				msg.documents = savedDocs;
-			}
-
-		} finally {
-			pm.close();
+			msg.images = savedImages;
 		}
+
+		if (msg.documents != null) {
+			List<Attach> savedDocs = new ArrayList<Attach>();
+			for (Attach doc : msg.documents) {
+				FileSource fs = StorageHelper.createFileSource( doc );
+				VoFileAccessRecord cfar;
+				if( fs == null ){
+					cfar = pm.getObjectById(VoFileAccessRecord.class, StorageHelper.getFileId(doc.getURL()));
+					cfar.updateContentParams(doc.contentType, doc.fileName);
+				}	else {	
+					cfar = StorageHelper.saveAttach( fs.fname, fs.contentType, authorId.getId(), true, fs.is, pm);
+				}
+				documents.add( cfar.getId());
+				savedDocs.add(cfar.getAttach());
+			}
+			msg.documents = savedDocs;
+		}
+
 	}
 
 	public void setCreatedAt(int createdAt) {
@@ -170,6 +165,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 			} catch(Exception e){ 
 			}
 		}
+		pm.makePersistent(this);
 		return popularityScore;
 	}
 
@@ -214,6 +210,7 @@ public abstract class VoBaseMessage extends GeoLocation {
 			} catch(Exception e){ 
 			}
 		}
+		pm.makePersistent(this);
 		return importantScore;
 	}
 
@@ -243,7 +240,17 @@ public abstract class VoBaseMessage extends GeoLocation {
 		this.importantNotificationSentDate = importantNotificationSentDate;
 	}
 
+	public long getId() {
+		return id.getId();
+	}
 
+	public void setId(long id) {
+		this.id = 0==id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
+	}
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	protected Key id;
 
 	/*
 	 * @PrimaryKey
@@ -259,7 +266,6 @@ public abstract class VoBaseMessage extends GeoLocation {
 	protected Map<MessageType, Long> links;
 
 	@Persistent
-	@Unindexed
 	protected MessageType type;
 
 	@Persistent

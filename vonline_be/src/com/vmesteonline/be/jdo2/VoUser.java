@@ -8,11 +8,15 @@ import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
@@ -37,7 +41,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable
-public class VoUser extends GeoLocation {
+public class VoUser /*extends GeoLocation*/ {
 	
 	public static int BASE_USER_SCORE = 100;
 
@@ -50,6 +54,17 @@ public class VoUser extends GeoLocation {
 			pm.close();
 		}
 		
+	}
+	
+	public Long getGroup( GroupType gt ){
+		int i=0;
+		for (VoGroup group : Defaults.defaultGroups){
+			if( group.getGroupType() == gt.getValue() )
+				return groups.get(i);
+			else
+				i++;
+		}
+		return null;
 	}
 
 	public VoUser(String name, String lastName, String email, String password) {
@@ -227,7 +242,8 @@ public class VoUser extends GeoLocation {
 		
 		groups = new ArrayList<Long>();
 		for (VoGroup group : Defaults.defaultGroups) {
-				VoUserGroup ug = new VoUserGroup(this, group, pm);
+				VoUserGroup ug = new VoUserGroup(building.getLongitude(), building.getLatitude(), group.getRadius(), 
+						group.getVisibleName(), group.getImportantScore(), group.getGroupType(), pm);
 				pm.makePersistent(ug);
 				groups.add(ug.getId());
 			}
@@ -240,9 +256,6 @@ public class VoUser extends GeoLocation {
 		
 		groups = new ArrayList<Long>();
 		groups.add(defaultGroup.getId());
-		this.setLatitude(defaultGroup.getLatitude());
-		this.setLongitude(defaultGroup.getLongitude());
-
 		pm.makePersistent(this);
 	}
 
@@ -254,6 +267,18 @@ public class VoUser extends GeoLocation {
 		this.emailConfirmed = emailConfirmed;
 	}
 
+	public long getId() {
+		return id.getId();
+	}
+
+	public void setId(long id) {
+		this.id = 0==id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
+	}
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	protected Key id;
+	
 	@Persistent
 	private Long address;
 
@@ -514,7 +539,7 @@ public class VoUser extends GeoLocation {
 	}
 
 	public String toFullString() {
-		return "VoUser [id=" + getId() + ", address=" + address + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", name=" + name
+		return "VoUser [id=" + getId() + ", address=" + address + ", name=" + name
 				+ ", lastName=" + lastName + ", email=" + email + ", password=" + password + ", messagesNum=" + messagesNum + ", topicsNum=" + topicsNum
 				+ ", likesNum=" + likesNum + ", unlikesNum=" + unlikesNum + "]";
 	}
