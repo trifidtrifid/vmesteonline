@@ -23,6 +23,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         base.lentaIsActive = true;
         base.emptyMessage = "Сообщений пока нет";
 
+        base.textareaBlur = function(message,defaultText,ctrl){
+            if(message == "") ctrl.message.content = defaultText;
+        };
+
+        base.textareaFocus = function(message, defaultText,ctrl){
+            if(message == defaultText) ctrl.message.content = "";
+        };
+
         base.addPollInput = function(event,obj){
             event.preventDefault();
 
@@ -61,13 +69,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }
             }
 
-            //console.log(poll.pollId+"--"+item);
-            //poll = {};
             var tempPoll = messageClient.doPoll(poll.pollId,item);
             poll.alreadyPoll = true;
             poll.values = tempPoll.values;
 
-            console.log("000"+poll.alreadyPoll);
             setPollEditNames(poll);
 
         };
@@ -481,6 +486,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         function createWallTopic(ctrl){
+
+            //alert(ctrl.poll.alreadyPoll);
+
             if (ctrl.isEdit) {
                 ctrl.attachedImages = getAttachedImages($('#attach-area-edit-' + ctrl.id));
                 ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-edit-' + ctrl.id),ctrl.isEdit);
@@ -510,32 +518,18 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 var isWall = 1,
                 newTopic = postTopic(ctrl, isWall);
 
-                /*var newWallItem = new com.vmesteonline.be.messageservice.WallItem();
-                 newWallItem.topic = newTopic;
-                 newWallItem.topic.authorName = getAuthorName();
-                 newWallItem.messages = [];
-                 newWallItem.commentText = TEXT_DEFAULT_2;
-                 newWallItem.answerShow = false;
-                 newWallItem.isFocus = false;
-                 newWallItem.label = getLabel($rootScope.base.groups, $rootScope.base.bufferSelectedGroup.type);
-                 newWallItem.tagColor = getTagColor(newWallItem.label);*/
-
                 if (ctrl.isEdit) {
                     cleanAttached($('#attach-area-edit-' + ctrl.id));
                     cleanAttached($('#attach-doc-area-edit-' + ctrl.id));
                     ctrl.isEdit = false;
+                    ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
                 } else {
                     cleanAttached($('#attach-area-'+ctrl.attachId));
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
                 }
 
                 if(!ctrl.isWallSingle) $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
-                /*if (lenta.selectedGroupInTop.id == $rootScope.base.bufferSelectedGroup.id) {
-                 lenta.wallItems ?
-                 lenta.wallItems.unshift(newWallItem) :
-                 lenta.wallItems[0] = newWallItem;
 
-                 }*/
             }
         }
 
@@ -558,30 +552,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             var isWall = true,
                 message = postMessage(wallItem, isWall);
 
-            /*var message =  new com.vmesteonline.be.messageservice.Message();
-             message.id = 0;
-             message.topicId = wallItem.topic.id;
-             message.parentId = 0;
-             message.groupId = lenta.selectedGroupInTop.id;
-             message.type = com.vmesteonline.be.messageservice.MessageType.WALL;//5;
-             message.content = wallItem.commentText;
-             message.images = getAttachedImages($('#attach-area-'+wallItem.topic.id));
-             message.created = Date.parse(new Date)/1000;
-
-             var newMessage = messageClient.postMessage(message);
-             wallItem.commentText = TEXT_DEFAULT_2;
-             message.createdEdit = getTiming(newMessage.created);
-             console.log(newMessage.created);
-             message.authorName = getAuthorName();
-             message.userInfo = newMessage.userInfo;
-             message.images = newMessage.images;
-             message.id = newMessage.id;*/
-
             if(message == 0){
                 wallItem.isCreateCommentError = true;
                 wallItem.createCommentErrorText = "Вы не ввели сообщение";
             }else {
                 wallItem.isCreateCommentError = false;
+                base.initStartParamsForCreateMessage(message);
 
                 if (wallItem.messages) {
                     wallItem.messages.push(message);
@@ -622,9 +598,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                 if(talk.fullTalkTopic) {
                     if (talk.fullTalkFirstMessages) {
-                        //if (talk.fullTalkFirstMessages.length < 10) {
-                        //alert($rootScope.base.isEarliestMessages+" "+$rootScope.base.endOfLoaded);
-                        
+
                         if (talk.fullTalkFirstMessages.length < 10 ||
                             $rootScope.base.isEarliestMessages ||
                             $rootScope.base.endOfLoaded ) {
@@ -634,8 +608,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                         }
 
-                            //talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talk.topicId,talk.selectedGroup.id,1,0,0,10).messages;
-                        //}
                     } else {
                         talk.fullTalkFirstMessages = [];
                         talk.fullTalkFirstMessages[0] = newMessage;
@@ -941,7 +913,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.initStartParamsForCreateTopic(lenta);
 
         lenta.message = {};
-        lenta.message.content = TEXT_DEFAULT_1;
+
+        lenta.message.content = lenta.message.default = TEXT_DEFAULT_1;
 
         lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
 
@@ -990,9 +963,15 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId, 0, 10);
+            /*for(var i = 0; i < lenta.wallItems.length ; i++){
+                if(lenta.wallItems[i].topic.poll){
+                    console.log("--0 "+lenta.wallItems[i].topic.message.content+" "+ lenta.wallItems[i].topic.poll.alreadyPoll);
+                }
+            }*/
 
             if(lenta.wallItems.length) {
                 initWallItem(lenta.wallItems);
+
                 lastLoadedId = lenta.wallItems[lenta.wallItems.length-1].topic.id;
             }
 
@@ -1245,7 +1224,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             talk.groups = userClientGroups;
 
             talk.message = {};
-            talk.message.content = TEXT_DEFAULT_3;
+            talk.message.content = talk.message.default = TEXT_DEFAULT_3;
             talk.subject = TEXT_DEFAULT_4;
 
             $rootScope.base.initStartParamsForCreateTopic(talk);
@@ -1548,19 +1527,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
                     $rootScope.base.initFirstMessages(buff);
 
-                    //alert(buffLength+" "+size);
-                    //if(size < 10 && (lastLoadedId == 0 || lastLoadedId === undefined)){
+                    talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
 
-                    /*if(lastLoadedId == 0 || lastLoadedId === undefined){
-                        talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
-                    }else{*/
-                        //lastLoadedId = buff[buffLength - 1].id;
-                        //if(!lastLoadedId) buff = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,lastLoadedId,0,10).messages,
-                        talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
-                    //}
-                    /*if(size >= 10){
-                        talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
-                    }*/
 
                 }
             }else{
@@ -1592,7 +1560,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         adverts.isAdvert = true;
 
         adverts.message = {};
-        adverts.message.content = TEXT_DEFAULT_3;
+        adverts.message.content = adverts.message.default = TEXT_DEFAULT_3;
         adverts.subject = TEXT_DEFAULT_4;
 
         $rootScope.base.initStartParamsForCreateTopic(adverts);
@@ -3177,7 +3145,6 @@ function postTopic(obj,isWall,isAdverts){
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
 
-        //alert(obj.message.groupId);
         var newTopic = messageClient.postTopic(obj);
     }else {
         // значит создание
@@ -3404,7 +3371,7 @@ function setPollEditNames(poll){
             value: 0,
             name : poll.names[j],
             votersNum : votersNum,
-            votersPercent: votersPercent+"%"
+            votersPercent: votersPercent.toFixed(1)+"%"
         };
 
     }

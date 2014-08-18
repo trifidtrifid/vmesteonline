@@ -644,7 +644,7 @@ h1 {
   border-radius: 0;
 }
 .itemdiv.dialogdiv > .body {
-  padding-bottom: 20px;
+  padding-bottom: 26px;
 }
 .itemdiv {
   padding-right: 0;
@@ -899,6 +899,7 @@ h1 {
   margin-left: -95px;
   padding-left: 95px;
   padding-right: 15px;
+  font-size: 12px;
 }
 .answer-block {
   width: 100%;
@@ -953,6 +954,7 @@ h1 {
 }
 .itemdiv.dialogdiv > .body {
   margin-left: 58px;
+  font-size: 14px;
 }
 .avatar {
   width: 80px;
