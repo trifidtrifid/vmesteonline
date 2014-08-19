@@ -291,7 +291,7 @@ transform()
 .widget-main
   overflow auto
   padding 0
-  padding-bottom 15px
+  padding-bottom 25px
 
 .talks-single .widget-main
 .adverts-single .widget-main
@@ -694,14 +694,18 @@ transform()
         color #fff
 
 .attached
-  padding-bottom 20px
+  //padding-bottom 20px
   a
     display inline-block
     vertical-align top
     margin 0 2px
     img
+      margin-bottom 10px
       max-width 150px
       max-height 150px
+
+.dialogdiv .attached
+  padding-bottom 0
 
 .create-poll
   margin-bottom 10px
@@ -813,6 +817,9 @@ transform()
 
 .edit-textarea
   margin 5px 0
+
+.forum-wrap
+  font-size 14px
 
 .fa-star
 .fa-heart
@@ -926,6 +933,7 @@ transform()
     margin-left -95px
     padding-left 95px
     padding-right 15px
+    font-size 13px
   .poll
     padding-bottom 30px
     .radio .lbl:before
@@ -935,7 +943,7 @@ transform()
 
   /* private-messages */
 .dialog-send
-  padding-bottom 15px
+  //padding-bottom 15px
   border-bottom 1px solid #ccc
   .dialog-send-center
     margin 0 60px
@@ -953,15 +961,22 @@ transform()
     padding 0
   .dialogs-container
     margin-top 15px
-    .private-message-single:hover
+    .dialog-item
+      overflow auto
+      padding 10px
+      padding-left 0
+      cursor pointer
+      border-bottom 1px solid #CCCCCC
+      &:first-child
+        border-top 1px solid #CCCCCC
+    .dialog-item:hover
       background-color #f6fcff
   h2
     margin-top 0
   .private-message-single
-    cursor pointer
     padding 10px
+    padding-bottom 12px
     padding-left 0
-    overflow auto
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
@@ -985,6 +1000,7 @@ transform()
 
 .private-messages
   .private-message-single .private-message-left
+  .dialog-item .private-message-left
     line-height 65px
     .private-message-left
       width 300px

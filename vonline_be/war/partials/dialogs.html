@@ -6,9 +6,9 @@
 
     <!--<div class="private-messages">-->
         <div class="dialogs-container">
-            <div ng-show="!dialogs.dialogsList || dialogs.dialogsList.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
+            <div ng-if="!dialogs.dialogsList || dialogs.dialogsList.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
 
-            <div class="private-message-single" ng-click="dialogs.goToSingleDialog(dialog.id)" ng-repeat="dialog in dialogs.dialogsList"> <!-- ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" -->
+            <div class="dialog-item" ng-click="dialogs.goToSingleDialog(dialog.id)" ng-repeat="dialog in dialogs.dialogsList"> <!-- ui-sref="dialog-single( {dialogId : {{ dialog.id }} })" -->
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
                         <div class="avatar middle" style="background-image: url({{dialog.anotherUser.avatar}})"></div>

@@ -118,12 +118,12 @@ $(document).ready(function(){
                 $('.login-error').hide();
                 document.location.replace("/");
             } else if(loginResult == 3){
-                $('.login-error').text('Ваш email не потвержден').removeClass('info-good').show();
+                $('.login-error').text('Ваш email не подтвержден').removeClass('info-good').show();
             }else{
-                $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
+                $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
             }
         } catch (e) {
-            $('.login-error').text('Вы ввели неккоректны e-mail или пароль').removeClass('info-good').show();
+            $('.login-error').text('Вы ввели неккоректный e-mail или пароль').removeClass('info-good').show();
         }
     }
 

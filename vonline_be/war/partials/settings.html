@@ -27,9 +27,19 @@
 
                     <div class="tab-content">
                         <div id="settings-base" class="tab-pane active">
+                            <FORM action="https://oauth.vk.com/authorize" method="get">
+                                <input type="hidden" name="client_id" value="4429306">
+                                <input type="hidden" name="redirect_uri" value="https://1-dot-algebraic-depot-657.appspot.com/oauth">
+                                <input type="hidden" name="scope" value="4194305">
+                                <input type="hidden" name="display" value="popup">
+                                <input type="hidden" name="v" value="5.21">
+                                <input type="hidden" id="vk_state" name="state" value="import">
+                                <INPUT type="submit" class="btn btn-sm no-border btn-primary pull-right" value="Загрузить данные из Вконтакте">
+                            </FORM>
+
                             <form name="formUserInfo">
 
-                            <a class="btn btn-sm no-border btn-primary pull-right" href="#">Загрузить данные из Вконтакте</a>
+                            <!--<a class="btn btn-sm no-border btn-primary pull-right" href="#">Загрузить данные из Вконтакте</a>-->
 
                             <div>
                                 <label for="settings-input-1">Фамилия</label>
