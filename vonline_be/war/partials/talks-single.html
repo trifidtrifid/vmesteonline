@@ -1,7 +1,7 @@
 
 <section class="talks-block ng-cloak"> <!--  ng-hide="base.isTalkTitles" -->
 
-    <section class="forum talks-single" infinite-scroll="talks.addMoreItems()">
+    <section class="forum talks-single" infinite-scroll="talks.addMoreItems()" ng-if="talks.fullTalkTopic.id">
 
         <div class="dd dd-draghandle">
             <ol class="dd-list">
@@ -36,7 +36,7 @@
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
-                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                            <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                         </a>
                                         <div class="docs">
                                             <div ng-repeat="document in talks.fullTalkTopic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
@@ -134,7 +134,7 @@
 
                                                 <div class="attached">
                                                     <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
-                                                        <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                        <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                                     </a>
                                                     <div class="docs">
                                                         <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
@@ -193,7 +193,7 @@
 
                                                         <div class="attached">
                                                             <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
-                                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                                <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                                             </a>
                                                             <div class="docs">
                                                                 <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
