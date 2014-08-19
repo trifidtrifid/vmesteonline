@@ -117,8 +117,9 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 
 	
 	public List<Long> getVisibleGroups(PersistenceManager pm) {
-		if( null==visibleGroups){
+		if( null==visibleGroups || visibleGroups.size() == 0){
 			visibleGroups = findAllVisibleGroups(pm);
+			pm.makePersistent(this);
 		}
 		return visibleGroups;
 	}
@@ -139,7 +140,6 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 					
 					vg.add( ug.getId() );
 			}
-			pm.makePersistent(this);
 		} else {
 			vg.add( this.getId() );
 		}

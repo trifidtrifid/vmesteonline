@@ -158,10 +158,10 @@ public class VoTopic extends VoBaseMessage {
 	private int usersNum;
 
 	@Persistent
-	@Unindexed
 	private int lastUpdate;
 	
 	@Persistent
+	@Unindexed
 	private int createDate;
 
 	@Persistent

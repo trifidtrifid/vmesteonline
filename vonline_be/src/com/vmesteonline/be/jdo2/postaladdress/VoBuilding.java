@@ -57,6 +57,7 @@ public class VoBuilding {
 	private String fullNo; // no with letter or other extension if any
 
 	@Persistent
+	@Unindexed
 	private String zipCode; 
 	
 	@Persistent
@@ -107,9 +108,10 @@ public class VoBuilding {
 		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute();
 		
 		if( 1==bgsl.size() ){
-			
 			return bgsl.get(0);
+			
 		} else if( 2==bgsl.size() ){
+			
 			throw new InvalidOperation(VoError.GeneralError, "There is two the same building: "+bgsl.get(0));
 		}
 		
