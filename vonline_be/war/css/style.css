@@ -308,7 +308,7 @@ h1 {
 .widget-main {
   overflow: auto;
   padding: 0;
-  padding-bottom: 15px;
+  padding-bottom: 25px;
 }
 .talks-single .widget-main,
 .adverts-single .widget-main {
@@ -777,15 +777,13 @@ h1 {
 .attach-dropdown .ace-file-input:hover .file-label:before {
   color: #fff;
 }
-.attached {
-  padding-bottom: 20px;
-}
 .attached a {
   display: inline-block;
   vertical-align: top;
   margin: 0 2px;
 }
 .attached a img {
+  margin-bottom: 10px;
   max-width: 150px;
   max-height: 150px;
 }
@@ -1069,7 +1067,6 @@ h1 {
   font-family: tahoma, arial;
 }
 .dialog-send {
-  padding-bottom: 15px;
   border-bottom: 1px solid #ccc;
 }
 .dialog-send .dialog-send-center {

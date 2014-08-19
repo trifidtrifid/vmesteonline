@@ -242,6 +242,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }else{
                 message.isEdit = true;
 
+                if(message.answerInputIsShow) message.answerInputIsShow = false;
+
                 var el = event.target;
                 if(isTopic){
                     var textLen = message.message.content.length;
@@ -447,7 +449,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 talk.createTalkErrorText = "Вы не указали заголовок";
 
             }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
-                && talk.content == TEXT_DEFAULT_3){
+                && (talk.content == TEXT_DEFAULT_3 || !talk.content)){
 
                 talk.isCreateTalkError = true;
                 talk.createTalkErrorText = "Вы не ввели сообщение";
@@ -530,8 +532,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 ctrl.attachedDocs = getAttachedDocs($('#attach-doc-area-'+ctrl.attachId));
             }
 
+
             if (ctrl.attachedImages.length == 0 && ctrl.attachedDocs && ctrl.attachedDocs.length == 0 && !ctrl.isPollShow
-                && ctrl.message.content == TEXT_DEFAULT_1) {
+                && (ctrl.message.content == TEXT_DEFAULT_1 || !ctrl.message.content)) {
 
                 ctrl.isCreateMessageError = true;
                 ctrl.createMessageErrorText = "Вы не ввели сообщение";
@@ -599,7 +602,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     wallItem.messages[0] = message;
                 }
 
-                wallItem.answerShow = false;
             }
         }
 
@@ -3234,14 +3236,21 @@ function postMessage(obj,isWall,isFirstLevel){
         message.images = getAttachedImages($('#attach-area-edit-' + attachId));
         message.documents = getAttachedDocs($('#attach-doc-area-edit-' + attachId),true);
 
-        var newMessage = messageClient.postMessage(message);
 
-        cleanAttached($('#attach-area-edit-' + attachId));
-        cleanAttached($('#attach-doc-area-edit-' + attachId));
+        if (message.content == "" && message.images.length == 0 && (message.documents === undefined || message.documents.length == 0)) {
 
-        obj.isEdit = false;
+            return 0;
 
-        return newMessage;
+        }else {
+            var newMessage = messageClient.postMessage(message);
+
+            cleanAttached($('#attach-area-edit-' + attachId));
+            cleanAttached($('#attach-doc-area-edit-' + attachId));
+
+            obj.isEdit = false;
+
+            return newMessage;
+        }
 
     }else {
         // значит создание
