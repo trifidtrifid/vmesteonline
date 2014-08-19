@@ -11,8 +11,6 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
-import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Mark;
 import com.vmesteonline.be.messageservice.Message;
@@ -141,6 +139,11 @@ public class VoTopic extends VoBaseMessage {
 	public void setImportant(boolean isImportant) {
 		this.isImportant = isImportant;
 	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
 
 	@Persistent
 	@Unindexed
