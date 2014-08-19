@@ -17,9 +17,9 @@
             </div>
         </div>
         <div class="attach-area attach-area-doc" id="attach-doc-area-edit-{{ctrlId}}">
-            <span class="attach-item" data-fakepath="{{doc.fileName}}"  ng-repeat="doc in ctrlMessage.documents">
+            <span class="attach-item" data-href="{{doc.URL}}" data-type="{{doc.contentType}}"  ng-repeat="doc in ctrlMessage.documents">
                 <a href="#" title="Не прикреплять" class="remove-attach-img" ng-click="base.removeAttach(ctrlMessage,$index,false)">×</a>
-                {{doc.fileName}}
+                <span>{{doc.fileName}}</span>
             </span>
         </div>
 

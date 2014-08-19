@@ -789,6 +789,9 @@ h1 {
   max-width: 150px;
   max-height: 150px;
 }
+.dialogdiv .attached {
+  padding-bottom: 0;
+}
 .create-poll {
   margin-bottom: 10px;
 }

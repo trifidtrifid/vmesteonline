@@ -726,7 +726,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     // значит редактирование
 
                     var attachImg = getAttachedImages($('#attach-area-edit-'+ctrl.attachId));
-                    var attachDoc = getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId));
+                    var attachDoc = getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId),true);
                     attach = attachImg.concat(attachDoc);
 
                     // еще attach
@@ -994,7 +994,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.message.content = lenta.message.default = TEXT_DEFAULT_1;
 
-        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,lastLoadedId,loadedLength);
+        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,0,loadedLength);
 
         var wallItemsLength;
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
@@ -1041,7 +1041,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.wallChangeGroup = function(groupId){
 
-            lenta.wallItems = messageClient.getWallItems(groupId, 0, 10);
+            lenta.wallItems = messageClient.getWallItems(groupId, 0, loadedLength);
             /*for(var i = 0; i < lenta.wallItems.length ; i++){
                 if(lenta.wallItems[i].topic.poll){
                     console.log("--0 "+lenta.wallItems[i].topic.message.content+" "+ lenta.wallItems[i].topic.poll.alreadyPoll);
@@ -1052,6 +1052,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 initWallItem(lenta.wallItems);
 
                 lastLoadedId = lenta.wallItems[lenta.wallItems.length-1].topic.id;
+                alert(lastLoadedId);
             }
 
         };
@@ -1111,6 +1112,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.addMoreItems = function(){
             if(wallItemsLength == 10) {
+                alert("2 "+lastLoadedId);
                 var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
                 if (buff) {
 
