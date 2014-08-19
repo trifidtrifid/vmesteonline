@@ -292,7 +292,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT, false);
 	}
 
-	@SuppressWarnings("unchecked")
 	private TopicListPart getTopics(long groupId, long rubricId, int commmunityId, long lastLoadedTopicId, int length, MessageType type,
 			boolean importantOnly) {
 

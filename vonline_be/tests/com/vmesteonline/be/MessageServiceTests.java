@@ -197,10 +197,11 @@ public class MessageServiceTests extends TestWorkAround {
 	public void testGetWallItems() {
 
 		try {
+			createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase));
 			createTopic(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase), MessageType.WALL);
 			List<WallItem> rTopic = msi.getWallItems(getUserGroupId(Defaults.user1email, Defaults.radiusStarecase), 0, 10000);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(1, rTopic.size());
+			Assert.assertEquals(2, rTopic.size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
