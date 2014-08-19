@@ -219,7 +219,7 @@ public class Defaults {
 			for (VoGroup dg : new VoGroup[] { 
 					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
 					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
-					new VoGroup("Мои двор", radiusSmall, GroupType.NEIGHBORS, true), 
+					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
 					//new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) 
 					}) {
 				dg.setImportantScore( impIterator.next() );
