@@ -725,15 +725,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 if(ctrl.isEdit){
                     // значит редактирование
 
-                    attach = getAttachedImages($('#attach-area-edit'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-edit'+ctrl.attachId)));
+                    attach = getAttachedImages($('#attach-area-edit-'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId)));
 
                     // еще attach
-                    dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText);
+                    dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText,attach);
 
-                    cleanAttached($('#attach-area-edit'+ctrl.attachId));
-                    cleanAttached($('#attach-doc-area-edit'+ctrl.attachId));
+                    cleanAttached($('#attach-area-edit-'+ctrl.attachId));
+                    cleanAttached($('#attach-doc-area-edit-'+ctrl.attachId));
 
                     ctrl.content = ctrl.commentText;
+                    ctrl.images = getAttachedImages($('#attach-area-edit-'+ctrl.attachId));
                     ctrl.isEdit = false;
 
                 }else {
@@ -2640,8 +2641,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 dialog.users.splice(i,1);
             }
         }
-        //initAttachImage($('#attachImage-000'),$('#attach-area-000'));
-        //initAttachDoc($('#attachDoc-000'),$('#attach-doc-area-000'));
 
         if ($stateParams.dialogId){
             dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
