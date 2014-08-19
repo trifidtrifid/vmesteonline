@@ -212,7 +212,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 
 	}
-
+	
 	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
 			 PersistenceManager pm) {
 
@@ -231,7 +231,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
 				filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
 			}
-			filter += " && type=='"+type+"'";
+			if( type == MessageType.WALL )
+				filter += " && (type=='WALL' || type='BASE')";
+			else 
+				filter += " && type=='"+type+"'";
 			
 			tQuery.setFilter(filter);
 			tQuery.setOrdering("lastUpdate DESC");
