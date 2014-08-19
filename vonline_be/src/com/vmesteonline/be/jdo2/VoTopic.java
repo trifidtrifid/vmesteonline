@@ -50,7 +50,7 @@ public class VoTopic extends VoBaseMessage {
 
 		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, getContent(), getLikes(), 0,
 				links, null, null, 0, null, imgs, docs, null, 
-					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId));
+					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId),getChildMessageNum());
 
 
 		Topic tpc = new Topic(getId(), subject, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,

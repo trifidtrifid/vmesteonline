@@ -70,13 +70,12 @@ public class VoMessage extends VoBaseMessage {
 		this.recipient = msg.getRecipientId();
 
 		
+		VoMessage parentMsg = null;
 		if (0 != msg.getParentId()) {
 			try {
-				VoMessage parentMsg = pm.getObjectById(VoMessage.class, msg.getParentId());
-				pm.retrieve(parentMsg);
-				pm.makePersistent(parentMsg);
+				parentMsg = pm.getObjectById(VoMessage.class, msg.getParentId());
+				
 			} catch (JDOObjectNotFoundException e) {
-				e.printStackTrace();
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "parent Message not found by ID=" + msg.getParentId());
 			}
 		}
@@ -97,6 +96,10 @@ public class VoMessage extends VoBaseMessage {
 			author.incrementMessages(1);;
 			this.approvedId = msg.getApprovedBy();
 
+			if(null!=parentMsg){
+				parentMsg.incrementChildMessageNum( +1);
+				pm.makePersistent(parentMsg);
+			}
 			pm.makePersistent(author);
 			pm.makePersistent(this);
 
@@ -129,10 +132,10 @@ public class VoMessage extends VoBaseMessage {
 
 		if (authorId == null)
 			return new Message(id.getId(), getParentId(), type, topicId, 0L, 0, createdAt, editedAt, getContent(), getLikes(), 0, links, null, null,
-					visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId));
+					visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId), childMessageNum);
 		else
 			return new Message(id.getId(), getParentId(), type, topicId, 0L, authorId.getId(), createdAt, editedAt, getContent(), getLikes(), 0,
-					links, null, null, visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId));
+					links, null, null, visibleOffset, null, imgs, docs, userNameForBlog, isImportant(userId), isLiked(userId),childMessageNum);
 	}
 
 	public long getApprovedId() {

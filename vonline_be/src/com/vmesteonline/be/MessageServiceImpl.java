@@ -762,6 +762,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			deleteAttachments(pm, msg.getImages());
 			deleteAttachments(pm, msg.getDocuments());
 			
+			
 			//check if message can be deleted
 			List<VoMessage> msgsOfTopic = (List<VoMessage>) pm.newQuery(VoMessage.class,"topicId=="+topicId ).execute();
 			boolean canDelete = true;
@@ -771,6 +772,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					break;
 				}
 			}
+			
+			if( 0!=msg.getParentId() )
+				try {
+					pm.getObjectById(VoMessage.class,msg.getParentId()).incrementChildMessageNum(-1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			
 			if(canDelete){
 				pm.deletePersistent(msg);
 				return null;

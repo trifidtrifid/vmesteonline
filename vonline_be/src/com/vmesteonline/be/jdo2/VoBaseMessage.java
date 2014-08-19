@@ -129,6 +129,10 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 		this.childMessageNum = childMessageNum;
 	}
 
+	public void incrementChildMessageNum(int deltaNum) {
+		this.childMessageNum += deltaNum;
+	}
+	
 	public int getEditedAt() {
 		return editedAt;
 	}

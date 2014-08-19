@@ -47,6 +47,7 @@ struct Message {
 	21: string anonName 
 	22: Mark important,
 	23: Mark like,
+	24: i32 childCount,
 } // 'сообщение';
 		
 
