@@ -232,7 +232,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
 			}
 			if( type == MessageType.WALL )
-				filter += " && (type=='WALL' || type='BASE')";
+				filter += " && (type=='WALL' || type=='BASE')";
 			else 
 				filter += " && type=='"+type+"'";
 			

@@ -20,7 +20,9 @@ import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoMessage;
+import com.vmesteonline.be.jdo2.VoPoll;
 import com.vmesteonline.be.jdo2.VoRubric;
+import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -166,6 +168,10 @@ public class Defaults {
 		deletePersistentAll(pm, VoInviteCode.class);
 		deletePersistentAll(pm, VoDialog.class);
 		deletePersistentAll(pm, VoDialogMessage.class);
+		deletePersistentAll(pm, VoPoll.class);
+		deletePersistentAll(pm, VoSession.class);
+		deletePersistentAll(pm, VoRubric.class);
+		
 	}
 
 	// ======================================================================================================================
@@ -182,29 +188,6 @@ public class Defaults {
 
 	private static void clearGroups(PersistenceManager pm) {
 		deletePersistentAll(pm, VoGroup.class);
-	}
-
-	// ======================================================================================================================
-	private static void clearRubrics(PersistenceManager pm) {
-		deletePersistentAll(pm, VoRubric.class);
-
-	}
-
-	// ======================================================================================================================
-	private static void initializeRubrics(PersistenceManager pm) {
-		Query q = pm.newQuery(VoRubric.class);
-		q.setFilter(" subscribedByDefault == true");
-		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
-		if (defRubrics.isEmpty()) {
-			for (VoRubric dr : new VoRubric[] { new VoRubric("rubric1", "rubric first", "rubric about first", true),
-					new VoRubric("rubric2", "rubric second", "rubric about second", true), new VoRubric("rubric3", "rubric third", "rubric about third", true),
-					new VoRubric("rubric4", "rubric fourth", "rubric about fourth", true) }) {
-
-				pm.makePersistent(dr);
-				defaultRubrics.add(dr);
-			}
-		}
-		q.closeAll();
 	}
 
 	// ======================================================================================================================
