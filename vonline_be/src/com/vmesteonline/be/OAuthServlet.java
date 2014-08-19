@@ -86,51 +86,51 @@ public class OAuthServlet extends HttpServlet {
 				}
 
 			} else {
+				URL url = new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
+						+ jsonObj.getString("access_token") + "&fields=first_name,last_name,sex,bdate,photo_medium");
+				String resp2 = runUrl(url);
+				JSONObject jsonObj2 = new JSONObject(resp2);
+
+				resp.getWriter().println("<br><br>  sdfsdf " + resp2 + " access token " + jsonObj.getString("access_token") + " req " + url.toString());
+
+				JSONArray vkResp = jsonObj2.getJSONArray("response");
+				JSONObject o = (JSONObject) vkResp.get(0);
 
 				if (inviteCode.startsWith("inviteCode:")) {
 					inviteCode = inviteCode.substring(inviteCode.lastIndexOf(":") + 1);
-
-					URL url = new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
-							+ jsonObj.getString("access_token") + "&fields=first_name,last_name,sex,bdate,photo_medium");
-					String resp2 = runUrl(url);
-					JSONObject jsonObj2 = new JSONObject(resp2);
-
-					resp.getWriter().println("<br><br>  sdfsdf " + resp2 + " access token " + jsonObj.getString("access_token") + " req " + url.toString());
-
-					JSONArray vkResp = jsonObj2.getJSONArray("response");
-					JSONObject o = (JSONObject) vkResp.get(0);
 					String password = generatePassword();
 					authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), password, email, inviteCode, o.getInt("sex"), false);
 					authServiceImpl.allowUserAccess(email, "", false);
 
-					PersistenceManager pm = PMF.getPm();
-					try {
-						VoUser user = authServiceImpl.getUserByEmail(email, pm);
-						if (user != null) {
-							resp.getWriter().println("<br>find user " + email + " avatar " + o.getString("photo_medium"));
-							user.setAvatarTopic(o.getString("photo_medium"));
-							user.setAvatarMessage(o.getString("photo_medium"));
-							user.setAvatarProfileShort(o.getString("photo_medium"));
-							user.setAvatarProfile(o.getString("photo_medium"));
-							SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-							Date date = formatter.parse(o.getString("bdate"));
-							long ts = date.getTime() / 1000L;
-							user.setBirthday((int) ts);
-
-						} else {
-							resp.getWriter().println("<br>can't find user " + email);
-
-						}
-						resp.sendRedirect(domain + "main");
-
-					} finally {
-						pm.close();
-					}
-				} else {
-
-					resp.sendRedirect(domain + "main?importdata");
-
 				}
+
+				PersistenceManager pm = PMF.getPm();
+				try {
+					VoUser user = authServiceImpl.getUserByEmail(email, pm);
+					if (user != null) {
+						resp.getWriter().println("<br>find user " + email + " avatar " + o.getString("photo_medium"));
+						user.setAvatarTopic(o.getString("photo_medium"));
+						user.setAvatarMessage(o.getString("photo_medium"));
+						user.setAvatarProfileShort(o.getString("photo_medium"));
+						user.setAvatarProfile(o.getString("photo_medium"));
+						SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+						Date date = formatter.parse(o.getString("bdate"));
+						long ts = date.getTime() / 1000L;
+						user.setBirthday((int) ts);
+
+					} else {
+						resp.getWriter().println("<br>can't find user " + email);
+					}
+
+				} finally {
+					pm.close();
+				}
+
+				if (inviteCode.startsWith("import")) {
+					resp.sendRedirect(domain + "settings");
+				} else
+					resp.sendRedirect(domain + "main");
+
 			}
 
 		} catch (Exception e) {
