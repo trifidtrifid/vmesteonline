@@ -60,13 +60,13 @@ public class InviteCodeUploader {
 					byte floor = 0;;
 					int flatNo = Integer.parseInt(row.get(8));
 					
-					VoCountry voCountry = new VoCountry( countryName, pm );
+					VoCountry voCountry = VoCountry.createVoCountry( countryName, pm );
 					pm.makePersistent(voCountry);
-					VoCity voCity = new VoCity( voCountry, cityName, pm );
+					VoCity voCity = VoCity.createVoCity(voCountry, cityName, pm);
 					pm.makePersistent(voCity);
-					VoStreet voStreet = new VoStreet( voCity, streetName, pm);
+					VoStreet voStreet = VoStreet.createVoStreet(voCity, streetName, pm);
 					pm.makePersistent(voStreet);
-					VoBuilding voBuilding = new VoBuilding( zip, voStreet,	houseNo, null, null, pm);
+					VoBuilding voBuilding = VoBuilding.createVoBuilding(zip, voStreet, houseNo, null, null, pm);
 					pm.makePersistent(voBuilding);
 					VoPostalAddress vpa = new VoPostalAddress(voBuilding, stairCase, floor, flatNo, "");
 					pm.makePersistent(vpa);

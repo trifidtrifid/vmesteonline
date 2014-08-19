@@ -20,18 +20,23 @@ import com.vmesteonline.be.VoError;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoStreet {
 
-	public VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
+	public static VoStreet createVoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
 		List<VoStreet> vcl = (List<VoStreet>)pm.newQuery(VoStreet.class, "cityId=="+city.getId()+"  && name=='"+name+"'").execute();
+		
+		if( vcl.size() == 1 ){
+			return vcl.get(0);
+			
+		} else if( vcl.size() == 0 ){
+			VoStreet vs = new VoStreet(city, name, pm);
+			pm.makePersistent(vs);
+			return vs;
+		} else 
+			throw new InvalidOperation( VoError.GeneralError, "To many cities with name '"+name+"' ");
+	}
+
+	private VoStreet(VoCity city, String name, PersistenceManager pm) throws InvalidOperation {
 		this.setCity(city.getId());
 		this.setName(name);
-		
-		if( vcl.size() > 0 ){
-			this.id = vcl.get(0).getId();
-			
-		} else {
-			
-			pm.makePersistent(this);
-		}
 	}
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

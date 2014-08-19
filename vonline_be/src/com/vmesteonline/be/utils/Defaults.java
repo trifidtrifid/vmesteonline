@@ -273,8 +273,8 @@ public class Defaults {
 
 		try {
 			List<String> locations = new ArrayList<String>();
-			VoStreet streetZ = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
-			VoStreet streetR = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
+			VoStreet streetZ = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
+			VoStreet streetR = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
 
 			pm.makePersistent(streetZ);
 			pm.makePersistent(streetR);
@@ -284,11 +284,11 @@ public class Defaults {
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 
 			String invCodes[] = { "1", "2", "3", "4", "5" };
 

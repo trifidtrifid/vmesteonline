@@ -22,9 +22,7 @@ import org.apache.thrift.TException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.GeoLocation;
 import com.vmesteonline.be.jdo2.VoInviteCode;
-import com.vmesteonline.be.jdo2.VoRubric;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -373,7 +371,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
 			}
 			if (null != contacts.getHomeAddress()) {
-				VoPostalAddress pa = new VoPostalAddress(contacts.getHomeAddress(), pm);
+				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(contacts.getHomeAddress(), pm);
 
 				if (user.getAddress() == 0 || pa.getId() != user.getAddress()) {
 					try {
@@ -572,7 +570,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
-			currentUser.setCurrentPostalAddress(new VoPostalAddress(newAddress, pm), pm);
+			currentUser.setCurrentPostalAddress(VoPostalAddress.createVoPostalAddress(newAddress, pm), pm);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
@@ -588,7 +586,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			// TODO check that there is no country with the same name
-			VoCountry vc = new VoCountry(name, pm);
+			VoCountry vc = VoCountry.createVoCountry(name, pm);
 			Query q = pm.newQuery(VoCountry.class);
 			q.setFilter("name == '" + name + "'");
 			List<VoCountry> countries = (List<VoCountry>) q.execute();
@@ -614,7 +612,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
-			return new VoCity(vco, name, pm).getCity();
+			return VoCity.createVoCity(vco, name, pm).getCity();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCity. " + e.getMessage());
@@ -630,7 +628,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no street with the same name
 			VoCity vc = pm.getObjectById(VoCity.class, cityId);
-			return new VoStreet(vc, name, pm).getStreet();
+			return VoStreet.createVoStreet(vc, name, pm).getStreet();
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -655,8 +653,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return buildings.get(0).getBuilding();
 			} else {
 				logger.info("VoBuilding '" + fullNo + "'was created.");
-				VoBuilding voBuilding = new VoBuilding(zipCode, vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude),
-						new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
+				VoBuilding voBuilding = VoBuilding.createVoBuilding(zipCode, vs, fullNo, new BigDecimal(null == longitude || "".equals(longitude) ? "0" : longitude), new BigDecimal(null == lattitude || "".equals(lattitude) ? "0" : lattitude), pm);
 				if (longitude == null || lattitude == null || longitude.isEmpty() || lattitude.isEmpty()) { // calculate
 					// location
 					try {
