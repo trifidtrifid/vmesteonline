@@ -118,7 +118,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public void updateDialogMessage(long dlgMsgId, String content) throws InvalidOperation {
+	public void updateDialogMessage(long dlgMsgId, String content, List<Attach> attachs) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -134,6 +134,8 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Current User '" + currentUserId + "' not author of message.");
 
 			vdlg.setContent(content);
+			vdlg.setAttachs( MessageServiceImpl.updateAttachments( vdlg.getAttachs(), attachs,  currentUserId, pm ));
+			
 			return;
 
 		} finally {
