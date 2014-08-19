@@ -49,7 +49,7 @@
                 <div class="pull-right">
                     <div class="message-tools clearfix" ng-show="message.author == base.me.id">
                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,dialog.privateMessages,false,false,true)">&times;</a>
-                        <a href="#" title="Редактировать" ng-click="base.setEdit(message)" class="fa fa-pencil pull-right"></a>
+                        <a href="#" title="Редактировать" ng-click="base.setEdit($event,message)" class="fa fa-pencil pull-right"></a>
                     </div>
                     {{message.created*1000 | date:'HH:mm dd.MM.yy'}}
                 </div>

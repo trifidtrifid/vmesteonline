@@ -21,7 +21,7 @@
 
                                     <div class="message-tools pull-right" ng-show="talks.fullTalkTopic.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(talks.fullTalkTopic,talks.topics,true,false)">&times;</a>
-                                        <a href="#" title="Редактировать" ng-click="base.setEdit(talks.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit($event,talks.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
                                     <span class="label label-lg arrowed lenta-item-hashtag pull-right"
@@ -124,7 +124,7 @@
                                         <div class="topic-right">
                                             <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
                                                 <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,talks.fullTalkFirstMessages,false,false)">&times;</a>
-                                                <a href="#" title="Редактировать" ng-click="base.setEdit(firstMessage,true)" class="fa fa-pencil pull-right"></a>
+                                                <a href="#" title="Редактировать" ng-click="base.setEdit($event,firstMessage,true)" class="fa fa-pencil pull-right"></a>
                                             </div>
 
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
@@ -183,7 +183,7 @@
 
                                                     <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
                                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,talks.fullTalkMessages[firstMessage.id],false,false)">&times;</a>
-                                                        <a href="#" title="Редактировать" ng-click="base.setEdit(message,true)" class="fa fa-pencil pull-right"></a>
+                                                        <a href="#" title="Редактировать" ng-click="base.setEdit($event,message,true)" class="fa fa-pencil pull-right"></a>
                                                     </div>
 
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>

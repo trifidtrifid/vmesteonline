@@ -19,7 +19,7 @@
 
                                 <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
                                     <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,lenta.wallItems,true,true)">&times;</a>
-                                    <a href="#" title="Редактировать" ng-click="base.setEdit(wallItem.topic)" class="fa fa-pencil pull-right"></a>
+                                    <a href="#" title="Редактировать" ng-click="base.setEdit($event,wallItem.topic,false)" class="fa fa-pencil pull-right"></a>
                                 </div>
 
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
@@ -82,7 +82,7 @@
                                     </div>
                                 </div>
 
-                                <div class="edit-message" ng-show="wallItem.topic.isEdit">
+                                <div class="edit-message ttt" ng-show="wallItem.topic.isEdit">
 
                                     <div ng-include="'templates/createTopic.html'" onload="ctrl=wallItem.topic; initCreateTopic(wallItem.topic);"></div>
 
@@ -109,7 +109,7 @@
                                 <div class="body">
                                     <div class="message-tools pull-right" ng-show="wallMessage.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallItem.messages,false)">&times;</a>
-                                        <a href="#" title="Редактировать" ng-click="base.setEdit(wallMessage)" class="fa fa-pencil pull-right"></a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit($event,wallMessage)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
                                     <div class="name">

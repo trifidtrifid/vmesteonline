@@ -2,7 +2,7 @@
     <textarea class="message-textarea no-resize" ng-model="ctrlMessage.commentText"
               ng-hasfocus="ctrlMessage.isFocus" ng-show="ctrlMessage.answerShow" ng-keyup="base.messageChange($event,1)"
               onblur="if(this.value=='') this.value='Ваш ответ';"
-              onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
+              onfocus="if(this.value=='Ваш ответ') this.value='';" ng-setareaheight="true"></textarea>
 
 
         <div class="attach-area" id="attach-area-edit-{{ctrlId}}">

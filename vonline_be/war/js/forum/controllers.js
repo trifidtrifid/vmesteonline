@@ -87,20 +87,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         base.oldTextLength = 0;
-        base.messageChange = function(event,textareaType){
+        base.messageChange = function(event){
 
-            var clientHeight = event.target.clientHeight,
-                scrollHeight = event.target.scrollHeight,
-                textLength = event.target.textLength,
-                clientWidth = event.target.clientWidth,
+            var el = event.target,
+                clientHeight = el.clientHeight,
+                scrollHeight = el.scrollHeight,
+                textLength = el.textLength,
+                clientWidth = el.clientWidth,
                 textLengthPX, newHeight,removeRowCount,
                 defaultHeight, newRowCount;
 
-            /*if(textareaType == 1){
-                defaultHeight = 90;
-            }else if(textareaType == 2){
-                defaultHeight = 44;
-            }*/
             defaultHeight = 44;
 
             /*
@@ -114,41 +110,51 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
              * 3) Определям новую высоту с учетом высоты удаленного текста
             * */
 
-            console.log("0 "+scrollHeight+" "+clientHeight);
+            //console.log("0 "+scrollHeight+" "+clientHeight);
              if(scrollHeight > clientHeight){
-                 console.log('1');
-                event.target.style.height = scrollHeight+'px';
+
+                el.style.height = scrollHeight+'px';
             }else if(scrollHeight > defaultHeight){
                 textLengthPX = (parseInt(base.oldTextLength) - textLength) * 8; // 1
-                 console.log("2 "+textLengthPX+" "+clientWidth+" "+textLength);
+                 //console.log("2 "+textLengthPX+" "+clientWidth+" "+textLength);
                 if (textLengthPX > clientWidth){
-                    console.log("3 "+textLengthPX+" "+clientWidth);
+                   // console.log("3 "+textLengthPX+" "+clientWidth);
                     removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
                     newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
                     newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
                                     event.target.style.height = defaultHeight+'px';
 
                 }else{
-                    //newRowCount = parseInt(textLength*8/clientWidth);
+                    el.style.height = scrollHeight-6+'px';
 
-                    event.target.style.height = scrollHeight-6+'px';
-
-                    /*if(newRowCount*14 < defaultHeight){
-                        console.log("3.5 "+event.target.style.height+" "+scrollHeight/textLength);
-                        //event.target.style.height = parseInt(event.target.style.height) - scrollHeight/textLength+"px";
-                        event.target.style.height = scrollHeight;
-
-                    }else{
-                        event.target.style.height = newRowCount*14+'px';
-                    }*/
-                    console.log("5 "+textLength+" "+textLength*8/clientWidth);
+                    //console.log("5 "+textLength+" "+textLength*8/clientWidth);
                 }
             }else{
-                 console.log('4');
-                event.target.style.height = defaultHeight+'px';
+                 //console.log('4');
+                 el.style.height = defaultHeight+'px';
             }
             base.oldTextLength = textLength;
         };
+
+        base.getTextareaHeight = function(textLength,clientWidth,isTopic){
+            //if(isTopic){
+                var k1 = 10,
+                    k2 = 19;
+            /*}else{
+                k1 = 8;
+                k2 = 14;
+            }*/
+
+            var stringLen = textLength*k1;
+            if(stringLen > clientWidth){
+                var rowCount = parseInt(stringLen/clientWidth); // сколько строк
+                var areaHeight = rowCount*k2;
+            }else{
+                areaHeight = 44;
+            }
+
+            return areaHeight;
+         };
 
         base.initFirstMessages = function(firstMessages){
             var fullTalkFirstMessagesLength,
@@ -183,7 +189,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     // вернул null, значит удаление произошло чисто
                     var messagesArrayLength = messagesArray.length;
                      for(var i = 0; i < messagesArrayLength; i++){
-                         //alert(messagesArray[i].topic.id+" "+message.id);
 
                          var currentId;
                          isWall ? currentId = messagesArray[i].topic.id :
@@ -227,8 +232,29 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        base.setEdit = function(message,isNeedAnswerShow){
-            (message.isEdit) ? message.isEdit = false : message.isEdit = true;
+        base.setEdit = function(event,message,isNeedAnswerShow){
+            var isTopic;
+            (message.message) ? isTopic = true : isTopic = false;
+
+            if(message.isEdit){
+                message.isEdit = false;
+
+            }else{
+                message.isEdit = true;
+
+                var el = event.target;
+                if(isTopic){
+                    var textLen = message.message.content.length;
+                }else{
+                    textLen = message.content.length;
+                }
+
+                var areaWidth = $(el.parentNode.parentNode).width()-20;
+
+                var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
+                $(el.parentNode.parentNode).find('.edit-message textarea').height(h+'px');
+
+            }
 
             if(isNeedAnswerShow){
                 message.answerShow = true;
@@ -492,11 +518,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     talk.subject = TEXT_DEFAULT_4;
                 }
             }
-        };
+        }
 
         function createWallTopic(ctrl){
-
-            //alert(ctrl.poll.alreadyPoll);
 
             if (ctrl.isEdit) {
                 ctrl.attachedImages = getAttachedImages($('#attach-area-edit-' + ctrl.id));
@@ -886,16 +910,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     };
 
     $rootScope.isSet = function(number){
-        //return this.tab === number;
-        //alert($rootScope.leftbar.tab);
         return $rootScope.leftbar.tab === number;
     };
   })
     .controller('rightBarController',function($rootScope) {
-        //var rightbar = this;
 
         $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[1].id);
-        //alert(rightbar.importantTopics.totalSize);
     })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
@@ -1042,17 +1062,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.wallChangeGroup = function(groupId){
 
             lenta.wallItems = messageClient.getWallItems(groupId, 0, loadedLength);
-            /*for(var i = 0; i < lenta.wallItems.length ; i++){
-                if(lenta.wallItems[i].topic.poll){
-                    console.log("--0 "+lenta.wallItems[i].topic.message.content+" "+ lenta.wallItems[i].topic.poll.alreadyPoll);
-                }
-            }*/
 
             if(lenta.wallItems.length) {
                 initWallItem(lenta.wallItems);
 
                 lastLoadedId = lenta.wallItems[lenta.wallItems.length-1].topic.id;
-                alert(lastLoadedId);
             }
 
         };
@@ -1112,7 +1126,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.addMoreItems = function(){
             if(wallItemsLength == 10) {
-                alert("2 "+lastLoadedId);
                 var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
                 if (buff) {
 
@@ -1598,7 +1611,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         var buff;
         talk.addMoreItems = function(){
             var temp = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
-                size = temp.totalSize;
                 buff = temp.messages;
             if(buff) {
                 var buffLength = buff.length;
@@ -1785,9 +1797,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 advert.fullTalkTopic.metaType = "message";
             }
 
-            advert.fullTalkFirstMessages = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,6,lastLoadedId,0,10).messages;
+            advert.fullTalkFirstMessages = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,6,$rootScope.base.lastLoadedId,0,10).messages;
 
-            lastLoadedId = $rootScope.base.initFirstMessages(advert.fullTalkFirstMessages);
+            $rootScope.base.lastLoadedId = $rootScope.base.initFirstMessages(advert.fullTalkFirstMessages);
 
             $rootScope.base.isAdvertTitles = false;
             $rootScope.base.mainContentTopIsHide = true;
@@ -1862,119 +1874,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 initFlagsMessage[attachId] = true;
             }
         };
-
-/*        advert.addSingleFirstMessage = function(event,topicId){
-            event.preventDefault();
-
-            advert.topicId = topicId;
-
-            var isWall = false,
-                isFirstLevel = true,
-                newMessage = postMessage(advert,isWall,isFirstLevel);
-
-            if(newMessage == 0){
-                advert.isCreateFirstMessageError = true;
-                advert.createFirstMessageErrorText = "Вы не ввели сообщение";
-            }else {
-                advert.fullTalkTopic.answerInputIsShow = false;
-
-                advert.isCreateFirstMessageError = false;
-
-                if(advert.fullTalkFirstMessages){
-                    if(advert.fullTalkFirstMessages.length < 10){
-                        advert.fullTalkFirstMessages.push(newMessage);
-                    }
-                } else{
-                    advert.fullTalkFirstMessages = [];
-                    advert.fullTalkFirstMessages[0] = newMessage;
-                }
-            }
-
-        };
-
-        advert.addSingleMessage = function(event,topicId,firstMessage,message){
-            event.preventDefault();
-
-            if (!advert.fullTalkMessages[firstMessage.id]) advert.fullTalkMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
-            advert.fullTalkMessages[firstMessage.id] ?
-                fullTalkMessagesLength = advert.fullTalkMessages[firstMessage.id].length:
-                fullTalkMessagesLength = 0;
-
-            var newMessage,answer,parentId;
-
-            if(!message){
-                // если добавляем к сообщению первого уровня
-                advert.messageId = firstMessage.id;
-
-                answer = firstMessage.answerMessage;
-                firstMessage.isTreeOpen = true;
-                firstMessage.answerMessage = TEXT_DEFAULT_2;
-                parentId = firstMessage.id;
-
-            }else{
-                // если добавляем к простому сообщению
-                advert.messageId = message.id;
-
-                for(var i = 0; i < fullTalkMessagesLength; i++){
-                    if(advert.fullTalkMessages[firstMessage.id][i].id == message.id){
-                        //talk.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
-                        advert.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
-                        advert.fullTalkMessages[firstMessage.id][i].isOpen = true;
-                        advert.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
-                        advert.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullTalkMessages[firstMessage.id][i].created);
-                        answer = advert.fullTalkMessages[firstMessage.id][i].answerMessage;
-                    }
-                }
-                parentId = message.id;
-
-            }
-            var isWall = false,
-                isFirstLevel = false;
-            advert.topicId = topicId;
-            advert.parentId = parentId;
-            advert.answerMessage = answer;
-
-            newMessage = postMessage(advert,isWall,isFirstLevel);
-
-            if(newMessage == 0){
-                if(!message){
-                    advert.isCreateMessageToFirstError = true;
-                    advert.createMessageToFirstErrorText = "Вы не ввели сообщение";
-                }else{
-                    advert.isCreateMessageError = true;
-                    advert.createMessageErrorText = "Вы не ввели сообщение";
-                }
-            }else {
-                if(!message){
-                    advert.isCreateMessageToFirstError = false;
-                    firstMessage.answerInputIsShow = false;
-
-                }else{
-                    advert.isCreateMessageError = false;
-                    for(var i = 0; i < fullTalkMessagesLength; i++){
-                        if(advert.fullTalkMessages[firstMessage.id][i].id == message.id){
-                            advert.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
-                        }
-                    }
-                }
-
-                advert.fullTalkMessages[firstMessage.id] = messageClient.getMessages(advertId, advert.selectedGroup.id, 1, firstMessage.id, 0, 1000).messages;
-
-                advert.fullTalkMessages[firstMessage.id] ?
-                    fullTalkMessagesLength = advert.fullTalkMessages[firstMessage.id].length :
-                    fullTalkMessagesLength = 0;
-
-                for (var i = 0; i < fullTalkMessagesLength; i++) {
-                    advert.fullTalkMessages[firstMessage.id][i].answerInputIsShow = false;
-                    advert.fullTalkMessages[firstMessage.id][i].isTreeOpen = true;
-                    advert.fullTalkMessages[firstMessage.id][i].isOpen = true;
-                    advert.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
-                    advert.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullTalkMessages[firstMessage.id][i].created);
-                    advert.fullTalkMessages[firstMessage.id][i].answerMessage = TEXT_DEFAULT_2;
-                }
-            }
-
-        };*/
 
         advert.toggleTreeFirstMessage = function($event,firstMessage){
             event.preventDefault();
@@ -2078,17 +1977,22 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var buff;
         advert.addMoreItems = function(){
-            buff = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,1,lastLoadedId,0,10).messages;
+            var temp = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
+                buff = temp.messages;
             if(buff) {
                 var buffLength = buff.length;
 
                 if(buffLength != 0) {
 
-                    lastLoadedId = buff[buffLength - 1].id;
+                    $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
                     $rootScope.base.initFirstMessages(buff);
 
                     advert.fullTalkFirstMessages = advert.fullTalkFirstMessages.concat(buff);
+
+
                 }
+            }else{
+                $rootScope.base.endOfLoaded = true;
             }
 
         };
@@ -2135,7 +2039,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 delay: 0,
                 source: data,
                 select: function(event,ui){
-                    //alert(ui.item.value);
                     $state.go('profile',{ 'userId' : ui.item.value});
 
                 }
@@ -2162,7 +2065,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $("#dialog-message").addClass('hide');
 
-        //alert($stateParams.userId+" "+shortUserInfo.id);
         if ($stateParams.userId && $stateParams.userId != 0 && $stateParams.userId != shortUserInfo.id){
             userId = $stateParams.userId;
             //profile.userContacts = userClient.getUserContactsExt(userId);
@@ -2301,7 +2203,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             settings.userInfo.birthdayMeta = month+"."+day+"."+year;
         }
-        //alert(settings.userInfo.birthday+" "+settings.userInfo.birthdayMeta);
 
         if(settings.family.childs === null || settings.family.childs.length == 0){
             settings.family.childs = [];
@@ -2318,7 +2219,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             if(settings.family.childs[i].birthday) {
 
                 var birthDate = new Date(settings.family.childs[i].birthday*1000);
-                //alert(settings.family.childs[i].birthday);
                     settings.family.childs[i].month = ""+birthDate.getMonth();
 
                 if(settings.family.childs[i].month.length == 1)
@@ -2375,8 +2275,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             settings.userInfo.birthdayMeta ?
                 temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
                 temp.birthday = 0;
-
-            //alert(temp.birthday+" "+new Date(temp.birthday));
 
             temp.gender = settings.userInfo.gender;
             temp.firstName = $rootScope.base.me.firstName = settings.userInfo.firstName;
@@ -2971,8 +2869,6 @@ function initProfileAva(obj){
 function initAttachImage(selector,attachAreaSelector){
     var title;
 
-    //alert(selector.length+" ");
-
     selector.ace_file_input({
         style:'well',
         btn_choose:'Изображение',
@@ -3396,7 +3292,6 @@ function postMessage(obj,isWall,isFirstLevel){
             if (message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
                 message.content = "";
             }
-            //alert(message.topicId+" "+message.groupId+" "+message.parentId);
             newMessage = messageClient.postMessage(message);
 
             obj.commentText = TEXT_DEFAULT_2;
