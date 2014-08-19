@@ -230,7 +230,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
 				filter = " isImportant == true && createDate > "+minimumCreateDate+" && " + filter;
 			}
-			filter += " && type=="+type;
+			filter += " && type=='"+type+"'";
 			
 			tQuery.setFilter(filter);
 			List<VoTopic> allTopics = (List<VoTopic>) tQuery.execute( );
@@ -342,6 +342,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					topic.message.authorId = getCurrentUserId();
 
 					VoTopic votopic = new VoTopic(topic, pm);
+					votopic.setSubject(topic.getSubject());
 
 					if (topic.poll != null) {
 
@@ -519,7 +520,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			if (!storedMsg.getContent().equals( msg.getContent())) {
 				//int editedAt = 0 == msg.getEdited() ? now : msg.getEdited();
 				storedMsg.setEditedAt(now);
-				topic.setLastUpdate(now);
 				storedMsg.setContent(msg.getContent());
 			}
 
@@ -527,7 +527,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					|| storedMsg.getRecipient() != msg.getRecipientId() || storedMsg.getCreatedAt() != msg.getCreated() || storedMsg.getType() != msg.getType())
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs,
 						"Parameters: topic, author, recipient, createdAt, type could not be changed!");
-
+			
+			storedMsg.setImages( updateAttachments( storedMsg.getImages(), msg.getImages(),  storedMsg.getAuthorId().getId(), pm ));
+			storedMsg.setDocuments( updateAttachments( storedMsg.getDocuments(), msg.getDocuments(),  storedMsg.getAuthorId().getId(), pm ));
+			
 			pm.makePersistent(storedMsg);
 			pm.makePersistent(topic);
 
@@ -588,7 +591,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setDocuments( updateAttachments( theTopic.getDocuments(), topic.getMessage().getDocuments(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
-			theTopic.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 			theTopic.setUserGroupId(topic.getMessage().getGroupId());
 			
 			updatePoll(theTopic, topic, pm); 
@@ -614,7 +616,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 		} else if( topic.poll != null && topic.poll.pollId == theTopic.getPollId()) { //check changes
 			VoPoll newPoll = VoPoll.create(topic.poll);
-			if(0!=theTopic.getPollId()) newPoll.setId(theTopic.getPollId());
+			if(0!=theTopic.getPollId()) {
+				VoPoll oldPoll = pm.getObjectById(VoPoll.class,theTopic.getPollId());
+				newPoll.setId(theTopic.getPollId());
+				newPoll.setValues( oldPoll.getValues());
+				newPoll.setAlreadyPoll(oldPoll.getAlreadyPoll());
+			}
 			pm.makePersistent(newPoll);
 			theTopic.setPollId( newPoll.getId() );
 		}

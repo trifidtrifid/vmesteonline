@@ -1,7 +1,6 @@
 package com.vmesteonline.be.jdo2;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -11,7 +10,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
@@ -88,6 +86,16 @@ public class VoPoll {
 	public boolean isAlreadyPoll(long userId) {
 		return alreadyPoll.contains(new Long(userId));
 	}
+
+	
+	public Set<Long> getAlreadyPoll() {
+		return alreadyPoll;
+	}
+
+	public void setAlreadyPoll(Set<Long> alreadyPoll) {
+		this.alreadyPoll = alreadyPoll;
+	}
+
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
