@@ -629,7 +629,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 //======================================================================================================================
 	
-	private List<Long> updateAttachments(List<Long> oldFileIds, List<Attach> updatedAttaches, long userId, PersistenceManager pm) {
+	public static List<Long> updateAttachments(List<Long> oldFileIds, List<Attach> updatedAttaches, long userId, PersistenceManager pm) {
 		
 		Set<Attach> onlyNewAttaches = new HashSet<Attach>();
 		onlyNewAttaches.addAll(updatedAttaches);

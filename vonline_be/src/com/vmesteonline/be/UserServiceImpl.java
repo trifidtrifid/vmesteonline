@@ -3,6 +3,8 @@ package com.vmesteonline.be;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -133,17 +135,25 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 				logger.info("find user email " + user.getEmail() + " name " + user.getName());
 
-				if (user.getGroups() == null) {
+				List<Long> uGroups = user.getGroups();
+				if (uGroups == null) {
 					logger.warning("user with id " + Long.toString(userId) + " has no any groups");
 					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
 				}
 				List<Group> groups = new ArrayList<Group>();
-				for (Long group : user.getGroups()) {
+				for (Long group : uGroups) {
 					VoUserGroup ug = pm.getObjectById(VoUserGroup.class, group);
 					logger.info("return group " + ug.getName());
 					groups.add( ug.createGroup());
 				}
+				Collections.sort(groups, new Comparator<Group>(){
 
+					@Override
+					public int compare(Group o1, Group o2) {
+						return Integer.compare(o1.type.getValue(),  o2.type.getValue());
+					}
+					
+				});
 				return groups;
 			} finally {
 				pm.close();
