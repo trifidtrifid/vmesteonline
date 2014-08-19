@@ -953,15 +953,22 @@ transform()
     padding 0
   .dialogs-container
     margin-top 15px
-    .private-message-single:hover
+    .dialog-item
+      overflow auto
+      padding 10px
+      padding-left 0
+      cursor pointer
+      border-bottom 1px solid #CCCCCC
+      &:first-child
+        border-top 1px solid #CCCCCC
+    .dialog-item:hover
       background-color #f6fcff
   h2
     margin-top 0
   .private-message-single
-    cursor pointer
     padding 10px
+    padding-bottom 12px
     padding-left 0
-    overflow auto
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
@@ -985,6 +992,7 @@ transform()
 
 .private-messages
   .private-message-single .private-message-left
+  .dialog-item .private-message-left
     line-height 65px
     .private-message-left
       width 300px

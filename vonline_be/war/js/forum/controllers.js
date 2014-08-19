@@ -725,7 +725,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 if(ctrl.isEdit){
                     // значит редактирование
 
-                    attach = getAttachedImages($('#attach-area-edit-'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId)));
+                    var attachImg = getAttachedImages($('#attach-area-edit-'+ctrl.attachId));
+                    var attachDoc = getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId));
+                    attach = attachImg.concat(attachDoc);
 
                     // еще attach
                     dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText,attach);
@@ -734,12 +736,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-doc-area-edit-'+ctrl.attachId));
 
                     ctrl.content = ctrl.commentText;
-                    ctrl.images = getAttachedImages($('#attach-area-edit-'+ctrl.attachId));
+
+                    ctrl.images = attachImg;
+                    ctrl.documents = attachDoc;
                     ctrl.isEdit = false;
 
                 }else {
                     // значит создание
-
                     attach = getAttachedImages($('#attach-area-'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-'+ctrl.attachId)));
 
                     var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
@@ -758,8 +761,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     newDialogMessage.images = tempMessage.images;
                     newDialogMessage.documents = tempMessage.documents;
                     newDialogMessage.id = tempMessage.id;
+                    newDialogMessage.isDialog = true;
+                    newDialogMessage.attachId = ctrl.dialogId+"-"+newDialogMessage.id;
 
                     ctrl.privateMessages.unshift(newDialogMessage);
+
+                    $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
 
                     ctrl.commentText = TEXT_DEFAULT_1;
 
@@ -776,7 +783,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             e.preventDefault();
             if(ctrl.isTalk){
                 //alert('111 '+ctrl.fullAdvertTopic+" "+ctrl.parentId);
-                if((ctrl.fullTalkTopic || ctrl.fullAdvertTopic || ctrl.parentId == 0) && !topicId){
+                if((ctrl.fullTalkTopic || ctrl.parentId == 0) && !topicId){
                     //alert('1');
                     addSingleFirstMessage(ctrl);
                 }else{
@@ -3162,9 +3169,6 @@ function getTagColor(labelName){
             break;
         case userClientGroups[2].visibleName:
             color = 'label-yellow';
-            break;
-        case userClientGroups[3].visibleName:
-            color = 'label-purple';
             break;
         default :
             break;
