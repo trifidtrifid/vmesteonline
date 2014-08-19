@@ -92,29 +92,28 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.retrieve(user);
 				
 				List<Long> userGroups = user.getGroups();
+
+				List<Long> groupsToSearch = new ArrayList<Long>();
 				for( Long ugId : userGroups ){
-					
-					VoUserGroup group = pm.getObjectById(VoUserGroup.class,ugId);
-			
-					// todo add last loaded and length
-					List<VoTopic> topics = getTopics(group, MessageType.WALL, lastLoadedIdTopicId, length, false, pm);
-	
-					
-					for (VoTopic voTopic : topics) {
-						Topic tpc = voTopic.getTopic(user.getId(), pm);
-	
-						tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-	
-						MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
-						if (mlp.totalSize > 0)
-							logger.info("find msgs " + mlp.messages.size());
-	
-						WallItem wi = new WallItem(mlp.messages, tpc);
-						wallItems.add(wi);
-					}
-					if( ugId == groupId)
-						break;
+					groupsToSearch.add(ugId);
+					if( ugId == groupId ) //usergGroups MUST be ordered from smaller to bigger one, so if topics of current group are added, it's time to finish collecting
+						break;	
 				}
+					List<VoTopic> topics = getTopics(groupsToSearch, MessageType.WALL, lastLoadedIdTopicId, length, false, pm);
+					
+				for (VoTopic voTopic : topics) {
+					Topic tpc = voTopic.getTopic(user.getId(), pm);
+
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+
+					MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
+					if (mlp.totalSize > 0)
+						logger.info("find msgs " + mlp.messages.size());
+
+					WallItem wi = new WallItem(mlp.messages, tpc);
+					wallItems.add(wi);
+				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -122,7 +121,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
-
 		return wallItems;
 	}
 
@@ -213,20 +211,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	}
 	
-	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
+	public static List<VoTopic> getTopics(List<Long> groups, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
 			 PersistenceManager pm) {
 
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 		
 			Query tQuery = pm.newQuery( VoTopic.class );
-			String filter = "";
+			String filter = "(";
 			
-			if( group.getGroupType() > GroupType.BUILDING.getValue()){
-				filter = "visibleGroups=="+group.getId();
-			} else {
-				filter = "userGroupId=="+group.getId();
+			for( Long group:groups ){
+				filter += "visibleGroups=="+group +" || ";
 			}
+			filter = filter.substring(0,filter.length()-4) + ")";
+			
 			if( importantOnly ){
 				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
 				filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
@@ -303,45 +301,32 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.retrieve(user);
 				
 				List<Long> userGroups = user.getGroups();
+				List<Long> groupsToSearch = new ArrayList<Long>();
 				for( Long ugId : userGroups ){
-					
-					VoUserGroup group = pm.getObjectById(VoUserGroup.class,ugId);
-					List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, importantOnly, pm);
-				
-				
-					mlp.totalSize += topics.size();
-					for (VoTopic voTopic : topics) {
-						Topic tpc = voTopic.getTopic(user.getId(), pm);
-	
-						tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-						tpc.setMessageNum( voTopic.getMessageNum());
-						mlp.addToTopics(tpc);
-					}
+					groupsToSearch.add(ugId);
 					if( ugId == groupId ) //usergGroups MUST be ordered from smaller to bigger one, so if topics of current group are added, it's time to finish collecting
-						break;
+						break;	
 				}
+				
+				List<VoTopic> topics = getTopics(groupsToSearch, type, lastLoadedTopicId, length, importantOnly, pm);
+			
+				mlp.totalSize += topics.size();
+				for (VoTopic voTopic : topics) {
+					Topic tpc = voTopic.getTopic(user.getId(), pm);
+
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+					tpc.setMessageNum( voTopic.getMessageNum());
+					mlp.addToTopics(tpc);
+				}
+				
 		} catch (Exception e) {
 				e.printStackTrace();
 
 		} finally {
 			pm.close();
 		}
-		orderTopicsByLastUpdate(mlp.topics);
 		return mlp; 
 
-	}
-
-	private List<Topic> orderTopicsByLastUpdate(List<Topic> topicsl) {
-		if( null!=topicsl )
-			Collections.sort( topicsl, new Comparator<Topic>(){
-
-			@Override
-			public int compare(Topic o1, Topic o2) {
-				return -Integer.compare( o1.getLastUpdate(), o2.getLastUpdate());
-			}
-			
-		});
-		return topicsl;
 	}
 
 	@Override

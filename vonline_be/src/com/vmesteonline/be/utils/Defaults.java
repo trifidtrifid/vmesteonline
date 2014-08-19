@@ -104,12 +104,10 @@ public class Defaults {
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
 			clearUsers(pm);
-			clearRubrics(pm);
 			clearGroups(pm);
 			clearLocations(pm);
 			clearFiles(pm);
 			
-			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
