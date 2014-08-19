@@ -943,6 +943,12 @@ h1 {
 .like-status.isLike .fa-heart {
   color: #f00;
 }
+.talks-title .like-status {
+  margin-right: 5px;
+}
+.talks-title .fa-star {
+  margin-right: 6px;
+}
 .important-status:hover,
 .like-status:hover {
   text-decoration: none;

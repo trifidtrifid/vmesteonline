@@ -40,13 +40,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        base.addPollInput = function(event,obj){
+        base.addPollInput = function(event,obj,isFocus){
             event.preventDefault();
 
             var newInput = {counter : 0, name:"" };
             obj.pollInputs.push(newInput);
 
+            if(isFocus){
+                setTimeout(setNewFocus,200,$(event.target));
+            }
+
         };
+
+        function setNewFocus(el){
+            el.prev().find('input').focus();
+        }
 
         base.showPoll = function(event,obj){
             event.preventDefault();
@@ -188,6 +196,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }catch(e){
                     // вернул null, значит удаление произошло чисто
                     var messagesArrayLength = messagesArray.length;
+
+                    if(!isWall) message.message.content = "Тема удалена пользователем";
+
                      for(var i = 0; i < messagesArrayLength; i++){
 
                          var currentId;
@@ -449,7 +460,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 talk.createTalkErrorText = "Вы не указали заголовок";
 
             }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
-                && (talk.content == TEXT_DEFAULT_3 || !talk.content)){
+                && (talk.message.content == TEXT_DEFAULT_3 || !talk.message.content)){
 
                 talk.isCreateTalkError = true;
                 talk.createTalkErrorText = "Вы не ввели сообщение";
@@ -1427,22 +1438,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     }
                 }
             }
-            if(talk.fullTalkTopic.poll != null){
+
+            if (talk.fullTalkTopic.poll != null) {
                 setPollEditNames(talk.fullTalkTopic.poll);
                 talk.fullTalkTopic.metaType = "poll";
-            }else{
+            } else {
                 talk.fullTalkTopic.metaType = "message";
             }
 
-            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10).messages;
+            talk.fullTalkFirstMessages = messageClient.getFirstLevelMessages(talkId, talk.selectedGroup.id, 1, $rootScope.base.lastLoadedId, 0, 10).messages;
 
             $rootScope.base.lastLoadedId = $rootScope.base.initFirstMessages(talk.fullTalkFirstMessages);
 
             $rootScope.base.isTalkTitles = false;
             $rootScope.base.mainContentTopIsHide = true;
             $rootScope.base.createTopicIsHide = true;
-
-            $rootScope.base.talk = talk;
 
         };
 
@@ -1662,18 +1672,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         adverts.answerFirstMessage = TEXT_DEFAULT_2;
 
-       /* adverts.fullAdvertsTopic = {};
-        adverts.fullAdvertsTopic.answerInputIsShow = false;
-        adverts.fullAdvertsMessages = [];
-        adverts.fullAdvertsFirstMessages = [];
-        var fullAdvertsFirstMessagesLength,
-            advertsId;*/
-
-        //$rootScope.currentGroup = adverts.selectedGroup = adverts.groups[0];
         $rootScope.base.bufferSelectedGroup = adverts.selectedGroup = $rootScope.currentGroup;
 
         adverts.topics = messageClient.getAdverts(adverts.selectedGroup.id, 0, 1000).topics;
-        //adverts.topics = messageClient.getTopics(adverts.selectedGroup.id, 0, 0, 0, 1000).topics;
 
         initAdverts();
 
@@ -1682,48 +1683,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.selectGroupInDropdown_adverts = function(groupId){
             adverts.selectedGroup = $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(groupId);
         };
-
-/*        adverts.addSingleAdverts = function(){
-            adverts.attachedImages = getAttachedImages($('#attach-area-00000'));
-            adverts.attachedDocs = getAttachedDocs($('#attach-doc-area-00000'));
-            if(adverts.subject == TEXT_DEFAULT_4 || adverts.subject == ""){
-
-                adverts.isCreateAdvertsError = true;
-                adverts.createAdvertsErrorText = "Вы не указали заголовок";
-
-            }else if(adverts.attachedImages.length == 0 && (adverts.attachedDocs === undefined || adverts.attachedDocs.length == 0) && !adverts.isPollShow
-                && adverts.content == TEXT_DEFAULT_3){
-
-                adverts.isCreateAdvertsError = true;
-                adverts.createAdvertsErrorText = "Вы не ввели сообщение";
-
-            }else if(adverts.isPollShow && (!adverts.pollSubject || adverts.pollInputs[0].name == "" || adverts.pollInputs[1].name == "")){
-
-                adverts.isCreateAdvertsError = true;
-                adverts.createAdvertsErrorText = "Вы не указали данные для опроса";
-
-            }else {
-
-                if (adverts.content == TEXT_DEFAULT_3 && (adverts.attachedImages || adverts.attachedDocs || adverts.isPollShow)) {
-                    adverts.content = "";
-                }
-                adverts.isCreateAdvertsError = false;
-                var isWall = 0, isAdverts = true,
-                    newTopic = postTopic(adverts, isWall,isAdverts);
-                newTopic.label = getLabel(adverts.groups,newTopic.groupType);
-                newTopic.tagColor = getTagColor(newTopic.label);
-
-                $rootScope.base.createTopicIsHide = true;
-
-                //adverts.topics.unshift(newTopic);
-                $rootScope.selectGroup($rootScope.base.bufferSelectedGroup);
-            }
-
-            cleanAttached($('#attach-area-00000'));
-            cleanAttached($('#attach-doc-area-00000'));
-            adverts.subject = TEXT_DEFAULT_4;
-
-        };*/
 
         function initAdverts(){
             var topicLength;

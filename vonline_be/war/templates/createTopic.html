@@ -16,7 +16,7 @@
         <div ng-repeat="input in ctrl.pollInputs">
             <input ng-model="input.name" type="text"/>
         </div>
-        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,ctrl)"/>
+        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,ctrl)" ng-focus="base.addPollInput($event,ctrl,true)"/>
     </div>
 
     <div ng-switch="ctrl.isEdit">

@@ -1,7 +1,7 @@
 
 <section class="talks-block adverts-block ng-cloak">
 
-    <section class="forum adverts-single" infinite-scroll="adverts.addMoreItems()">
+    <section class="forum adverts-single" infinite-scroll="adverts.addMoreItems()" ng-if="adverts.fullTalkTopic.id">
 
         <div class="dd dd-draghandle">
             <ol class="dd-list">
@@ -37,7 +37,7 @@
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id}}" ng-repeat="image in adverts.fullTalkTopic.message.images">
-                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                            <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                         </a>
                                         <div class="docs">
                                             <div ng-repeat="document in adverts.fullTalkTopic.message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
@@ -130,7 +130,7 @@
 
                                                 <div class="attached">
                                                     <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
-                                                        <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                        <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                                     </a>
                                                     <div class="docs">
                                                         <div ng-repeat="document in firstMessage.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
@@ -186,7 +186,7 @@
 
                                                         <div class="attached">
                                                             <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">
-                                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                                                <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                                             </a>
                                                             <div class="docs">
                                                                 <div ng-repeat="document in message.documents"><a ng-href="{{document.URL}}" class="doc-item">{{document.fileName}}</a></div>
