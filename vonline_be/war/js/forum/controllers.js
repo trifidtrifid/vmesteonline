@@ -449,7 +449,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 talk.createTalkErrorText = "Вы не указали заголовок";
 
             }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
-                && (talk.content == TEXT_DEFAULT_3 || !talk.content)){
+                && (talk.message.content == TEXT_DEFAULT_3 || !talk.message.content)){
 
                 talk.isCreateTalkError = true;
                 talk.createTalkErrorText = "Вы не ввели сообщение";
