@@ -1438,7 +1438,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     }
                 }
             }
-                        
+
             if (talk.fullTalkTopic.poll != null) {
                 setPollEditNames(talk.fullTalkTopic.poll);
                 talk.fullTalkTopic.metaType = "poll";
