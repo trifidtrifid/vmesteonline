@@ -105,7 +105,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 textLengthPX, newHeight,removeRowCount,
                 defaultHeight, newRowCount;
 
-            defaultHeight = 44;
+            defaultHeight = TEXTAREA_DEFAULT_HEIGHT;
 
             /*
             Исходные данные:
@@ -158,7 +158,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 var rowCount = parseInt(stringLen/clientWidth); // сколько строк
                 var areaHeight = rowCount*k2;
             }else{
-                areaHeight = 44;
+                areaHeight = TEXTAREA_DEFAULT_HEIGHT;
             }
 
             return areaHeight;
@@ -482,41 +482,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                 var newTopic = postTopic(talk, isWall,isAdvert);
 
+                if(newTopic.poll && talk.poll) talk.poll.pollId = newTopic.poll.pollId;
+
                 newTopic.label = getLabel(base.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
-
-                /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
-                 newTopic.message = new com.vmesteonline.be.messageservice.Message;
-                 newTopic.message.groupId = talk.selectedGroup.id;
-                 newTopic.message.type = 1;
-                 newTopic.message.content = talk.content;
-                 newTopic.message.id = 0;
-                 newTopic.message.created = Date.parse(new Date());
-
-                 newTopic.subject = talk.subject;
-                 newTopic.id = 0;
-
-                 var poll;
-                 if(talk.isPollShow){
-                 poll = new com.vmesteonline.be.messageservice.Poll;
-                 poll.pollId = 0;
-                 poll.names = [];
-                 var pollInputsLength = talk.pollInputs.length;
-                 for(var i = 0; i < pollInputsLength; i++){
-                 poll.names[i] = talk.pollInputs[i].name;
-                 }
-                 newTopic.poll = poll;
-                 newTopic.metaType = "poll";
-                 }
-
-                 newTopic = messageClient.postTopic(newTopic);
-
-                 if(talk.isPollShow){
-                 poll.pollId = newTopic.poll.pollId;
-                 talk.isPollShow = false;
-                 talk.pollSubject= "";
-                 talk.isPollAvailable = true;
-                 }*/
 
                 $rootScope.base.createTopicIsHide = true;
 
@@ -582,6 +551,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.createTopic = function(event,ctrl){
             event.preventDefault();
+
+            if(!ctrl.isEdit){
+                $(event.target).closest('.message-input').find('.topic-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
+            }
 
             if(ctrl.isTalk){
                 // значит это talk
@@ -686,6 +659,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 firstMessage.isTreeOpen = true;
                 firstMessage.commentText = TEXT_DEFAULT_2;
                 parentId = firstMessage.id;
+
+                if(!firstMessage.childCount || firstMessage.childCount == 0) firstMessage.childCount = 1;
 
             }else{
                 // если добавляем к простому сообщению
@@ -818,6 +793,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.createMessage = function(e,ctrl,topicId,talk,message){
             e.preventDefault();
+
+            if(!ctrl.isEdit){
+                $(event.target).closest('.answer-block').find('.message-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
+            }
+
             if(ctrl.isTalk){
                 //alert('111 '+ctrl.fullAdvertTopic+" "+ctrl.parentId);
                 if((ctrl.fullTalkTopic || ctrl.parentId == 0) && !topicId){
@@ -2759,6 +2739,8 @@ var TEXT_DEFAULT_3 = "Сообщение";
 var TEXT_DEFAULT_4 = "Заголовок";
 
 var MAP_COLOR = "6FB3E040";
+
+var TEXTAREA_DEFAULT_HEIGHT = 44;
 
 /* functions */
 

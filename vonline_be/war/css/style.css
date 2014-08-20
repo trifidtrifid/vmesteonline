@@ -1042,6 +1042,7 @@ h1 {
 }
 .talks-block .talks-single .dd-item .dd2-content {
   margin-top: 0;
+  margin-bottom: 10px;
 }
 .talks-block .answer-input textarea {
   width: 100%;
