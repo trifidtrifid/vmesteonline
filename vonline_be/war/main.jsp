@@ -170,7 +170,7 @@
 					<ul class="nav nav-list">
                         <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li>
                         <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
-                        <li ng-class="{active:isSet(3)}"><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:isSet(3)}"><a ui-sref="service"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">
@@ -222,7 +222,7 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in groups"
-                            id="{{group.id}}" ng-class="{active : currentGroup.id == group.id}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button> <!-- {active : group.selected} -->
+                            id="{{group.id}}" ng-class="{active : currentGroup.id == group.id}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}} {{group.type}}</button> <!-- {active : group.selected} -->
                         </nav>
 
                         <div class="create-topic-btn pull-right ng-cloak" ng-show="base.talksIsActive || base.advertsIsActive">

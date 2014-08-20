@@ -24,8 +24,8 @@
                                         <a href="#" title="Редактировать" ng-click="base.setEdit($event,adverts.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
-                                    <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                      ng-class="adverts.fullTalkTopic.tagColor">{{adverts.fullTalkTopic.label}}</span>
+                                    <a ui-sref="service" class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="adverts.fullTalkTopic.tagColor">{{adverts.fullTalkTopic.label}}</a>
 
                                     <div ng-hide="adverts.fullTalkTopic.isEdit">
                                         <h2>
