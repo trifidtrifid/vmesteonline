@@ -8,6 +8,8 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
+import org.apache.lucene.index.SegmentInfos.FindSegmentsFile;
+
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
@@ -42,9 +44,31 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			
 		} else {
 			VoUserGroup ug = new VoUserGroup(longitude, latitude, radius, staircase, floor, name, impScore, gType, pm);
+			//all groups that could intersect should reset their intervisibility
+			resetVisibiltyGroups(ug, pm);
 			pm.makePersistent(ug);
 			return ug;
 		}
+	}
+
+	private static void resetVisibiltyGroups(VoUserGroup ug, PersistenceManager pm) {
+		List<Long> allGroups = ug.findAllVisibleGroups(pm);
+		
+		for( Long nbgGrp : allGroups){
+			if( nbgGrp != ug.getId() ){
+				//reset visibility of group
+				VoUserGroup nbGroup = pm.getObjectById(VoUserGroup.class, nbgGrp);
+				nbGroup.getVisibleGroups().add(ug.getId());
+				List<VoTopic> nnbgTopics = (List<VoTopic>)pm.newQuery(VoTopic.class, "userGroupId=="+nbgGrp).execute();
+				if( null!=nnbgTopics)
+					for( VoTopic tpc: nnbgTopics){
+						tpc.setVisibleGroups(nbGroup.getVisibleGroups());
+						pm.makePersistent(tpc);
+					}
+				pm.makePersistent(nbGroup);
+			}
+		}
+		ug.setVisibleGroups(allGroups);
 	}
 
 	private VoUserGroup(BigDecimal longitude, BigDecimal latitude, int radius, byte staircase, byte floor, String name, int impScore, int gType, PersistenceManager pm){
@@ -129,6 +153,14 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		this.groupType = groupType;
 	}
 	
+	public List<Long> getVisibleGroups() {
+		return visibleGroups;
+	}
+
+	public void setVisibleGroups(List<Long> visibleGroups) {
+		this.visibleGroups = visibleGroups;
+	}
+
 	@Override
 	public String toString() {
 		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", radius=" + radius +", staircase="+staircase +", floor="+floor
