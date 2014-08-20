@@ -32,7 +32,7 @@
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                        <p ng-switch-when="message">{{talks.fullTalkTopic.message.content}}</p>
+                                        <p ng-switch-when="message" class="text">{{talks.fullTalkTopic.message.content}}</p>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
@@ -44,7 +44,6 @@
                                     </div>
 
                                     <div class="poll" ng-switch-when="poll"  ng-switch on="talks.fullTalkTopic.poll.alreadyPoll" ng-cloak>
-                                        <div class="text" ng-cloak>{{talks.fullTalkTopic.message.content}}</div>
 
                                         <h5>{{talks.fullTalkTopic.poll.subject}}</h5>
 
@@ -116,7 +115,7 @@
                                         <div class="topic-left">
                                             <a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">
                                                 <div class="avatar short2" style="background-image: url({{firstMessage.userInfo.avatar}})"></div>
-                                            <div class="topic-author">
+                                            <div class="topic-author" ng-show="firstMessage.childCount && firstMessage.childCount != 0">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
                                             </div>
@@ -130,7 +129,7 @@
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
 
                                             <div ng-hide="firstMessage.isEdit">
-                                                <p>{{firstMessage.content}}</p>
+                                                <p class="text">{{firstMessage.content}}</p>
 
                                                 <div class="attached">
                                                     <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
@@ -174,7 +173,7 @@
                                                 <div class="topic-left">
                                                     <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
                                                         <div class="avatar short2" style="background-image: url({{message.userInfo.avatar}})"></div>
-                                                    <div class="topic-author">
+                                                    <div class="topic-author" ng-show="message.childCount && message.childCount != 0">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>
                                                     </div>
@@ -189,7 +188,7 @@
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
 
                                                     <div ng-hide="message.isEdit">
-                                                        <p>{{message.content}}</p>
+                                                        <p class="text">{{message.content}}</p>
 
                                                         <div class="attached">
                                                             <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">

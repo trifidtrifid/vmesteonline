@@ -604,11 +604,6 @@ transform()
   .talk-subject
     margin-bottom 10px
 
-.talks-single .message-input
-.adverts-single .message-input
-  padding-left 0
-  padding-top 25px
-
 .message-tools
   margin-left 10%
   a
@@ -811,9 +806,21 @@ transform()
   overflow hidden
   display block
 
+.message-textarea
+.topic-textarea
+  line-height inherit
+
 .edit-message
   .btn
     border-width 2px
+  .message-input
+    padding 10px 0
+    background inherit
+
+.talks-single .message-input
+.adverts-single .message-input
+  padding-left 0
+  padding-top 25px
 
 .edit-textarea
   margin 5px 0
@@ -923,6 +930,7 @@ transform()
       margin-top 0
       .dd2-content
         margin-top 0
+        margin-bottom 10px
   .answer-input
     textarea
       width 100%

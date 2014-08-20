@@ -4,7 +4,7 @@
            onblur="if(this.value=='') this.value='Заголовок';"
            onfocus="if(this.value=='Заголовок') this.value='';" ng-model="ctrl.subject" />
 
-    <textarea ng-model="ctrl.message.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
+    <textarea ng-model="ctrl.message.content" class="topic-textarea no-resize" ng-keyup="base.messageChange($event,1)"
               ng-blur="base.textareaBlur(ctrl.message.content,ctrl.message.default,ctrl,true)" ng-focus="base.textareaFocus(ctrl.message.content,ctrl.message.default,ctrl,true)"
               ng-setareaheight="true"></textarea>
 
@@ -73,7 +73,6 @@
                     </ul>
 
         </div>
-        <!--<a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createWallMessage($event,ctrl)">Отправить</a>-->
         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createTopic($event,ctrl)">Отправить</a>
 
         <div class="hashtag pull-left">

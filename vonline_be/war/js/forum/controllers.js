@@ -105,7 +105,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 textLengthPX, newHeight,removeRowCount,
                 defaultHeight, newRowCount;
 
-            defaultHeight = 44;
+            defaultHeight = TEXTAREA_DEFAULT_HEIGHT;
 
             /*
             Исходные данные:
@@ -145,20 +145,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         base.getTextareaHeight = function(textLength,clientWidth,isTopic){
-            //if(isTopic){
+            /*if(isTopic){
                 var k1 = 10,
                     k2 = 19;
-            /*}else{
-                k1 = 8;
+            }else{*/
+               var  k1 = 12,
                 k2 = 14;
-            }*/
+            //}
 
             var stringLen = textLength*k1;
             if(stringLen > clientWidth){
                 var rowCount = parseInt(stringLen/clientWidth); // сколько строк
                 var areaHeight = rowCount*k2;
             }else{
-                areaHeight = 44;
+                areaHeight = TEXTAREA_DEFAULT_HEIGHT;
             }
 
             return areaHeight;
@@ -262,9 +262,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     textLen = message.content.length;
                 }
 
-                var areaWidth = $(el.parentNode.parentNode).width()-20;
+                //var areaWidth = $(el.parentNode.parentNode).width()-20;
+                //alert($(el.parentNode.parentNode).find('.text').height());
 
-                var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
+                //var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
+                var h = $(el.parentNode.parentNode).find('.text').height()+24;
+                
+                if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
+
                 $(el.parentNode.parentNode).find('.edit-message textarea').height(h+'px');
 
             }
@@ -482,41 +487,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                 var newTopic = postTopic(talk, isWall,isAdvert);
 
+                if(newTopic.poll && talk.poll) talk.poll.pollId = newTopic.poll.pollId;
+
                 newTopic.label = getLabel(base.groups,newTopic.groupType);
                 newTopic.tagColor = getTagColor(newTopic.label);
-
-                /*var newTopic = new com.vmesteonline.be.messageservice.Topic;
-                 newTopic.message = new com.vmesteonline.be.messageservice.Message;
-                 newTopic.message.groupId = talk.selectedGroup.id;
-                 newTopic.message.type = 1;
-                 newTopic.message.content = talk.content;
-                 newTopic.message.id = 0;
-                 newTopic.message.created = Date.parse(new Date());
-
-                 newTopic.subject = talk.subject;
-                 newTopic.id = 0;
-
-                 var poll;
-                 if(talk.isPollShow){
-                 poll = new com.vmesteonline.be.messageservice.Poll;
-                 poll.pollId = 0;
-                 poll.names = [];
-                 var pollInputsLength = talk.pollInputs.length;
-                 for(var i = 0; i < pollInputsLength; i++){
-                 poll.names[i] = talk.pollInputs[i].name;
-                 }
-                 newTopic.poll = poll;
-                 newTopic.metaType = "poll";
-                 }
-
-                 newTopic = messageClient.postTopic(newTopic);
-
-                 if(talk.isPollShow){
-                 poll.pollId = newTopic.poll.pollId;
-                 talk.isPollShow = false;
-                 talk.pollSubject= "";
-                 talk.isPollAvailable = true;
-                 }*/
 
                 $rootScope.base.createTopicIsHide = true;
 
@@ -569,7 +543,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-area-edit-' + ctrl.id));
                     cleanAttached($('#attach-doc-area-edit-' + ctrl.id));
                     ctrl.isEdit = false;
-                    ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
+                    if(ctrl.poll && newTopic.poll)ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
                 } else {
                     cleanAttached($('#attach-area-'+ctrl.attachId));
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
@@ -582,6 +556,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.createTopic = function(event,ctrl){
             event.preventDefault();
+
+            if(!ctrl.isEdit){
+                $(event.target).closest('.message-input').find('.topic-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
+            }
 
             if(ctrl.isTalk){
                 // значит это talk
@@ -686,6 +664,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 firstMessage.isTreeOpen = true;
                 firstMessage.commentText = TEXT_DEFAULT_2;
                 parentId = firstMessage.id;
+
+                if(!firstMessage.childCount || firstMessage.childCount == 0) firstMessage.childCount = 1;
 
             }else{
                 // если добавляем к простому сообщению
@@ -818,6 +798,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.createMessage = function(e,ctrl,topicId,talk,message){
             e.preventDefault();
+
+            if(!ctrl.isEdit){
+                $(event.target).closest('.answer-block').find('.message-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
+            }
+
             if(ctrl.isTalk){
                 //alert('111 '+ctrl.fullAdvertTopic+" "+ctrl.parentId);
                 if((ctrl.fullTalkTopic || ctrl.parentId == 0) && !topicId){
@@ -2760,6 +2745,8 @@ var TEXT_DEFAULT_4 = "Заголовок";
 
 var MAP_COLOR = "6FB3E040";
 
+var TEXTAREA_DEFAULT_HEIGHT = 54;
+
 /* functions */
 
 var transport = new Thrift.Transport("/thrift/MessageService");
@@ -3070,6 +3057,8 @@ function postTopic(obj,isWall,isAdverts){
                 obj.poll = poll;
                 obj.metaType = "poll";
             }
+        }else{
+            obj.poll = null;
         }
 
         obj.message.images = obj.attachedImages;

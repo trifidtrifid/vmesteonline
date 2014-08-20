@@ -12,11 +12,11 @@
         </span>
     </form>
 
-        <div class="nextdoor-single" ng-repeat="neighboor in neighbours.neighboors">
+        <div class="nextdoor-single" ng-repeat="neighboor in neighbours.neighboors" ng-if="neighboor.id != base.me.id">
+
             <a ui-sref="profile({ userId : neighboor.id})" class="nextdoor-left pull-left">
             <span class="nextdoor-ava pull-left">
                 <div class="avatar short2" style="background-image: url({{neighboor.avatar}})"></div>
-                <!--<img src="{{neighboor.avatar}}" alt="аватарка"/>-->
             </span>
                 <span class="nextdoor-name">{{neighboor.firstName+" "+neighboor.lastName}}</span>
             </a>
