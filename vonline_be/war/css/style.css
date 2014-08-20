@@ -677,11 +677,6 @@ h1 {
 .message-input .talk-subject {
   margin-bottom: 10px;
 }
-.talks-single .message-input,
-.adverts-single .message-input {
-  padding-left: 0;
-  padding-top: 25px;
-}
 .message-tools {
   margin-left: 10%;
 }
@@ -916,8 +911,21 @@ h1 {
   overflow: hidden;
   display: block;
 }
+.message-textarea,
+.topic-textarea {
+  line-height: inherit;
+}
 .edit-message .btn {
   border-width: 2px;
+}
+.edit-message .message-input {
+  padding: 10px 0;
+  background: inherit;
+}
+.talks-single .message-input,
+.adverts-single .message-input {
+  padding-left: 0;
+  padding-top: 25px;
 }
 .edit-textarea {
   margin: 5px 0;

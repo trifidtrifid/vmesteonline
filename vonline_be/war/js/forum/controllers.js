@@ -145,13 +145,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         base.getTextareaHeight = function(textLength,clientWidth,isTopic){
-            //if(isTopic){
+            /*if(isTopic){
                 var k1 = 10,
                     k2 = 19;
-            /*}else{
-                k1 = 8;
+            }else{*/
+               var  k1 = 12,
                 k2 = 14;
-            }*/
+            //}
 
             var stringLen = textLength*k1;
             if(stringLen > clientWidth){
@@ -262,9 +262,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     textLen = message.content.length;
                 }
 
-                var areaWidth = $(el.parentNode.parentNode).width()-20;
+                //var areaWidth = $(el.parentNode.parentNode).width()-20;
+                //alert($(el.parentNode.parentNode).find('.text').height());
 
-                var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
+                //var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
+                var h = $(el.parentNode.parentNode).find('.text').height()+24;
+                
+                if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
+
                 $(el.parentNode.parentNode).find('.edit-message textarea').height(h+'px');
 
             }
@@ -538,7 +543,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-area-edit-' + ctrl.id));
                     cleanAttached($('#attach-doc-area-edit-' + ctrl.id));
                     ctrl.isEdit = false;
-                    ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
+                    if(ctrl.poll && newTopic.poll)ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
                 } else {
                     cleanAttached($('#attach-area-'+ctrl.attachId));
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
@@ -2740,7 +2745,7 @@ var TEXT_DEFAULT_4 = "Заголовок";
 
 var MAP_COLOR = "6FB3E040";
 
-var TEXTAREA_DEFAULT_HEIGHT = 44;
+var TEXTAREA_DEFAULT_HEIGHT = 54;
 
 /* functions */
 
@@ -3052,6 +3057,8 @@ function postTopic(obj,isWall,isAdverts){
                 obj.poll = poll;
                 obj.metaType = "poll";
             }
+        }else{
+            obj.poll = null;
         }
 
         obj.message.images = obj.attachedImages;
