@@ -169,6 +169,7 @@ public class VoTopic extends VoBaseMessage {
 	private Long rubricId;
 
 	@Persistent
+	@Unindexed
 	private Long userGroupId;
 	
 	@Persistent

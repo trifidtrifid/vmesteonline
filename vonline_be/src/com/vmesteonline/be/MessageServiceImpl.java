@@ -592,6 +592,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setUserGroupId(topic.getMessage().getGroupId());
+			theTopic.setSubject( topic.getSubject() );
 			
 			updatePoll(theTopic, topic, pm); 
 					
