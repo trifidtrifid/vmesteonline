@@ -266,8 +266,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 //alert($(el.parentNode.parentNode).find('.text').height());
 
                 //var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
-                var h = $(el.parentNode.parentNode).find('.text').height()+24;
-                
+                var h = $(el).closest('.text-container').find('.text').height()+24;
+
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
 
                 $(el.parentNode.parentNode).find('.edit-message textarea').height(h+'px');

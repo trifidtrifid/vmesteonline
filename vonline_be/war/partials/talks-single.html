@@ -17,7 +17,7 @@
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right" ng-switch on="talks.fullTalkTopic.metaType">
+                                <div class="topic-right text-container" ng-switch on="talks.fullTalkTopic.metaType">
 
                                     <div class="message-tools pull-right" ng-show="talks.fullTalkTopic.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(talks.fullTalkTopic,talks.topics,true,false)">&times;</a>
@@ -120,7 +120,7 @@
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
                                             </div>
                                         </div>
-                                        <div class="topic-right">
+                                        <div class="topic-right text-container">
                                             <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
                                                 <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,talks.fullTalkFirstMessages,false,false)">&times;</a>
                                                 <a href="#" title="Редактировать" ng-click="base.setEdit($event,firstMessage,true)" class="fa fa-pencil pull-right"></a>
@@ -178,7 +178,7 @@
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>
                                                     </div>
                                                 </div>
-                                                <div class="topic-right">
+                                                <div class="topic-right text-container">
 
                                                     <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
                                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,talks.fullTalkMessages[firstMessage.id],false,false)">&times;</a>

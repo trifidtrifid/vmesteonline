@@ -11,7 +11,7 @@
                                 <div class="avatar" style="background-image: url({{wallSingle.wallItem.topic.userInfo.avatar}})"></div>
                             </a>
 
-                            <div class="body" ng-switch on="wallSingle.wallItem.topic.metaType">
+                            <div class="body text-container" ng-switch on="wallSingle.wallItem.topic.metaType">
                                 <div class="message-tools pull-right" ng-show="wallSingle.wallItem.topic.userInfo.id == base.me.id">
                                     <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallSingle.wallItem.topic,wallSingle.wallItems,true,true)">&times;</a>
                                     <a href="#" title="Редактировать" ng-click="base.setEdit(wallSingle.wallItem.topic)" class="fa fa-pencil pull-right"></a>
