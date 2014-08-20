@@ -54,7 +54,10 @@ public class NotificationServlet extends HttpServlet {
 
 			e.printStackTrace();
 			rsp.setStatus(HttpServletResponse.SC_OK, e.why);
-		}
+		} catch (Exception e) {
+			e.printStackTrace();
+			rsp.setStatus(HttpServletResponse.SC_OK, e.getMessage());
+		} 
 	}
 
 	//=============================================================================================================

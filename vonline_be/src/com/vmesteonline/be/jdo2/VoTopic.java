@@ -127,6 +127,15 @@ public class VoTopic extends VoBaseMessage {
 		this.pollId = pollId;
 	}
 
+	
+	public List<Long> getVisibleGroups() {
+		return visibleGroups;
+	}
+
+	public void setVisibleGroups(List<Long> visibleGroups) {
+		this.visibleGroups = visibleGroups;
+	}
+
 	@Override
 	public String toString() {
 		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";

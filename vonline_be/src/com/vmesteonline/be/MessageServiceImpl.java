@@ -3,6 +3,7 @@ package com.vmesteonline.be;
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -579,19 +580,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 
-			if(0!=topic.getRubricId())
-				try {
-					pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-				} catch (Exception e) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
-							+ topic.getRubricId());
-				}
 			updateTopicMessage( theTopic, topic.getMessage(), pm );
 			theTopic.setImages( updateAttachments( theTopic.getImages(), topic.getMessage().getImages(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setDocuments( updateAttachments( theTopic.getDocuments(), topic.getMessage().getDocuments(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
-			theTopic.setUserGroupId(topic.getMessage().getGroupId());
+			changeTopicGroup(topic, theTopic, pm);
 			theTopic.setSubject( topic.getSubject() );
 			
 			updatePoll(theTopic, topic, pm); 
@@ -600,6 +594,18 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 		} finally {
 			pm.close();
+		}
+	}
+
+	private void changeTopicGroup(Topic topic, VoTopic theTopic, PersistenceManager pm) throws InvalidOperation {
+		long newGroupId = topic.getMessage().getGroupId();
+		VoUser currentUser = getCurrentUser(pm);
+		if( -1 ==Collections.indexOfSubList( currentUser.getGroups(), Arrays.asList( new Long[]{newGroupId})) )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "USer "+currentUser+" could not move message to group "+newGroupId+" he does not belongs to");
+		if(newGroupId != theTopic.getUserGroupId()){
+			VoUserGroup newGroup = pm.getObjectById(VoUserGroup.class, newGroupId);
+			theTopic.setUserGroupId(newGroupId);
+			theTopic.setVisibleGroups( new ArrayList<Long>(newGroup.getVisibleGroups(pm)));
 		}
 	}
 
@@ -826,6 +832,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			deleteAttachments(pm, tpc.getImages());
 			deleteAttachments(pm, tpc.getDocuments());
+			if( 0!=tpc.getPollId()){
+				pm.deletePersistent( pm.getObjectById(VoPoll.class, tpc.getPollId()));
+			}
 			
 			if(0==tpc.getMessageNum()){
 				try {
@@ -839,7 +848,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 			} else {
 				tpc.setContent("Тема удалена пользователем "+ (isModerator ? "модератором." : "пользователем."));
-				tpc.setLastUpdate((int) (System.currentTimeMillis()/1000L));
+				tpc.setPollId(0L);
+
 				return tpc.getTopic(cu.getId(), pm);
 			}
 			
