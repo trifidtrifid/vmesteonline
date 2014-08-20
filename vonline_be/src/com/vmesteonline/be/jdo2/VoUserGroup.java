@@ -12,32 +12,50 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
 import com.vmesteonline.be.GroupType;
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> {
 
-	public VoUserGroup(BigDecimal longitude,BigDecimal latitude, int radius, String name, int impScore, int gType, PersistenceManager pm){
+	public static VoUserGroup createVoUserGroup(BigDecimal longitude, BigDecimal latitude, int radius, byte staircase, byte floor, String name, int impScore, int gType,
+			PersistenceManager pm) throws InvalidOperation {
+		
+		String queryStr = "longitude=='"+longitude.toPlainString()
+				+"' && latitude=='"+latitude.toPlainString()+"'"
+				+" && groupType=="+gType;
+		
+		if( gType == GroupType.STAIRCASE.getValue() )
+			queryStr += " && staircase==" + staircase;
+		
+		if( gType == GroupType.FLOOR.getValue() )
+			queryStr += " && floor==" + floor;
+		
+		List<VoUserGroup> ugl =  (List<VoUserGroup>)pm.newQuery(VoUserGroup.class,queryStr).execute();
+		
+		if( 1==ugl.size() ) {
+			return ugl.get(0);
+			
+		} else if( 1<ugl.size() ) {
+			throw new InvalidOperation(VoError.GeneralError, "Two or more the same groups already registered + "+ugl.get(0));
+			
+		} else {
+			VoUserGroup ug = new VoUserGroup(longitude, latitude, radius, staircase, floor, name, impScore, gType, pm);
+			pm.makePersistent(ug);
+			return ug;
+		}
+	}
+
+	private VoUserGroup(BigDecimal longitude, BigDecimal latitude, int radius, byte staircase, byte floor, String name, int impScore, int gType, PersistenceManager pm){
 		setLongitude(longitude);
 		setLatitude(latitude);
 		this.radius = radius;
 		this.name = name;
 		importantScore = impScore;
 		groupType = gType;
-		
-		String queryStr = "longitude=='"+longitude.toPlainString()+
-				"' && latitude=='"+latitude.toPlainString()+"' && "
-				+ "radius=="+radius
-				+" && groupType=="+groupType;
-		List<VoUserGroup> ugl =  (List<VoUserGroup>)pm.newQuery(VoUserGroup.class,queryStr).execute();
-		
-		if( 0!=ugl.size() ) {
-			id = KeyFactory.createKey(this.getClass().getSimpleName(), ugl.get(0).getId());
-			
-		} else {
-			id = null;
-			
-		}
+		this.staircase = staircase;
+		this.floor = floor;
 	} 
 	
 	public int getRadius() {
@@ -77,11 +95,19 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	private String name;
 
 	@Persistent
+	@Unindexed
 	private int radius;
 	
 	@Persistent
 	@Unindexed
 	private int importantScore;
+	
+	@Persistent
+	private byte staircase;
+	
+	@Persistent
+	private byte floor;
+	
 
 	@Persistent
 	@Unindexed
@@ -105,7 +131,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	
 	@Override
 	public String toString() {
-		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", radius=" + radius
+		return "VoUserGroup [id=" + getId() + ", name=" + name + ", longitude=" + getLongitude() + ", latitude=" + getLatitude() + ", radius=" + radius +", staircase="+staircase +", floor="+floor
 				+ "]";
 	}
 
@@ -133,7 +159,8 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			BigDecimal longMax = VoHelper.getLongitudeMax( new BigDecimal(longitude), new BigDecimal(latitude), radius);
 			BigDecimal longMin = VoHelper.getLongitudeMin( new BigDecimal(longitude), new BigDecimal(latitude), radius);
 			
-			List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery( VoUserGroup.class, "groupType=="+groupType).execute();
+			String filter = "groupType=="+groupType;
+			List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery( VoUserGroup.class, filter).execute();
 			for( VoUserGroup ug: groups ){
 				if( ug.getLatitude().compareTo( latMax ) <=0 && ug.getLatitude().compareTo( latMin ) >=0 
 						&& ug.getLongitude().compareTo( longMax ) <= 0 && ug.getLongitude().compareTo( longMin ) >= 0)

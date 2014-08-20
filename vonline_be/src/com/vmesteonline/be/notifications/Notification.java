@@ -50,7 +50,7 @@ public abstract class Notification {
 
 	protected static String host;
 	static {
-		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "vmesteonline.ru" : "localhost:8888";
+		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "1-dot-algebraic-depot-657.appspot.com" : "localhost:8888";
 	}
 
 	public abstract void makeNotification(Set<VoUser> users);
@@ -200,12 +200,14 @@ public abstract class Notification {
 
 		body += "На сайте уже зарегистрированно: " + userSet.size() + " пользователей<br/>";
 		
-		List<VoUser> ul = (List<VoUser>) pm.newQuery(VoUser.class, "groups=="+newUser.getGroup(GroupType.BLOCK)).execute();
+		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS), pm );
 		if(0!=ul.size()) body += "Из них рядом с вами живут: "+ul.size()+"<br/>";
-		ul = (List<VoUser>) pm.newQuery(VoUser.class, "groups=="+newUser.getGroup(GroupType.BUILDING)).execute();
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING), pm );
 		if(0!=ul.size()) body += "В вашем доме: "+ul.size()+"<br/>";
-		ul = (List<VoUser>) pm.newQuery(VoUser.class, "groups=="+newUser.getGroup(GroupType.STAIRCASE)).execute();
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE), pm );
 		if(0!=ul.size()) body += "В вашем подъезде: "+ul.size()+"<br/>";
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR), pm );
+		if(0!=ul.size()) body += "На вашем этаже : "+ul.size()+"<br/>";
 		
 		
 		body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/><br/>";

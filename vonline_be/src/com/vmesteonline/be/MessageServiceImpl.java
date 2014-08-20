@@ -592,6 +592,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
 			theTopic.setUserGroupId(topic.getMessage().getGroupId());
+			theTopic.setSubject( topic.getSubject() );
 			
 			updatePoll(theTopic, topic, pm); 
 					
@@ -604,7 +605,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	private void updatePoll(VoTopic theTopic, Topic topic, PersistenceManager pm) throws InvalidOperation {
 		if( topic.poll == null && 0!=theTopic.getPollId() || topic.poll !=null && topic.poll.pollId != theTopic.getPollId()){
-			if( theTopic.getPollId() == 0 ) {//poll changed so the old one should be removed
+			if( theTopic.getPollId() != 0 ) {//poll changed so the old one should be removed
 				pm.deletePersistent(pm.getObjectById(VoPoll.class, theTopic.getPollId()));
 				theTopic.setPollId(0L);
 			} 

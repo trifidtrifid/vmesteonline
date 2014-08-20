@@ -34,7 +34,7 @@ import com.vmesteonline.be.utils.StorageHelper.FileSource;
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class VoBaseMessage /*extends GeoLocation*/ {
 
-	private static final Charset STRING_CHARSET=Charset.forName("UTF-8");
+	public static final Charset STRING_CHARSET=Charset.forName("UTF-8");
 	
 	public VoBaseMessage(Message msg, PersistenceManager pm) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());

@@ -750,8 +750,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	public static List<VoUser> getUsersByLocation(Long userGroupId, PersistenceManager pm) {
 		List<VoUser> users = new ArrayList<VoUser>();
-		for( Long g : pm.getObjectById( VoUserGroup.class, userGroupId ).getVisibleGroups(pm))
-			users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, "groups=="+g).execute());
+		if( null!= userGroupId )
+		
+			for( Long g : pm.getObjectById( VoUserGroup.class, userGroupId ).getVisibleGroups(pm)) {
+				String filter = "groups=="+g +" && emailConfirmed==true";
+				users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, filter).execute());
+			}
 		return users;
 	}
 
