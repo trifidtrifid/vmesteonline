@@ -45,6 +45,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		} else {
 			VoUserGroup ug = new VoUserGroup(longitude, latitude, radius, staircase, floor, name, impScore, gType, pm);
 			//all groups that could intersect should reset their intervisibility
+			pm.makePersistent(ug);
 			resetVisibiltyGroups(ug, pm);
 			pm.makePersistent(ug);
 			return ug;
