@@ -59,13 +59,11 @@ public class VoUser /* extends GeoLocation */{
 
 	}
 
-	public Long getGroup(GroupType gt) {
-		int i = 0;
-		for (VoGroup group : Defaults.defaultGroups) {
-			if (group.getGroupType() == gt.getValue())
-				return groups.get(i);
-			else
-				i++;
+	public Long getGroup(GroupType gt, PersistenceManager pm) {
+		for( Long gid: groups){
+			VoUserGroup ug = pm.getObjectById( VoUserGroup.class, gid );
+			if( ug.getGroupType() == gt.getValue() )
+				return ug.getId();
 		}
 		return null;
 	}
@@ -207,10 +205,11 @@ public class VoUser /* extends GeoLocation */{
 		this.lastNotified = lastNotified;
 	}
 
-	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
+	public VoPostalAddress setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		try {
 			VoPostalAddress userAddress = pm.getObjectById(VoPostalAddress.class, locCode);
 			setCurrentPostalAddress(userAddress, pm);
+			return userAddress;
 		} catch (JDOObjectNotFoundException eonf) {
 			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
 		}

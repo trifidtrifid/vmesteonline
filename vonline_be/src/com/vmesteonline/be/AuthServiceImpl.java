@@ -189,16 +189,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
 
+			VoPostalAddress uaddress;
 			try {
-				user.setLocation(voInviteCode.getPostalAddressId(), pm);
+				uaddress = user.setLocation(voInviteCode.getPostalAddressId(), pm);
 			} catch (NumberFormatException | InvalidOperation e) {
 				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
 			}
 
 			List<Long> groups = user.getGroups();
 			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
-					+ (0 == groups.size() ? "Undefined!" : pm.getObjectById(VoUserGroup.class, groups.get(0)).getName()+"["+
-			pm.getObjectById(VoPostalAddress.class,user.getAddress()).getAddressText(pm)+"]"));
+					+ (0 == groups.size() ? "Undefined!" : pm.getObjectById(VoUserGroup.class, groups.get(0)).getName()
+							+"["+uaddress.getAddressText(pm)+"]"));
 
 			// Add the send welcomeMessage Task to the default queue.
 			Queue queue = QueueFactory.getDefaultQueue();
