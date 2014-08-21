@@ -886,7 +886,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             localStorage.removeItem('groupId');
             authClient.logout();
 
-            document.location.replace("login.html");
+            document.location.replace("login.jsp");
 
         }
 

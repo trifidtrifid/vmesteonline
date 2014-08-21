@@ -1,4 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 
 <!DOCTYPE html>
 <html>
@@ -9,7 +12,7 @@
 		<meta name="description" content="User login page" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="build/style.min.css"/>
+        <link rel="stylesheet" href="css/style.css"/>
         <script src="./js/lib/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             globalUserAuth = false;
@@ -17,210 +20,143 @@
 
 	</head>
 
-	<body class="login-layout">
+	<body class="login-layout login-forum">
 		<div class="main-container">
 			<div class="main-content">
-				<div class="row">
-					<div class="col-sm-10 col-sm-offset-1">
-						<div class="login-container">
 
-							<div class="space-6"></div>
+				<div class="row clearfix">
+					<div class="col-sm-10 col-sm-offset-1">
+                        <c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
+                            <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/></span></div>
+                        </c:if>
+
+                        <div class="login-left col-md-5 ">
+                            <a href="/"><img src="i/logo.png" alt="логотип"/></a>
+                            <h1>Закрытая социальная сеть<br>только для соседей</h1>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5">
+						<div class="login-container">
 
 							<div class="position-relative">
 								<div id="login-box" class="login-box visible widget-box no-border">
 									<div class="widget-body">
 										<div class="widget-main">
-											<h4 class="header blue lighter bigger">
-												<i class="icon-coffee green"></i>
-												Вход
-											</h4>
+                                            <div class="login-main">
+                                                <div class="clearfix">
 
-											<div class="space-6"></div>
+                                                    <FORM action="https://oauth.vk.com/authorize" method="get">
+                                                        <input type="hidden" name="client_id" value="4429306">
+                                                        <input type="hidden" name="redirect_uri" value="https://1-dot-algebraic-depot-657.appspot.com/oauth">
+                                                        <input type="hidden" name="scope" value="4194305">
+                                                        <input type="hidden" name="v" value="5.21">
+                                                        <INPUT type="submit" class="width-100 btn btn-sm no-border btn-primary" value="Войти через Вконтакте">
+                                                    </FORM>
 
-											<form>
-												<fieldset>
-													<label class="block clearfix">
+                                                    <div class="or">или</div>
+                                                </div>
+
+                                                <form>
+                                                    <fieldset>
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                                <input type="text" id="uname" class="form-control" placeholder="Ваш email" />
+                                                                <i class="icon-user"></i>
+                                                            </span>
+                                                        </label>
+
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                                <input type="password" id="password" class="form-control" placeholder="Пароль" />
+                                                                <i class="icon-lock"></i>
+                                                            </span>
+                                                        </label>
+
+                                                        <div class="tools">
+                                                            <!--<div class="checkbox">
+                                                                <label>
+                                                                    <input name="form-field-checkbox" type="checkbox" class="ace">
+                                                                    <span class="lbl"> Запомнить меня</span>
+                                                                </label>
+                                                            </div>-->
+                                                            <a href="#" class="show-remember">Напомнить пароль</a>
+                                                        </div>
+
+
+                                                        <div class="error-info login-error"></div>
+
+
+                                                        <div class="clearfix">
+
+                                                            <button type="button" class="width-100 btn btn-sm btn-primary no-border btn-login">
+                                                                Войти
+                                                            </button>
+                                                            <br>
+                                                            <br>
+                                                            <div><a href="/" class="reg-link">Зарегестрируйтесь</a> если у вас нет аккаунта</div>
+                                                        </div>
+
+                                                    </fieldset>
+
+                                                </form>
+                                            </div>
+
+                                            <div class="remember hidden">
+                                                <form>
+                                                    <fieldset>
+                                                        <label class="block clearfix">
 														<span class="block input-icon input-icon-right">
-															<input type="text" id="uname" class="form-control" placeholder="Ваш email" />
+															<input type="email" id="email" class="form-control" placeholder="Ваш email" />
 															<i class="icon-user"></i>
 														</span>
-													</label>
+                                                        </label>
 
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" id="password" class="form-control" placeholder="Пароль" />
-															<i class="icon-lock"></i>
-														</span>
-													</label>
+                                                        <div class="error-info login-error"></div>
+                                                        <br>
 
-                                                    <div class="error-info login-error"></div>
+                                                        <div class="clearfix">
+                                                            <button type="button" class="width-100 btn btn-sm btn-primary no-border btn-remember">
+                                                                Восстановить пароль
+                                                            </button>
 
-                                                    <div class="space"></div>
+                                                            <a href="#" class="btn-back pull-left">Назад</a>
+                                                        </div>
 
-													<div class="clearfix">
+                                                    </fieldset>
+                                                </form>
+                                            </div>
 
-														<button type="button" class="width-50 pull-right btn btn-sm btn-primary">
-															<i class="icon-key"></i>
-															Войти
-														</button>
-													</div>
-
-													<div class="space-4"></div>
-												</fieldset>
-											</form>
-
-
-										</div><!-- /widget-main -->
-
-										<div class="toolbar clearfix">
-											<div>
-												<a href="#" class="forgot-password-link">
-													<i class="icon-arrow-left"></i>
-													Забыл пароль
-												</a>
-											</div>
-
-											<div>
-												<a href="#" class="user-signup-link">
-													Регистрация
-													<i class="icon-arrow-right"></i>
-												</a>
-											</div>
 										</div>
-									</div><!-- /widget-body -->
-								</div><!-- /login-box -->
+									</div>
+								</div>
 
-								<div id="forgot-box" class="forgot-box widget-box no-border">
-									<div class="widget-body">
-										<div class="widget-main">
-											<h4 class="header red lighter bigger">
-												<i class="icon-key"></i>
-												Восстановление пароля
-											</h4>
-
-											<div class="space-6"></div>
-											<p>
-												Введите ваш email и получите код подтверждения.
-											</p>
-
-											<form>
-												<fieldset>
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="email" id="email-forgot" class="form-control" placeholder="Email" />
-															<i class="icon-envelope"></i>
-														</span>
-													</label>
-                                                    <div class="error-info email-forgot-error"></div>
-
-													<div class="clearfix">
-                                                        <button type="button" class="width-50 pull-right btn btn-sm btn-danger sendConfirmCode">
-                                                            <%--<i class="icon-lightbulb"></i>--%>
-                                                            Получить код
-                                                        </button>
-													</div>
-                                                    <div class="space"></div>
-
-                                                    <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" id="confirmCode" class="form-control" placeholder="Код подтверждения" />
-															<i class="icon-key"></i>
-														</span>
-                                                    </label>
-                                                    <label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" id="password-new" class="form-control" placeholder="Новый пароль" />
-															<i class="icon-lock"></i>
-														</span>
-                                                    </label>
-                                                    <div class="error-info password-new-error"></div>
-
-                                                    <div class="clearfix">
-                                                        <button type="button" class="width-50 pull-right btn btn-sm btn-danger useConfirmCode">
-                                                            <%--<i class="icon-lightbulb"></i>--%>
-                                                            Подтвердить
-                                                        </button>
-                                                    </div>
-												</fieldset>
-											</form>
-										</div><!-- /widget-main -->
-
-										<div class="toolbar center">
-											<a href="#" class="back-to-login-link">
-												Назад
-												<i class="icon-arrow-right"></i>
-											</a>
-										</div>
-									</div><!-- /widget-body -->
-								</div><!-- /forgot-box -->
-
-								<div id="signup-box" class="signup-box widget-box no-border">
-									<div class="widget-body">
-										<div class="widget-main">
-											<h4 class="header green lighter bigger">
-												<i class="icon-group blue"></i>
-												Регистрация
-											</h4>
-
-											<div class="space-6"></div>
-
-											<form>
-												<fieldset>
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="email" id="email" class="form-control" placeholder="Email" />
-															<i class="icon-envelope"></i>
-														</span>
-													</label>
-
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="text" id="login" class="form-control" placeholder="Логин" />
-															<i class="icon-user"></i>
-														</span>
-													</label>
-
-													<label class="block clearfix">
-														<span class="block input-icon input-icon-right">
-															<input type="password" id="pass" class="form-control" placeholder="Пароль" />
-															<i class="icon-lock"></i>
-														</span>
-													</label>
-
-                                                    <span class="email-alert error-info"></span>
-
-                                                    <div class="space"></div>
-
-													<div class="clearfix">
-														<%--<button type="reset" class="width-30 pull-left btn btn-sm">
-															<i class="icon-refresh"></i>
-															Сброс
-														</button>--%>
-
-														<button type="button" class="width-65 pull-right btn btn-sm btn-success">
-															Регистрация
-															<i class="icon-arrow-right icon-on-right"></i>
-														</button>
-													</div>
-												</fieldset>
-											</form>
-										</div>
-
-										<div class="toolbar center">
-											<a href="#" class="back-to-login-link">
-												<i class="icon-arrow-left"></i>
-												Назад
-											</a>
-										</div>
-									</div><!-- /widget-body -->
-								</div><!-- /signup-box -->
-							</div><!-- /position-relative -->
+							</div>
 						</div>
-					</div><!-- /.col -->
-				</div><!-- /.row -->
-			</div>
-		</div><!-- /.main-container -->
+                        </div>
 
-        <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+        <div class="footer footer-bottom footer-login footer-white col-sm-10 col-sm-offset-1">
+                <div class="pull-left">(c) Вместе Онлайн 2014</div>
+                <div class="pull-right">
+                    <ul>
+                        <li><a href="about">О сайте</a></li>
+                        <li><a href="blog">Блог</a></li>
+                        <li><a href="contacts">Контакты</a></li>
+                    </ul>
+                </div>
+        </div>
+
+        <!-- файлы thrift -->
+        <script src="js/thrift.js" type="text/javascript"></script>
+        <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+        <script src="gen-js/AuthService.js" type="text/javascript"></script>        <!-- -->
+
+        <script src="js/forum/login.js"></script>
 	</body>
 </html>

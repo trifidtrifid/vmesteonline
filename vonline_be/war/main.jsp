@@ -145,6 +145,11 @@
         </div>
 
     </div>
+    <div class="container">
+        <c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
+            <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/><a href="#" onclick="$(this).parent().hide().detach()">&times;</a></span></div>
+        </c:if>
+    </div>
     <%--<div class="container">
 
         <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
