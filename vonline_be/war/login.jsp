@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -89,7 +88,7 @@
 
                                                         <div class="clearfix">
 
-                                                            <button type="button" class="width-100 btn btn-sm btn-primary no-border btn-login">
+                                                            <button type="button" data-tourl="<%=session.getAttribute("toURL")%>" class="width-100 btn btn-sm btn-primary no-border btn-login">
                                                                 Войти
                                                             </button>
                                                             <br>

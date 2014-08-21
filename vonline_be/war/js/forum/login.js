@@ -67,10 +67,17 @@ $(document).ready(function(){
         }
     }
 
-
     $('#login-box .btn-login').click(function(e){
         e.preventDefault();
-        login($(this));
+
+        var url = "/";
+        var toURL = $(this).attr('data-tourl');
+        if(toURL && toURL.indexOf('favicon') == -1) {
+            url = toURL;
+            $(this).attr('data-tourl',"");
+        }
+
+        login(url);
     });
 
     $('.btn-reg').click(function(){
@@ -111,12 +118,13 @@ $(document).ready(function(){
 
     var resourcefileName = "mailTemplates/changePasswordConfirm.html";
 
-    function login(selector) {
+    function login(toURL) {
         try {
             var loginResult = authClient.login($("#uname").val(), $("#password").val());
             if (loginResult == 1) {
                 $('.login-error').hide();
-                document.location.replace("/");
+
+                document.location.replace(toURL);
             } else if(loginResult == 3){
                 $('.login-error').text('Ваш email не подтвержден').removeClass('info-good').show();
             }else{

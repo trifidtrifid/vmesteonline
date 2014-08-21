@@ -18,6 +18,7 @@
 <%
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
+    //out.print(request.getRequestURI()+" "+request.getRequestURL());
 
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
@@ -43,6 +44,7 @@
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
+        session.setAttribute("toURL",request.getRequestURL());
 		response.sendRedirect("/index.html");
 		return;
 	}

@@ -871,10 +871,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         }
 
+        var lsGroupId = localStorage.getItem('groupId'),
+            groupsLength = base.groups.length;
+
+        if(!lsGroupId){
+            $rootScope.currentGroup = base.groups[1];
+        }else{
+            for(var i = 0; i < groupsLength; i++){
+                if(base.groups[i].id == lsGroupId){
+                    $rootScope.currentGroup = base.groups[i];
+                }
+            }
+            if(!$rootScope.currentGroup){
+                $rootScope.currentGroup = base.groups[1];
+            }
+        }
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
 
         $rootScope.leftbar = {};
+
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
@@ -933,10 +950,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         return $rootScope.leftbar.tab === number;
     };
   })
-    .controller('rightBarController',function($rootScope) {
-
-        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[1].id);
-    })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
 
@@ -946,26 +959,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         for(var i = 0; i < groupsLength; i++){
             groups[i].isShow = true;
+            if(groups[i].id == $rootScope.currentGroup.id) groups[i].selected = true;
         }
-
-        var lsGroupId = localStorage.getItem('groupId');
-
-        if(!lsGroupId){
-            groups[0].selected = true;
-            $rootScope.currentGroup = groups[1];
-        }else{
-            for(var i = 0; i < groupsLength; i++){
-                if(groups[i].id == lsGroupId){
-                    groups[i].selected = true;
-                    $rootScope.currentGroup = groups[i];
-                }
-            }
-            if(!$rootScope.currentGroup){
-                groups[0].selected = true;
-                $rootScope.currentGroup = groups[1];
-            }
-        }
-
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -1014,6 +1009,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         $('.ng-cloak').removeClass('ng-cloak');
+    })
+    .controller('rightBarController',function($rootScope) {
+
+        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
     })
     .controller('LentaController',function($rootScope) {
 
@@ -2045,6 +2044,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         profile.userProfile = userClient.getUserProfile(userId);
 
+        if(!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone && !profile.userProfile.contacts.email
+            && !profile.userProfile.family.relations && !profile.userProfile.family.childs && !profile.userProfile.family.pets
+            && !profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts
+            && !profile.userProfile.interests.userInterests && !profile.userProfile.interests.job
+            && !profile.userProfile.notifications)
+            profile.isEmptyProfile = true;
+
         if(profile.userProfile.userInfo){
             if (profile.userProfile.userInfo.gender == 1){
                 profile.userProfile.userInfo.genderMeta = "Женский";
@@ -2096,7 +2102,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         //$rootScope.chageIndex = 0;
 
-        angular.element($('.profile')).css({'min-height': $(window).height()-135});
+        angular.element($('.profile')).css({'min-height': $(window).height()-140});
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -2115,8 +2121,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.settingsLoadStatus = "isLoaded";
 
         var settings = this,
-            userContatcsMeta = userClient.getUserContacts(),
             userProfileMeta = userClient.getUserProfile(),
+            userContatcsMeta = userProfileMeta.contacts,
             userInfoMeta = userProfileMeta.userInfo,
             userPrivacyMeta = userProfileMeta.privacy,
             userNotificationsMeta = userProfileMeta.notifications,
