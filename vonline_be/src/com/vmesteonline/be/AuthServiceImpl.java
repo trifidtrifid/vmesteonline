@@ -142,10 +142,10 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public UserLocation checkInviteCode(String code) throws InvalidOperation {
-
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoInviteCode invite = VoInviteCode.getInviteCode(code, pm);
+			VoInviteCode invite = VoInviteCode.getInviteCode(code.trim(), pm);
 			VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class, invite.getPostalAddressId());
 			VoBuilding vBuilding = pm.getObjectById(VoBuilding.class, pa.getBuilding());
 			if (vBuilding.getLatitude() == null || vBuilding.getLongitude() == null) {
@@ -170,7 +170,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public long registerNewUser(String firstname, String lastname, String password, String email, String inviteCode, int gender,
 			boolean needConfirmEmail) throws InvalidOperation {
 
-		if (getUserByEmail(email) != null)
+		VoUser userByEmail = getUserByEmail(email);
+		if (userByEmail != null && userByEmail.isEmailConfirmed())
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
 		if (null == inviteCode || "".equals(inviteCode.trim()))
 			throw new InvalidOperation(VoError.IncorrectParametrs, "unknown invite code " + inviteCode);
