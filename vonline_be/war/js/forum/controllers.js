@@ -192,15 +192,34 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.deleteMessage = function(message,messagesArray,isTopic,isWall,isDialog){
 
-            if(isTopic){
+            if(isTopic && !isWall){
+                // если talk-single или service-single
+
+                bootbox.confirm("Вы уверены, что хотите удалить эту тему?", function(result) {
+                    if(result) {
+
+                        try {
+                            var deleteResult = messageClient.deleteTopic(message.id);
+                            message.message.content = deleteResult.message.content;
+                        }catch(e){
+                            // вернул null, значит потомков нет
+                        }
+
+                        if(message.message.type == 1){
+                            $state.go('talks');
+                        }else{
+                            $state.go('service');
+                        }
+
+                    }
+                });
+            }else if(isTopic){
                 try {
                     var deleteResult = messageClient.deleteTopic(message.id);
-                    message.message.content = "Тема удалена пользователем";
+                    message.message.content = deleteResult.message.content;
                 }catch(e){
                     // вернул null, значит удаление произошло чисто
                     var messagesArrayLength = messagesArray.length;
-
-                    if(!isWall) message.message.content = "Тема удалена пользователем";
 
                      for(var i = 0; i < messagesArrayLength; i++){
 
@@ -229,7 +248,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }else {
                     try {
                         deleteResult = messageClient.deleteMessage(message.id);
-                        message.content = "Сообщение удалено пользователем";
+                        //message.content = "Сообщение удалено пользователем";
+                        message.content = deleteResult.content;
                     }
                     catch (e) {
                         // удалено чисто
@@ -2473,7 +2493,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
     })
-    .controller('dialogController',function($rootScope,$stateParams) {
+    .controller('dialogController',function($rootScope,$stateParams,$state) {
 
         initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
@@ -2481,69 +2501,52 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var dialog = this,
             lastLoadedId = 0,
-            loadedLength = 20,
-            currentDialog = dialogClient.getDialogById($stateParams.dialogId),
-            currentDialogLength = currentDialog.length;
+            loadedLength = 20;
 
-        dialog.isDialog = true;
-        dialog.attachId = '000';
-        dialog.dialogId = $stateParams.dialogId;
+        try {
+            var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
 
-        dialog.users = currentDialog.users;
-        var dialogUsersLength = dialog.users.length;
-        for(var i = 0; i < dialogUsersLength; i++){
-            //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
-            if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)){
-                dialog.users.splice(i,1);
+            var currentDialogLength = currentDialog.length;
+
+            dialog.isDialog = true;
+            dialog.attachId = '000';
+            dialog.dialogId = $stateParams.dialogId;
+
+            dialog.users = currentDialog.users;
+            var dialogUsersLength = dialog.users.length;
+            for (var i = 0; i < dialogUsersLength; i++) {
+                //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
+                if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)) {
+                    dialog.users.splice(i, 1);
+                }
             }
+
+            if ($stateParams.dialogId) {
+                console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
+                try {
+                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, lastLoadedId);
+                } catch (e) {
+                    $state.go('dialogs');
+                }
+                console.log('dialog after');
+                var privateMessagesLength = dialog.privateMessages.length;
+
+                if (privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
+
+                for (var i = 0; i < privateMessagesLength; i++) {
+                    dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
+                    dialog.privateMessages[i].isDialog = true;
+                    dialog.privateMessages[i].attachId = dialog.dialogId + "-" + dialog.privateMessages[i].id;
+                    $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
+                }
+            }
+
+            //dialog.messageText = TEXT_DEFAULT_1;
+            $rootScope.base.initStartParamsForCreateMessage(dialog);
+
+        }catch(e){
+            $state.go('dialogs');
         }
-
-        if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
-            var privateMessagesLength = dialog.privateMessages.length;
-
-            if(privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength-1].id;
-
-            for(var i = 0; i < privateMessagesLength; i++){
-                dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
-                dialog.privateMessages[i].isDialog = true;
-                dialog.privateMessages[i].attachId = dialog.dialogId+"-"+dialog.privateMessages[i].id;
-                $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
-            }
-        }
-
-        //dialog.messageText = TEXT_DEFAULT_1;
-        $rootScope.base.initStartParamsForCreateMessage(dialog);
-
-/*        dialog.sendMessage = function(){
-            var attach = [];
-            attach = getAttachedImages($('#attach-area-000')).concat(getAttachedDocs($('#attach-doc-area-000')));
-
-            if((dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != "") || attach.length != 0){
-
-                var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
-
-                (dialog.messageText == TEXT_DEFAULT_1) ?
-                    newDialogMessage.content = "" :
-                    newDialogMessage.content = dialog.messageText;
-
-                newDialogMessage.author = $rootScope.base.me.id;
-
-                newDialogMessage.created = Date.parse(new Date())/1000;
-                newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
-
-                var tempMessage = dialogClient.postMessage($stateParams.dialogId, newDialogMessage.content,attach);
-                newDialogMessage.images = tempMessage.images;
-                newDialogMessage.documents = tempMessage.documents;
-                newDialogMessage.id = tempMessage.id;
-
-                dialog.privateMessages.unshift(newDialogMessage);
-
-                dialog.messageText = TEXT_DEFAULT_1;
-                cleanAttached($('#attach-area-000'));
-                cleanAttached($('#attach-doc-area-000'));
-            }
-        };*/
 
         dialog.addMoreItems = function(){
             var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
@@ -3409,4 +3412,6 @@ $.widget( "custom.catcomplete", $.ui.autocomplete, {
         });
     }
 });
+
+bootbox.setDefaults({locale: "ru"});
 
