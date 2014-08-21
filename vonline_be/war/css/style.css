@@ -494,14 +494,14 @@ h1 {
   margin-bottom: 10px;
   font-size: 14px;
 }
-.dd-list .topic-right {
-  margin-left: 60px;
-}
 .dd .topic-right {
   margin-left: 95px;
 }
 .dd-list .dd-list {
   padding-left: 37px;
+}
+.dd-list .dd-list .topic-right {
+  margin-left: 60px;
 }
 .one-message .like-item .fa {
   margin-right: 5px;
