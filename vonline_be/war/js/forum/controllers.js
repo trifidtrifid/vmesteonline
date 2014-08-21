@@ -814,7 +814,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
                 }
 
-
             }
 
         }
@@ -2822,6 +2821,9 @@ function initProfileAva(obj){
 }
 function initAttachImage(selector,attachAreaSelector){
     var title;
+    // на случай если будет прикрепляться не файл
+    docsBase64[attachAreaSelector] = [];
+    docsInd[attachAreaSelector] = 0;
 
     selector.ace_file_input({
         style:'well',
@@ -2836,39 +2838,31 @@ function initAttachImage(selector,attachAreaSelector){
             return true;
         }
     }).on('change', function(){
-        attachAreaSelector.find('.loading').removeClass('hidden');
-
-        var fileLabel = $(this).find('+.file-label'),
-        type = selector[0].files[0].type;
-
+        var fileLabel = $(this).find('+.file-label');
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
-        setTimeout(copyImage,200);
+        var type = selector[0].files[0].type;
 
-        function copyImage() {
-            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+        if(type.indexOf('image') != -1) {
+            //если картинка
+            attachAreaSelector.find('.loading').removeClass('hidden');
 
-            if(copyImgSrc == 'none'){
-                setTimeout(copyImage,200);
-            }else {
-                var url = fileClient.saveFileContent(copyImgSrc, true),
-                    fileName = fileLabel.find('.file-name').attr('data-title');
 
-                attachAreaSelector.find('.loading').addClass('hidden');
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') != -1)
+                myArea = $(attachAreaSelector.selector.replace('doc-area','area'));
 
-                attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
-                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                    "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
+            setTimeout(copyImage, 200,myArea,fileLabel,type);
+        }else{
+            // если другой файл
 
-                $('.new-attached .remove-attach-img').click(function (e) {
-                    e.preventDefault();
-                    $(this).closest('.attach-item').hide().detach();
-                    fileClient.deleteFile(url);
-                });
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') == -1)
+                myArea = $(attachAreaSelector.selector.replace('area','doc-area'));
 
-                $('.new-attached').removeClass('new-attached');
-            }
+            setTimeout(insertDoc,200,selector,myArea,fileLabel);
+
         }
 
     });
@@ -2876,11 +2870,10 @@ function initAttachImage(selector,attachAreaSelector){
 
 var docsBase64 = [],
     docsInd = [];
-function initAttachDoc(selector,attachAreaSelector,isEdit){
+function initAttachDoc(selector,attachAreaSelector){
     var title;
         docsBase64[attachAreaSelector] = [];
         docsInd[attachAreaSelector] = 0;
-
 
     selector.ace_file_input({
         style:'well',
@@ -2888,7 +2881,7 @@ function initAttachDoc(selector,attachAreaSelector,isEdit){
         btn_change:null,
         no_icon:'',
         droppable:true,
-        thumbnail: false,
+        thumbnail: 'large',
         icon_remove:null,
         before_change: function(files, dropped){
             title = $(this).find('+.file-label').data('title');
@@ -2899,44 +2892,91 @@ function initAttachDoc(selector,attachAreaSelector,isEdit){
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
-        setTimeout(insertDoc,200);
-        //var input = selector.clone();
+        //setTimeout(insertDoc,200,selector,attachAreaSelector,fileLabel);
 
-        function insertDoc() {
-            var docName = fileLabel.find('.file-name').attr('data-title');
+        var type = selector[0].files[0].type;
 
-            var reader = new FileReader();
-            reader.readAsBinaryString(selector[0].files[0]);
-            var dataType = selector[0].files[0].type;
+        if(type.indexOf('image') != -1) {
+            //если картинка
+            attachAreaSelector.find('.loading').removeClass('hidden');
 
-            reader.onload = function(e){
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
-                docsInd[attachAreaSelector]++;
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') != -1)
+                myArea = $(attachAreaSelector.selector.replace('doc-area','area'));
 
-                attachAreaSelector.append("<span class='attach-item new-attached' data-href='"+ url +"' data-type='"+ dataType +"'>" +
-                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                    '<span>'+docName+'</span>'+
-                    "</span>");
+            setTimeout(copyImage, 200,myArea,fileLabel,type);
+        }else{
+            // если другой файл
 
-                $('.new-attached .remove-attach-img').click(function(e){
-                    e.preventDefault();
-                    var attachItem = $(this).closest('.attach-item');
-                    var ind = attachItem.index();
-                    attachItem.hide().detach();
-                    docsBase64[attachAreaSelector].splice(ind,1);
-                    fileClient.deleteFile(url);
-                });
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') == -1)
+                myArea = $(attachAreaSelector.selector.replace('area','doc-area'));
 
-                $('.new-attached').removeClass('new-attached');
-            };
-
-
+            setTimeout(insertDoc,200,selector,myArea,fileLabel);
         }
+
     });
 }
+
+function copyImage(attachAreaSelector,fileLabel,type) {
+    var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+
+    if (copyImgSrc == 'none' || !copyImgSrc) {
+        setTimeout(copyImage, 200,attachAreaSelector,fileLabel,type);
+    } else {
+        var url = fileClient.saveFileContent(copyImgSrc, true),
+            fileName = fileLabel.find('.file-name').attr('data-title');
+
+        attachAreaSelector.find('.loading').addClass('hidden');
+
+        attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
+            "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+            "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
+
+        $('.new-attached .remove-attach-img').click(function (e) {
+            e.preventDefault();
+            $(this).closest('.attach-item').hide().detach();
+            fileClient.deleteFile(url);
+        });
+
+        $('.new-attached').removeClass('new-attached');
+    }
+}
+
+function insertDoc(selector,attachAreaSelector,fileLabel) {
+    var docName = fileLabel.find('.file-name').attr('data-title');
+
+    var reader = new FileReader();
+    reader.readAsBinaryString(selector[0].files[0]);
+    var dataType = selector[0].files[0].type;
+
+    reader.onload = function(e){
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
+        var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
+        docsInd[attachAreaSelector]++;
+
+        attachAreaSelector.append("<span class='attach-item new-attached' data-href='"+ url +"' data-type='"+ dataType +"'>" +
+            "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+            '<span>'+docName+'</span>'+
+            "</span>");
+
+        $('.new-attached .remove-attach-img').click(function(e){
+            e.preventDefault();
+            var attachItem = $(this).closest('.attach-item');
+            var ind = attachItem.index();
+            attachItem.hide().detach();
+            docsBase64[attachAreaSelector].splice(ind,1);
+            fileClient.deleteFile(url);
+        });
+
+        $('.new-attached').removeClass('new-attached');
+    };
+
+
+}
+
 function selectGroupInDropdown(groupId){
     var groupsLength = userClientGroups.length,
         selectedGroup;
@@ -3315,10 +3355,11 @@ function setPoll(poll,pollInputs){
 function getAttachedImages(selector){
     var imgList = [], ind = 0;
 
-    selector.find('.attach-item img').each(function(){
-        var bgImg = $(this).css('background-image'),
-            name = $(this).attr('data-title'),
-            type = $(this).attr('data-type'),
+    selector.find('.attach-item').each(function(){
+        //значит картинка
+        var bgImg = $(this).find('img').css('background-image'),
+            name = $(this).find('img').attr('data-title'),
+            type = $(this).find('img').attr('data-type'),
             result,content;
 
         var i = bgImg.indexOf('base64,');
@@ -3332,6 +3373,7 @@ function getAttachedImages(selector){
         //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";
 
         imgList[ind++] = result;
+
     });
 
     return imgList;
