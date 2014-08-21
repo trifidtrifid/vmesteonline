@@ -192,15 +192,34 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.deleteMessage = function(message,messagesArray,isTopic,isWall,isDialog){
 
-            if(isTopic){
+            if(isTopic && !isWall){
+                // если talk-single или service-single
+
+                bootbox.confirm("Вы уверены, что хотите удалить эту тему?", function(result) {
+                    if(result) {
+
+                        try {
+                            var deleteResult = messageClient.deleteTopic(message.id);
+                            message.message.content = deleteResult.message.content;
+                        }catch(e){
+                            // вернул null, значит потомков нет
+                        }
+
+                        if(message.message.type == 1){
+                            $state.go('talks');
+                        }else{
+                            $state.go('service');
+                        }
+
+                    }
+                });
+            }else if(isTopic){
                 try {
                     var deleteResult = messageClient.deleteTopic(message.id);
-                    message.message.content = "Тема удалена пользователем";
+                    message.message.content = deleteResult.message.content;
                 }catch(e){
                     // вернул null, значит удаление произошло чисто
                     var messagesArrayLength = messagesArray.length;
-
-                    if(!isWall) message.message.content = "Тема удалена пользователем";
 
                      for(var i = 0; i < messagesArrayLength; i++){
 
@@ -229,7 +248,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }else {
                     try {
                         deleteResult = messageClient.deleteMessage(message.id);
-                        message.content = "Сообщение удалено пользователем";
+                        //message.content = "Сообщение удалено пользователем";
+                        message.content = deleteResult.content;
                     }
                     catch (e) {
                         // удалено чисто
@@ -794,7 +814,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
                 }
 
-
             }
 
         }
@@ -852,10 +871,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         }
 
+        var lsGroupId = localStorage.getItem('groupId'),
+            groupsLength = base.groups.length;
+
+        if(!lsGroupId){
+            $rootScope.currentGroup = base.groups[1];
+        }else{
+            for(var i = 0; i < groupsLength; i++){
+                if(base.groups[i].id == lsGroupId){
+                    $rootScope.currentGroup = base.groups[i];
+                }
+            }
+            if(!$rootScope.currentGroup){
+                $rootScope.currentGroup = base.groups[1];
+            }
+        }
+
         $rootScope.base = base;
         $rootScope.currentPage = 'lenta';
 
         $rootScope.leftbar = {};
+
     })
   .controller('navbarController', function($rootScope) {
         this.privateMessagesBtnStatus = "";
@@ -867,7 +903,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             localStorage.removeItem('groupId');
             authClient.logout();
 
-            document.location.replace("login.html");
+            document.location.replace("login.jsp");
 
         }
 
@@ -914,10 +950,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         return $rootScope.leftbar.tab === number;
     };
   })
-    .controller('rightBarController',function($rootScope) {
-
-        $rootScope.importantTopics = messageClient.getImportantTopics(userClientGroups[1].id);
-    })
     .controller('mainContentTopController',function($rootScope) {
         var topCtrl = this;
 
@@ -927,26 +959,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         for(var i = 0; i < groupsLength; i++){
             groups[i].isShow = true;
+            if(groups[i].id == $rootScope.currentGroup.id) groups[i].selected = true;
         }
-
-        var lsGroupId = localStorage.getItem('groupId');
-
-        if(!lsGroupId){
-            groups[0].selected = true;
-            $rootScope.currentGroup = groups[1];
-        }else{
-            for(var i = 0; i < groupsLength; i++){
-                if(groups[i].id == lsGroupId){
-                    groups[i].selected = true;
-                    $rootScope.currentGroup = groups[i];
-                }
-            }
-            if(!$rootScope.currentGroup){
-                groups[0].selected = true;
-                $rootScope.currentGroup = groups[1];
-            }
-        }
-
 
         topCtrl.isSet = function(groupId){
             //return groupId ===
@@ -995,6 +1009,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
         $('.ng-cloak').removeClass('ng-cloak');
+    })
+    .controller('rightBarController',function($rootScope) {
+
+        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
     })
     .controller('LentaController',function($rootScope) {
 
@@ -2026,6 +2044,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         profile.userProfile = userClient.getUserProfile(userId);
 
+        if(!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone && !profile.userProfile.contacts.email
+            && !profile.userProfile.family.relations && !profile.userProfile.family.childs && !profile.userProfile.family.pets
+            && !profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts
+            && !profile.userProfile.interests.userInterests && !profile.userProfile.interests.job
+            && !profile.userProfile.notifications)
+            profile.isEmptyProfile = true;
+
         if(profile.userProfile.userInfo){
             if (profile.userProfile.userInfo.gender == 1){
                 profile.userProfile.userInfo.genderMeta = "Женский";
@@ -2077,7 +2102,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         //$rootScope.chageIndex = 0;
 
-        angular.element($('.profile')).css({'min-height': $(window).height()-135});
+        angular.element($('.profile')).css({'min-height': $(window).height()-140});
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -2096,8 +2121,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.settingsLoadStatus = "isLoaded";
 
         var settings = this,
-            userContatcsMeta = userClient.getUserContacts(),
             userProfileMeta = userClient.getUserProfile(),
+            userContatcsMeta = userProfileMeta.contacts,
             userInfoMeta = userProfileMeta.userInfo,
             userPrivacyMeta = userProfileMeta.privacy,
             userNotificationsMeta = userProfileMeta.notifications,
@@ -2473,7 +2498,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         };
 
     })
-    .controller('dialogController',function($rootScope,$stateParams) {
+    .controller('dialogController',function($rootScope,$stateParams,$state) {
 
         initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
@@ -2481,69 +2506,52 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var dialog = this,
             lastLoadedId = 0,
-            loadedLength = 20,
-            currentDialog = dialogClient.getDialogById($stateParams.dialogId),
-            currentDialogLength = currentDialog.length;
+            loadedLength = 20;
 
-        dialog.isDialog = true;
-        dialog.attachId = '000';
-        dialog.dialogId = $stateParams.dialogId;
+        try {
+            var currentDialog = dialogClient.getDialogById($stateParams.dialogId);
 
-        dialog.users = currentDialog.users;
-        var dialogUsersLength = dialog.users.length;
-        for(var i = 0; i < dialogUsersLength; i++){
-            //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
-            if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)){
-                dialog.users.splice(i,1);
+            var currentDialogLength = currentDialog.length;
+
+            dialog.isDialog = true;
+            dialog.attachId = '000';
+            dialog.dialogId = $stateParams.dialogId;
+
+            dialog.users = currentDialog.users;
+            var dialogUsersLength = dialog.users.length;
+            for (var i = 0; i < dialogUsersLength; i++) {
+                //console.log(dialog.users[i].id+" "+$rootScope.base.me.id);
+                if (dialog.users[i] && (dialog.users[i].id == $rootScope.base.me.id)) {
+                    dialog.users.splice(i, 1);
+                }
             }
+
+            if ($stateParams.dialogId) {
+                console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
+                try {
+                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, lastLoadedId);
+                } catch (e) {
+                    $state.go('dialogs');
+                }
+                console.log('dialog after');
+                var privateMessagesLength = dialog.privateMessages.length;
+
+                if (privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
+
+                for (var i = 0; i < privateMessagesLength; i++) {
+                    dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
+                    dialog.privateMessages[i].isDialog = true;
+                    dialog.privateMessages[i].attachId = dialog.dialogId + "-" + dialog.privateMessages[i].id;
+                    $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
+                }
+            }
+
+            //dialog.messageText = TEXT_DEFAULT_1;
+            $rootScope.base.initStartParamsForCreateMessage(dialog);
+
+        }catch(e){
+            $state.go('dialogs');
         }
-
-        if ($stateParams.dialogId){
-            dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
-            var privateMessagesLength = dialog.privateMessages.length;
-
-            if(privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength-1].id;
-
-            for(var i = 0; i < privateMessagesLength; i++){
-                dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
-                dialog.privateMessages[i].isDialog = true;
-                dialog.privateMessages[i].attachId = dialog.dialogId+"-"+dialog.privateMessages[i].id;
-                $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
-            }
-        }
-
-        //dialog.messageText = TEXT_DEFAULT_1;
-        $rootScope.base.initStartParamsForCreateMessage(dialog);
-
-/*        dialog.sendMessage = function(){
-            var attach = [];
-            attach = getAttachedImages($('#attach-area-000')).concat(getAttachedDocs($('#attach-doc-area-000')));
-
-            if((dialog.messageText != TEXT_DEFAULT_1 && dialog.messageText != "") || attach.length != 0){
-
-                var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
-
-                (dialog.messageText == TEXT_DEFAULT_1) ?
-                    newDialogMessage.content = "" :
-                    newDialogMessage.content = dialog.messageText;
-
-                newDialogMessage.author = $rootScope.base.me.id;
-
-                newDialogMessage.created = Date.parse(new Date())/1000;
-                newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
-
-                var tempMessage = dialogClient.postMessage($stateParams.dialogId, newDialogMessage.content,attach);
-                newDialogMessage.images = tempMessage.images;
-                newDialogMessage.documents = tempMessage.documents;
-                newDialogMessage.id = tempMessage.id;
-
-                dialog.privateMessages.unshift(newDialogMessage);
-
-                dialog.messageText = TEXT_DEFAULT_1;
-                cleanAttached($('#attach-area-000'));
-                cleanAttached($('#attach-doc-area-000'));
-            }
-        };*/
 
         dialog.addMoreItems = function(){
             var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
@@ -2819,6 +2827,9 @@ function initProfileAva(obj){
 }
 function initAttachImage(selector,attachAreaSelector){
     var title;
+    // на случай если будет прикрепляться не файл
+    docsBase64[attachAreaSelector] = [];
+    docsInd[attachAreaSelector] = 0;
 
     selector.ace_file_input({
         style:'well',
@@ -2833,39 +2844,31 @@ function initAttachImage(selector,attachAreaSelector){
             return true;
         }
     }).on('change', function(){
-        attachAreaSelector.find('.loading').removeClass('hidden');
-
-        var fileLabel = $(this).find('+.file-label'),
-        type = selector[0].files[0].type;
-
+        var fileLabel = $(this).find('+.file-label');
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
-        setTimeout(copyImage,200);
+        var type = selector[0].files[0].type;
 
-        function copyImage() {
-            var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+        if(type.indexOf('image') != -1) {
+            //если картинка
+            attachAreaSelector.find('.loading').removeClass('hidden');
 
-            if(copyImgSrc == 'none'){
-                setTimeout(copyImage,200);
-            }else {
-                var url = fileClient.saveFileContent(copyImgSrc, true),
-                    fileName = fileLabel.find('.file-name').attr('data-title');
 
-                attachAreaSelector.find('.loading').addClass('hidden');
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') != -1)
+                myArea = $(attachAreaSelector.selector.replace('doc-area','area'));
 
-                attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
-                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                    "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
+            setTimeout(copyImage, 200,myArea,fileLabel,type);
+        }else{
+            // если другой файл
 
-                $('.new-attached .remove-attach-img').click(function (e) {
-                    e.preventDefault();
-                    $(this).closest('.attach-item').hide().detach();
-                    fileClient.deleteFile(url);
-                });
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') == -1)
+                myArea = $(attachAreaSelector.selector.replace('area','doc-area'));
 
-                $('.new-attached').removeClass('new-attached');
-            }
+            setTimeout(insertDoc,200,selector,myArea,fileLabel);
+
         }
 
     });
@@ -2873,11 +2876,10 @@ function initAttachImage(selector,attachAreaSelector){
 
 var docsBase64 = [],
     docsInd = [];
-function initAttachDoc(selector,attachAreaSelector,isEdit){
+function initAttachDoc(selector,attachAreaSelector){
     var title;
         docsBase64[attachAreaSelector] = [];
         docsInd[attachAreaSelector] = 0;
-
 
     selector.ace_file_input({
         style:'well',
@@ -2885,7 +2887,7 @@ function initAttachDoc(selector,attachAreaSelector,isEdit){
         btn_change:null,
         no_icon:'',
         droppable:true,
-        thumbnail: false,
+        thumbnail: 'large',
         icon_remove:null,
         before_change: function(files, dropped){
             title = $(this).find('+.file-label').data('title');
@@ -2896,44 +2898,91 @@ function initAttachDoc(selector,attachAreaSelector,isEdit){
         fileLabel.attr('data-title',title).removeClass('hide-placeholder');
         fileLabel.find('.file-name').hide();
 
-        setTimeout(insertDoc,200);
-        //var input = selector.clone();
+        //setTimeout(insertDoc,200,selector,attachAreaSelector,fileLabel);
 
-        function insertDoc() {
-            var docName = fileLabel.find('.file-name').attr('data-title');
+        var type = selector[0].files[0].type;
 
-            var reader = new FileReader();
-            reader.readAsBinaryString(selector[0].files[0]);
-            var dataType = selector[0].files[0].type;
+        if(type.indexOf('image') != -1) {
+            //если картинка
+            attachAreaSelector.find('.loading').removeClass('hidden');
 
-            reader.onload = function(e){
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
-                docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
-                var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
-                docsInd[attachAreaSelector]++;
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') != -1)
+                myArea = $(attachAreaSelector.selector.replace('doc-area','area'));
 
-                attachAreaSelector.append("<span class='attach-item new-attached' data-href='"+ url +"' data-type='"+ dataType +"'>" +
-                    "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-                    '<span>'+docName+'</span>'+
-                    "</span>");
+            setTimeout(copyImage, 200,myArea,fileLabel,type);
+        }else{
+            // если другой файл
 
-                $('.new-attached .remove-attach-img').click(function(e){
-                    e.preventDefault();
-                    var attachItem = $(this).closest('.attach-item');
-                    var ind = attachItem.index();
-                    attachItem.hide().detach();
-                    docsBase64[attachAreaSelector].splice(ind,1);
-                    fileClient.deleteFile(url);
-                });
+            var myArea = attachAreaSelector;
+            if(attachAreaSelector.selector.indexOf('doc-area') == -1)
+                myArea = $(attachAreaSelector.selector.replace('area','doc-area'));
 
-                $('.new-attached').removeClass('new-attached');
-            };
-
-
+            setTimeout(insertDoc,200,selector,myArea,fileLabel);
         }
+
     });
 }
+
+function copyImage(attachAreaSelector,fileLabel,type) {
+    var copyImgSrc = fileLabel.find('.file-name img').css('background-image');
+
+    if (copyImgSrc == 'none' || !copyImgSrc) {
+        setTimeout(copyImage, 200,attachAreaSelector,fileLabel,type);
+    } else {
+        var url = fileClient.saveFileContent(copyImgSrc, true),
+            fileName = fileLabel.find('.file-name').attr('data-title');
+
+        attachAreaSelector.find('.loading').addClass('hidden');
+
+        attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
+            "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+            "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
+
+        $('.new-attached .remove-attach-img').click(function (e) {
+            e.preventDefault();
+            $(this).closest('.attach-item').hide().detach();
+            fileClient.deleteFile(url);
+        });
+
+        $('.new-attached').removeClass('new-attached');
+    }
+}
+
+function insertDoc(selector,attachAreaSelector,fileLabel) {
+    var docName = fileLabel.find('.file-name').attr('data-title');
+
+    var reader = new FileReader();
+    reader.readAsBinaryString(selector[0].files[0]);
+    var dataType = selector[0].files[0].type;
+
+    reader.onload = function(e){
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]] = new com.vmesteonline.be.messageservice.Attach();
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].fileName = docName;
+        docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].contentType = dataType;
+        var url = docsBase64[attachAreaSelector][docsInd[attachAreaSelector]].URL = fileClient.saveFileContent(base64encode(reader.result));
+        docsInd[attachAreaSelector]++;
+
+        attachAreaSelector.append("<span class='attach-item new-attached' data-href='"+ url +"' data-type='"+ dataType +"'>" +
+            "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
+            '<span>'+docName+'</span>'+
+            "</span>");
+
+        $('.new-attached .remove-attach-img').click(function(e){
+            e.preventDefault();
+            var attachItem = $(this).closest('.attach-item');
+            var ind = attachItem.index();
+            attachItem.hide().detach();
+            docsBase64[attachAreaSelector].splice(ind,1);
+            fileClient.deleteFile(url);
+        });
+
+        $('.new-attached').removeClass('new-attached');
+    };
+
+
+}
+
 function selectGroupInDropdown(groupId){
     var groupsLength = userClientGroups.length,
         selectedGroup;
@@ -3312,10 +3361,11 @@ function setPoll(poll,pollInputs){
 function getAttachedImages(selector){
     var imgList = [], ind = 0;
 
-    selector.find('.attach-item img').each(function(){
-        var bgImg = $(this).css('background-image'),
-            name = $(this).attr('data-title'),
-            type = $(this).attr('data-type'),
+    selector.find('.attach-item').each(function(){
+        //значит картинка
+        var bgImg = $(this).find('img').css('background-image'),
+            name = $(this).find('img').attr('data-title'),
+            type = $(this).find('img').attr('data-type'),
             result,content;
 
         var i = bgImg.indexOf('base64,');
@@ -3329,6 +3379,7 @@ function getAttachedImages(selector){
         //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";
 
         imgList[ind++] = result;
+
     });
 
     return imgList;
@@ -3409,4 +3460,6 @@ $.widget( "custom.catcomplete", $.ui.autocomplete, {
         });
     }
 });
+
+bootbox.setDefaults({locale: "ru"});
 

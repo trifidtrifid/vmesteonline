@@ -18,6 +18,7 @@
 <%
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
+    //out.print(request.getRequestURI()+" "+request.getRequestURL());
 
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
@@ -43,6 +44,7 @@
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
+        session.setAttribute("toURL",request.getRequestURL());
 		response.sendRedirect("/index.html");
 		return;
 	}
@@ -144,6 +146,12 @@
             </ul>
         </div>
 
+    </div>
+    <div class="container">
+        <c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
+            <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/><a href="#" onclick="$(this).parent().hide().detach()">&times;</a></span></div>
+        </c:if>
+        <% pageContext.removeAttribute("MESSAGE_TO_SHOW"); %>
     </div>
     <%--<div class="container">
 

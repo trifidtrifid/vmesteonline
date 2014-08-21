@@ -1547,3 +1547,26 @@ h1 {
 .about .footer li {
   font-size: 13px;
 }
+.message-to-show {
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
+.message-to-show span {
+  color: #fff;
+  background: #f00;
+  padding: 4px 10px;
+  display: inline-block;
+}
+.message-to-show span a {
+  color: #fff;
+  display: inline-block;
+  margin-left: 10px;
+}
+.message-to-show span a:hover {
+  text-decoration: none;
+}
+.login-layout .message-to-show {
+  position: absolute;
+  top: -60px;
+}
