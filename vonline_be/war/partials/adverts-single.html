@@ -17,22 +17,22 @@
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right" ng-switch on="adverts.fullTalkTopic.metaType">
+                                <div class="topic-right text-container" ng-switch on="adverts.fullTalkTopic.metaType">
 
                                     <div class="message-tools pull-right" ng-show="adverts.fullTalkTopic.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(adverts.fullTalkTopic,adverts.topics,true,false)">&times;</a>
                                         <a href="#" title="Редактировать" ng-click="base.setEdit($event,adverts.fullTalkTopic)" class="fa fa-pencil pull-right"></a>
                                     </div>
 
-                                    <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                      ng-class="adverts.fullTalkTopic.tagColor">{{adverts.fullTalkTopic.label}}</span>
+                                    <a ui-sref="service" class="label label-lg arrowed lenta-item-hashtag pull-right"
+                                      ng-class="adverts.fullTalkTopic.tagColor">{{adverts.fullTalkTopic.label}}</a>
 
                                     <div ng-hide="adverts.fullTalkTopic.isEdit">
                                         <h2>
                                             <span>{{adverts.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                        <p ng-switch-when="message">{{adverts.fullTalkTopic.message.content}}</p>
+                                        <p ng-switch-when="message" class="text">{{adverts.fullTalkTopic.message.content}}</p>
 
 
                                     <div class="attached">
@@ -115,7 +115,7 @@
                                                    ng-click="adverts.toggleTreeFirstMessage($event,firstMessage)"></a>
                                             </div>
                                         </div>
-                                        <div class="topic-right">
+                                        <div class="topic-right text-container">
 
                                             <div class="message-tools pull-right" ng-show="firstMessage.userInfo.id == base.me.id">
                                                 <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(firstMessage,adverts.fullTalkFirstMessages,false,false)">&times;</a>
@@ -125,7 +125,7 @@
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
 
                                             <div ng-hide="firstMessage.isEdit">
-                                                <p>{{firstMessage.content}}</p>
+                                                <p class="text">{{firstMessage.content}}</p>
 
                                                 <div class="attached">
                                                     <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
@@ -172,7 +172,7 @@
                                                            ng-click="adverts.toggleTree($event,message,firstMessage)"></a>
                                                     </div>
                                                 </div>
-                                                <div class="topic-right">
+                                                <div class="topic-right text-container">
                                                     <div class="message-tools pull-right" ng-show="message.userInfo.id == base.me.id">
                                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,adverts.fullTalkMessages[firstMessage.id],false,false)">&times;</a>
                                                         <a href="#" title="Редактировать" ng-click="base.setEdit($event,message,true)" class="fa fa-pencil pull-right"></a>
@@ -181,7 +181,7 @@
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
 
                                                     <div ng-hide="message.isEdit">
-                                                        <p>{{message.content}}</p>
+                                                        <p class="text">{{message.content}}</p>
 
                                                         <div class="attached">
                                                             <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{adverts.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">

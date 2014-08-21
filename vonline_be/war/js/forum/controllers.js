@@ -60,6 +60,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             event.preventDefault();
 
             obj.isPollShow = true;
+            obj.pollSubject = "";
+            obj.poll = null;
+
             obj.pollInputs = [
                 {
                     counter : 0,
@@ -266,11 +269,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 //alert($(el.parentNode.parentNode).find('.text').height());
 
                 //var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
-                var h = $(el.parentNode.parentNode).find('.text').height()+24;
-                
+                var h = $(el).closest('.text-container').find('.text').height()+24;
+
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
 
-                $(el.parentNode.parentNode).find('.edit-message textarea').height(h+'px');
+                $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
 
             }
 
@@ -3031,10 +3034,9 @@ function postTopic(obj,isWall,isAdverts){
                 // редактирование опроса
                 obj.poll.subject = obj.pollSubject;
                 obj.poll.names = [];
-                var pollInputsLength = obj.pollInputs.length;
-                for (var i = 0; i < pollInputsLength; i++) {
-                    obj.poll.names[i] = obj.pollInputs[i].name;
-                }
+
+                setPoll(obj.poll,obj.pollInputs);
+
             }else{
                 // создание опроса
                 poll = new com.vmesteonline.be.messageservice.Poll();
@@ -3043,16 +3045,8 @@ function postTopic(obj,isWall,isAdverts){
                 poll.names = [];
                 poll.subject = obj.pollSubject;
                 poll.alreadyPoll = false;
-                pollInputsLength = obj.pollInputs.length;
-                for (var i = 0; i < pollInputsLength; i++) {
-                    //if (obj.pollInputs[i].name != "") {
-                    poll.names[i] = obj.pollInputs[i].name;
-                    poll.editNames[i] = {
-                        id: i,
-                        name: obj.pollInputs[i].name
-                    };
-                    //}
-                }
+
+                setPoll(poll,obj.pollInputs);
 
                 obj.poll = poll;
                 obj.metaType = "poll";
@@ -3064,6 +3058,9 @@ function postTopic(obj,isWall,isAdverts){
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
+
+        obj.label = getLabel(userClientGroups,obj.selectedGroup.type);
+        obj.tagColor = getTagColor(obj.label);
 
         var newTopic = messageClient.postTopic(obj);
     }else {
@@ -3119,16 +3116,8 @@ function postTopic(obj,isWall,isAdverts){
             poll.names = [];
             poll.subject = obj.pollSubject;
             poll.alreadyPoll = false;
-            var pollInputsLength = obj.pollInputs.length;
-            for (var i = 0; i < pollInputsLength; i++) {
-                //if (obj.pollInputs[i].name != "") {
-                    poll.names[i] = obj.pollInputs[i].name;
-                    poll.editNames[i] = {
-                        id: i,
-                        name: obj.pollInputs[i].name
-                    };
-                //}
-            }
+
+            setPoll(poll,obj.pollInputs);
 
             newTopic.poll = poll;
             newTopic.metaType = "poll";
@@ -3302,6 +3291,22 @@ function setPollEditNames(poll){
 
     }
     poll.amount = amount;
+}
+
+function setPoll(poll,pollInputs){
+    var counterForPoll = 0,
+        pollInputsLength = pollInputs.length;
+
+    for (var i = 0; i < pollInputsLength; i++) {
+        if (pollInputs[i].name != "") {
+            poll.names[counterForPoll] = pollInputs[i].name;
+            poll.editNames[counterForPoll] = {
+                id: counterForPoll++,
+                name: pollInputs[i].name
+            };
+        }
+    }
+
 }
 
 function getAttachedImages(selector){

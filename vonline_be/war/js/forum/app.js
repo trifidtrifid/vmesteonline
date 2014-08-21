@@ -34,13 +34,13 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/talks-single.html",
             controller: 'TalksSingleController as talks'
         })
-        .state('profit', {
-            url: "/profit",
+        .state('service', {
+            url: "/service",
             templateUrl: "partials/adverts.html",
             controller: 'AdvertsController as adverts'
         })
-        .state('profit-single', {
-            url: "/profit-single-:advertId",
+        .state('service-single', {
+            url: "/service-single-:advertId",
             templateUrl: "partials/adverts-single.html",
             controller: 'AdvertsSingleController as adverts'
         })

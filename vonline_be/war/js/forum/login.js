@@ -82,7 +82,7 @@ $(document).ready(function(){
 
         $('input[name="sex"]').each(function(){
             if($(this).prop("checked")){
-                gender = $(this).index();
+                gender = $(this).closest('.radio').index()+1;
             }
         });
 
