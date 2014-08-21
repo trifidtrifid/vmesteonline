@@ -29,6 +29,7 @@
                         <c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
                             <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/></span></div>
                         </c:if>
+                        <% pageContext.removeAttribute("MESSAGE_TO_SHOW"); %>
 
                         <div class="login-left col-md-5 ">
                             <a href="/"><img src="i/logo.png" alt="логотип"/></a>
