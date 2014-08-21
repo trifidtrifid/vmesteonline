@@ -178,7 +178,7 @@
 					<ul class="nav nav-list">
                         <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li>
                         <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
-                        <li ng-class="{active:isSet(3)}"><a ui-sref="service"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li ng-class="{active:isSet(3)}"><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">

@@ -208,7 +208,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                         if(message.message.type == 1){
                             $state.go('talks');
                         }else{
-                            $state.go('service');
+                            $state.go('profit');
                         }
 
                     }
