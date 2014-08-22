@@ -192,8 +192,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.deleteMessage = function(message,messagesArray,isTopic,isWall,isDialog){
 
-            if(isTopic && !isWall){
-                // если talk-single или service-single
+            if(isTopic && !isWall || message.isWallSingle){
+                // если talk-single или profit-single
 
                 bootbox.confirm("Вы уверены, что хотите удалить эту тему?", function(result) {
                     if(result) {
@@ -207,8 +207,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
                         if(message.message.type == 1){
                             $state.go('talks');
-                        }else{
+                        }else if(message.message.type == 6){
                             $state.go('profit');
+                        }else if(message.message.type == 5){
+                            $state.go('main');
                         }
 
                     }
@@ -285,10 +287,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     textLen = message.content.length;
                 }
 
-                //var areaWidth = $(el.parentNode.parentNode).width()-20;
-                //alert($(el.parentNode.parentNode).find('.text').height());
-
-                //var h = base.getTextareaHeight(textLen,areaWidth,isTopic);
                 var h = $(el).closest('.text-container').find('.text').height()+24;
 
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
@@ -566,7 +564,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     cleanAttached($('#attach-area-edit-' + ctrl.id));
                     cleanAttached($('#attach-doc-area-edit-' + ctrl.id));
                     ctrl.isEdit = false;
-                    if(ctrl.poll && newTopic.poll)ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
+                    if(ctrl.poll && newTopic.poll){
+                        ctrl.poll.alreadyPoll = newTopic.poll.alreadyPoll;
+                        ctrl.poll.pollId = newTopic.poll.pollId;
+                    }
                 } else {
                     cleanAttached($('#attach-area-'+ctrl.attachId));
                     cleanAttached($('#attach-doc-area-'+ctrl.attachId));
@@ -1171,6 +1172,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
+        initFancyBox($('.lenta-item'));
 
         // временно, нужна функция getWallItem(topicId)
         var wallItems = messageClient.getWallItems($rootScope.currentGroup.id,0,1000),
@@ -2087,7 +2089,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             for(var i = 0; i < petsLength; i++){
                 switch(profile.userProfile.family.pets[i].type){
                     case 0:
-                        profile.userProfile.family.pets[i].typeMeta = "Кот/кошка";
+                        profile.userProfile.family.pets[i].typeMeta = "Кошка";
                         break;
                     case 1:
                         profile.userProfile.family.pets[i].typeMeta = "Собака";

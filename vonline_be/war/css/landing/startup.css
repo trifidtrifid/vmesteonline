@@ -861,6 +861,23 @@ html{
 }
 .ketchup-error{display:none !important}
 
+.message-to-show{
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+    position: absolute;
+    top: 20px;
+    z-index: 2;
+}
+.message-to-show span{
+    color: #fff;
+    background: #ff0000;
+    padding: 4px 10px;
+    display: inline-block;
+    cursor: default;
+}
+
+
 @media (max-width: 390px) {
     h1{
         font-size: 40px;
