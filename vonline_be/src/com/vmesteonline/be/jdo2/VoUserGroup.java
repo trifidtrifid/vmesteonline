@@ -28,10 +28,10 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 				+"' && latitude=='"+latitude.toPlainString()+"'"
 				+" && groupType=="+gType;
 		
-		if( gType == GroupType.STAIRCASE.getValue() )
+		if( gType <= GroupType.STAIRCASE.getValue() )
 			queryStr += " && staircase==" + staircase;
 		
-		if( gType == GroupType.FLOOR.getValue() )
+		if( gType <= GroupType.FLOOR.getValue() )
 			queryStr += " && floor==" + floor;
 		
 		List<VoUserGroup> ugl =  (List<VoUserGroup>)pm.newQuery(VoUserGroup.class,queryStr).execute();
