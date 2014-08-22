@@ -10,7 +10,7 @@ $(document).ready(function(){
         URL = document.location.hash;
         URL = URL.slice(1);
         URLArray = URL.split('-');
-        email = URLArray[1];
+        email = decodeURIComponent(URLArray[1]);
         var remindPassw = URLArray[0];
 
         var isGood_1 = authClient.checkRemindCode(remindPassw,email);
