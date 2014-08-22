@@ -18,7 +18,9 @@ import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoMessage;
+import com.vmesteonline.be.jdo2.VoPoll;
 import com.vmesteonline.be.jdo2.VoRubric;
+import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -98,12 +100,9 @@ public class Defaults {
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
 			clearUsers(pm);
-			clearRubrics(pm);
 			clearGroups(pm);
 			clearLocations(pm);
 			clearFiles(pm);
-
-			initializeRubrics(pm);
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
@@ -160,6 +159,10 @@ public class Defaults {
 		deletePersistentAll(pm, VoInviteCode.class);
 		deletePersistentAll(pm, VoDialog.class);
 		deletePersistentAll(pm, VoDialogMessage.class);
+		deletePersistentAll(pm, VoPoll.class);
+		deletePersistentAll(pm, VoSession.class);
+		deletePersistentAll(pm, VoRubric.class);
+		
 	}
 
 	// ======================================================================================================================
@@ -179,42 +182,20 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	private static void clearRubrics(PersistenceManager pm) {
-		deletePersistentAll(pm, VoRubric.class);
-
-	}
-
-	// ======================================================================================================================
-	private static void initializeRubrics(PersistenceManager pm) {
-		Query q = pm.newQuery(VoRubric.class);
-		q.setFilter(" subscribedByDefault == true");
-		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
-		if (defRubrics.isEmpty()) {
-			for (VoRubric dr : new VoRubric[] { new VoRubric("rubric1", "rubric first", "rubric about first", true),
-					new VoRubric("rubric2", "rubric second", "rubric about second", true), new VoRubric("rubric3", "rubric third", "rubric about third", true),
-					new VoRubric("rubric4", "rubric fourth", "rubric about fourth", true) }) {
-
-				pm.makePersistent(dr);
-				defaultRubrics.add(dr);
-			}
-		}
-		q.closeAll();
-	}
-
-	// ======================================================================================================================
 	private static void initializeGroups(PersistenceManager pm) {
 		Query q;
 		q = pm.newQuery(VoGroup.class);
 		q.setFilter("subscribedByDefault == true");
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
-		if (defGroups.isEmpty()) {
-			Iterator<Integer> impIterator = Arrays.asList(new Integer[] { 200, 500, 1000, 5000 }).iterator();
+		if (defGroups.isEmpty()){
+			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
-			for (VoGroup dg : new VoGroup[] { new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true),
-					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true), new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true),
-			// new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true)
-			}) {
-				dg.setImportantScore(impIterator.next());
+			for (VoGroup dg : new VoGroup[] { 
+					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
+					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
+					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
+					}) {
+				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
@@ -266,8 +247,9 @@ public class Defaults {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
-			VoStreet streetZ = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
-			VoStreet streetR = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
+			List<String> locations = new ArrayList<String>();
+			VoStreet streetZ = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
+			VoStreet streetR = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
 
 			pm.makePersistent(streetZ);
 			pm.makePersistent(streetR);
@@ -277,11 +259,11 @@ public class Defaults {
 
 					// адресов должно быть минимум три! кол-во юзеров
 					// хардкодится выше
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
-					new VoPostalAddress(new VoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 
 			String invCodes[] = { "1", "2", "3", "4", "5" };
 

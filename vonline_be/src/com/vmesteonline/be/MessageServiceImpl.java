@@ -3,6 +3,7 @@ package com.vmesteonline.be;
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -90,14 +91,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			try {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
-				VoUserGroup group = pm.getObjectById(VoUserGroup.class, groupId);
-				// todo add last loaded and length
-				List<VoTopic> topics = getTopics(group, MessageType.WALL, lastLoadedIdTopicId, length, false, pm);
+				
+				List<Long> userGroups = user.getGroups();
 
-				if (topics.isEmpty()) {
-					logger.fine("can't find any topics");
-					return wallItems;
+				List<Long> groupsToSearch = new ArrayList<Long>();
+				for( Long ugId : userGroups ){
+					groupsToSearch.add(ugId);
+					if( ugId == groupId ) //usergGroups MUST be ordered from smaller to bigger one, so if topics of current group are added, it's time to finish collecting
+						break;	
 				}
+					List<VoTopic> topics = getTopics(groupsToSearch, MessageType.WALL, lastLoadedIdTopicId, length, false, pm);
+					
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
@@ -110,6 +114,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					WallItem wi = new WallItem(mlp.messages, tpc);
 					wallItems.add(wi);
 				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -117,7 +122,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} finally {
 			pm.close();
 		}
-
 		return wallItems;
 	}
 
@@ -207,32 +211,33 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 
 	}
-
-	public List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly, PersistenceManager pm) {
-		return getTopics(group, type, lastLoadedTopicId, length, importantOnly, con, pm);
-	}
-
-	public static List<VoTopic> getTopics(VoUserGroup group, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
-			JDBCConnector con, PersistenceManager pm) {
+	
+	public static List<VoTopic> getTopics(List<Long> groups, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
+			 PersistenceManager pm) {
 
 		List<VoTopic> topics = new ArrayList<VoTopic>();
 		try {
 		
 			Query tQuery = pm.newQuery( VoTopic.class );
-			String filter = "";
+			String filter = "(";
 			
-			if( group.getGroupType() > GroupType.BUILDING.getValue()){
-				filter = "visibleGroups=="+group.getId();
-			} else {
-				filter = "userGroupId=="+group.getId();
+			for( Long group:groups ){
+				filter += "visibleGroups=="+group +" || ";
 			}
+			filter = filter.substring(0,filter.length()-4) + ")";
+			
 			if( importantOnly ){
 				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
-				filter = " isImportant == true && createDate > "+minimumCreateDate+" && " + filter;
+				filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
 			}
-			filter += " && type=='"+type+"'";
+			if( type == MessageType.WALL )
+				filter += " && (type=='WALL' || type=='BASE')";
+			else 
+				filter += " && type=='"+type+"'";
 			
 			tQuery.setFilter(filter);
+			tQuery.setOrdering("lastUpdate DESC");
+			
 			List<VoTopic> allTopics = (List<VoTopic>) tQuery.execute( );
 			boolean addTopic = 0 == lastLoadedTopicId ? true : false;
 			for (VoTopic topic : allTopics) {
@@ -250,14 +255,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Collections.sort( topics, new Comparator<VoTopic>(){
-
-			@Override
-			public int compare(VoTopic o1, VoTopic o2) {
-				return -Integer.compare( o1.getLastUpdate(), o2.getLastUpdate());
-			}
-			
-		});
 		return topics;
 	}
 
@@ -303,28 +300,33 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
-				VoUserGroup group = pm.getObjectById(VoUserGroup.class,groupId);
-				List<VoTopic> topics = getTopics(group, type, lastLoadedTopicId, length, importantOnly, pm);
-
-				if (topics.isEmpty()) {
-					logger.fine("can't find any topics");
-					return mlp;
+				
+				List<Long> userGroups = user.getGroups();
+				List<Long> groupsToSearch = new ArrayList<Long>();
+				for( Long ugId : userGroups ){
+					groupsToSearch.add(ugId);
+					if( ugId == groupId ) //usergGroups MUST be ordered from smaller to bigger one, so if topics of current group are added, it's time to finish collecting
+						break;	
 				}
-				mlp.totalSize = topics.size();
+				
+				List<VoTopic> topics = getTopics(groupsToSearch, type, lastLoadedTopicId, length, importantOnly, pm);
+			
+				mlp.totalSize += topics.size();
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
 					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
-					tpc.setMessageNum( voTopic.getMessageNum()/*voUserTopic.getMessagesCount()*/);
+					tpc.setMessageNum( voTopic.getMessageNum());
 					mlp.addToTopics(tpc);
 				}
+				
 		} catch (Exception e) {
 				e.printStackTrace();
 
 		} finally {
 			pm.close();
 		}
-		return mlp;
+		return mlp; 
 
 	}
 
@@ -578,19 +580,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "FAiled to update Topic. No topic found by ID" + topic.getId());
 			}
 
-			if(0!=topic.getRubricId())
-				try {
-					pm.getObjectById(VoRubric.class, KeyFactory.createKey(VoRubric.class.getSimpleName(), topic.getRubricId()));
-				} catch (Exception e) {
-					throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Failed to move topic No Rubric found by id="
-							+ topic.getRubricId());
-				}
 			updateTopicMessage( theTopic, topic.getMessage(), pm );
 			theTopic.setImages( updateAttachments( theTopic.getImages(), topic.getMessage().getImages(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setDocuments( updateAttachments( theTopic.getDocuments(), topic.getMessage().getDocuments(),  theTopic.getAuthorId().getId(), pm ));
 			theTopic.setUsersNum(topic.usersNum);
 			theTopic.setViewers(topic.viewers);
-			theTopic.setUserGroupId(topic.getMessage().getGroupId());
+			changeTopicGroup(topic, theTopic, pm);
+			theTopic.setSubject( topic.getSubject() );
 			
 			updatePoll(theTopic, topic, pm); 
 					
@@ -601,9 +597,21 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 	}
 
+	private void changeTopicGroup(Topic topic, VoTopic theTopic, PersistenceManager pm) throws InvalidOperation {
+		long newGroupId = topic.getMessage().getGroupId();
+		VoUser currentUser = getCurrentUser(pm);
+		if( -1 ==Collections.indexOfSubList( currentUser.getGroups(), Arrays.asList( new Long[]{newGroupId})) )
+			throw new InvalidOperation(VoError.IncorrectParametrs, "USer "+currentUser+" could not move message to group "+newGroupId+" he does not belongs to");
+		if(newGroupId != theTopic.getUserGroupId()){
+			VoUserGroup newGroup = pm.getObjectById(VoUserGroup.class, newGroupId);
+			theTopic.setUserGroupId(newGroupId);
+			theTopic.setVisibleGroups( new ArrayList<Long>(newGroup.getVisibleGroups(pm)));
+		}
+	}
+
 	private void updatePoll(VoTopic theTopic, Topic topic, PersistenceManager pm) throws InvalidOperation {
 		if( topic.poll == null && 0!=theTopic.getPollId() || topic.poll !=null && topic.poll.pollId != theTopic.getPollId()){
-			if( theTopic.getPollId() == 0 ) {//poll changed so the old one should be removed
+			if( theTopic.getPollId() != 0 ) {//poll changed so the old one should be removed
 				pm.deletePersistent(pm.getObjectById(VoPoll.class, theTopic.getPollId()));
 				theTopic.setPollId(0L);
 			} 
@@ -761,6 +769,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			deleteAttachments(pm, msg.getImages());
 			deleteAttachments(pm, msg.getDocuments());
 			
+			
 			//check if message can be deleted
 			List<VoMessage> msgsOfTopic = (List<VoMessage>) pm.newQuery(VoMessage.class,"topicId=="+topicId ).execute();
 			boolean canDelete = true;
@@ -770,6 +779,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					break;
 				}
 			}
+			
+			if( 0!=msg.getParentId() )
+				try {
+					pm.getObjectById(VoMessage.class,msg.getParentId()).incrementChildMessageNum(-1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			
 			if(canDelete){
 				pm.deletePersistent(msg);
 				return null;
@@ -815,6 +832,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			
 			deleteAttachments(pm, tpc.getImages());
 			deleteAttachments(pm, tpc.getDocuments());
+			if( 0!=tpc.getPollId()){
+				pm.deletePersistent( pm.getObjectById(VoPoll.class, tpc.getPollId()));
+			}
 			
 			if(0==tpc.getMessageNum()){
 				try {
@@ -828,7 +848,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				}
 			} else {
 				tpc.setContent("Тема удалена пользователем "+ (isModerator ? "модератором." : "пользователем."));
-				tpc.setLastUpdate((int) (System.currentTimeMillis()/1000L));
+				tpc.setPollId(0L);
+
 				return tpc.getTopic(cu.getId(), pm);
 			}
 			

@@ -9,13 +9,16 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.DialogMessage;
 
 @PersistenceCapable
 public class VoDialogMessage {
+	
 
 	public DialogMessage getDialogMessage( PersistenceManager pm){
 		List<Attach> docs = new ArrayList<Attach>();
@@ -25,14 +28,14 @@ public class VoDialogMessage {
 			VoFileAccessRecord att = pm.getObjectById(VoFileAccessRecord.class, farId);
 			( att.isImage() ?  imgs : docs ).add( att.getAttach() );
 		}
-		return new DialogMessage(id, dialogId, authorId, content, createDate, imgs, docs);
+		return new DialogMessage(id, dialogId, authorId, getContent(), createDate, imgs, docs);
 	} 
 	
 	public VoDialogMessage(long dialogId, long authorId, String content) {
 		super();
 		this.dialogId = dialogId;
 		this.authorId = authorId;
-		this.content = content;
+		this.setContent(content);
 		this.createDate = (int)(System.currentTimeMillis() / 1000L);
 	}
 
@@ -48,7 +51,7 @@ public class VoDialogMessage {
 	
 	@Persistent
 	@Unindexed
-	protected String content;
+	protected Blob content;
 	
 	@Persistent
 	@Unindexed
@@ -84,11 +87,11 @@ public class VoDialogMessage {
 	}
 
 	public String getContent() {
-		return content;
+		return new String( content.getBytes(), VoBaseMessage.STRING_CHARSET );
 	}
 
 	public void setContent(String content) {
-		this.content = content;
+		this.content = new Blob( content.getBytes( VoBaseMessage.STRING_CHARSET ));
 	}
 
 	public int getCreateDate() {

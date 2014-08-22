@@ -1,6 +1,8 @@
 package com.vmesteonline.be.jdo2;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +17,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
@@ -26,13 +29,16 @@ import com.vmesteonline.be.messageservice.MessageType;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.StorageHelper.FileSource;
 
+
 @PersistenceCapable
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
 public abstract class VoBaseMessage /*extends GeoLocation*/ {
+
+	public static final Charset STRING_CHARSET=Charset.forName("UTF-8");
 	
 	public VoBaseMessage(Message msg, PersistenceManager pm) throws IOException, InvalidOperation {
 		// super(msg.getLikesNum(), msg.getUnlikesNum());
-		content = msg.getContent();
+		setContent(msg.getContent());
 		links = msg.getLinkedMessages();
 		type = msg.getType();
 		authorId = KeyFactory.createKey(VoUser.class.getSimpleName(), msg.getAuthorId());
@@ -104,11 +110,11 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 	 * public void setId(Key key) { this.id = key; }
 	 */
 	public String getContent() {
-		return content;
+		return new String( content.getBytes(), STRING_CHARSET);
 	}
 
 	public void setContent(String content) {
-		this.content = content;
+		this.content = new Blob(content.getBytes(STRING_CHARSET));
 	}
 
 	public int getCreatedAt() {
@@ -123,6 +129,10 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 		this.childMessageNum = childMessageNum;
 	}
 
+	public void incrementChildMessageNum(int deltaNum) {
+		this.childMessageNum += deltaNum;
+	}
+	
 	public int getEditedAt() {
 		return editedAt;
 	}
@@ -259,7 +269,7 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 	 */
 	@Persistent
 	@Unindexed
-	protected String content;
+	protected Blob content;
 
 	@Persistent
 	@Unindexed

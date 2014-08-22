@@ -4,9 +4,9 @@
            onblur="if(this.value=='') this.value='Заголовок';"
            onfocus="if(this.value=='Заголовок') this.value='';" ng-model="ctrl.subject" />
 
-    <textarea ng-model="ctrl.message.content" class="no-resize" ng-keyup="base.messageChange($event,1)"
+    <textarea ng-model="ctrl.message.content" class="topic-textarea no-resize" ng-keyup="base.messageChange($event,1)"
               ng-blur="base.textareaBlur(ctrl.message.content,ctrl.message.default,ctrl,true)" ng-focus="base.textareaFocus(ctrl.message.content,ctrl.message.default,ctrl,true)"
-              ></textarea>
+              ng-setareaheight="true"></textarea>
 
     <div class="create-poll" ng-show="ctrl.isPollShow">
         <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="ctrl.isPollShow = false;ctrl.isPollAvailable = true;">&times;</a>
@@ -16,7 +16,7 @@
         <div ng-repeat="input in ctrl.pollInputs">
             <input ng-model="input.name" type="text"/>
         </div>
-        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,ctrl)"/>
+        <input type="text" class="poll-readonly" readonly value="Добавить ответ" ng-click="base.addPollInput($event,ctrl)" ng-focus="base.addPollInput($event,ctrl,true)"/>
     </div>
 
     <div ng-switch="ctrl.isEdit">
@@ -73,7 +73,6 @@
                     </ul>
 
         </div>
-        <!--<a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createWallMessage($event,ctrl)">Отправить</a>-->
         <a class="btn btn-sm no-border btn-primary pull-left" href="#" ng-click="createTopic($event,ctrl)">Отправить</a>
 
         <div class="hashtag pull-left">

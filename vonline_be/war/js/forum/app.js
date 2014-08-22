@@ -36,12 +36,12 @@ main.config(function($stateProvider, $urlRouterProvider) {
         })
         .state('profit', {
             url: "/profit",
-            templateUrl: "partials/adverts.html",
+            templateUrl: "partials/profit.html",
             controller: 'AdvertsController as adverts'
         })
-        .state('adverts-single', {
-            url: "/adverts-single-:advertId",
-            templateUrl: "partials/adverts-single.html",
+        .state('profit-single', {
+            url: "/profit-single-:advertId",
+            templateUrl: "partials/profit-single.html",
             controller: 'AdvertsSingleController as adverts'
         })
         .state('dialogs', {

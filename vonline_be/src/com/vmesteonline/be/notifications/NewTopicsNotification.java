@@ -2,6 +2,7 @@ package com.vmesteonline.be.notifications;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -79,14 +80,16 @@ public class NewTopicsNotification extends Notification {
 		Map<Long, Set<VoUser>> groupUserMap = arrangeUsersInGroups(users);
 		Map<Long, Set<VoTopic>> groupTopicMap = new TreeMap<Long, Set<VoTopic>>();
 		
-		JDBCConnector con = new MySQLJDBCConnector();
-		for (Long ug : groupUserMap.keySet()) {
-			Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
-			topics.addAll(MessageServiceImpl.getTopics( 
-					pm.getObjectById(VoUserGroup.class,ug), MessageType.BASE, 0, 10, false, con, pm));
-			groupTopicMap.put(ug, topics);
-		}
-		con.close();
+		List<Long> groups = new ArrayList<Long>();
+		groups.addAll(groupUserMap.keySet());
+		
+		Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
+		topics.addAll(MessageServiceImpl.getTopics( 
+				groups, MessageType.BASE, 0, 10, false, pm));
+	
+		for( VoTopic topic: topics)
+			groupTopicMap.put(topic.getUserGroupId(), topics);
+		
 		return groupTopicMap;
 	}
 

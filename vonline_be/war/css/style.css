@@ -308,7 +308,7 @@ h1 {
 .widget-main {
   overflow: auto;
   padding: 0;
-  padding-bottom: 15px;
+  padding-bottom: 25px;
 }
 .talks-single .widget-main,
 .adverts-single .widget-main {
@@ -494,14 +494,14 @@ h1 {
   margin-bottom: 10px;
   font-size: 14px;
 }
-.dd-list .topic-right {
-  margin-left: 60px;
-}
 .dd .topic-right {
   margin-left: 95px;
 }
 .dd-list .dd-list {
   padding-left: 37px;
+}
+.dd-list .dd-list .topic-right {
+  margin-left: 60px;
 }
 .one-message .like-item .fa {
   margin-right: 5px;
@@ -677,11 +677,6 @@ h1 {
 .message-input .talk-subject {
   margin-bottom: 10px;
 }
-.talks-single .message-input,
-.adverts-single .message-input {
-  padding-left: 0;
-  padding-top: 25px;
-}
 .message-tools {
   margin-left: 10%;
 }
@@ -777,17 +772,18 @@ h1 {
 .attach-dropdown .ace-file-input:hover .file-label:before {
   color: #fff;
 }
-.attached {
-  padding-bottom: 20px;
-}
 .attached a {
   display: inline-block;
   vertical-align: top;
   margin: 0 2px;
 }
 .attached a img {
+  margin-bottom: 10px;
   max-width: 150px;
   max-height: 150px;
+}
+.dialogdiv .attached {
+  padding-bottom: 0;
 }
 .create-poll {
   margin-bottom: 10px;
@@ -915,11 +911,27 @@ h1 {
   overflow: hidden;
   display: block;
 }
+.message-textarea,
+.topic-textarea {
+  line-height: inherit;
+}
 .edit-message .btn {
   border-width: 2px;
 }
+.edit-message .message-input {
+  padding: 10px 0;
+  background: inherit;
+}
+.talks-single .message-input,
+.adverts-single .message-input {
+  padding-left: 0;
+  padding-top: 25px;
+}
 .edit-textarea {
   margin: 5px 0;
+}
+.forum-wrap {
+  font-size: 14px;
 }
 .fa-star,
 .fa-heart {
@@ -938,6 +950,12 @@ h1 {
 .like-status:hover .fa-heart,
 .like-status.isLike .fa-heart {
   color: #f00;
+}
+.talks-title .like-status {
+  margin-right: 5px;
+}
+.talks-title .fa-star {
+  margin-right: 6px;
 }
 .important-status:hover,
 .like-status:hover {
@@ -1032,6 +1050,7 @@ h1 {
 }
 .talks-block .talks-single .dd-item .dd2-content {
   margin-top: 0;
+  margin-bottom: 10px;
 }
 .talks-block .answer-input textarea {
   width: 100%;
@@ -1051,6 +1070,7 @@ h1 {
   margin-left: -95px;
   padding-left: 95px;
   padding-right: 15px;
+  font-size: 13px;
 }
 .talks-block .poll {
   padding-bottom: 30px;
@@ -1062,7 +1082,6 @@ h1 {
   font-family: tahoma, arial;
 }
 .dialog-send {
-  padding-bottom: 15px;
   border-bottom: 1px solid #ccc;
 }
 .dialog-send .dialog-send-center {
@@ -1088,8 +1107,20 @@ h1 {
 .private-messages .dialogs-container {
   margin-top: 15px;
 }
-.dialog .dialogs-container .private-message-single:hover,
-.private-messages .dialogs-container .private-message-single:hover {
+.dialog .dialogs-container .dialog-item,
+.private-messages .dialogs-container .dialog-item {
+  overflow: auto;
+  padding: 10px;
+  padding-left: 0;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+}
+.dialog .dialogs-container .dialog-item:first-child,
+.private-messages .dialogs-container .dialog-item:first-child {
+  border-top: 1px solid #ccc;
+}
+.dialog .dialogs-container .dialog-item:hover,
+.private-messages .dialogs-container .dialog-item:hover {
   background-color: #f6fcff;
 }
 .dialog h2,
@@ -1098,10 +1129,9 @@ h1 {
 }
 .dialog .private-message-single,
 .private-messages .private-message-single {
-  cursor: pointer;
   padding: 10px;
+  padding-bottom: 12px;
   padding-left: 0;
-  overflow: auto;
   border-bottom: 1px solid #ccc;
 }
 .dialog .private-message-single:first-child,
@@ -1137,13 +1167,16 @@ h1 {
 .private-messages .private-message-single .private-message-right {
   margin-left: 320px;
 }
-.private-messages .private-message-single .private-message-left {
+.private-messages .private-message-single .private-message-left,
+.private-messages .dialog-item .private-message-left {
   line-height: 65px;
 }
-.private-messages .private-message-single .private-message-left .private-message-left {
+.private-messages .private-message-single .private-message-left .private-message-left,
+.private-messages .dialog-item .private-message-left .private-message-left {
   width: 300px;
 }
-.private-messages .private-message-single .private-message-left .private-message-author {
+.private-messages .private-message-single .private-message-left .private-message-author,
+.private-messages .dialog-item .private-message-left .private-message-author {
   display: inline-block;
   vertical-align: middle;
   line-height: 18px;
@@ -1513,4 +1546,27 @@ h1 {
 }
 .about .footer li {
   font-size: 13px;
+}
+.message-to-show {
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
+.message-to-show span {
+  color: #fff;
+  background: #f00;
+  padding: 4px 10px;
+  display: inline-block;
+}
+.message-to-show span a {
+  color: #fff;
+  display: inline-block;
+  margin-left: 10px;
+}
+.message-to-show span a:hover {
+  text-decoration: none;
+}
+.login-layout .message-to-show {
+  position: absolute;
+  top: -60px;
 }

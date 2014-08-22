@@ -48,9 +48,9 @@ public class VoTopic extends VoBaseMessage {
 				docs.add(att.getAttach());
 			}
 
-		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, new String(content), getLikes(), 0,
+		Message msg = new Message(id.getId(), 0L, type, getId(), userGroupId, authorId.getId(), createdAt, editedAt, getContent(), getLikes(), 0,
 				links, null, null, 0, null, imgs, docs, null, 
-					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId));
+					isImportant ? Mark.POSITIVE : isImportant(userId), isLiked(userId),getChildMessageNum());
 
 
 		Topic tpc = new Topic(getId(), subject, msg, getMessageNum(), getViewers(), getUsersNum(), getLastUpdate(), getLikes(), 0, null,
@@ -127,6 +127,15 @@ public class VoTopic extends VoBaseMessage {
 		this.pollId = pollId;
 	}
 
+	
+	public List<Long> getVisibleGroups() {
+		return visibleGroups;
+	}
+
+	public void setVisibleGroups(List<Long> visibleGroups) {
+		this.visibleGroups = visibleGroups;
+	}
+
 	@Override
 	public String toString() {
 		return "VoTopic [id=" + id + ", message=" + content.toString() + ", messageNum=" + messageNum + "]";
@@ -158,10 +167,10 @@ public class VoTopic extends VoBaseMessage {
 	private int usersNum;
 
 	@Persistent
-	@Unindexed
 	private int lastUpdate;
 	
 	@Persistent
+	@Unindexed
 	private int createDate;
 
 	@Persistent

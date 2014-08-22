@@ -30,13 +30,13 @@ public class UPDATEServlet extends HttpServlet {
 			VoCity vcty;
 			VoCountry vc;
 			try {
-				vc = new VoCountry("Россия", pm);
+				vc = VoCountry.createVoCountry("Россия", pm);
 				pm.makePersistent(vc);
-				vcty = new VoCity(vc, "Ленинградская Обл. п. Кудрово", pm);
+				vcty = VoCity.createVoCity(vc, "Ленинградская Обл. п. Кудрово", pm);
 				pm.makePersistent(vcty);
-				cs = new VoStreet(vcty, "улица Ленинградская", pm);
+				cs = VoStreet.createVoStreet(vcty, "улица Ленинградская", pm);
 				pm.makePersistent(cs);
-				vb = new VoBuilding("188689", cs, "7", null, null, pm);
+				vb = VoBuilding.createVoBuilding("188689", cs, "7", null, null, pm);
 				pm.makePersistent(vb);
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
@@ -55,7 +55,7 @@ public class UPDATEServlet extends HttpServlet {
 			}
 			
 			try {
-				vb = new VoBuilding("188689", cs, "5", null, null, pm);
+				vb = VoBuilding.createVoBuilding("188689", cs, "5", null, null, pm);
 				pm.makePersistent(vb);
 			} catch (InvalidOperation e) {
 				e.printStackTrace();
@@ -76,11 +76,11 @@ public class UPDATEServlet extends HttpServlet {
 			
 			//проспект Солидарности  14 корпус 1 - 1-й подъезд
 			try {
-				vcty = new VoCity(vc, "Санкт Петербург", pm);
+				vcty = VoCity.createVoCity(vc, "Санкт Петербург", pm);
 				pm.makePersistent(vcty);
-				cs = new VoStreet(vcty, "проспект Солидарности", pm);
+				cs = VoStreet.createVoStreet(vcty, "проспект Солидарности", pm);
 				pm.makePersistent(cs);
-				vb = new VoBuilding("188689", cs, "14к1", null, null, pm);
+				vb = VoBuilding.createVoBuilding("188689", cs, "14к1", null, null, pm);
 				pm.makePersistent(vb);
 				VoPostalAddress pa = new VoPostalAddress(vb, 
 						(byte)1, (byte)0, 11, null);

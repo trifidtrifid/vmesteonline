@@ -18,6 +18,7 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUserGroup;
+import com.vmesteonline.be.notifications.NewNeigboursNotification;
 
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
@@ -34,43 +35,6 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	public VoUserGroup getUserHomeGroup() {
 		return userGroup;
-	}
-
-	@SuppressWarnings("unchecked")
-	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
-
-		if (null == postalAddress)
-			throw new InvalidOperation(VoError.IncorrectParametrs, "can't init VoPostalAddress object. Input parametr is null");
-
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			VoBuilding vob;
-			try {
-				vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
-			} catch (JDOObjectNotFoundException jonfe) {
-				jonfe.printStackTrace();
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
-			}
-			// check that the address exists
-			Query q = pm.newQuery(VoPostalAddress.class);
-			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
-					+ postalAddress.getFlatNo());
-			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
-			if (pal.size() > 0) {
-				this.id = pal.get(0).id;
-			}
-			pm.retrieve(vob);
-
-			this.buildingId = vob.getId();
-			this.staircase = postalAddress.getStaircase();
-			this.floor = postalAddress.getFloor();
-			this.flatNo = postalAddress.getFlatNo();
-			this.comment = postalAddress.getComment();
-			pm.makePersistent(this);
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
 	}
 
 	@Override
@@ -96,6 +60,40 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	public static Key getKeyValue(long code) {
 		return KeyFactory.createKey(VoPostalAddress.class.getSimpleName(), code ^ valueMask);
+	}
+
+	public static VoPostalAddress createVoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
+		
+		if (null == postalAddress)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "can't init VoPostalAddress object. Input parametr is null");
+
+		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		try {
+			VoBuilding vob;
+			try {
+				vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
+			} catch (JDOObjectNotFoundException jonfe) {
+				jonfe.printStackTrace();
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
+			}
+			// check that the address exists
+			Query q = pm.newQuery(VoPostalAddress.class);
+			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
+					+ postalAddress.getFlatNo());
+			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
+			if (pal.size() == 1) {
+				return pal.get(0);
+			} else if (pal.size() > 1) 
+				throw new InvalidOperation(VoError.GeneralError, "There is two or more the same addresses registered. "+pal.get(0));
+				 
+			VoPostalAddress vpa = new VoPostalAddress(vob, postalAddress.getStaircase(), postalAddress.getFloor(), postalAddress.getFlatNo(), postalAddress.getComment());
+			pm.makePersistent(vpa);
+			return vpa;
+			
+		} finally {
+			if (null == _pm)
+				pm.close();
+		}
 	}
 
 	public long getBuilding() {

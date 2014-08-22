@@ -50,7 +50,7 @@ public abstract class Notification {
 
 	protected static String host;
 	static {
-		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "vmesteonline.ru" : "localhost:8888";
+		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "1-dot-algebraic-depot-657.appspot.com" : "localhost:8888";
 	}
 
 	public abstract void makeNotification(Set<VoUser> users);
@@ -145,7 +145,7 @@ public abstract class Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(group.getId(), pm);
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
 			String subject = "важное сообщение";
 			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";
@@ -198,12 +198,22 @@ public abstract class Notification {
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
 
-		body += "На сайте уже зарегистрированно: " + userSet.size() + " Ваших соседей<br/>";
-
+		body += "На сайте уже зарегистрированно: " + userSet.size() + " пользователей<br/>";
+		
+		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS, pm), pm );
+		if(0!=ul.size()) body += "Из них рядом с вами живут: "+ul.size()+"<br/>";
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING, pm), pm );
+		if(0!=ul.size()) body += "В вашем доме: "+ul.size()+"<br/>";
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE, pm), pm );
+		if(0!=ul.size()) body += "В вашем подъезде: "+ul.size()+"<br/>";
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR, pm), pm );
+		if(0!=ul.size()) body += "На вашем этаже : "+ul.size()+"<br/>";
+		
+		
 		body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/><br/>";
 		if (!newUser.isEmailConfirmed()) {
-			body += "Для доступа к сайту, подтвердите ваш email перейдя по этой <a href=\"http://" + host + "/confirm/profile-" + newUser.getId() + ","
-					+ newUser.getConfirmCode() + "\">ссылке</a><br/></br>";
+			body += "Для доступа к сайту, подтвердите ваш email перейдя по <a href=\"http://" + host + "/confirm/profile-" + newUser.getId() + ","
+					+ newUser.getConfirmCode() + "\">этой ссылке</a><br/></br>";
 			pm.makePersistent(newUser);// to save confirm code
 		}
 

@@ -13,6 +13,7 @@ import com.vmesteonline.be.jdo2.VoUser;
 
 public class ConfirmEmailServlet extends HttpServlet {
 	
+	private static final String MESSAGE_TO_SHOW = "MESSAGE_TO_SHOW";
 	private static String reqPrefix="/confirm/profile-";
 
 	@Override
@@ -28,6 +29,8 @@ public class ConfirmEmailServlet extends HttpServlet {
 						user.setEmailConfirmed(true);
 						serviceImpl.setSession(req.getSession());
 						serviceImpl.saveUserInSession(pm, user);				
+					} else {
+						getServletContext().setAttribute(MESSAGE_TO_SHOW, "Вы ввели некорректный код подтверждения или ввели его повторно.");
 					}
 				} catch (Exception e) {					
 					e.printStackTrace();

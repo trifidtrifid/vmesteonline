@@ -49,20 +49,21 @@ public class VoUser /* extends GeoLocation */{
 	static {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			defaultGroup = new VoUserGroup(new BigDecimal("60.0"), new BigDecimal("30.0"), 10000, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
+			defaultGroup = VoUserGroup.createVoUserGroup(new BigDecimal("60.0"), new BigDecimal("30.0"), 
+					10000,(byte)0,(byte)0, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
 		} finally {
 			pm.close();
 		}
 
 	}
 
-	public Long getGroup(GroupType gt) {
-		int i = 0;
-		for (VoGroup group : Defaults.defaultGroups) {
-			if (group.getGroupType() == gt.getValue())
-				return groups.get(i);
-			else
-				i++;
+	public VoUserGroup getGroup(GroupType gt, PersistenceManager pm) {
+		for( Long gid: groups){
+			VoUserGroup ug = pm.getObjectById( VoUserGroup.class, gid );
+			if( ug.getGroupType() == gt.getValue() )
+				return ug;
 		}
 		return null;
 	}
@@ -204,10 +205,11 @@ public class VoUser /* extends GeoLocation */{
 		this.lastNotified = lastNotified;
 	}
 
-	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
+	public VoPostalAddress setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		try {
 			VoPostalAddress userAddress = pm.getObjectById(VoPostalAddress.class, locCode);
 			setCurrentPostalAddress(userAddress, pm);
+			return userAddress;
 		} catch (JDOObjectNotFoundException eonf) {
 			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Location not found by CODE=" + locCode);
 		}
@@ -220,10 +222,11 @@ public class VoUser /* extends GeoLocation */{
 	 *          newUSer postal address
 	 * @param pm
 	 *          - PersistenceManager to manage the objects
+	 * @throws InvalidOperation 
 	 */
 
 	// TODO should test removing
-	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) {
+	public void setCurrentPostalAddress(VoPostalAddress userAddress, PersistenceManager pm) throws InvalidOperation {
 
 		// building from new address
 		VoBuilding building = pm.getObjectById(VoBuilding.class, userAddress.getBuilding());
@@ -242,9 +245,9 @@ public class VoUser /* extends GeoLocation */{
 
 		groups = new ArrayList<Long>();
 		for (VoGroup group : Defaults.defaultGroups) {
-			VoUserGroup ug = new VoUserGroup(building.getLongitude(), building.getLatitude(), group.getRadius(), group.getVisibleName(),
-					group.getImportantScore(), group.getGroupType(), pm);
-			pm.makePersistent(ug);
+			VoUserGroup ug = VoUserGroup.createVoUserGroup(building.getLongitude(), building.getLatitude(), 
+					group.getRadius(), userAddress.getStaircase(), userAddress.getFloor(),
+					group.getVisibleName(), group.getImportantScore(), group.getGroupType(), pm);
 			groups.add(ug.getId());
 		}
 
@@ -332,7 +335,6 @@ public class VoUser /* extends GeoLocation */{
 	private long confirmCode;
 
 	@Persistent
-	@Unindexed
 	private boolean emailConfirmed;
 
 	@Persistent

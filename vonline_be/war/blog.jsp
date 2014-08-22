@@ -20,7 +20,6 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 } catch (InvalidOperation ioe) {
     isAuth = false;
     pageContext.setAttribute("auth",false);
-    //response.sendRedirect("/login.html");
     //return;
 }
 

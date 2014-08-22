@@ -3,6 +3,7 @@
 .login-layout .main-content {
   border: 0;
   margin-right: 0;
+  position: relative;
 }
 .login-container .widget-box {
   visibility: hidden;

@@ -87,7 +87,7 @@ public class VoGeocoder {
 									if (streets.size() > 0) {
 										rightStreet = streets.get(0);
 									} else { // create new street
-										rightStreet = new VoStreet(city, addrInfo.getStreetName(), pm);
+										rightStreet = VoStreet.createVoStreet(city, addrInfo.getStreetName(), pm);
 										pm.makePersistent(rightStreet);
 									}
 									building.setStreetId(rightStreet.getId());

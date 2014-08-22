@@ -16,16 +16,22 @@ import com.vmesteonline.be.VoError;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoCountry {
 	
-	public VoCountry(String name, PersistenceManager pm) throws InvalidOperation{
+	public static VoCountry createVoCountry(String name, PersistenceManager pm) throws InvalidOperation {
 		List<VoCountry> vcl = (List<VoCountry>)pm.newQuery(VoCountry.class, "name=='"+name+"'").execute();
-		this.name = name;
 		if( vcl.size() == 1 ){
-			this.id = vcl.get(0).getId();
+			return vcl.get(0);
 		} else if( vcl.size() == 0 ){
-			pm.makePersistent(this);
+			VoCountry vc = new VoCountry(name, pm);
+			pm.makePersistent(vc);
+			return vc;
+			
 		} else {
 			throw new InvalidOperation(VoError.GeneralError, "Too many("+vcl.size()+") countries with the same name. ");
 		}
+	}
+
+	private VoCountry(String name, PersistenceManager pm) throws InvalidOperation{
+		this.name = name;
 	}
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

@@ -291,7 +291,7 @@ transform()
 .widget-main
   overflow auto
   padding 0
-  padding-bottom 15px
+  padding-bottom 25px
 
 .talks-single .widget-main
 .adverts-single .widget-main
@@ -446,15 +446,14 @@ transform()
         margin-bottom 10px
         font-size 14px
 
-
-.dd-list .topic-right //.topic-item
-  margin-left 60px
-
 .dd .topic-right
     margin-left 95px
 
 .dd-list .dd-list
   padding-left 37px
+  
+.dd-list .dd-list .topic-right //.topic-item
+  margin-left 60px
 
 .one-message
   .like-item
@@ -604,11 +603,6 @@ transform()
   .talk-subject
     margin-bottom 10px
 
-.talks-single .message-input
-.adverts-single .message-input
-  padding-left 0
-  padding-top 25px
-
 .message-tools
   margin-left 10%
   a
@@ -694,14 +688,18 @@ transform()
         color #fff
 
 .attached
-  padding-bottom 20px
+  //padding-bottom 20px
   a
     display inline-block
     vertical-align top
     margin 0 2px
     img
+      margin-bottom 10px
       max-width 150px
       max-height 150px
+
+.dialogdiv .attached
+  padding-bottom 0
 
 .create-poll
   margin-bottom 10px
@@ -807,12 +805,27 @@ transform()
   overflow hidden
   display block
 
+.message-textarea
+.topic-textarea
+  line-height inherit
+
 .edit-message
   .btn
     border-width 2px
+  .message-input
+    padding 10px 0
+    background inherit
+
+.talks-single .message-input
+.adverts-single .message-input
+  padding-left 0
+  padding-top 25px
 
 .edit-textarea
   margin 5px 0
+
+.forum-wrap
+  font-size 14px
 
 .fa-star
 .fa-heart
@@ -833,6 +846,12 @@ transform()
   &.isLike
     .fa-heart
       color #ff0000
+
+.talks-title
+  .like-status
+    margin-right 5px
+  .fa-star
+    margin-right 6px
 
 .important-status:hover
 .like-status:hover
@@ -910,6 +929,7 @@ transform()
       margin-top 0
       .dd2-content
         margin-top 0
+        margin-bottom 10px
   .answer-input
     textarea
       width 100%
@@ -926,6 +946,7 @@ transform()
     margin-left -95px
     padding-left 95px
     padding-right 15px
+    font-size 13px
   .poll
     padding-bottom 30px
     .radio .lbl:before
@@ -935,7 +956,7 @@ transform()
 
   /* private-messages */
 .dialog-send
-  padding-bottom 15px
+  //padding-bottom 15px
   border-bottom 1px solid #ccc
   .dialog-send-center
     margin 0 60px
@@ -953,15 +974,22 @@ transform()
     padding 0
   .dialogs-container
     margin-top 15px
-    .private-message-single:hover
+    .dialog-item
+      overflow auto
+      padding 10px
+      padding-left 0
+      cursor pointer
+      border-bottom 1px solid #CCCCCC
+      &:first-child
+        border-top 1px solid #CCCCCC
+    .dialog-item:hover
       background-color #f6fcff
   h2
     margin-top 0
   .private-message-single
-    cursor pointer
     padding 10px
+    padding-bottom 12px
     padding-left 0
-    overflow auto
     border-bottom 1px solid #CCCCCC
     &:first-child
       border-top 1px solid #CCCCCC
@@ -985,6 +1013,7 @@ transform()
 
 .private-messages
   .private-message-single .private-message-left
+  .dialog-item .private-message-left
     line-height 65px
     .private-message-left
       width 300px
@@ -1308,6 +1337,25 @@ transform()
   .footer li
     font-size 13px
 
+.message-to-show
+  width 100%
+  text-align center
+  margin-top 8px
+  span
+    color #fff
+    background #ff0000
+    padding 4px 10px
+    display inline-block
+    a
+      color #fff
+      display inline-block
+      margin-left 10px
+      &:hover
+        text-decoration none
+
+.login-layout .message-to-show
+  position absolute
+  top -60px
 
 
 

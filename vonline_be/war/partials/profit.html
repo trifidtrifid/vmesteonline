@@ -1,5 +1,5 @@
 
-    <section class="adverts page ng-cloak" ng-show="base.advertsIsActive">
+    <section class="profit page ng-cloak" ng-show="base.advertsIsActive">
 
         <section class="create-topic" ng-hide="base.createTopicIsHide">
             <div ng-include="'templates/createTopic.html'" onload="ctrl = adverts; initCreateTopic(adverts);"></div>
@@ -12,7 +12,7 @@
                 <div class="talks-title-left load-talk">
                     <a ui-sref="profile({ userId : {{advert.userInfo.id}} })" class="avatar short2 pull-left" style="background-image: url('{{ advert.userInfo.avatar }}')"></a>
                     <div class="talks-title-links">
-                        <a ui-sref="adverts-single({ advertId : {{advert.id}} })">{{advert.subject}}</a>
+                        <a ui-sref="profit-single({ advertId : {{advert.id}} })">{{advert.subject}}</a>
                         <a ui-sref="profile({ userId : {{advert.userInfo.id}} })">{{advert.userInfo.firstName + " "+advert.userInfo.lastName}}</a>
                     </div>
 

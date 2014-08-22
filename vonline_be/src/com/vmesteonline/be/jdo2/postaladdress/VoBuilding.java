@@ -23,44 +23,14 @@ import com.vmesteonline.be.jdo2.VoUser;
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
 public class VoBuilding {
 
-	public VoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm) throws InvalidOperation {
-		Query q = pm.newQuery(VoBuilding.class, "streetId=="+vs.getId()+" && fullNo == '"+fullNo+"'");
-		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute();
+	private VoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude) throws InvalidOperation {
+		
 		this.streetId = vs.getId();
 		this.fullNo = fullNo;
 		this.zipCode = zip;
-		
-		if( 0!=bgsl.size() ){
-			
-			VoBuilding oldbg = bgsl.get(0);
-			this.setId(oldbg.getId());
-			
-			longitude = oldbg.getLongitude();
-			latitude = oldbg.getLatitude();
-			this.addressString = oldbg.getAddressString();
-		}
-		
-		if( null == longitude || longitude.toPlainString().trim().length() == 0 || 
-				null == latitude || latitude.toPlainString().trim().length() == 0) {
-			VoGeocoder.getPosition(this, false);
-			
-		} else {
-			this.longitude = longitude.toPlainString();
-			this.latitude = latitude.toPlainString();
-		}
-		if( this.addressString == null ) {
-			VoStreet street = pm.getObjectById(VoStreet.class, this.streetId);
-			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
-			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
-			
-			this.addressString = country.getName() + "," + city.getName() + "," + street.getName() + ","
-					+ this.getFullNo();
-		}
-		pm.makePersistent(this);
-	}
+		this.longitude = null == longitude ? null : longitude.toPlainString();
+		this.latitude = null == latitude ? null : latitude.toPlainString();
 
-	private void setId(long id) {
-		this.id = id;
 	}
 
 	public String getAddressString() {
@@ -87,6 +57,7 @@ public class VoBuilding {
 	private String fullNo; // no with letter or other extension if any
 
 	@Persistent
+	@Unindexed
 	private String zipCode; 
 	
 	@Persistent
@@ -130,6 +101,39 @@ public class VoBuilding {
 
 	//Calculate distance in kilometers between two buildings if all off coordinates are defined
 	
+	public static VoBuilding createVoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude, PersistenceManager pm)
+			throws InvalidOperation {
+		
+		Query q = pm.newQuery(VoBuilding.class, "streetId=="+vs.getId()+" && fullNo == '"+fullNo+"'");
+		List<VoBuilding> bgsl = (List<VoBuilding>)q.execute();
+		
+		if( 1==bgsl.size() ){
+			return bgsl.get(0);
+			
+		} else if( 2==bgsl.size() ){
+			
+			throw new InvalidOperation(VoError.GeneralError, "There is two the same building: "+bgsl.get(0));
+		}
+		
+		VoBuilding vb = new VoBuilding(zip, vs, fullNo, longitude, latitude);
+		
+		if( null == longitude || longitude.toPlainString().trim().length() == 0 || 
+				null == latitude || latitude.toPlainString().trim().length() == 0) {
+			VoGeocoder.getPosition(vb, false);
+			
+		} 
+		if( vb.addressString == null ) {
+			VoStreet street = pm.getObjectById(VoStreet.class, vb.streetId);
+			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
+			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
+			
+			vb.addressString = country.getName() + "," + city.getName() + "," + street.getName() + ","
+					+ vb.getFullNo();
+		}
+		pm.makePersistent(vb);
+		return vb;
+	}
+
 	public Double getDistance( VoBuilding that ){
 		
 		if( null == longitude || null == latitude || 

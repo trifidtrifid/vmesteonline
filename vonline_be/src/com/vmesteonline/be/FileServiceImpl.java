@@ -13,6 +13,8 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 
 	@Override
 	public String saveFileContent(ByteBuffer data, boolean isPublic) throws InvalidOperation {
+		if(null==data)
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Null data could not been saved");
 		return copyFileContent( new String( data.array() ), isPublic );
 	}
 
