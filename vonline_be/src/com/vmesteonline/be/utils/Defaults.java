@@ -262,7 +262,7 @@ public class Defaults {
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 
 			String invCodes[] = { "1", "2", "3", "4", "5" };
