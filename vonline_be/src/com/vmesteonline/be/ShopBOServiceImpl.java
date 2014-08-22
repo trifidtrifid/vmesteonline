@@ -1037,7 +1037,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				
 				productsMatrix.add( line ); //create new row
 				line.add( "user:"+nextUser.getId() ); //three line of row head
-				line.add( nextUser.getName());
+				line.add( nextUser.getName()+" "+nextUser.getLastName());
 				line.add( "order["+userOrdrersCounter+"]:"+orderEntry.getKey() );
 				//fill the row
 				for( VoProduct nextProduct : productsList.values() ){

@@ -451,7 +451,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
 		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
-		htmlBody += "<br/>Стоимость: "+ currentOrder.getTotalCost()+" руб";
+		htmlBody += "<br/>Стоимость: "+ VoHelper.roundDouble( currentOrder.getTotalCost(), 2) + " руб";
 		if( currentOrder.getDeliveryCost() > 0) htmlBody += "<br/>Из них доставка: "+ currentOrder.getDeliveryCost()+" руб";
 		htmlBody += "<br/>Вес: "+ currentOrder.getWeightGramm()/1000+" кг";
 		htmlBody += "<br/>Контактный номер: "+customer.getMobilePhone();
@@ -1058,6 +1058,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
+		if( 0==dateFrom ) //it's to expensive to show all orders
+			dateFrom = getNextOrderDate( (int) (System.currentTimeMillis()/1000L - 7 * 86400L)).orderDate;
+
 		return getOrdersByStatus( 0, dateFrom, dateTo, status);
 	}
 
@@ -1084,6 +1087,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 				ps = (List<VoOrder>) pcq.execute(userId, dateFrom);
 			} else  {
+					
 				pcq.setFilter("shopId == " + shopId + " && date >= " + dateFrom + 
 						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 				ps = (List<VoOrder>) pcq.execute(dateFrom);

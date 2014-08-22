@@ -75,6 +75,7 @@ public class Main implements javax.servlet.Filter {
 						String shopHome = "http://"+host+"/"+shopContext;
 						logger.fine("Send redirect to "+shopHome);
 						response.sendRedirect( shopHome);
+						return;
 					} else {
 						logger.fine("No redirect required shopContext:"+shopContext+" request.getRequestURI():"+request.getRequestURI());
 					}
