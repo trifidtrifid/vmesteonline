@@ -2061,8 +2061,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }else{
                 profile.userProfile.userInfo.genderMeta = "";
             }
-
-
         }
 
         $rootScope.base.avatarBuffer = profile.userProfile.userInfo.avatar;
