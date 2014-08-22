@@ -117,9 +117,11 @@ public class OAuthServlet extends HttpServlet {
 						Date date = formatter.parse(o.getString("bdate"));
 						long ts = date.getTime() / 1000L;
 						user.setBirthday((int) ts);
+						pm.makePersistent(user);
+//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
 
 					} else {
-						resp.getWriter().println("<br>can't find user " + email);
+//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
 					}
 
 				} finally {
@@ -127,6 +129,8 @@ public class OAuthServlet extends HttpServlet {
 				}
 
 				if (inviteCode.startsWith("import")) {
+					// resp.getWriter().println("<br><br>go to " + domain + "settings");
+
 					resp.sendRedirect(domain + "settings");
 				} else
 					resp.sendRedirect(domain + "main");

@@ -191,6 +191,7 @@ public class Defaults {
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
+					new VoGroup("Мой этаж", radiusStarecase, GroupType.FLOOR, true), 
 					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
 					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
 					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
@@ -241,7 +242,7 @@ public class Defaults {
 	// inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 user b
 	// inviteCode 3 addr zan 32 k 3 kv 51 staircase 2 user c
 	// inviteCode 4 addr zan 35 kv 35 staircase 1 user d
-	// inviteCode 5 addr resp 6 kv s5 staircase 1 user e
+	// inviteCode 5 addr resp 6 kv 5 staircase 1 user e
 
 	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
