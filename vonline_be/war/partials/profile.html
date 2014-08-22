@@ -25,7 +25,7 @@
                     <div class="user-body-right">
                         <div ng-if="profile.isEmptyProfile" class="empty-messages">Информация скрыта</div>
                         <div class="profile-item" ng-show="profile.userProfile.userInfo.birthday != 0 || profile.userProfile.userInfo.gender != 0">
-                            <div ng-show="profile.userProfile.userInfo.birthday != null && profile.userProfile.userInfo.birthday != 0"><span>День рождения:</span>{{profile.userProfile.userInfo.birthday}}</div>
+                            <div ng-show="profile.userProfile.userInfo.birthday != null && profile.userProfile.userInfo.birthday != 0"><span>День рождения: </span> {{profile.userProfile.userInfo.birthday*1000 | date: 'dd.MM.yyyy'}}</div>
                             <!--<div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол: </span> {{profile.userProfile.userInfo.genderMeta}}</div>-->
                         </div>
 

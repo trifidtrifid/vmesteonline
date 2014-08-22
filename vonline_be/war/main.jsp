@@ -45,7 +45,7 @@
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
         session.setAttribute("toURL",request.getRequestURL());
-		response.sendRedirect("/index.html");
+		response.sendRedirect("/login.jsp");
 		return;
 	}
 
