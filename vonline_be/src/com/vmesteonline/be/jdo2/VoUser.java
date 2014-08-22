@@ -59,11 +59,11 @@ public class VoUser /* extends GeoLocation */{
 
 	}
 
-	public Long getGroup(GroupType gt, PersistenceManager pm) {
+	public VoUserGroup getGroup(GroupType gt, PersistenceManager pm) {
 		for( Long gid: groups){
 			VoUserGroup ug = pm.getObjectById( VoUserGroup.class, gid );
 			if( ug.getGroupType() == gt.getValue() )
-				return ug.getId();
+				return ug;
 		}
 		return null;
 	}

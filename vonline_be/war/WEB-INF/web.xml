@@ -94,14 +94,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/blog</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
+    <!-- servlet>
         <servlet-name>Login</servlet-name>
         <jsp-file>/login.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/login.jsp</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping-->
 
     <servlet>
         <servlet-name>Contacts</servlet-name>

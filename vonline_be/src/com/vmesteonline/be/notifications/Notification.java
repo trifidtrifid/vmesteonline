@@ -145,7 +145,7 @@ public abstract class Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(group.getId(), pm);
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
 			String subject = "важное сообщение";
 			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";
@@ -200,13 +200,13 @@ public abstract class Notification {
 
 		body += "На сайте уже зарегистрированно: " + userSet.size() + " пользователей<br/>";
 		
-		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS), pm );
+		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS, pm), pm );
 		if(0!=ul.size()) body += "Из них рядом с вами живут: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING, pm), pm );
 		if(0!=ul.size()) body += "В вашем доме: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE, pm), pm );
 		if(0!=ul.size()) body += "В вашем подъезде: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR, pm), pm );
 		if(0!=ul.size()) body += "На вашем этаже : "+ul.size()+"<br/>";
 		
 		

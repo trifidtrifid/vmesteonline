@@ -730,7 +730,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser();
 			
-			List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING), pm);
+			List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING, pm), pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
@@ -741,18 +741,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> users = getUsersByLocation(groupId, pm);
+			List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
 			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 		} finally {
 			pm.close();
 		}
 	}
 
-	public static List<VoUser> getUsersByLocation(Long userGroupId, PersistenceManager pm) {
+	public static List<VoUser> getUsersByLocation(VoUserGroup group, PersistenceManager pm) {
 		List<VoUser> users = new ArrayList<VoUser>();
-		if( null!= userGroupId )
+		if( null!= group )
 		
-			for( Long g : pm.getObjectById( VoUserGroup.class, userGroupId ).getVisibleGroups(pm)) {
+			for( Long g : group.getVisibleGroups(pm)) {
 				String filter = "groups=="+g +" && emailConfirmed==true";
 				users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, filter).execute());
 			}
