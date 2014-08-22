@@ -219,21 +219,27 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 		
 			Query tQuery = pm.newQuery( VoTopic.class );
-			String filter = "(";
+			String filter = "";
 			
-			for( Long group:groups ){
-				filter += "visibleGroups=="+group +" || ";
-			}
-			filter = filter.substring(0,filter.length()-4) + ")";
+			if( type != MessageType.BLOG ){
 			
-			if( importantOnly ){
-				int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
-				filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
+				filter += "(";
+				for( Long group:groups ){
+					filter += "visibleGroups=="+group +" || ";
+				}
+				filter = filter.substring(0,filter.length()-4) + ")";
+				
+				if( importantOnly ){
+					int minimumCreateDate = (int) (System.currentTimeMillis()/1000L - 86400L * 14L); //two only last week important
+					filter = " isImportant == true && lastUpdate > "+minimumCreateDate+" && " + filter;
+				}
+				
+				filter += " && ";
 			}
 			if( type == MessageType.WALL )
-				filter += " && (type=='WALL' || type=='BASE')";
+				filter += "(type=='WALL' || type=='BASE')";
 			else 
-				filter += " && type=='"+type+"'";
+				filter += "type=='"+type+"'";
 			
 			tQuery.setFilter(filter);
 			tQuery.setOrdering("lastUpdate DESC");
