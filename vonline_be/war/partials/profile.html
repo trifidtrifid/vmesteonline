@@ -44,7 +44,7 @@
                                 <h4>Дети: </h4>
                                 <div ng-repeat="child in profile.userProfile.family.childs">
                                     {{child.name}}
-                                    <span ng-show="child.birthday">, родился: {{child.birthday*1000 | date: 'MM.yyyy'}}</span>
+                                    <span ng-show="child.birthday">, {{child.birthday*1000 | date: 'MM.yyyy'}}</span>
                                 </div>
                             </div>
                             <div ng-show="profile.userProfile.family.pets != null && profile.userProfile.family.pets.length != 0 && profile.userProfile.family.pets[0].name != ''">

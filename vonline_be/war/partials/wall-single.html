@@ -11,10 +11,10 @@
                                 <div class="avatar" style="background-image: url({{wallSingle.wallItem.topic.userInfo.avatar}})"></div>
                             </a>
 
-                            <div class="body text-container" ng-switch on="wallSingle.wallItem.topic.metaType">
+                            <div class="body text-container"> <!--  ng-switch on="wallSingle.wallItem.topic.metaType" -->
                                 <div class="message-tools pull-right" ng-show="wallSingle.wallItem.topic.userInfo.id == base.me.id">
                                     <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallSingle.wallItem.topic,wallSingle.wallItems,true,true)">&times;</a>
-                                    <a href="#" title="Редактировать" ng-click="base.setEdit(wallSingle.wallItem.topic)" class="fa fa-pencil pull-right"></a>
+                                    <a href="#" title="Редактировать" ng-click="base.setEdit($event,wallSingle.wallItem.topic,false)" class="fa fa-pencil pull-right"></a>
                                 </div>
 
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
@@ -25,19 +25,19 @@
                                 </div>
 
                                 <div ng-hide="wallSingle.wallItem.topic.isEdit">
-                                    <div class="text" ng-switch-when="message" ng-hide="wallSingle.wallItem.topic.isEdit">{{wallSingle.wallItem.topic.message.content}}</div>
+
+                                    <div class="text" ng-hide="wallSingle.wallItem.topic.isEdit">{{wallSingle.wallItem.topic.message.content}}</div> <!--  ng-switch-when="message" -->
 
                                     <div class="attached" ng-show="wallSingle.wallItem.topic.message.images.length || wallSingle.wallItem.topic.message.documents.length">
-                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
-                                            <img ng-src="{{image.URL}}" alt="картинка"/>
+                                        <a href="{{image.URL}}" class="fancybox" ng-click="$event.preventDefault()" rel="attached-group-{{wallSingle.wallItem.topic.id}}" ng-repeat="image in wallSingle.wallItem.topic.message.images">
+                                            <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                         </a>
                                         <div class="docs">
                                             <div ng-repeat="document in wallSingle.wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
                                         </div>
                                     </div>
 
-                                    <div class="poll" ng-switch-when="poll" ng-switch on="wallSingle.wallItem.topic.poll.alreadyPoll" >
-                                        <div class="text" >{{wallSingle.wallItem.topic.message.content}}</div>
+                                    <div class="poll" ng-if="wallSingle.wallItem.topic.metaType == 'poll'" ng-switch on="wallSingle.wallItem.topic.poll.alreadyPoll" >
 
                                         <h5>{{wallSingle.wallItem.topic.poll.subject}}</h5>
 
@@ -98,7 +98,11 @@
                                     <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
                                 </a>
 
-                                <div class="body">
+                                <div class="body text-container">
+                                    <div class="message-tools pull-right" ng-show="wallMessage.userInfo.id == base.me.id">
+                                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallMessage,wallSingle.wallItem.messages,false)">&times;</a>
+                                        <a href="#" title="Редактировать" ng-click="base.setEdit($event,wallMessage)" class="fa fa-pencil pull-right"></a>
+                                    </div>
 
                                     <div class="name">
                                         <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })">{{wallMessage.userInfo.firstName+" "+wallMessage.userInfo.lastName}}</a>
@@ -109,8 +113,8 @@
                                         <div class="text" >{{wallMessage.content}}</div>
 
                                         <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
-                                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallSingle.wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
-                                                <img ng-src="{{image.URL}}" alt="картинка"/>
+                                            <a href="{{image.URL}}" class="fancybox"  ng-click="$event.preventDefault()" rel="attached-group-{{wallSingle.wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                                <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                             </a>
                                             <div class="docs">
                                                 <div ng-repeat="document in wallMessage.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
