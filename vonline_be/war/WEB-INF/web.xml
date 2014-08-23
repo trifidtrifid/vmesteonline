@@ -67,15 +67,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
-    <!-- servlet>
-        <servlet-name>Index</servlet-name>
-        <jsp-file>/index.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Index</servlet-name>
-        <url-pattern>/index.jsp</url-pattern>
-    </servlet-mapping -->
-
     <servlet>
         <servlet-name>Backoffice</servlet-name>
         <jsp-file>/backoffice.jsp</jsp-file>
@@ -94,19 +85,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/blog</url-pattern>
 	</servlet-mapping>
 
-    <!-- servlet>
+    <servlet>
         <servlet-name>Login</servlet-name>
         <jsp-file>/login.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
-<<<<<<< HEAD
-        <url-pattern>/login.jsp</url-pattern>
-    </servlet-mapping -->
-=======
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
->>>>>>> FE-forum
 
     <servlet>
         <servlet-name>Contacts</servlet-name>
