@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -22,7 +20,6 @@ import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.Notifications;
-import com.vmesteonline.be.PrivacyType;
 import com.vmesteonline.be.RelationsType;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserContacts;
@@ -51,6 +48,7 @@ public class VoUser /* extends GeoLocation */{
 		try {
 			defaultGroup = VoUserGroup.createVoUserGroup(new BigDecimal("60.0"), new BigDecimal("30.0"), 
 					10000,(byte)0,(byte)0, "Мой Город", 10000, GroupType.TOWN.getValue(), pm);
+			
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
 		} finally {
@@ -398,7 +396,7 @@ public class VoUser /* extends GeoLocation */{
 	private Set<Long> moderationGroups;
 
 	public UserPrivacy getPrivacy() {
-		return null == privacy ? new UserPrivacy(0L, PrivacyType.NONE, PrivacyType.NONE) : privacy;
+		return null == privacy ? new UserPrivacy(0L, GroupType.BUILDING, GroupType.STAIRCASE) : privacy;
 	}
 
 	public void setPrivacy(UserPrivacy privacy) {

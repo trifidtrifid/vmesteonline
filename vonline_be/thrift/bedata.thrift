@@ -81,12 +81,12 @@ struct UserInfo{
 	6: string avatar
 }
 
-enum PrivacyType { NONE=0, STAIRCASE=1, HOME=2, DISTRICT=3, EVERYBODY=4}
+enum GroupType { NOBODY=0, FLAT=1, FLOOR=2, STAIRCASE=3, BUILDING=4, NEIGHBORS=5, BLOCK=6, DISTRICT=7, TOWN=8 }
 
 struct UserPrivacy{
 	1: i64 userId,
-	2: PrivacyType profile,
-	3: PrivacyType contacts
+	2: GroupType profile,
+	3: GroupType contacts
 }
 
 struct UserContacts{
@@ -139,8 +139,6 @@ struct UserProfile {
 	7: i32 importancy,
 	8: i32 populatity,
 }
-
-enum GroupType { FLOOR=1, STAIRCASE=2, BUILDING=3, NEIGHBORS=4, BLOCK=5, DISTRICT=6, TOWN=7 }
 
 struct Group {
 	1: i64 id,

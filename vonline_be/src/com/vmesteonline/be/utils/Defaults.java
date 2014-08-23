@@ -83,9 +83,11 @@ public class Defaults {
 	public static String[] uEmails = new String[] { user1email, user2email, user3email, user4email, user5email };
 	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass, user4pass, user5pass };
 
-	public static int radiusStarecase = 0;
-	public static int radiusHome = 50;
-	public static int radiusSmall = 350;
+	public static int radiusZero = 0;
+	public static int radiusBuilding = 50;
+	public static int radiusNeighbors = 350;
+	public static int radiusBlock = 500;
+	
 	/*
 	 * public static int radiusMedium = 1500; public static int radiusLarge = 5000;
 	 */
@@ -191,10 +193,10 @@ public class Defaults {
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
-					new VoGroup("Мой этаж", radiusStarecase, GroupType.FLOOR, true), 
-					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
-					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
-					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
+					new VoGroup("Мой этаж", radiusZero, GroupType.FLOOR, true), 
+					new VoGroup("Мой подъезд", radiusZero, GroupType.STAIRCASE, true), 
+					new VoGroup("Мой дом", radiusBuilding, GroupType.BUILDING, true),
+					new VoGroup("Соседние дома", radiusNeighbors, GroupType.NEIGHBORS, true), 
 					}) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
