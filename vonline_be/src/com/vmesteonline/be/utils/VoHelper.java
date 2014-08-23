@@ -46,9 +46,9 @@ public class VoHelper {
 
 	public static int findMinimumGroupRadius(GeoLocation a, GeoLocation b) {
 
-		if (!isInclude(a, Defaults.radiusStarecase, b)) {
-			if (!isInclude(a, Defaults.radiusHome, b)) {
-				if (!isInclude(a, Defaults.radiusSmall, b)) {
+		if (!isInclude(a, Defaults.radiusZero, b)) {
+			if (!isInclude(a, Defaults.radiusBuilding, b)) {
+				if (!isInclude(a, Defaults.radiusNeighbors, b)) {
 /*					if (!isInclude(a, Defaults.radiusMedium, b)) {
 						if (!isInclude(a, Defaults.radiusLarge, b)) {
 */							return 100000;
@@ -57,11 +57,11 @@ public class VoHelper {
 					} else
 						return Defaults.radiusMedium;
 				} else
-*/					return Defaults.radiusSmall;
+*/					return Defaults.radiusNeighbors;
 			} else
-				return Defaults.radiusHome;
+				return Defaults.radiusBuilding;
 		} else
-			return Defaults.radiusStarecase;
+			return Defaults.radiusZero;
 
 	}
 
@@ -82,7 +82,7 @@ public class VoHelper {
 
 		int maxRadius = rLong > rLat ? rLong : rLat;
 		if (maxRadius == 0 && (a.getLongitude().compareTo(b.getLongitude()) != 0 || a.getLatitude().compareTo(b.getLatitude()) != 0))
-			return Defaults.radiusHome;
+			return Defaults.radiusBuilding;
 
 		return maxRadius;
 	}
