@@ -99,6 +99,7 @@ public class VoUser /* extends GeoLocation */{
 		up.interests = new UserInterests(getInterests(), getJob());
 		up.importancy = getImportancy();
 		up.populatity = getPopularuty();
+
 		return up;
 	}
 

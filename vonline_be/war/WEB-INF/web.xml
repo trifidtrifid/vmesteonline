@@ -67,6 +67,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
+	<!--<servlet> <servlet-name>Index</servlet-name> <jsp-file>/index.jsp</jsp-file> 
+		</servlet> <servlet-mapping> <servlet-name>Index</servlet-name> <url-pattern>/index</url-pattern> 
+		</servlet-mapping> -->
+
 	<servlet>
 		<servlet-name>Backoffice</servlet-name>
 		<jsp-file>/backoffice.jsp</jsp-file>
@@ -93,6 +97,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>Login</servlet-name>
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>Contacts</servlet-name>
 		<jsp-file>/contacts.jsp</jsp-file>

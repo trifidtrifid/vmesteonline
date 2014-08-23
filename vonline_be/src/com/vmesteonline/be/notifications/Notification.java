@@ -195,6 +195,7 @@ public abstract class Notification {
 
 		String body = newUser.getName() + " " + newUser.getLastName() + ", добро пожаловать на сайт Вашего дома!<br/><br/> ";
 
+		body += "Ваш логин: "+newUser.getEmail()+"<br/>Пароль:    "+newUser.getPassword()+"<br/><i>Мы рекомендуем поменять пароль воспользовавшись меню настроек</i><br/><br/>";
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
 
@@ -219,7 +220,7 @@ public abstract class Notification {
 
 		body += "На страницах сайта вы найдете новости, полезную информацию от управляющей компании и сможете обсудить их с соседями...<br/><br/>";
 
-		decorateAndSendMessage(newUser, "подтвердите email", body);
+		decorateAndSendMessage(newUser, newUser.isEmailConfirmed() ? "поддтверждение email" : "успешная регистрация", body);
 
 	}
 

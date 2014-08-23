@@ -217,7 +217,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			if (userId == 0) {
-				return currentUser.getUserProfile();
+				UserProfile up = currentUser.getUserProfile();
+				try {
+					up.contacts.homeAddress = pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getPostalAddress();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return up;
 			}
 
 			VoUser user;

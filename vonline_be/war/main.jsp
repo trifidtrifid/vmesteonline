@@ -18,33 +18,27 @@
 <%
 	HttpSession sess = request.getSession();
     pageContext.setAttribute("auth",true);
-    //out.print(request.getRequestURI()+" "+request.getRequestURL());
 
 	try {
 	 	AuthServiceImpl.checkIfAuthorised(sess.getId());
         UserServiceImpl userService = new UserServiceImpl(request.getSession());
 
-        List<Group> Groups = userService.getUserGroups();
-        List<Rubric> Rubrics = userService.getUserRubrics();
         ShortUserInfo ShortUserInfo = userService.getShortUserInfo();
         MessageServiceImpl messageService = new MessageServiceImpl(request.getSession().getId());
-        //MessageType mesType = MessageType.BASE;
 
-        TopicListPart Topics = new TopicListPart( new ArrayList<Topic>(), 0);
-        if( Groups.size() > 0 && Rubrics.size() > 0 )
-            Topics = messageService.getTopics(Groups.get(0).id,Rubrics.get(0).id,0,0,10);
 
         //out.print(ShortUserInfo.firstName);
 
-        pageContext.setAttribute("groups",Groups);
-        pageContext.setAttribute("rubrics",Rubrics);
-        pageContext.setAttribute("topics",Topics.topics);
+        
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
+
+        session.setAttribute("toURL","");
+
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
-        session.setAttribute("toURL",request.getRequestURL());
+        session.setAttribute("toURL", request.getRequestURL());
 		response.sendRedirect("/login");
 		return;
 	}

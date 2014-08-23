@@ -1,5 +1,6 @@
 
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -15,6 +16,24 @@
   <script src="js/forum/landing/html5shiv.js"></script>
   <script src="js/forum/landing/respond.min.js"></script>
 <![endif]-->
+
+    <script src="js/thrift.js" type="text/javascript"></script>
+    <script src="gen-js/authservice_types.js" type="text/javascript"></script>
+    <script src="gen-js/AuthService.js" type="text/javascript"></script>
+
+    <script>
+
+        var transport = new Thrift.Transport("/thrift/AuthService");
+        var protocol = new Thrift.Protocol(transport);
+        var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
+
+        var isAuth = authClient.checkIfAuthorized();
+
+        if(isAuth){
+            document.location.replace('/main');
+        }
+
+    </script>
 
 <link rel="shortcut icon" href="i/landing/vmesteonline.png">
 <script src="js/forum/landing/pace.js"></script>
