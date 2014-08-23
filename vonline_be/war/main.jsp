@@ -29,7 +29,7 @@
 
         //out.print(ShortUserInfo.firstName);
 
-        
+
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);

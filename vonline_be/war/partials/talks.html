@@ -10,22 +10,27 @@
             <div ng-show="!talks.topics || talks.topics.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
 
             <div class="talks-title" ng-repeat="talk in talks.topics" id="{{talk.id}}">
-                <div class="talks-title-left load-talk">
-                    <a ui-sref="talks-single({ talkId : {{talk.id}} })">{{talk.subject}}</a>
-                    <div>{{talk.messageNum}} сообщений</div>
-                </div>
+
                 <div class="talks-title-right">
-                                <span class="label label-lg arrowed lenta-item-hashtag pull-right"
-                                      ng-class="talk.tagColor">{{talk.label}}</span>
+                    <span class="label label-lg arrowed lenta-item-hashtag pull-right"
+                          ng-class="talk.tagColor">{{talk.label}}</span>
 
                     <a class="pull-right important-status" ng-class="{'important' : talk.message.important == 1}" title='{{ talk.message.importantText }}' href="#" ng-click="base.markImportant($event,talk.message)"><i class="fa fa-star"></i></a>
                     <a class="pull-right like-status" ng-class="{'isLike' : talk.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,talk.message)"><i class="fa fa-heart"></i></a>
                     <div class="like-help" id="like-help-{{talk.message.id}}">сообщение уже отмечено</div>
 
                     <div class="clearfix"></div>
+                </div>
 
+                <div class="talks-title-left load-talk">
+                    <a ui-sref="talks-single({ talkId : {{talk.id}} })">{{talk.subject}}</a>
+                    <div>{{talk.messageNum}} сообщений</div>
+                </div>
+
+                <div class="last-update pull-right">
                     <div>Последнее обновление: {{talk.lastUpdateEdit}}</div>
                 </div>
+
             </div>
 
         </section>

@@ -98,9 +98,8 @@
                                 <select class="form-control" id="settings-select-2" ng-model="settings.userPrivacy.profile">
                                     <option value="0" ng-selected="settings.userPrivacy.profile == 0 ">Никому</option>
 
-                                    <option value="{{$index+1}}" ng-selected="settings.userPrivacy.profile == {{$index+1}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
+                                    <option value="{{group.type}}" ng-selected="settings.userPrivacy.profile == {{group.type}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
 
-                                    <option value="{{base.groups.length + 1}}" ng-selected="settings.userPrivacy.profile == {{base.groups.length + 1}} ">Всем</option>
                                 </select>
                             </div>
                             <div>
@@ -109,9 +108,8 @@
                                 <select class="form-control" id="settings-select-3" ng-model="settings.userPrivacy.contacts">
                                     <option value="0" ng-selected="settings.userPrivacy.contacts == 0 ">Никому</option>
 
-                                    <option value="{{$index+1}}" ng-selected="settings.userPrivacy.contacts == {{$index+1}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
+                                    <option value="{{group.type}}" ng-selected="settings.userPrivacy.contacts == {{group.type}}" ng-repeat="group in base.groups">{{group.visibleName}}</option>
 
-                                    <option value="{{base.groups.length + 1}}" ng-selected="settings.userPrivacy.contacts == {{base.groups.length + 1}} ">Всем</option>
                                 </select>
                             </div>
 
