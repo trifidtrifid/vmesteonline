@@ -1,6 +1,5 @@
 package com.vmesteonline.be.jdo2;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.utils.StorageHelper;
 

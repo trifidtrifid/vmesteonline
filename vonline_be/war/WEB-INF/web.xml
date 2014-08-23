@@ -100,8 +100,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
+<<<<<<< HEAD
         <url-pattern>/login.jsp</url-pattern>
     </servlet-mapping -->
+=======
+<<<<<<< HEAD
+        <url-pattern>/login.jsp</url-pattern>
+    </servlet-mapping -->
+=======
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+>>>>>>> FE-forum
+>>>>>>> 049691f23d7ac11e0dca399666c91e6735c8d56e
 
     <servlet>
         <servlet-name>Contacts</servlet-name>
