@@ -207,10 +207,6 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			user.setGender(gender);
 			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
-			
-			//todo если userId нигде не используется то инициализировать прайваси надо в консутрукторе
-			user.setPrivacy(new UserPrivacy(user.getId(), PrivacyType.EVERYBODY, PrivacyType.STAIRCASE));
-			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
 
 			VoPostalAddress uaddress;
