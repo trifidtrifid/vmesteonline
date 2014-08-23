@@ -179,10 +179,6 @@
 
                     <div class="wallitem-topic" ng-switch-when="1">
                         <div class="talks-title">
-                            <div class="talks-title-left load-talk">
-                                <a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a>
-                                <div>{{wallItem.topic.messageNum}} сообщений</div>
-                            </div>
                             <div class="talks-title-right">
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="wallItem.tagColor">{{wallItem.label}}</span>
@@ -192,7 +188,14 @@
                                 <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
                                 <div class="clearfix"></div>
+                            </div>
 
+                            <div class="talks-title-left load-talk">
+                                <a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a>
+                                <div>{{wallItem.topic.messageNum}} сообщений</div>
+                            </div>
+
+                            <div class="last-update pull-right">
                                 <div>Последнее обновление: {{wallItem.topic.lastUpdateEdit}}</div>
                             </div>
                         </div>

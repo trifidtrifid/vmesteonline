@@ -3267,6 +3267,7 @@ function postMessage(obj,isWall,isFirstLevel){
 
         message.id = 0;
         message.images = getAttachedImages($('#attach-area-' + attachId));
+
         message.documents = getAttachedDocs($('#attach-doc-area-' + attachId));
         /*for(var p in message.documents[0]){
          alert(p+" "+message.documents[0][p]);
@@ -3371,6 +3372,10 @@ function getAttachedImages(selector){
         result = new com.vmesteonline.be.messageservice.Attach();
         result.fileName = name;
         result.contentType = type;
+
+        var indexFile = content.indexOf('/file');
+        content = content.substring(indexFile);
+
         result.URL = content;
         //console.log(content);
         //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";
