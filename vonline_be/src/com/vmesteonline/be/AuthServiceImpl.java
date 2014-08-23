@@ -38,6 +38,26 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		super(sessId);
 	}
 
+	
+	@Override
+	public boolean checkIfAuthorized() throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			long uid;
+			if( 0!= (uid = getCurrentSession(pm).getUserId())){
+				try {
+					pm.getObjectById(VoUser.class, uid);
+					return true;
+				} catch (JDOObjectNotFoundException e) {
+				}
+			} 
+
+		} finally {
+			pm.close();
+		}
+		return false;
+	}
+
 	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {

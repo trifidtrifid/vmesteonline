@@ -31,4 +31,6 @@ service AuthService {
 	bool remindPassword(1:string emal),
 	bool checkRemindCode(1:string remindeCode,2:string emal),
 	bool changePasswordByRemidCode(1:string remindCode, 2:string emal, 3:string newPwd),
+	
+	bool checkIfAuthorized() throws (1:error.InvalidOperation exc),
 }
