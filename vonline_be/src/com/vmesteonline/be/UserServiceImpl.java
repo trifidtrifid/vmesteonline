@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -245,8 +246,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return uProfile;
 			}
 
-			// otherwise lets determine users relations that would be stored as PrivacyType
-			PrivacyType relation = determineProvacyByAddresses(currentUser, user, pm);
+			// otherwise lets determine users relations that would be stored as GroupType
+			GroupType relation = determineProvacyByAddresses(currentUser, user, pm);
 
 			// filter information according to relations
 			if (uPrivacy.contacts.getValue() < relation.getValue()) {// remove contacts
@@ -269,9 +270,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
-		GroupType relation = GroupType.TOWN;
-
-		VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+	
+		Iterator<Long> ugit = user.getGroups().iterator();
+		Iterator<Long> cugit = currentUser.getGroups().iterator();
+		long commonGroupId;
+		while( ugit.hasNext() && cugit.hasNext() ){ //excepc that group are synchronized by type
+			if( (commonGroupId = ugit.next()) == cugit.next() ){
+				pm.getObjectById(VoUserGroup.class, commonGroupId).getGroupType();
+			}
+		}
+		return GroupType.TOWN;
+		
+		/*VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
 		long uAddrId;
 		VoPostalAddress uAddr;
 		if (null == cuAddr || 0 == (uAddrId = user.getAddress())) {
@@ -301,7 +311,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				relation = GroupType.BLOCK;
 			
 		}
-		return relation;
+		return relation;*/
 	}
 
 	@Override
