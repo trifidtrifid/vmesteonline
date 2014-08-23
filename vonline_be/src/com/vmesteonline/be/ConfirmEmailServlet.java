@@ -25,8 +25,9 @@ public class ConfirmEmailServlet extends HttpServlet {
 				PersistenceManager pm = PMF.getPm();
 				try {
 					VoUser user = pm.getObjectById(VoUser.class, Long.parseLong(uidAndConfCode[0]));
-					if( !user.isEmailConfirmed() && (""+user.getConfirmCode()).equals(uidAndConfCode[1])){
+					if((""+user.getConfirmCode()).equals(uidAndConfCode[1])){
 						user.setEmailConfirmed(true);
+						user.setConfirmCode(System.currentTimeMillis()*System.currentTimeMillis()); //just to reset
 						serviceImpl.setSession(req.getSession());
 						serviceImpl.saveUserInSession(pm, user);				
 					} else {
