@@ -276,7 +276,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		long commonGroupId;
 		while( ugit.hasNext() && cugit.hasNext() ){ //excepc that group are synchronized by type
 			if( (commonGroupId = ugit.next()) == cugit.next() ){
-				pm.getObjectById(VoUserGroup.class, commonGroupId).getGroupType();
+				return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, commonGroupId).getGroupType());
 			}
 		}
 		return GroupType.TOWN;
