@@ -145,7 +145,7 @@ public abstract class Notification {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation(group.getId(), pm);
+			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
 			String subject = "важное сообщение";
 			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";
@@ -195,18 +195,19 @@ public abstract class Notification {
 
 		String body = newUser.getName() + " " + newUser.getLastName() + ", добро пожаловать на сайт Вашего дома!<br/><br/> ";
 
+		body += "Ваш логин: "+newUser.getEmail()+"<br/>Пароль:    "+newUser.getPassword()+"<br/><i>Мы рекомендуем поменять пароль воспользовавшись меню настроек</i><br/><br/>";
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll((List<VoUser>) pm.newQuery(VoUser.class, "").execute());
 
 		body += "На сайте уже зарегистрированно: " + userSet.size() + " пользователей<br/>";
 		
-		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS), pm );
+		List<VoUser> ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.NEIGHBORS, pm), pm );
 		if(0!=ul.size()) body += "Из них рядом с вами живут: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.BUILDING, pm), pm );
 		if(0!=ul.size()) body += "В вашем доме: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.STAIRCASE, pm), pm );
 		if(0!=ul.size()) body += "В вашем подъезде: "+ul.size()+"<br/>";
-		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR), pm );
+		ul = UserServiceImpl.getUsersByLocation( newUser.getGroup(GroupType.FLOOR, pm), pm );
 		if(0!=ul.size()) body += "На вашем этаже : "+ul.size()+"<br/>";
 		
 		
@@ -219,7 +220,7 @@ public abstract class Notification {
 
 		body += "На страницах сайта вы найдете новости, полезную информацию от управляющей компании и сможете обсудить их с соседями...<br/><br/>";
 
-		decorateAndSendMessage(newUser, "подтвердите email", body);
+		decorateAndSendMessage(newUser, newUser.isEmailConfirmed() ? "поддтверждение email" : "успешная регистрация", body);
 
 	}
 

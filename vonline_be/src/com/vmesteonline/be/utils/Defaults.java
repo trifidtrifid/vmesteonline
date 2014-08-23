@@ -13,8 +13,6 @@ import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
-import com.vmesteonline.be.data.JDBCConnector;
-import com.vmesteonline.be.data.MySQLJDBCConnector;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoGroup;
@@ -37,9 +35,9 @@ import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
-	
+
 	static {
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			initializeGroups(pm);
@@ -69,7 +67,7 @@ public class Defaults {
 	public static String user3name = "Cname";
 	public static String user3email = "c";
 	public static String user3pass = "c";
-	
+
 	public static String user4lastName = "Dfamily";
 	public static String user4name = "Dname";
 	public static String user4email = "d";
@@ -80,7 +78,7 @@ public class Defaults {
 	public static String user5email = "e";
 	public static String user5pass = "e";
 
-	public static String[] unames = new String[] { user1name, user2name, user3name, user4name,user5name };
+	public static String[] unames = new String[] { user1name, user2name, user3name, user4name, user5name };
 	public static String[] ulastnames = new String[] { user1lastName, user2lastName, user3lastName, user4lastName, user5lastName };
 	public static String[] uEmails = new String[] { user1email, user2email, user3email, user4email, user5email };
 	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass, user4pass, user5pass };
@@ -88,15 +86,13 @@ public class Defaults {
 	public static int radiusStarecase = 0;
 	public static int radiusHome = 50;
 	public static int radiusSmall = 350;
-/*	public static int radiusMedium = 1500;
-	public static int radiusLarge = 5000;
-*/
+	/*
+	 * public static int radiusMedium = 1500; public static int radiusLarge = 5000;
+	 */
 	public static String defaultAvatarTopicUrl = "/data/da.gif";
 	public static String defaultAvatarMessageUrl = "/data/da.gif";
 	public static String defaultAvatarProfileUrl = "/data/da.gif";
 	public static String defaultAvatarShortProfileUrl = "/data/da.gif";
-
-	private static long userId = 0;
 
 	public static boolean initDefaultData(boolean loadInviteCodes) {
 
@@ -107,11 +103,10 @@ public class Defaults {
 			clearGroups(pm);
 			clearLocations(pm);
 			clearFiles(pm);
-			
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes);
 			initializeUsers(locCodes);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -122,8 +117,6 @@ public class Defaults {
 
 	}
 
-	
-
 	private static void clearFiles(PersistenceManager pm) {
 		Extent<VoFileAccessRecord> ext = pm.getExtent(VoFileAccessRecord.class);
 		if (null != ext)
@@ -131,11 +124,11 @@ public class Defaults {
 				try {
 					StorageHelper.deleteImage(far.getGSFileName());
 					pm.deletePersistent(far);
-				} catch (Exception rte ) {
+				} catch (Exception rte) {
 					// e.printStackTrace();
 				}
 			}
-		
+
 	}
 
 	public static boolean initDefaultData() {
@@ -195,20 +188,20 @@ public class Defaults {
 		q.setFilter("subscribedByDefault == true");
 		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
 		if (defGroups.isEmpty()){
-			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 200, 500, 1000, 5000 }).iterator();
+			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
-					new VoGroup("Мой этаж", radiusStarecase, GroupType.FLOOR, false), 
+					new VoGroup("Мой этаж", radiusStarecase, GroupType.FLOOR, true), 
 					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
 					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
 					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
-					//new VoGroup("Мой район", radiusLarge, GroupType.DISTRICT, true) 
 					}) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
 				pm.makePersistent(dg);
 			}
-		} else defaultGroups = defGroups;
+		} else
+			defaultGroups = defGroups;
 	}
 
 	// ======================================================================================================================
@@ -223,13 +216,15 @@ public class Defaults {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
 					VoUser user = pm.getObjectById(VoUser.class, uid);
 					user.setEmailConfirmed(true);
-					
-					if(counter==1) for( Long ug: user.getGroups()) //the first user would moderate all of groups
-						user.setGroupModerator(ug, true);
-					
+
+					if (counter == 1)
+						for (Long ug : user.getGroups())
+							// the first user would moderate all of groups
+							user.setGroupModerator(ug, true);
+
 					pm.makePersistent(user);
 					uids.add(uid);
-					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -239,16 +234,15 @@ public class Defaults {
 		}
 		if (uids.size() == 0)
 			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
-		userId = uids.get(0);
 
 	}
 
 	// ======================================================================================================================
-	//inviteCode 1 addr zan 32 k 3 kv 5 staircase 1 user a
-	//inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 user b 
-	//inviteCode 3 addr zan 32 k 3 kv 51 staircase 2  user c
-	//inviteCode 1 addr zan 35 kv 35 staircase 1 user d
-	//inviteCode 1 addr resp 6 kv s5 staircase 1 user e
+	// inviteCode 1 addr zan 32 k 3 kv 5 staircase 1 user a
+	// inviteCode 2 addr zan 32 k 3 kv 50 staircase 2 user b
+	// inviteCode 3 addr zan 32 k 3 kv 51 staircase 2 user c
+	// inviteCode 4 addr zan 35 kv 35 staircase 1 user d
+	// inviteCode 5 addr resp 6 kv 5 staircase 1 user e
 
 	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -269,7 +263,7 @@ public class Defaults {
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
+					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
 					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
 
 			String invCodes[] = { "1", "2", "3", "4", "5" };
@@ -288,7 +282,8 @@ public class Defaults {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + (e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
+			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. "
+					+ (e instanceof InvalidOperation ? ((InvalidOperation) e).why : e.getMessage()));
 		} finally {
 			pm.close();
 		}
