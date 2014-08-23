@@ -106,6 +106,11 @@
                 <button class="btn btn-sm btn-primary no-border send">Отправить</button>
                 <span class="info-good hidden">Ваше сообщение отправлено</span>
             </form>
+                <br/>
+                <div>
+                    <a href="/main">Вернуться на главную</a>
+                </div>
+                <br/>
             </div>
 
         </div>
