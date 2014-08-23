@@ -34,12 +34,6 @@
 
          используются только для создания сообщений НЕ первого уровня в обсуждении
          -->
-        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="createMessage($event,ctrlMessage,ctrlTopicId,ctrlParent)">
-            <i class="icon-share-alt"></i>
-            Отправить
-        </button>
-        <span class="error-info" ng-show="ctrlMessage.isCreateCommentError" ng-click>{{ctrlMessage.createCommentErrorText}}</span>
-
         <div class="btn-group attach-dropdown pull-right">
             <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                 <span class="btn-group-text">Прикрепить</span>
@@ -51,5 +45,12 @@
                 <li><input id="attachDoc-edit-{{ctrlId}}" type="file"/></li>
             </ul>
         </div>
+
+        <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="createMessage($event,ctrlMessage,ctrlTopicId,ctrlParent)">
+            <i class="icon-share-alt"></i>
+            Отправить
+        </button>
+        <span class="error-info" ng-show="ctrlMessage.isCreateCommentError" ng-click>{{ctrlMessage.createCommentErrorText}}</span>
+
     </span>
 </div>
