@@ -45,7 +45,7 @@
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
         session.setAttribute("toURL",request.getRequestURL());
-		response.sendRedirect("/login.jsp");
+		response.sendRedirect("/login");
 		return;
 	}
 
@@ -219,7 +219,7 @@
                     </div>
 
                 </aside>
-				<div class="main-content dynamic">
+				<div class="main-content dynamic ng-cloak">
 
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
                          ng-class="{'top-overflow-auto' : base.pageTitle.length}" ng-cloak>

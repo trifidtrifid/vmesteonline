@@ -823,7 +823,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             e.preventDefault();
 
             if(!ctrl.isEdit){
-                $(event.target).closest('.answer-block').find('.message-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
+                $(e.target).closest('.answer-block').find('.message-textarea').height(TEXTAREA_DEFAULT_HEIGHT);
             }
 
             if(ctrl.isTalk){
@@ -904,7 +904,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             localStorage.removeItem('groupId');
             authClient.logout();
 
-            document.location.replace("login.jsp");
+            document.location.replace("/login");
 
         }
 
