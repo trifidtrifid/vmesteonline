@@ -70,7 +70,7 @@ $(document).ready(function(){
     $('#login-box .btn-login').click(function(e){
         e.preventDefault();
 
-        var url = "/";
+        var url = "/main";
         var toURL = $(this).attr('data-tourl');
         if(toURL && toURL.indexOf('favicon') == -1) {
             url = toURL;
