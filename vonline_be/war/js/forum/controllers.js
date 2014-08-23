@@ -2934,7 +2934,6 @@ function copyImage(attachAreaSelector,fileLabel,type) {
 
         attachAreaSelector.find('.loading').before("<span class='attach-item new-attached'>" +
             "<a href='#' title='Не прикреплять' class='remove-attach-img'>&times;</a>" +
-            /*"<img src='"+ url +"'>" +*/
             "<img data-title='" + fileName + "' data-type='" + type + "' class='attached-img' style='background-image:url(" + url + ")'></span>");
 
         $('.new-attached .remove-attach-img').click(function (e) {
