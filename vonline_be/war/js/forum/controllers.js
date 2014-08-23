@@ -2453,6 +2453,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         angular.element($('.settings')).css({'min-height': $(window).height()-125});
 
+        $('.ng-cloak').removeClass('ng-cloak');
+
     })
     .controller('dialogsController', function($rootScope,$state){
         $rootScope.isTopSearchShow = false;
