@@ -18,6 +18,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.utils.StorageHelper;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
@@ -106,22 +107,23 @@ public class OAuthServlet extends HttpServlet {
 
 				PersistenceManager pm = PMF.getPm();
 				try {
-					VoUser user = authServiceImpl.getUserByEmail(email, pm);
+					VoUser user = authServiceImpl.getCurrentUser(pm);
 					if (user != null) {
-						resp.getWriter().println("<br>find user " + email + " avatar " + o.getString("photo_medium"));
-						user.setAvatarTopic(o.getString("photo_medium"));
-						user.setAvatarMessage(o.getString("photo_medium"));
-						user.setAvatarProfileShort(o.getString("photo_medium"));
-						user.setAvatarProfile(o.getString("photo_medium"));
+						resp.getWriter().println("<br>find user " + user.getEmail() + " avatar " + o.getString("photo_medium"));
+						String avatarUrl = StorageHelper.saveImage(o.getString("photo_medium").getBytes(), user.getId(), true, pm);
+						user.setAvatarTopic(avatarUrl);
+						user.setAvatarMessage(avatarUrl);
+						user.setAvatarProfileShort(avatarUrl);
+						user.setAvatarProfile(avatarUrl);
 						SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 						Date date = formatter.parse(o.getString("bdate"));
 						long ts = date.getTime() / 1000L;
 						user.setBirthday((int) ts);
 						pm.makePersistent(user);
-//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
+						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
 
 					} else {
-//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
+						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
 					}
 
 				} finally {
@@ -139,7 +141,7 @@ public class OAuthServlet extends HttpServlet {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.sendRedirect(domain + "login.html?error=" + e.toString());
+			resp.sendRedirect(domain + "main?error=" + e.toString());
 		}
 
 	}
