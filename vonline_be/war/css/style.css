@@ -381,6 +381,7 @@ h1 {
 .topic-item .topic-descr .topic-right h2 {
   margin-top: 0;
   font-size: 20px;
+  padding-right: 190px;
 }
 .topic-item .topic-descr .topic-right .fa-relations {
   float: right;
@@ -1014,7 +1015,7 @@ h1 {
   border-top: 1px solid #5090c1;
 }
 .talks-title .talks-title-left {
-  float: left;
+  padding-right: 130px;
 }
 .talks-title .talks-title-left >a {
   font-weight: bold;
@@ -1040,6 +1041,9 @@ h1 {
 .talks-title .talks-title-right .adverts-comments span {
   display: inline-block;
   margin-right: 20px;
+}
+.talks-title .last-update {
+  margin-top: -22px;
 }
 .talks-block {
   padding: 0 10px;
@@ -1345,6 +1349,7 @@ h1 {
 }
 .load-avatar {
   display: block;
+  width: 150px;
   margin: 0 auto;
   padding: 0;
   border-width: 0;

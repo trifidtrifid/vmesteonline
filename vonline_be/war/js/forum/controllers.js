@@ -2050,9 +2050,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         profile.userProfile = userClient.getUserProfile(userId);
 
         if(!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone && !profile.userProfile.contacts.email
-            && !profile.userProfile.family.relations && !profile.userProfile.family.childs && !profile.userProfile.family.pets
-            && !profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts
-            && !profile.userProfile.interests.userInterests && !profile.userProfile.interests.job
+            && !profile.userProfile.family && !profile.userProfile.family.relations && !profile.userProfile.family.childs && !profile.userProfile.family.pets
+            && !profile.userProfile.privacy && !profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts
+            && !profile.userProfile.interests && !profile.userProfile.interests.userInterests && !profile.userProfile.interests.job
             && !profile.userProfile.notifications)
             profile.isEmptyProfile = true;
 
@@ -2581,6 +2581,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
     })
     .controller('changeAvatarController',function($state,$rootScope){
+
         var changeAvatar = this, newSrc,
             x1 = 50, y1 = 50, x2 = 200, y2 = 200,
             imageWidth = 150, imageHeight = 150;
@@ -2621,7 +2622,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-            initModalAndCrop();
+        initModalAndCrop();
 
         function initModalAndCrop() {
 
@@ -2671,7 +2672,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                             $('.preview-container').removeClass('hidden');
                             $('.loading').addClass('hidden');
 
-
                         }
 
                         function updateCoords(c) {
@@ -2682,13 +2682,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                             y1 = c.y;
                             x2 = c.x2;
                             y2 = c.y2;
-                            /*$('#x').val(c.x);
+                            $('#x').val(c.x);
                              $('#y').val(c.y);
                              $('#w').val(c.w);
                              $('#h').val(c.h);
 
                              $('#x2').val(c.x2);
-                             $('#y2').val(c.y2);*/
+                             $('#y2').val(c.y2);
 
                             var rx = 150 / c.w; // 150 - размер окна предварительного просмотра
                             var ry = 150 / c.h;
@@ -2821,33 +2821,6 @@ function resetAceNavBtns(navbar){
     navbar.neighboursBtnStatus = "";
     navbar.privateMessagesBtnStatus = "";
     navbar.mapsBtnStatus = "";
-}
-function initProfileAva(obj){
-
-    $('.load-avatar input').ace_file_input({
-        style:'well',
-        btn_choose:'Загрузить аватар',
-        btn_change:null,
-        no_icon:'',
-        droppable:true,
-        thumbnail:'large',
-        icon_remove:null
-    }).on('change', function(){
-        obj.isMaySave = true;
-
-        //$('.logo-container>img').hide();
-
-        /*setTimeout(saveNewAva,1000);
-
-        function saveNewAva(){
-            //console.log($('.ace-file-input').find('.file-name img').css('background-image'));
-            var imgBase64 = $('.profile .ace-file-input').find('.file-name img').css('background-image');
-            var url = fileClient.saveFileContent(imgBase64,false);
-
-            userClient.updateUserAvatar(url);
-        }*/
-    });
-
 }
 function initAttachImage(selector,attachAreaSelector){
     var title;
@@ -3294,6 +3267,7 @@ function postMessage(obj,isWall,isFirstLevel){
 
         message.id = 0;
         message.images = getAttachedImages($('#attach-area-' + attachId));
+
         message.documents = getAttachedDocs($('#attach-doc-area-' + attachId));
         /*for(var p in message.documents[0]){
          alert(p+" "+message.documents[0][p]);
@@ -3398,6 +3372,10 @@ function getAttachedImages(selector){
         result = new com.vmesteonline.be.messageservice.Attach();
         result.fileName = name;
         result.contentType = type;
+
+        var indexFile = content.indexOf('/file');
+        content = content.substring(indexFile);
+
         result.URL = content;
         //console.log(content);
         //result = 'obj(name:'+ base64encode(name) +';data:'+ type +';content:'+content+")";

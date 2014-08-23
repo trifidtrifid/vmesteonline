@@ -1,6 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
+<%@ page import="com.vmesteonline.be.InvalidOperation"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
+<%
+    HttpSession sess = request.getSession();
+
+    try {
+
+        AuthServiceImpl.checkIfAuthorised(sess.getId());
+        response.sendRedirect("/main");
+
+    }catch(InvalidOperation ioe){
+
+    }
+
+%>
 
 <!DOCTYPE html>
 <html>
