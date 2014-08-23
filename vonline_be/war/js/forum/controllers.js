@@ -2178,7 +2178,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             var year = settings.userInfo.birthdayMeta.getFullYear();
 
-            settings.userInfo.birthdayMeta = month+"."+day+"."+year;
+            settings.userInfo.birthdayMeta = day+"."+month+"."+year;
         }
 
         if(settings.family.childs === null || settings.family.childs.length == 0){
@@ -2250,7 +2250,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             var temp = new com.vmesteonline.be.UserInfo();
 
             settings.userInfo.birthdayMeta ?
-                temp.birthday = Date.parse(settings.userInfo.birthdayMeta)/1000 :
+                temp.birthday = Date.parse(getCorrectDate(settings.userInfo.birthdayMeta))/1000 :
                 temp.birthday = 0;
 
             temp.gender = settings.userInfo.gender;
@@ -2337,10 +2337,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             for(var i = 0; i < childsLength; i++){
                 if(settings.family.childs[i].name && settings.family.childs[i].name != ""){ <!--  && settings.family.childs[i].month && settings.family.childs[i].year -->
 
-                    var tempMonth = parseInt(settings.family.childs[i].month)+1;
+                    var tempMonth = parseInt(settings.family.childs[i].month)+1+"";
+
+                    if(tempMonth.length < 2) tempMonth = "0" + tempMonth;
 
                     if(settings.family.childs[i].year && settings.family.childs[i].year != '1911' && settings.family.childs[i].month) {
-                        temp.childs[i].birthday = Date.parse(tempMonth + ".15." + settings.family.childs[i].year) / 1000;
+                        temp.childs[i].birthday = Date.parse(getCorrectDate("15."+tempMonth +"." + settings.family.childs[i].year)) / 1000;
+                        //alert(tempMonth+" "+getCorrectDate("15."+tempMonth +"." + settings.family.childs[i].year));
                     }else{
                         temp.childs[i].birthday = null;
                     }
@@ -2352,6 +2355,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     //temp.pets.splice(i,1);
                 }
             }
+
             userClient.updateFamily(temp);
 
             settings.isFamilyError = false;
@@ -2377,7 +2381,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             newChild.name = " ";
             var nowYear = new Date();
             nowYear = nowYear.getFullYear();
-            newChild.birthday = Date.parse('01.15.'+nowYear);
+            newChild.birthday = Date.parse(getCorrectDate('15.01.'+nowYear));
 
             var birthDate = new Date(newChild.birthday);
             //newChild.month = ""+birthDate.getMonth();
@@ -2448,7 +2452,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         settings.birthday = settings.userInfo.birthday :
         settings.birthday = "";*/
 
-        $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,dateFormat: "mm.dd.yy",yearRange:'c-100:+c'});
+        $('#settings-input-3').datepicker({changeMonth:true, changeYear:true,dateFormat: "dd.mm.yy",yearRange:'c-100:+c'});
         $.datepicker.setDefaults($.datepicker.regional['ru']);
 
         angular.element($('.settings')).css({'min-height': $(window).height()-125});
@@ -2807,6 +2811,54 @@ function showGroupOverBuilding(groups){
     for(var i = 0; i < len; i++){
         if(groups[i].type < 3) groups[i].isShow = false;
     }
+}
+
+function getCorrectDate(str){
+    var arrDate = str.split('.'),
+        month = arrDate[1],
+        monthStr;
+
+    switch(month){
+        case "01":
+            monthStr = "Jan";
+            break;
+        case "02":
+            monthStr = "Feb";
+            break;
+        case "03":
+            monthStr = "Mar";
+            break;
+        case "04":
+            monthStr = "Apr";
+            break;
+        case "05":
+            monthStr = "May";
+            break;
+        case "06":
+            monthStr = "June";
+            break;
+        case "07":
+            monthStr = "July";
+            break;
+        case "08":
+            monthStr = "Aug";
+            break;
+        case "09":
+            monthStr = "Sep";
+            break;
+        case "10":
+            monthStr = "Oct";
+            break;
+        case "11":
+            monthStr = "Nov";
+            break;
+        case "12":
+            monthStr = "Dec";
+            break;
+    }
+
+    return arrDate[0]+" "+ monthStr +" "+arrDate[2];
+
 }
 
 function resetPages(base){
