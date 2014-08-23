@@ -274,6 +274,40 @@ public class VoGeocoder {
 			}
 			return longitude;
 		}
+		
+		
+
+		@Override
+		public void setStreetName(String sn) {
+			streetName = sn;
+		}
+
+		@Override
+		public void getBuildingNo(String bn) {
+			buildingNo = bn;
+		}
+
+		
+		@Override
+		public void setCityName(String bn) {
+			cityName = bn;
+		}
+
+		
+		@Override
+		public void setLongitude(String string) {
+			longitude = new BigDecimal(string);
+		}
+
+		@Override
+		public void setLattitude(String string) {
+			longitude = new BigDecimal(string);			
+		}
+
+		@Override
+		public void setCountryName(String bn) {
+			countryName = bn;
+		}
 
 		private void calculateLongLat() {
 			if (null != longLatString) {

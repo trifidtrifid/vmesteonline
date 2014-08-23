@@ -24,5 +24,17 @@ public interface AddressInfo {
 	public abstract BigDecimal getLattitude();
 
 	public abstract BigDecimal getLongitude();
+	
+	public abstract void setStreetName(String sn);
+
+	public abstract void getBuildingNo(String bn);
+	
+	public abstract void setCityName(String bn);
+
+	public abstract void setCountryName(String bn);
+
+	public abstract void setLongitude(String string);
+
+	public abstract void setLattitude(String string);
 
 }

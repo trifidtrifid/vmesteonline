@@ -433,7 +433,7 @@ public class StorageHelper {
 					is = url.openStream();
 					// file name for the same sources will be the same
 				}
-				fname = url.getFile();
+				fname = null == fname ? url.getFile() : fname;
 
 			} catch (MalformedURLException e) {
 				

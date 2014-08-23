@@ -1246,8 +1246,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			throws InvalidOperation {
 		
 		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург "+buildingAddressText);
-		if( null == addrInfo.getBuildingNo() )
-			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found. Be sure that you entered a house number.");
+		if( null == addrInfo.getBuildingNo() || !addrInfo.isExact()){
+			addrInfo.setStreetName( buildingAddressText );
+			addrInfo.getBuildingNo("");
+			addrInfo.setCityName("Санкт Петербург");
+			addrInfo.setCountryName("Россия");
+			addrInfo.setLongitude("1"); 
+			addrInfo.setLattitude("1");
+		}
 		
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -1256,7 +1262,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoCity voCity = new VoCity( voCountry, addrInfo.getCityName(), pm );
 			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
 			String no = addrInfo.getBuildingNo();
-			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
+			VoBuilding voBuilding = new VoBuilding(voStreet, no, 
+					addrInfo.getLongitude(), 
+					addrInfo.getLattitude(), pm);
 			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, flatNo, comment );
 			currentUser.addDeliveryAddress( pa, buildingAddressText);
 			return pa.getPostalAddress(pm);
