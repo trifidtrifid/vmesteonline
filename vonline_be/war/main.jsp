@@ -42,10 +42,11 @@
         pageContext.setAttribute("firstName",ShortUserInfo.firstName);
         pageContext.setAttribute("lastName",ShortUserInfo.lastName);
         pageContext.setAttribute("userAvatar",ShortUserInfo.avatar);
+
 	} catch (InvalidOperation ioe) {
         pageContext.setAttribute("auth",false);
         session.setAttribute("toURL",request.getRequestURL());
-		response.sendRedirect("/login");
+		//response.sendRedirect("/login");
 		return;
 	}
 
