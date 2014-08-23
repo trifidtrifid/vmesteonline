@@ -270,17 +270,18 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
-	
+		//--------------- implementation faster then commented below but it requires that groups are in the same order and the same Type
 		Iterator<Long> ugit = user.getGroups().iterator();
 		Iterator<Long> cugit = currentUser.getGroups().iterator();
 		long commonGroupId;
-		while( ugit.hasNext() && cugit.hasNext() ){ //excepc that group are synchronized by type
+		while( ugit.hasNext() && cugit.hasNext() ){ //expects that group are synchronized by type
 			if( (commonGroupId = ugit.next()) == cugit.next() ){
-				return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, commonGroupId).getGroupType());
+				return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, commonGroupId ).getGroupType());
 			}
 		}
 		return GroupType.TOWN;
 		
+	//---- Slower but reliable 
 		/*VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
 		long uAddrId;
 		VoPostalAddress uAddr;
