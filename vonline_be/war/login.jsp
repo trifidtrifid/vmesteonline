@@ -93,7 +93,7 @@
                                                             </button>
                                                             <br>
                                                             <br>
-                                                            <div><a href="/" class="reg-link">Зарегестрируйтесь</a> если у вас нет аккаунта</div>
+                                                            <div><a href="/index.html" class="reg-link">Зарегестрируйтесь</a> если у вас нет аккаунта</div>
                                                         </div>
 
                                                     </fieldset>
