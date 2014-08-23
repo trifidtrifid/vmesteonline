@@ -876,7 +876,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             groupsLength = base.groups.length;
 
         if(!lsGroupId){
-            $rootScope.currentGroup = base.groups[1];
+            $rootScope.currentGroup = getDefaultGroup(base.groups);
         }else{
             for(var i = 0; i < groupsLength; i++){
                 if(base.groups[i].id == lsGroupId){
@@ -884,7 +884,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }
             }
             if(!$rootScope.currentGroup){
-                $rootScope.currentGroup = base.groups[1];
+                $rootScope.currentGroup = getDefaultGroup(base.groups);
             }
         }
 
@@ -1660,6 +1660,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.setTab(3);
         $rootScope.base.showAllGroups();
         $rootScope.base.isFooterBottom = false;
+        showGroupOverBuilding($rootScope.groups);
 
         /*initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений*/
@@ -2015,6 +2016,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         }
         initAutoFill();
 
+        $('.ng-cloak').removeClass('ng-cloak');
+
     })
     .controller('ProfileController',function($rootScope, $stateParams) {
 
@@ -2158,7 +2161,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         settings.years= [];
         var ind = 0;
-        for(var i = 1940; i < 2015; i++){
+        for(var i = 2014; i > 1940; i--){
             settings.years[ind++] = i;
         }
 
@@ -2497,6 +2500,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             $state.go('dialog-single',{ dialogId : dialogId});
         };
 
+        $('.ng-cloak').removeClass('ng-cloak');
+
     })
     .controller('dialogController',function($rootScope,$stateParams,$state) {
 
@@ -2571,6 +2576,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
 
         };
+
+        $('.ng-cloak').removeClass('ng-cloak');
 
     })
     .controller('changeAvatarController',function($state,$rootScope){
@@ -2727,7 +2734,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.base.mapsLoadStatus = "isLoaded";
 
-        $rootScope.groups[0].isShow = false;
+        showGroupOverBuilding($rootScope.groups);
+        //$rootScope.groups[0].isShow = false;
         //$rootScope.groups[1].selected = true;
 
         if($rootScope.currentGroup.id == $rootScope.groups[0].id){
@@ -2782,6 +2790,22 @@ var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol)
 transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
+
+function getDefaultGroup(groups){
+    var len = groups.length;
+    for(var i = 0; i < len;i++){
+        if(groups[i].type == 3) return groups[i];
+    }
+
+    return groups[0];
+}
+
+function showGroupOverBuilding(groups){
+    var len = groups.length;
+    for(var i = 0; i < len; i++){
+        if(groups[i].type < 3) groups[i].isShow = false;
+    }
+}
 
 function resetPages(base){
     base.neighboursIsActive = false;
