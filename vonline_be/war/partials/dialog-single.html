@@ -33,7 +33,20 @@
                         <div><a ui-sref="profile({ userId : {{ message.authorProfile.userInfo.userId }} })">{{message.authorProfile.userInfo.firstName + " "+ message.authorProfile.userInfo.lastName}}</a></div> <!--  -->
 
                         <div ng-hide="message.isEdit">
-                            <p class="text">{{message.content}}</p>
+
+                            <div ng-if="message.content.length < base.contentLength">
+                                <div class="text">{{message.content}}</div>
+                            </div>
+                            <div ng-if="message.content.length >= base.contentLength">
+                                <div class="text" ng-hide="message.isFullText">
+                                    {{message.content.slice(0,base.contentLength-1)}}
+                                    <div><a href="#" ng-click="base.toggleFullText(message)">читать далее...</a></div>
+                                </div>
+                                <div class="text" ng-show="message.isFullText">
+                                    {{message.content}}
+                                    <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
+                                </div>
+                            </div>
 
                             <div class="attached">
                                 <a href="{{image.URL}}" class="fancybox" ng-click="$event.preventDefault()" rel="attached-group-dialog-{{message.id}}" ng-repeat="image in message.images">

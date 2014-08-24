@@ -32,7 +32,25 @@
                                             <span>{{talks.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                        <p ng-switch-when="message" class="text">{{talks.fullTalkTopic.message.content}}</p>
+                                        <!--<p ng-switch-when="message" class="text">{{talks.fullTalkTopic.message.content}}</p>-->
+
+                                        <div ng-switch-when="message">
+
+                                            <div ng-if="talks.fullTalkTopic.message.content.length < base.contentLength">
+                                                <div class="text">{{talks.fullTalkTopic.message.content}}</div>
+                                            </div>
+                                            <div ng-if="talks.fullTalkTopic.message.content.length >= base.contentLength">
+                                                <div class="text" ng-hide="talks.fullTalkTopic.message.isFullText">
+                                                    {{talks.fullTalkTopic.message.content.slice(0,base.contentLength-1)}}
+                                                    <div><a href="#" ng-click="base.toggleFullText(talks.fullTalkTopic.message)">читать далее...</a></div>
+                                                </div>
+                                                <div class="text" ng-show="talks.fullTalkTopic.message.isFullText">
+                                                    {{talks.fullTalkTopic.message.content}}
+                                                    <div><a href="#" ng-click="base.toggleFullText(talks.fullTalkTopic.message)">свернуть</a></div>
+                                                </div>
+                                            </div>
+
+                                        </div>
 
                                     <div class="attached">
                                         <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id}}" ng-repeat="image in talks.fullTalkTopic.message.images">
@@ -128,7 +146,20 @@
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
 
                                             <div ng-hide="firstMessage.isEdit">
-                                                <p class="text">{{firstMessage.content}}</p>
+
+                                                <div ng-if="firstMessage.content.length < base.contentLength">
+                                                    <div class="text">{{firstMessage.content}}</div>
+                                                </div>
+                                                <div ng-if="firstMessage.content.length >= base.contentLength">
+                                                    <div class="text" ng-hide="firstMessage.isFullText">
+                                                        {{firstMessage.content.slice(0,base.contentLength-1)}}
+                                                        <div><a href="#" ng-click="base.toggleFullText(firstMessage)">читать далее...</a></div>
+                                                    </div>
+                                                    <div class="text" ng-show="firstMessage.isFullText">
+                                                        {{firstMessage.content}}
+                                                        <div><a href="#" ng-click="base.toggleFullText(firstMessage)">свернуть</a></div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="attached">
                                                     <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+firstMessage.id}}" ng-repeat="image in firstMessage.images">
@@ -187,7 +218,20 @@
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
 
                                                     <div ng-hide="message.isEdit">
-                                                        <p class="text">{{message.content}}</p>
+
+                                                        <div ng-if="message.content.length < base.contentLength">
+                                                            <div class="text">{{message.content}}</div>
+                                                        </div>
+                                                        <div ng-if="message.content.length >= base.contentLength">
+                                                            <div class="text" ng-hide="message.isFullText">
+                                                                {{message.content.slice(0,base.contentLength-1)}}
+                                                                <div><a href="#" ng-click="base.toggleFullText(message)">читать далее...</a></div>
+                                                            </div>
+                                                            <div class="text" ng-show="message.isFullText">
+                                                                {{message.content}}
+                                                                <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
+                                                            </div>
+                                                        </div>
 
                                                         <div class="attached">
                                                             <a href="{{image.URL}}" ng-click="$event.preventDefault()" class="fancybox" rel="attached-group-{{talks.fullTalkTopic.id+'-'+message.id}}" ng-repeat="image in message.images">

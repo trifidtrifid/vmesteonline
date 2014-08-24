@@ -268,6 +268,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
+/*        var func = function(el,message){
+            var h = $(el).closest('.text-container').find('.text:eq(1)').height()+24;
+            $(el).closest('.text-container').find('.text:eq(1)').height();
+            alert('1');
+            message.isEdit = true;
+            alert(message.isEdit);
+
+            if(message.answerInputIsShow) message.answerInputIsShow = false;
+
+            if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
+
+            $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
+        };*/
+
         base.setEdit = function(event,message,isNeedAnswerShow){
             var isTopic;
             (message.message) ? isTopic = true : isTopic = false;
@@ -276,23 +290,41 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 message.isEdit = false;
 
             }else{
+                var el = event.target;
+
+                //message.isFullText = true;
+                //setTimeout(func,100,el,message);
+
+                /*alert(h);
+                setTimeout(func,1000,el);
+                message.isFullText = false;*/
+
+                //alert($(el).closest('.text-container').find('.text:eq(1)').height());
+                //$(el).closest('.text-container').find('.text:eq(1)').css('display','block !important');
+
+                var h0 = $(el).closest('.text-container').find('.text:eq(0)').height(),
+                    h1 = $(el).closest('.text-container').find('.text:eq(1)').height(),
+                    h;
+
+                (h0 > h1) ? h = h0+24 : h = h1;
+
                 message.isEdit = true;
 
                 if(message.answerInputIsShow) message.answerInputIsShow = false;
 
-                var el = event.target;
                 if(isTopic){
                     var textLen = message.message.content.length;
                 }else{
                     textLen = message.content.length;
                 }
 
-                var h = $(el).closest('.text-container').find('.text').height()+24;
+                /*if(textLen > base.contentLength){
+                    h = (textLen/base.contentLength).toFixed(0)*(h-24);
+                }*/
 
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
 
                 $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
-
             }
 
             if(isNeedAnswerShow){
@@ -870,7 +902,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 // значит создание
             }
 
-        }
+        };
+
+        base.toggleFullText = function(ctrl){
+            ctrl.isFullText ? ctrl.isFullText = false : ctrl.isFullText = true;
+        };
+
+        base.contentLength = 500;
 
         var lsGroupId = localStorage.getItem('groupId'),
             groupsLength = base.groups.length;
@@ -1015,16 +1053,19 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
 
-        var importantTopicsLen = $rootScope.importantTopics.topics.length;
-        for(var i = 0; i < importantTopicsLen; i++){
-            $rootScope.importantTopics.topics[i].sliceContent =
-                $rootScope.importantTopics.topics[i].message.content;
+        if($rootScope.importantTopics.topics) {
 
-            if ($rootScope.importantTopics.topics[i].message.content.length > 50){
+            var importantTopicsLen = $rootScope.importantTopics.topics.length;
+            for (var i = 0; i < importantTopicsLen; i++) {
                 $rootScope.importantTopics.topics[i].sliceContent =
-                    $rootScope.importantTopics.topics[i].message.content.slice(0,50)+"...";
-            }
+                    $rootScope.importantTopics.topics[i].message.content;
 
+                if ($rootScope.importantTopics.topics[i].message.content.length > 50) {
+                    $rootScope.importantTopics.topics[i].sliceContent =
+                        $rootScope.importantTopics.topics[i].message.content.slice(0, 50) + "...";
+                }
+
+            }
         }
 
         $('.ng-cloak').removeClass('ng-cloak');
@@ -2492,6 +2533,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         angular.element($('.settings')).css({'min-height': $(window).height()-125});
 
         $('.ng-cloak').removeClass('ng-cloak');
+
+        var href = document.location.href;
+        var hrefInd = href.indexOf("/",9);
+        $('input[name="redirect_uri"]').val(href.substring(0,hrefInd)+"/oauth");
 
     })
     .controller('dialogsController', function($rootScope,$state){
