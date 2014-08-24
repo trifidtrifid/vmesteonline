@@ -24,7 +24,6 @@ public class UPDATEServlet extends HttpServlet {
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			String[] lines = allusersL7.split("\\|");
 			VoBuilding vb;
 			VoStreet cs;
 			VoCity vcty;
@@ -43,15 +42,7 @@ public class UPDATEServlet extends HttpServlet {
 				arg1.setStatus(HttpResponse.__500_Internal_Server_Error, e.why);
 				return;
 			}
-
-			for (String line : lines) {
-				String[] items = line.split(";");
-
-				VoPostalAddress pa = new VoPostalAddress(vb, Byte.parseByte(items[7]), (byte) 0, Integer.parseInt(items[8]), null);
-				pm.makePersistent(pa);
-				VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
-				pm.makePersistent(ic);
-			}
+			initPostalAddresses(allusersL7.split("\\|"), pm, vb);
 
 			try {
 				vb = VoBuilding.createVoBuilding("188689", cs, "5", null, null, pm);
@@ -62,15 +53,7 @@ public class UPDATEServlet extends HttpServlet {
 				return;
 			}
 
-			lines = allusersL5.split("\\|");
-			for (String line : lines) {
-				String[] items = line.split(";");
-
-				VoPostalAddress pa = new VoPostalAddress(vb, Byte.parseByte(items[7]), (byte) Integer.parseInt(items[6]), Integer.parseInt(items[8]), null);
-				pm.makePersistent(pa);
-				VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
-				pm.makePersistent(ic);
-			}
+			initPostalAddresses(allusersL5.split("\\|"), pm, vb);
 
 			// проспект Солидарности 14 корпус 1 - 1-й подъезд
 			try {
@@ -94,6 +77,17 @@ public class UPDATEServlet extends HttpServlet {
 
 		} finally {
 			pm.close();
+		}
+	}
+
+	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) {
+		for (String line : lines) {
+			String[] items = line.split(";");
+
+			VoPostalAddress pa = new VoPostalAddress(vb, Byte.parseByte(items[7]), (byte) Integer.parseInt(items[6]), Integer.parseInt(items[8]), null);
+			pm.makePersistent(pa);
+			VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
+			pm.makePersistent(ic);
 		}
 	}
 
