@@ -81,6 +81,7 @@ public class UPDATEServlet extends HttpServlet {
 			arg1.getOutputStream().write("Initialized!".getBytes());
 		} catch( Exception e){
 			e.printStackTrace();
+			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
 		} finally {
 			pm.close();
 		}
