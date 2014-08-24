@@ -36,7 +36,6 @@ public class TestWorkAround {
 	protected TreeMap<Long, String> noTags = new TreeMap<Long, String>();
 	protected PersistenceManager pm;
 
-
 	protected String topicSubject = "Test topic";
 
 	protected boolean init() {
@@ -66,15 +65,10 @@ public class TestWorkAround {
 		helper.tearDown();
 	}
 
-	protected long getUserGroupId(String email, int radius) {
+	protected long getUserGroupId(String email, GroupType type) {
 		VoUser user = asi.getUserByEmail(email, pm);
-		for (Long ugid : user.getGroups()) {
-			VoUserGroup ug = pm.getObjectById(VoUserGroup.class,ugid);
-			if (ug.getRadius() == radius) {
-				return ug.getId();
-			}
-		}
-		return 0L;
+		VoUserGroup group = user.getGroup(type, pm);
+		return null == group ? 0L : group.getId();
 	}
 
 }

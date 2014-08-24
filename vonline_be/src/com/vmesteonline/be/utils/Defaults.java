@@ -36,16 +36,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 @SuppressWarnings("unchecked")
 public class Defaults {
 
-	static {
-
-		PersistenceManager pm = PMF.getPm();
-		try {
-			initializeGroups(pm);
-		} finally {
-			pm.close();
-		}
-	}
-
 	private static final String CITY = "Санкт Петербург";
 	private static final String COUNTRY = "Россия";
 	public static List<VoGroup> defaultGroups;
@@ -95,6 +85,15 @@ public class Defaults {
 	public static String defaultAvatarMessageUrl = "/data/da.gif";
 	public static String defaultAvatarProfileUrl = "/data/da.gif";
 	public static String defaultAvatarShortProfileUrl = "/data/da.gif";
+	
+	static {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			initializeGroups(pm);
+		} finally {
+			pm.close();
+		}
+	}
 
 	public static boolean initDefaultData(boolean loadInviteCodes) {
 

@@ -98,7 +98,7 @@ public class VoMessage extends VoBaseMessage {
 			}
 
 			VoUser author = pm.getObjectById(VoUser.class, msg.getAuthorId());
-			author.incrementMessages(1);;
+			author.incrementMessages(1);
 			this.approvedId = msg.getApprovedBy();
 
 			if(null!=parentMsg){
