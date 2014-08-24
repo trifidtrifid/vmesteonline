@@ -2051,9 +2051,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         var isEmptyContacts = false,
             isEmptyFamily = false,
-            isEmptyPrivacy = false,
             isEmptyInterests = false,
-            isEmptyNotifications = false;
+            isEmptyNotifications = false,
+            isEmptyUserInfo = false;
+
+        if(!profile.userProfile.userInfo || !profile.userProfile.userInfo.birthday) isEmptyUserInfo = true;
 
         if(!profile.userProfile.contacts || (!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone &&
             !profile.userProfile.contacts.email)) isEmptyContacts = true;
@@ -2061,13 +2063,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         if(!profile.userProfile.family || (!profile.userProfile.family.relations
             && !profile.userProfile.family.childs && !profile.userProfile.family.pets)) isEmptyFamily = true;
 
-        if(!profile.userProfile.privacy || (!profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts)) isEmptyPrivacy = true;
-
         if(!profile.userProfile.interests || (!profile.userProfile.interests.userInterests && !profile.userProfile.interests.job)) isEmptyInterests = true;
 
         if(!profile.userProfile.notifications) isEmptyNotifications = true;
 
-        if(isEmptyContacts && isEmptyFamily && isEmptyPrivacy && isEmptyInterests && isEmptyNotifications)
+        //alert(isEmptyUserInfo+" "+isEmptyContacts+" "+isEmptyFamily+" "+isEmptyInterests+" "+isEmptyNotifications);
+        if(isEmptyUserInfo && isEmptyContacts && isEmptyFamily && isEmptyInterests && isEmptyNotifications)
             profile.isEmptyProfile = true;
 
         if(profile.userProfile.userInfo){
@@ -2119,7 +2120,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         //$rootScope.chageIndex = 0;
 
-        angular.element($('.profile')).css({'min-height': $(window).height()-140});
+        angular.element($('.profile')).css({'min-height': $(window).height()-135});
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -3122,8 +3123,23 @@ function getAuthorName(userInfo){
     return userInf.firstName+" "+userInf.lastName;
 }
 function getTagColor(labelName){
-    var color;
-    switch(labelName){
+    var color,
+        len = userClientGroups.length;
+
+    for(var i = 0; i < len; i++){
+        if(labelName == userClientGroups[i].visibleName){
+            if(i == 0){
+                color = 'label-pink';
+            }else if(i == 1){
+                color = 'label-success';
+            }else if(i == 2){
+                color = 'label-yellow';
+            }else if(i == 3){
+                color = 'label-purple';
+            }
+        }
+    }
+    /*switch(labelName){
         case userClientGroups[0].visibleName:
             color = 'label-pink';
             break;
@@ -3135,7 +3151,7 @@ function getTagColor(labelName){
             break;
         default :
             break;
-    }
+    }*/
     return color;
 }
 

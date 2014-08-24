@@ -24,11 +24,12 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Логин</title>
-
-		<meta name="description" content="User login page" />
+        <link rel="shortcut icon" href="i/landing/vmesteonline.png">
+		<meta name="description" content="Вход вместе онлайн" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="stylesheet" href="css/style.css"/>
+
         <script src="./js/lib/jquery-2.1.1.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             globalUserAuth = false;
