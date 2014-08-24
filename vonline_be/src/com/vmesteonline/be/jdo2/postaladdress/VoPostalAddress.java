@@ -89,8 +89,8 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	public static VoPostalAddress createVoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment, PersistenceManager pm) throws InvalidOperation {
 		
 		Query q = pm.newQuery(VoPostalAddress.class);
-		q.setFilter("building == :key && staircase == " + staircase + " && floor == " + floor + " && flatNo == "+ flatNo);
-		List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(voBuilding.getId());
+		q.setFilter("buildingId=="+voBuilding.getId()+" && staircase==" + staircase + " && floor==" + floor + " && flatNo=="+ flatNo);
+		List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute();
 		if (pal.size() == 1) {
 			return pal.get(0);
 		} else if (pal.size() > 1) 
