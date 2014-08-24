@@ -101,9 +101,10 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-			clearUsers(pm);
-			clearGroups(pm);
+			
 			clearLocations(pm);
+			clearGroups(pm);
+			clearUsers(pm);
 			clearFiles(pm);
 			pm.flush();
 			
@@ -156,7 +157,6 @@ public class Defaults {
 
 	private static void clearUsers(PersistenceManager pm) {
 		deletePersistentAll(pm, VoUserTopic.class);
-		deletePersistentAll(pm, VoUserGroup.class);
 		deletePersistentAll(pm, VoTopic.class);
 		deletePersistentAll(pm, VoMessage.class);
 		deletePersistentAll(pm, VoUser.class);
@@ -183,6 +183,7 @@ public class Defaults {
 
 	private static void clearGroups(PersistenceManager pm) {
 		deletePersistentAll(pm, VoGroup.class);
+		deletePersistentAll(pm, VoUserGroup.class);
 	}
 
 	// ======================================================================================================================

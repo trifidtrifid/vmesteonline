@@ -274,7 +274,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
-		//--------------- implementation faster then commented below but it requires that groups are in the same order and the same Type
+		/*//--------------- implementation faster then commented below but it requires that groups are in the same order and the same Type
 		Iterator<Long> ugit = user.getGroups().iterator();
 		Iterator<Long> cugit = currentUser.getGroups().iterator();
 		long commonGroupId;
@@ -283,10 +283,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, commonGroupId ).getGroupType());
 			}
 		}
-		return GroupType.TOWN;
+		return GroupType.TOWN;*/
 		
 	//---- Slower but reliable 
-		/*VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+		GroupType relation = GroupType.TOWN;
+		
+		VoPostalAddress cuAddr = pm.getObjectById( VoPostalAddress.class, currentUser.getAddress());
 		long uAddrId;
 		VoPostalAddress uAddr;
 		if (null == cuAddr || 0 == (uAddrId = user.getAddress())) {
@@ -307,16 +309,15 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 		} else { // lets determine the relation as according to the distance
 
-			int maxRadius = VoHelper.calculateRadius(
-					pm.getObjectById( VoPostalAddress.class, user.getAddress()).getUserHomeGroup(),
-					pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getUserHomeGroup());
+			VoPostalAddress userAddress = pm.getObjectById( VoPostalAddress.class, user.getAddress());
+			int maxRadius = VoHelper.calculateRadius( userAddress.getUserHomeGroup(), cuAddr.getUserHomeGroup());
 			if (maxRadius <= Defaults.radiusNeighbors)
 				relation = GroupType.NEIGHBORS;
 			else if (maxRadius <= Defaults.radiusBlock)
 				relation = GroupType.BLOCK;
 			
 		}
-		return relation;*/
+		return relation;
 	}
 
 	@Override
