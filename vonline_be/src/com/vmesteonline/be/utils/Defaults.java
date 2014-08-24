@@ -105,6 +105,8 @@ public class Defaults {
 			clearGroups(pm);
 			clearLocations(pm);
 			clearFiles(pm);
+			pm.flush();
+			
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes, pm);
 			initializeUsers(locCodes, pm);
@@ -246,22 +248,22 @@ public class Defaults {
 	private static List<String> initializeTestLocations(boolean loadInviteCodes, PersistenceManager pm) throws InvalidOperation {
 		
 		try{
-			VoStreet streetZ = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
-			VoStreet streetR = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
-
-			pm.makePersistent(streetZ);
-			pm.makePersistent(streetR);
+			VoCountry country = VoCountry.createVoCountry(COUNTRY, pm);
+			VoCity city = VoCity.createVoCity(country, CITY, pm);
+			VoStreet streetZ = VoStreet.createVoStreet(city, "Заневский", pm);
+			VoStreet streetR = VoStreet.createVoStreet(city, "Республиканская", pm);
 
 			VoPostalAddress[] addresses;
+			VoBuilding zanevsky32k3 = VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm);
+			VoBuilding respublikanskaya35 = VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm);
+			VoBuilding resp6 = VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm);
 			addresses = new VoPostalAddress[] {
 
-					// адресов должно быть минимум три! кол-во юзеров
-					// хардкодится выше
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 1, (byte) 1, (byte) 5, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 50, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm), (byte) 2, (byte) 1, (byte) 51, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm), (byte) 1, (byte) 11, (byte) 35, ""),
-					new VoPostalAddress(VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm), (byte) 1, (byte) 2, (byte) 25, "") };
+					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 1, (byte) 1, 5, "", pm),
+					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 2, (byte) 1, 50, "", pm),
+					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 2, (byte) 1, 51, "", pm),
+					VoPostalAddress.createVoPostalAddress(respublikanskaya35, (byte) 1, (byte) 11, 35, "", pm),
+					VoPostalAddress.createVoPostalAddress(resp6, (byte) 1, (byte) 2, 25, "", pm) };
 
 			String invCodes[] = { "1", "2", "3", "4", "5" };
 
@@ -270,6 +272,7 @@ public class Defaults {
 				pm.makePersistent(addresses[i]);
 				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId());
 				pm.makePersistent(icode);
+				pm.flush();
 			}
 
 			if (loadInviteCodes)

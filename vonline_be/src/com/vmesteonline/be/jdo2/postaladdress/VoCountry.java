@@ -23,6 +23,7 @@ public class VoCountry {
 		} else if( vcl.size() == 0 ){
 			VoCountry vc = new VoCountry(name, pm);
 			pm.makePersistent(vc);
+			pm.flush();
 			return vc;
 			
 		} else {

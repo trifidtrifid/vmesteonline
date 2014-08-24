@@ -112,7 +112,7 @@ public class VoGeocoder {
 		}
 	}
 
-	public static AddressInfo resolveAddressString(String address) throws InvalidOperation {
+	public static synchronized AddressInfo resolveAddressString(String address) throws InvalidOperation {
 		try {
 			URL url = new URL(geocogingServerURL + "?" + addressParamName + "=" + URLEncoder.encode(address,"UTF-8"));
 			YAMLGecodingHandler handler = new YAMLGecodingHandler();

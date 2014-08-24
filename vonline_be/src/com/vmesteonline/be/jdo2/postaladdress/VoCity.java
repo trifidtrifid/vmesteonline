@@ -25,6 +25,7 @@ public class VoCity {
 		} else if( vcl.size() ==0 ){
 			VoCity vc = new VoCity(country, name, pm);
 			pm.makePersistent(vc);
+			pm.flush();
 			return vc;
 		} else {
 			throw new InvalidOperation(VoError.GeneralError, "To many cities with anme '"+name+"'");

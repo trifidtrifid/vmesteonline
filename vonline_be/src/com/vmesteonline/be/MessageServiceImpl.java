@@ -215,11 +215,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public static List<VoTopic> getTopics(List<Long> groups, MessageType type, long lastLoadedTopicId, int length, boolean importantOnly,
 			 PersistenceManager pm) {
 
+		String filter = "";
+		List<VoTopic> allTopics = null;
 		List<VoTopic> topics = new ArrayList<VoTopic>();
+		Exception e = null;
 		try {
 		
 			Query tQuery = pm.newQuery( VoTopic.class );
-			String filter = "";
 			
 			if( type != MessageType.BLOG ){
 			
@@ -244,7 +246,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			tQuery.setFilter(filter);
 			tQuery.setOrdering("lastUpdate DESC");
 			
-			List<VoTopic> allTopics = (List<VoTopic>) tQuery.execute( );
+			allTopics = (List<VoTopic>) tQuery.execute( );
+			
 			boolean addTopic = 0 == lastLoadedTopicId ? true : false;
 			for (VoTopic topic : allTopics) {
 				
@@ -258,9 +261,16 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				if( topics.size() == length)
 					break;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ee) {
+			(e=ee).printStackTrace();
 		}
+		logger.fine("Got topic request type:"+type+" lastLoadedTopicId:"+lastLoadedTopicId+" length:"+length
+				+ (null==groups ? "" : " groups count:"+groups.size())
+				+" Query filter:"+filter
+				+" Query Result:"+allTopics.size()
+				+" Result: "+topics.size()
+				+ (null != e ? " exception:"+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()) : ""));
+		
 		return topics;
 	}
 

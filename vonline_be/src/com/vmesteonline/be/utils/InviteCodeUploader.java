@@ -1,7 +1,6 @@
 package com.vmesteonline.be.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -10,9 +9,6 @@ import java.util.logging.Logger;
 import javax.jdo.PersistenceManager;
 
 import com.google.appengine.api.utils.SystemProperty;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
@@ -61,15 +57,10 @@ public class InviteCodeUploader {
 					int flatNo = Integer.parseInt(row.get(8));
 					
 					VoCountry voCountry = VoCountry.createVoCountry( countryName, pm );
-					pm.makePersistent(voCountry);
 					VoCity voCity = VoCity.createVoCity(voCountry, cityName, pm);
-					pm.makePersistent(voCity);
 					VoStreet voStreet = VoStreet.createVoStreet(voCity, streetName, pm);
-					pm.makePersistent(voStreet);
 					VoBuilding voBuilding = VoBuilding.createVoBuilding(zip, voStreet, houseNo, null, null, pm);
-					pm.makePersistent(voBuilding);
-					VoPostalAddress vpa = new VoPostalAddress(voBuilding, stairCase, floor, flatNo, "");
-					pm.makePersistent(vpa);
+					VoPostalAddress vpa = VoPostalAddress.createVoPostalAddress(voBuilding, stairCase, floor, flatNo, "",pm);
 					
 					VoInviteCode ic = new VoInviteCode(code, vpa.getId());
 					pm.makePersistent(ic);

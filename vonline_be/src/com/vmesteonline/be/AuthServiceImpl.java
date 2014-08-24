@@ -162,7 +162,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public UserLocation checkInviteCode(String code) throws InvalidOperation {
-		
+
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoInviteCode invite = VoInviteCode.getInviteCode(code.trim(), pm);
@@ -208,6 +208,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
+			pm.flush();
 
 			VoPostalAddress uaddress;
 			try {
@@ -217,9 +218,17 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			}
 
 			List<Long> groups = user.getGroups();
-			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + inviteCode + " home group: "
-					+ (0 == groups.size() ? "Undefined!" : pm.getObjectById(VoUserGroup.class, groups.get(0)).getName()
-							+"["+uaddress.getAddressText(pm)+"]"));
+			logger.info("register "
+					+ email
+					+ " pass "
+					+ password
+					+ " id "
+					+ user.getId()
+					+ " location code: "
+					+ inviteCode
+					+ " home group: "
+					+ (0 == groups.size() ? "Undefined!" : pm.getObjectById(VoUserGroup.class, groups.get(0)).getName() + "[" + uaddress.getAddressText(pm)
+							+ "]"));
 
 			// Add the send welcomeMessage Task to the default queue.
 			Queue queue = QueueFactory.getDefaultQueue();

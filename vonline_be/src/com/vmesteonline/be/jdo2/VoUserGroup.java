@@ -8,9 +8,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
-import org.apache.lucene.index.SegmentInfos.FindSegmentsFile;
-
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unindexed;
 import com.vmesteonline.be.Group;
 import com.vmesteonline.be.GroupType;
@@ -48,6 +45,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			pm.makePersistent(ug);
 			resetVisibiltyGroups(ug, pm);
 			pm.makePersistent(ug);
+			pm.flush();
 			return ug;
 		}
 	}

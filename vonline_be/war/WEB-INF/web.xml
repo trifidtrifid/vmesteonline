@@ -67,23 +67,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/init</url-pattern>
 	</servlet-mapping>
 
-     <!--<servlet>
-        <servlet-name>Index</servlet-name>
-        <jsp-file>/index.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Index</servlet-name>
-        <url-pattern>/index</url-pattern>
-    </servlet-mapping>-->
+	<!--<servlet> <servlet-name>Index</servlet-name> <jsp-file>/index.jsp</jsp-file> 
+		</servlet> <servlet-mapping> <servlet-name>Index</servlet-name> <url-pattern>/index</url-pattern> 
+		</servlet-mapping> -->
 
-    <servlet>
-        <servlet-name>Backoffice</servlet-name>
-        <jsp-file>/backoffice.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Backoffice</servlet-name>
-        <url-pattern>/backoffice</url-pattern>
-    </servlet-mapping>
+	<servlet>
+		<servlet-name>Backoffice</servlet-name>
+		<jsp-file>/backoffice.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Backoffice</servlet-name>
+		<url-pattern>/backoffice</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>Blog</servlet-name>
@@ -94,32 +89,32 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/blog</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>Login</servlet-name>
-        <jsp-file>/login.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Login</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
+	<servlet>
+		<servlet-name>Login</servlet-name>
+		<jsp-file>/login.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Login</servlet-name>
+		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>Contacts</servlet-name>
-        <jsp-file>/contacts.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Contacts</servlet-name>
-        <url-pattern>/contacts</url-pattern>
-    </servlet-mapping>
+	<servlet>
+		<servlet-name>Contacts</servlet-name>
+		<jsp-file>/contacts.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Contacts</servlet-name>
+		<url-pattern>/contacts</url-pattern>
+	</servlet-mapping>
 
-    <servlet>
-        <servlet-name>About</servlet-name>
-        <jsp-file>/about.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>About</servlet-name>
-        <url-pattern>/about</url-pattern>
-    </servlet-mapping>
+	<servlet>
+		<servlet-name>About</servlet-name>
+		<jsp-file>/about.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>About</servlet-name>
+		<url-pattern>/about</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>Main</servlet-name>
@@ -138,7 +133,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>FileService</servlet-name>
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>ConfirmEmailServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.ConfirmEmailServlet</servlet-class>
@@ -148,11 +143,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/confirm/*</url-pattern>
 	</servlet-mapping>
 
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-    
-    <servlet>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
 		<servlet-name>Notification</servlet-name>
 		<servlet-class>com.vmesteonline.be.NotificationServlet</servlet-class>
 	</servlet>
@@ -160,18 +155,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>Notification</servlet-name>
 		<url-pattern>/tasks/notification</url-pattern>
 	</servlet-mapping>
-	
-    <security-constraint>
-	    <web-resource-collection>
-	        <web-resource-name>tasks</web-resource-name>
-	        <url-pattern>/tasks/*</url-pattern>
-	    </web-resource-collection>
-	    <auth-constraint>
-	        <role-name>admin</role-name>
-	    </auth-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>tasks</web-resource-name>
+			<url-pattern>/tasks/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
 	</security-constraint>
-    
-    <servlet>
+
+	<servlet>
 		<servlet-name>doUpdate</servlet-name>
 		<servlet-class>com.vmesteonline.be.UPDATEServlet</servlet-class>
 	</servlet>
@@ -179,5 +174,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>doUpdate</servlet-name>
 		<url-pattern>/update/doupdate</url-pattern>
 	</servlet-mapping>
-    
+
 </web-app>

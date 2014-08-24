@@ -220,7 +220,7 @@ public abstract class Notification {
 
 		body += "На страницах сайта вы найдете новости, полезную информацию от управляющей компании и сможете обсудить их с соседями...<br/><br/>";
 
-		decorateAndSendMessage(newUser, newUser.isEmailConfirmed() ? "поддтверждение email" : "успешная регистрация", body);
+		decorateAndSendMessage(newUser, !newUser.isEmailConfirmed() ? "поддтверждение email" : "успешная регистрация", body);
 
 	}
 

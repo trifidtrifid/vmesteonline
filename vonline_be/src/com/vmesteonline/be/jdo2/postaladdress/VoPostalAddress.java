@@ -18,12 +18,11 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.notifications.NewNeigboursNotification;
 
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
-	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
+	private VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
 
 		this.buildingId = voBuilding.getId();
 		this.staircase = staircase;
@@ -76,24 +75,30 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 				jonfe.printStackTrace();
 				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
 			}
-			// check that the address exists
-			Query q = pm.newQuery(VoPostalAddress.class);
-			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
-					+ postalAddress.getFlatNo());
-			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
-			if (pal.size() == 1) {
-				return pal.get(0);
-			} else if (pal.size() > 1) 
-				throw new InvalidOperation(VoError.GeneralError, "There is two or more the same addresses registered. "+pal.get(0));
 				 
-			VoPostalAddress vpa = new VoPostalAddress(vob, postalAddress.getStaircase(), postalAddress.getFloor(), postalAddress.getFlatNo(), postalAddress.getComment());
-			pm.makePersistent(vpa);
-			return vpa;
+			return createVoPostalAddress(vob, postalAddress.getStaircase(), postalAddress.getFloor(), postalAddress.getFlatNo(), 
+					postalAddress.getComment(), pm);
 			
 		} finally {
 			if (null == _pm)
 				pm.close();
 		}
+	}
+
+	public static VoPostalAddress createVoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment, PersistenceManager pm) throws InvalidOperation {
+		
+		Query q = pm.newQuery(VoPostalAddress.class);
+		q.setFilter("buildingId=="+voBuilding.getId()+" && staircase==" + staircase + " && floor==" + floor + " && flatNo=="+ flatNo);
+		List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute();
+		if (pal.size() == 1) {
+			return pal.get(0);
+		} else if (pal.size() > 1) 
+			throw new InvalidOperation(VoError.GeneralError, "There is two or more the same addresses registered. "+pal.get(0));
+			 
+		VoPostalAddress voPostalAddress = new VoPostalAddress(voBuilding, staircase, floor, flatNo, comment);
+		pm.makePersistent(voPostalAddress);
+		pm.flush();
+		return voPostalAddress;
 	}
 
 	public long getBuilding() {

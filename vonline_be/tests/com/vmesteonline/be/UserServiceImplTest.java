@@ -53,14 +53,14 @@ public class UserServiceImplTest extends TestWorkAround {
 
 		userId = asi.registerNewUser("fn", "ln", "pswd", "eml", userHomeLocation, Integer.parseInt(userHomeLocation));
 		Assert.assertTrue(userId > 0);
-		asi.login("eml", "pswd");
+		asi.login(Defaults.user1email, Defaults.user1pass);
 
 		newCountry = usi.createNewCountry(COUNTRY);
 		newCity = usi.createNewCity(newCountry.getId(), CITY);
 		newStreet = usi.createNewStreet(newCity.getId(), STREET);
 		newStreet1 = usi.createNewStreet(newCity.getId(), STREET1);
 
-		newBuilding = usi.createNewBuilding("zip",newStreet.getId(), BUILDING_NO, "17", "53");
+		newBuilding = usi.createNewBuilding("zip", newStreet.getId(), BUILDING_NO, "17", "53");
 
 		Assert.assertEquals(newBuilding.getFullNo(), BUILDING_NO);
 		Assert.assertEquals(newBuilding.getStreetId(), newStreet.getId());
@@ -118,35 +118,21 @@ public class UserServiceImplTest extends TestWorkAround {
 		}
 	}
 
-	/*	@Test
-		public void testUpdateUserInfo() {
-
-			PersistenceManager pm = PMF.getPm();
-			try {
-				asi.login(Defaults.user1email, Defaults.user1pass);
-
-				UserInfo ui = new UserInfo();
-				ui.birthday = "1984-07-18";
-				ui.firstName = "FirstName";
-				ui.lastName = "LastName";
-				ui.relations = RelationsType.MARRIED;
-				usi.updateUserInfo(ui);
-
-				UserInfo uiBack = usi.getUserInfo();
-
-				Assert.assertEquals(ui.birthday, uiBack.birthday);
-				Assert.assertEquals(ui.firstName, uiBack.firstName);
-				Assert.assertEquals(ui.lastName, uiBack.lastName);
-				Assert.assertEquals(ui.relations, uiBack.relations);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail(e.getMessage());
-			} finally {
-				pm.close();
-			}
-		}
-	*/
+	/*
+	 * @Test public void testUpdateUserInfo() {
+	 * 
+	 * PersistenceManager pm = PMF.getPm(); try { asi.login(Defaults.user1email, Defaults.user1pass);
+	 * 
+	 * UserInfo ui = new UserInfo(); ui.birthday = "1984-07-18"; ui.firstName = "FirstName"; ui.lastName = "LastName"; ui.relations =
+	 * RelationsType.MARRIED; usi.updateUserInfo(ui);
+	 * 
+	 * UserInfo uiBack = usi.getUserInfo();
+	 * 
+	 * Assert.assertEquals(ui.birthday, uiBack.birthday); Assert.assertEquals(ui.firstName, uiBack.firstName); Assert.assertEquals(ui.lastName,
+	 * uiBack.lastName); Assert.assertEquals(ui.relations, uiBack.relations);
+	 * 
+	 * } catch (Exception e) { e.printStackTrace(); fail(e.getMessage()); } finally { pm.close(); } }
+	 */
 	@Test
 	public void testUpdateUserContacts() {
 
@@ -193,37 +179,34 @@ public class UserServiceImplTest extends TestWorkAround {
 				VoUser uB = asi.getCurrentUser(pmB);
 				List<Long> voUserGroupsB = uB.getGroups();
 
-						
 				Assert.assertEquals(5, voUserGroupsB.size());
-				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(0)).getRadius());
-				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(1)).getRadius());
-				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(2)).getRadius());
-				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(3)).getRadius());
-				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(4)).getRadius());
+				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(0)).getRadius());
+				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(1)).getRadius());
+				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(2)).getRadius());
+				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(3)).getRadius());
+				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(4)).getRadius());
 
 				Assert.assertEquals(5, voUserGroupsA.size());
-				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getRadius());
-				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(1)).getRadius());
-				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(2)).getRadius());
-				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(3)).getRadius());
-				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(4)).getRadius());
+				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getRadius());
+				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(1)).getRadius());
+				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(2)).getRadius());
+				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(3)).getRadius());
+				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(4)).getRadius());
 
 				/*
-				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new
-				 * BigDecimal("59.9331461"));
-				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new
-				 * BigDecimal("59.9331462"));
-				 */System.out.print("max = " + VoHelper.getLongitudeMax(
-						 pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude(), 
-						 pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLongitude(), 200).toPlainString() + " origin = "
-				 	+ pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLongitude() + "\n");
-				System.out.print("lat max = " + VoHelper.getLatitudeMax(
-						pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude(), 200).toPlainString() + " origin = "
-						+ pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)).getLatitude() + "\n");
+				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new BigDecimal("59.9331461"));
+				 * Assert.assertEquals(voUserGroupsB.get(0).getLongitude(), new BigDecimal("59.9331462"));
+				 */System.out.print("max = "
+						+ VoHelper.getLongitudeMax(pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getLatitude(),
+								pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getLongitude(), 200).toPlainString() + " origin = "
+						+ pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getLongitude() + "\n");
+				System.out.print("lat max = "
+						+ VoHelper.getLatitudeMax(pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getLatitude(), 200).toPlainString() + " origin = "
+						+ pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getLatitude() + "\n");
 
-				System.out.print("delta = " + VoHelper.calculateRadius(
-						pmA.getObjectById(VoUserGroup.class,voUserGroupsA.get(0)), 
-						pmA.getObjectById(VoUserGroup.class,voUserGroupsB.get(0))));
+				System.out.print("delta = "
+						+ VoHelper.calculateRadius(pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)),
+								pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(0))));
 			} finally {
 				pmA.close();
 				pmB.close();
@@ -503,15 +486,15 @@ public class UserServiceImplTest extends TestWorkAround {
 			fail("Exception " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testsetUserMap() {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
-			
-			for( Long vug : usi.getCurrentUser(pm).getGroups()) {
-				String map = usi.getGroupMap( vug, "8822DDC0");
+
+			for (Long vug : usi.getCurrentUser(pm).getGroups()) {
+				String map = usi.getGroupMap(vug, "8822DDC0");
 				System.out.println(map);
 			}
 
@@ -523,4 +506,54 @@ public class UserServiceImplTest extends TestWorkAround {
 			pm.close();
 		}
 	}
+
+	@Test
+	public void testGetUserProfileByAnother() {
+		try {
+			long userAid = asi.getCurrentUserId();
+			usi.updateFamily(new UserFamily(RelationsType.MARRIED, null, null));
+			usi.updatePrivacy(new UserPrivacy(userAid, GroupType.BUILDING, GroupType.BUILDING));
+			asi.login(Defaults.user2email, Defaults.user2email);
+			UserProfile up = usi.getUserProfile(userAid);
+			Assert.assertNotNull(up);
+			Assert.assertNotNull(up.family);
+			Assert.assertEquals(RelationsType.MARRIED, up.family.relations);
+
+			asi.login(Defaults.user4email, Defaults.user4email);
+			up = usi.getUserProfile(userAid);
+			Assert.assertNotNull(up);
+			Assert.assertNotNull(up.family);
+			Assert.assertNull(up.family.relations);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	
+	@Test
+	public void testGetUserContactsByAnother() {
+		try {
+			long userAid = asi.getCurrentUserId();
+			usi.updateContacts(new UserContacts(0, UserStatus.CONFIRMED, null,"+79213367346", null));
+			usi.updatePrivacy(new UserPrivacy(userAid, GroupType.BUILDING, GroupType.BUILDING));
+			asi.login(Defaults.user2email, Defaults.user2email);
+			UserProfile up = usi.getUserProfile(userAid);
+			Assert.assertNotNull(up);
+			Assert.assertNotNull(up.contacts);
+			Assert.assertEquals("+79213367346", up.contacts.mobilePhone);
+
+			asi.login(Defaults.user4email, Defaults.user4email);
+			up = usi.getUserProfile(userAid);
+			Assert.assertNotNull(up);
+			Assert.assertNotNull(up.contacts);
+			Assert.assertNull(up.contacts.mobilePhone);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
 }
