@@ -1,7 +1,6 @@
 package com.vmesteonline.be.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -10,9 +9,6 @@ import java.util.logging.Logger;
 import javax.jdo.PersistenceManager;
 
 import com.google.appengine.api.utils.SystemProperty;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;

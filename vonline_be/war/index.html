@@ -215,8 +215,12 @@
 													var email = $('#address')
 															.val();
 													var code = $('#code').val();
-													$
-															.ajax({
+
+                                                    if(email.indexOf('@') == -1){
+                                                        $('.alertMsg').text('Вы указали некорректный email.').show();
+                                                    }else{
+
+													$.ajax({
 																url : action,
 																type : 'POST',
 																data : {
@@ -253,11 +257,7 @@
 																							+ ";code="
 																							+ code);
 																		} catch (e) {
-																			$(
-																					'.alertMsg')
-																					.text(
-																							'Вы ввели некоректный код или этот код уже был активирован.')
-																					.show();
+																			$('.alertMsg').text('Вы ввели некоректный код или этот код уже был активирован.').show();
 																		}
 
 																	}
@@ -266,10 +266,11 @@
 																error : function() {
 																	$('#result')
 																			.html(
-																					'Sorry, an error occurred.');
+																					'Извините, ошибка.');
 																}
 															});
 												}
+                                                }
 
 												return false;
 											});

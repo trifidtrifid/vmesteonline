@@ -18,7 +18,6 @@ import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.notifications.NewNeigboursNotification;
 
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {

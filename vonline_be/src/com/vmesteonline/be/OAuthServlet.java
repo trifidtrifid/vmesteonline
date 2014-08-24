@@ -18,6 +18,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.utils.StorageHelper;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
@@ -28,7 +29,6 @@ import com.vmesteonline.be.jdo2.VoUser;
 public class OAuthServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6391276180341584453L;
-	private static final String domain = "https://1-dot-algebraic-depot-657.appspot.com/";
 
 	private String generatePassword() {
 		StringBuilder sb = new StringBuilder();
@@ -43,12 +43,16 @@ public class OAuthServlet extends HttpServlet {
 		return sb.toString();
 	}
 
+	protected String getDomain(String state) {
+		return new String();
+	}
+
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		resp.setContentType("text/html; charset=utf-8");
-
 		String authCode = req.getParameter("code");
+		String domain = "https://" + new URL(req.getRequestURL().toString()).getHost() + "/";
 
 		String inviteCode = req.getParameter("state");
 
@@ -59,6 +63,7 @@ public class OAuthServlet extends HttpServlet {
 		try {
 			String response = runUrl(new URL("https://oauth.vk.com/access_token?client_id=4429306&redirect_uri=" + domain
 					+ "oauth&client_secret=oQBV8uO3tHyBONHcNsxe&code=" + authCode));
+
 			JSONObject jsonObj = new JSONObject(response.toString());
 
 			AuthServiceImpl authServiceImpl = new AuthServiceImpl();
@@ -88,6 +93,7 @@ public class OAuthServlet extends HttpServlet {
 			} else {
 				URL url = new URL("https://api.vk.com/method/users.get?user_id=" + jsonObj.getString("user_id") + "&v=5.23&access_token="
 						+ jsonObj.getString("access_token") + "&fields=first_name,last_name,sex,bdate,photo_medium");
+
 				String resp2 = runUrl(url);
 				JSONObject jsonObj2 = new JSONObject(resp2);
 
@@ -106,22 +112,24 @@ public class OAuthServlet extends HttpServlet {
 
 				PersistenceManager pm = PMF.getPm();
 				try {
-					VoUser user = authServiceImpl.getUserByEmail(email, pm);
+					VoUser user = authServiceImpl.getCurrentUser(pm);
 					if (user != null) {
-						resp.getWriter().println("<br>find user " + email + " avatar " + o.getString("photo_medium"));
-						user.setAvatarTopic(o.getString("photo_medium"));
-						user.setAvatarMessage(o.getString("photo_medium"));
-						user.setAvatarProfileShort(o.getString("photo_medium"));
-						user.setAvatarProfile(o.getString("photo_medium"));
+						resp.getWriter().println("<br>find user " + user.getEmail() + " avatar " + o.getString("photo_medium"));
+						String avatarUrl = StorageHelper.saveImage(o.getString("photo_medium").getBytes(), user.getId(), true, pm);
+						user.setAvatarTopic(avatarUrl);
+						user.setAvatarMessage(avatarUrl);
+						user.setAvatarProfileShort(avatarUrl);
+						user.setAvatarProfile(avatarUrl);
+						user.setGender(o.getInt("sex"));
 						SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 						Date date = formatter.parse(o.getString("bdate"));
 						long ts = date.getTime() / 1000L;
 						user.setBirthday((int) ts);
 						pm.makePersistent(user);
-//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
+						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
 
 					} else {
-//						getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
+						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
 					}
 
 				} finally {
@@ -139,7 +147,8 @@ public class OAuthServlet extends HttpServlet {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			resp.sendRedirect(domain + "login.html?error=" + e.toString());
+			resp.getWriter().println("<br><br>error " + domain + " " + e.getMessage());
+			resp.sendRedirect(domain + "main?error=" + e.toString());
 		}
 
 	}
