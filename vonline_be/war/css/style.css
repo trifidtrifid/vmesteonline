@@ -154,6 +154,12 @@ h1 {
   color: #a6a6a6;
   border-top: 1px solid #ccc;
 }
+.footer .copypast {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: -1px;
+}
 .footer ul {
   margin: 0;
 }
@@ -910,6 +916,12 @@ h1 {
   padding-right: 15px;
   font-size: 12px;
 }
+.lenta-item:last-child .wallitem-message {
+  border-bottom: 1px solid #5090c1;
+}
+.lenta-item .wallitem-topic .talks-title {
+  border-bottom: 0;
+}
 .answer-block {
   width: 100%;
 }
@@ -1022,6 +1034,9 @@ h1 {
   overflow: auto;
   position: relative;
   border-top: 1px solid #5090c1;
+}
+.talks-title:last-child {
+  border-bottom: 1px solid #5090c1;
 }
 .talks-title .talks-title-left {
   padding-right: 130px;

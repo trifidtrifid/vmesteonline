@@ -93,7 +93,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                     <%--<div class="post-date" data-date="<%=Blog.topics.get(i).message.created%>"></div>--%>
                     <div class="topic"></div>
                     <div class="topic-stuff">
-                        <a href="#" class="show-comment">Показать комментарии</a>
+                        <a href="#" class="show-comment">Показать комментарии</a> |
                         <a href="#" class="make-comment">Комментировать</a>
                     </div>
 
@@ -130,7 +130,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
     </div>
 
     <div class="footer footer-bottom clearfix">
-        <div class="pull-left">(c) Вместе Онлайн 2014</div>
+        <div class="pull-left"><span class="copypast">&copy;</span> ВместеОнлайн 2014</div>
         <div class="pull-right">
             <ul>
                 <li><a href="about">О сайте</a></li>
@@ -148,12 +148,26 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 <script src="gen-js/bedata_types.js" type="text/javascript"></script>
 <script src="gen-js/messageservice_types.js" type="text/javascript"></script>
 <script src="gen-js/MessageService.js" type="text/javascript"></script>
+<script src="gen-js/userservice_types.js" type="text/javascript"></script>
+<script src="gen-js/UserService.js" type="text/javascript"></script>
 <!-- -->
 <script type="text/javascript">
     $(document).ready(function(){
         var transport = new Thrift.Transport("/thrift/MessageService");
         var protocol = new Thrift.Protocol(transport);
         var messageClient = new com.vmesteonline.be.messageservice.MessageServiceClient(protocol);
+
+        transport = new Thrift.Transport("/thrift/UserService");
+        protocol = new Thrift.Protocol(transport);
+        var userClient = new com.vmesteonline.be.userservice.UserServiceClient(protocol);
+
+        var isAuth = true,
+            me;
+        if($('.blog').attr('data-auth') == 'false') isAuth = false;
+
+        if(isAuth){
+            me = userClient.getUserProfile();
+        }
 
         /*$('.post-date').each(function(){
 
@@ -201,10 +215,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             if(comments){
                 var commentsLength = comments.length,
-                    commentsHTML = "",
-                    isAuth = true;
-
-                if($('.blog').attr('data-auth') == 'false') isAuth = false;
+                    commentsHTML = "";
 
                 for(var i = 0; i < commentsLength; i++){
                     var classNoLink = "",
@@ -212,16 +223,24 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                     messageName,
                     messageUserId;
 
-                    if(!isAuth){
+                    if(!comments[i].userInfo){
                         messageAvatar = "data/da.gif";
-                        messageName = comments[i].anonName;
                         messageUserId = 0;
                         classNoLink = "no-link";
                     }else{
+                        //messageName = comments[i].userInfo.firstName+" "+comments[i].userInfo.lastName;
                         messageAvatar = comments[i].userInfo.avatar;
-                        messageName = comments[i].userInfo.firstName+" "+comments[i].userInfo.lastName;
                         messageUserId = comments[i].userInfo.id;
                     }
+
+                    /*messageAvatar = comments[i].userInfo.avatar;
+                    messageUserId = comments[i].userInfo.id;
+                    if(!messageAvatar) messageAvatar = "data/da.gif";
+                    if(!messageUserId){
+                        messageUserId = 0;
+                        classNoLink = "no-link";
+                    }*/
+                    messageName = comments[i].anonName;
 
                     commentsHTML += '<div class="itemdiv dialogdiv new">'+
                             '<a href="profile-'+messageUserId+'" class="user '+classNoLink+'">'+
@@ -303,6 +322,8 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             if(!isAuth){
                 message.anonName = $(this).closest('.input-group').find('.anonName').val();
+            }else{
+                message.anonName = "";
             };
 
             var returnComment = messageClient.postBlogMessage(message);
@@ -356,31 +377,6 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
         });
 
-/*        function tempFunc(comments,newCommentHTML,message,selector){
-            if(comments.css('display') == 'none'){
-                var tempIsLoaded = isCommentsLoaded[message.topicId];
-                alert('0 '+tempIsLoaded);
-
-                selector.closest('.post').find('.show-comment').trigger('click');
-                alert('0 '+isCommentsLoaded[message.topicId]);
-
-                if(tempIsLoaded){
-                    alert('1');
-                    comments.append(newCommentHTML);
-
-                    initNoLink($('.new'));
-                    initAnswerToComment($('.new .lenta-item-bottom a'));
-                    $('.new').removeClass('new');
-                }
-            }else{
-                alert('2');
-                comments.append(newCommentHTML);
-
-                initNoLink($('.new'));
-                initAnswerToComment($('.new .lenta-item-bottom a'));
-                $('.new').removeClass('new');
-            }
-        }*/
 
         function getTiming(messageObjDate){
             var minute = 60*1000,
@@ -446,6 +442,36 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
     });
 </script>
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter25964365 = new Ya.Metrika({id:25964365,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true,
+                    trackHash:true,
+                    ut:"noindex"});
+            } catch(e) { }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/25964365?ut=noindex" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
 
 
 </body>
