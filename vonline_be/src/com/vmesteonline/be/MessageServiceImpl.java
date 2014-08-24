@@ -105,7 +105,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId(),pm);
 
 					MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
@@ -331,7 +331,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId());
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId(), pm);
 					tpc.setMessageNum( voTopic.getMessageNum());
 					mlp.addToTopics(tpc);
 				}
@@ -518,7 +518,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		for (VoMessage voMessage : lst) {
 			Message msg = voMessage.getMessage(userId, pm);
 			if (voMessage.getAuthorId() != null)
-				msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId());
+				msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId(), pm);
 			mlp.addToMessages(msg);
 		}
 		return mlp;
