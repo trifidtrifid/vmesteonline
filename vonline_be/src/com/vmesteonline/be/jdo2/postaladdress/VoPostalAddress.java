@@ -24,7 +24,7 @@ import com.vmesteonline.be.notifications.NewNeigboursNotification;
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
 	public VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
-
+//todo use int instead of byte
 		this.buildingId = voBuilding.getId();
 		this.staircase = staircase;
 		this.floor = floor;
