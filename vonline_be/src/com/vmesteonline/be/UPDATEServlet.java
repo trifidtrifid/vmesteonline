@@ -17,7 +17,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-//todo необходимо сделать метод для создания PostalAddres а не использовать копи паст
+
 public class UPDATEServlet extends HttpServlet {
 
 	@Override
@@ -42,6 +42,7 @@ public class UPDATEServlet extends HttpServlet {
 				arg1.setStatus(HttpResponse.__500_Internal_Server_Error, e.why);
 				return;
 			}
+
 			initPostalAddresses(allusersL7.split("\\|"), pm, vb);
 
 			try {
@@ -53,9 +54,11 @@ public class UPDATEServlet extends HttpServlet {
 				return;
 			}
 
+
 			initPostalAddresses(allusersL5.split("\\|"), pm, vb);
 
 			// проспект Солидарности 14 корпус 1 - 1-й подъезд
+
 			try {
 				vcty = VoCity.createVoCity(vc, "Санкт Петербург", pm);
 				pm.makePersistent(vcty);
@@ -63,7 +66,9 @@ public class UPDATEServlet extends HttpServlet {
 				pm.makePersistent(cs);
 				vb = VoBuilding.createVoBuilding("188689", cs, "14к1", null, null, pm);
 				pm.makePersistent(vb);
-				VoPostalAddress pa = new VoPostalAddress(vb, (byte) 1, (byte) 0, 11, null);
+
+				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, (byte) 1, (byte) 0, 11, null, pm);
+
 				pm.makePersistent(pa);
 				VoInviteCode ic = new VoInviteCode("123456", pa.getId());
 				pm.makePersistent(ic);
@@ -74,17 +79,18 @@ public class UPDATEServlet extends HttpServlet {
 			}
 			arg1.setStatus(HttpResponse.__200_OK, "OK");
 			arg1.getOutputStream().write("Initialized!".getBytes());
-
+		} catch( Exception e){
+			e.printStackTrace();
 		} finally {
 			pm.close();
 		}
 	}
 
-	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) {
+	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) throws NumberFormatException, InvalidOperation {
 		for (String line : lines) {
 			String[] items = line.split(";");
 
-			VoPostalAddress pa = new VoPostalAddress(vb, Byte.parseByte(items[7]), (byte) Integer.parseInt(items[9]), Integer.parseInt(items[8]), null);
+			VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, Byte.parseByte(items[7]), (byte) Integer.parseInt(items[9]), Integer.parseInt(items[8]), null,pm);
 			pm.makePersistent(pa);
 			VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
 			pm.makePersistent(ic);

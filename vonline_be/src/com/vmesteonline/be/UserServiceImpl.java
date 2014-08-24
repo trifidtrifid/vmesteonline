@@ -239,10 +239,12 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			
 			// show nothing if full privacy
 			if (uPrivacy.contacts == GroupType.NOBODY && uPrivacy.profile == GroupType.NOBODY) {
-				uProfile.contacts = new UserContacts();
-				uProfile.interests = new UserInterests();
-				uProfile.family = new UserFamily();
-				uProfile.privacy = new UserPrivacy();
+				uProfile.contacts = null;
+				uProfile.interests = null;
+				uProfile.family = null;
+				uProfile.privacy = null;
+				uProfile.userInfo.birthday = 0;
+				uProfile.userInfo.gender = 0;
 				return uProfile;
 			}
 
@@ -251,12 +253,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			// filter information according to relations
 			if (uPrivacy.contacts.getValue() < relation.getValue()) {// remove contacts
-				uProfile.contacts = new UserContacts();
+				uProfile.contacts = null;
 			}
 
 			if (uPrivacy.profile.getValue() < relation.getValue()) {// remove interest and family
-				uProfile.interests = new UserInterests();
-				uProfile.family = new UserFamily();
+				uProfile.interests = null;
+				uProfile.family = null;
+				uProfile.userInfo.birthday = 0;
+				uProfile.userInfo.gender = 0;
 			}
 			
 			return uProfile;
