@@ -626,8 +626,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			VoUserGroup newGroup = pm.getObjectById(VoUserGroup.class, newGroupId);
 			theTopic.setUserGroupId(newGroupId);
 			ArrayList<Long> visibleGroups = new ArrayList<Long>(newGroup.getVisibleGroups(pm));
-			visibleGroups.removeAll(currentUser.getGroups());
-			visibleGroups.addAll(currentUser.getGroups());
+			/*visibleGroups.removeAll(currentUser.getGroups());
+			visibleGroups.addAll(currentUser.getGroups());*/
 			theTopic.setVisibleGroups( visibleGroups);
 		}
 	}
