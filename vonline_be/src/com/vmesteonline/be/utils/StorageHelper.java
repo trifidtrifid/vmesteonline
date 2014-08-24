@@ -10,12 +10,9 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.Map;
-
-
 import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -24,10 +21,6 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-
-
-
 
 import org.datanucleus.util.Base64;
 
@@ -404,16 +397,23 @@ public class StorageHelper {
 			throw new IOException("Invalid content. Failed to store null or empty content");
 
 		} else {
+			
+			boolean unquoteReq = urlOrContent.length != 1 && urlOrContent[0] == '\"' && urlOrContent[ urlOrContent.length-1] == '\"';
+			
 			String fname = null == fileName ? null : fileName;
 			String contentType = null==_contentType ? DEFAULT_CONTENT_TYPE : _contentType;
 			String ext = ".bin";
 			InputStream is = null;
 			
-			String contentString = new String( urlOrContent, 0, Math.min( 256, urlOrContent.length ));
+			String contentString = new String( urlOrContent, unquoteReq ? 1 : 0, 
+					Math.min( 256, urlOrContent.length-1 ));
 			
 			if( contentString.startsWith("url(")){
 				
-				String[] split = new String( urlOrContent ).split("[():;,]");
+				String[] split = (unquoteReq ? new String( urlOrContent, 1, urlOrContent.length-2 ) 
+					: new String( urlOrContent))
+					.split("[():;,]");
+				
 				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].matches("\"?data")){
 					String data = new String( urlOrContent).split("[():;,]")[4];
 					if( split[1].startsWith("\"") )
@@ -460,7 +460,7 @@ public class StorageHelper {
 			} else if( contentString.startsWith("http://") || contentString.startsWith("https://") ){
 			
 					try { // try to create URL from content
-						URL url = new URL(new String( urlOrContent));
+						URL url = new URL(unquoteReq ? new String( urlOrContent, 1, urlOrContent.length-2 ) : new String( urlOrContent));
 						if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
 							HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
 							httpConnection.connect();

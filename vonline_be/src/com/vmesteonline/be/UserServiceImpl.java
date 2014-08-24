@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -236,11 +237,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			UserProfile uProfile = user.getUserProfile();
 			UserPrivacy uPrivacy = user.getPrivacy();
 			
-			// show everything if no privacy set
-			if (uPrivacy.contacts == PrivacyType.EVERYBODY && uPrivacy.profile == PrivacyType.EVERYBODY)
-				return uProfile;
 			// show nothing if full privacy
-			if (uPrivacy.contacts == PrivacyType.NONE && uPrivacy.profile == PrivacyType.NONE) {
+			if (uPrivacy.contacts == GroupType.NOBODY && uPrivacy.profile == GroupType.NOBODY) {
 				uProfile.contacts = new UserContacts();
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
@@ -248,8 +246,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				return uProfile;
 			}
 
-			// otherwise lets determine users relations that would be stored as PrivacyType
-			PrivacyType relation = determineProvacyByAddresses(currentUser, user, pm);
+			// otherwise lets determine users relations that would be stored as GroupType
+			GroupType relation = determineProvacyByAddresses(currentUser, user, pm);
 
 			// filter information according to relations
 			if (uPrivacy.contacts.getValue() < relation.getValue()) {// remove contacts
@@ -271,25 +269,35 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	private PrivacyType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
-		PrivacyType relation = PrivacyType.EVERYBODY;
-
-		VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
+		//--------------- implementation faster then commented below but it requires that groups are in the same order and the same Type
+		Iterator<Long> ugit = user.getGroups().iterator();
+		Iterator<Long> cugit = currentUser.getGroups().iterator();
+		long commonGroupId;
+		while( ugit.hasNext() && cugit.hasNext() ){ //expects that group are synchronized by type
+			if( (commonGroupId = ugit.next()) == cugit.next() ){
+				return GroupType.findByValue( pm.getObjectById(VoUserGroup.class, commonGroupId ).getGroupType());
+			}
+		}
+		return GroupType.TOWN;
+		
+	//---- Slower but reliable 
+		/*VoPostalAddress cuAddr = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
 		long uAddrId;
 		VoPostalAddress uAddr;
 		if (null == cuAddr || 0 == (uAddrId = user.getAddress())) {
-			relation = PrivacyType.EVERYBODY;
+			relation = GroupType.TOWN;
 
 		} else if ( null!=(uAddr = pm.getObjectById(VoPostalAddress.class, uAddrId))
 				&& cuAddr.getBuilding() == uAddr.getBuilding() && 0 != cuAddr.getBuilding()) { // the same building
 
-			relation = PrivacyType.HOME;
+			relation = GroupType.BUILDING;
 
 			if (cuAddr.getStaircase() == uAddr.getStaircase() && 0 != uAddr.getStaircase()){
-				relation = PrivacyType.STAIRCASE;
+				relation = GroupType.STAIRCASE;
 
 				if (cuAddr.getFloor() == uAddr.getFloor() && 0 != uAddr.getFloor()) {
-					relation = PrivacyType.STAIRCASE; // TODO could be a Floor privacy
+					relation = GroupType.FLOOR; 
 				}
 			}
 
@@ -298,14 +306,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			int maxRadius = VoHelper.calculateRadius(
 					pm.getObjectById( VoPostalAddress.class, user.getAddress()).getUserHomeGroup(),
 					pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getUserHomeGroup());
-			if (maxRadius <= Defaults.radiusStarecase)
-				relation = PrivacyType.STAIRCASE;
-			else if (maxRadius <= Defaults.radiusHome)
-				relation = PrivacyType.HOME;
-			else if (maxRadius <= Defaults.radiusSmall)
-				relation = PrivacyType.DISTRICT;
+			if (maxRadius <= Defaults.radiusNeighbors)
+				relation = GroupType.NEIGHBORS;
+			else if (maxRadius <= Defaults.radiusBlock)
+				relation = GroupType.BLOCK;
+			
 		}
-		return relation;
+		return relation;*/
 	}
 
 	@Override

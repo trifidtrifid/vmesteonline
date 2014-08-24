@@ -83,9 +83,11 @@ public class Defaults {
 	public static String[] uEmails = new String[] { user1email, user2email, user3email, user4email, user5email };
 	public static String[] uPasses = new String[] { user1pass, user2pass, user3pass, user4pass, user5pass };
 
-	public static int radiusStarecase = 0;
-	public static int radiusHome = 50;
-	public static int radiusSmall = 350;
+	public static int radiusZero = 0;
+	public static int radiusBuilding = 50;
+	public static int radiusNeighbors = 350;
+	public static int radiusBlock = 500;
+	
 	/*
 	 * public static int radiusMedium = 1500; public static int radiusLarge = 5000;
 	 */
@@ -104,8 +106,8 @@ public class Defaults {
 			clearLocations(pm);
 			clearFiles(pm);
 			initializeGroups(pm);
-			List<String> locCodes = initializeTestLocations(loadInviteCodes);
-			initializeUsers(locCodes);
+			List<String> locCodes = initializeTestLocations(loadInviteCodes, pm);
+			initializeUsers(locCodes, pm);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -191,10 +193,10 @@ public class Defaults {
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
-					new VoGroup("Мой этаж", radiusStarecase, GroupType.FLOOR, true), 
-					new VoGroup("Мой подъезд", radiusStarecase, GroupType.STAIRCASE, true), 
-					new VoGroup("Мой дом", radiusHome, GroupType.BUILDING, true),
-					new VoGroup("Соседние дома", radiusSmall, GroupType.NEIGHBORS, true), 
+					new VoGroup("Мой этаж", radiusZero, GroupType.FLOOR, true), 
+					new VoGroup("Мой подъезд", radiusZero, GroupType.STAIRCASE, true), 
+					new VoGroup("Мой дом", radiusBuilding, GroupType.BUILDING, true),
+					new VoGroup("Соседние дома", radiusNeighbors, GroupType.NEIGHBORS, true), 
 					}) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
@@ -205,12 +207,11 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	private static void initializeUsers(List<String> locCodes) throws InvalidOperation {
+	private static void initializeUsers(List<String> locCodes, PersistenceManager pm) throws InvalidOperation {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		PersistenceManager pm = PMF.getPm();
-		try {
+		
 			for (String uname : unames) {
 				try {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
@@ -229,9 +230,7 @@ public class Defaults {
 					e.printStackTrace();
 				}
 			}
-		} finally {
-			pm.close();
-		}
+
 		if (uids.size() == 0)
 			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
 
@@ -244,11 +243,9 @@ public class Defaults {
 	// inviteCode 4 addr zan 35 kv 35 staircase 1 user d
 	// inviteCode 5 addr resp 6 kv 5 staircase 1 user e
 
-	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-
-		try {
-			List<String> locations = new ArrayList<String>();
+	private static List<String> initializeTestLocations(boolean loadInviteCodes, PersistenceManager pm) throws InvalidOperation {
+		
+		try{
 			VoStreet streetZ = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
 			VoStreet streetR = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
 
@@ -284,8 +281,6 @@ public class Defaults {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. "
 					+ (e instanceof InvalidOperation ? ((InvalidOperation) e).why : e.getMessage()));
-		} finally {
-			pm.close();
 		}
 	}
 }
