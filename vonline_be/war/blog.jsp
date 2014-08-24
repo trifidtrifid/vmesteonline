@@ -193,8 +193,9 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
             var topicId = $(this).closest('.post').attr('data-topicid'),
                 dialogs = $(this).closest('.post').find('.dialogs');
 
-            if(!isCommentsLoaded[topicId]){
+            //if(!isCommentsLoaded[topicId]){
             var comments = messageClient.getMessagesAsList(topicId, 7, 0,false,1000).messages;
+            //alert(comments.length);
 
             if(comments){
                 var commentsLength = comments.length,
@@ -238,7 +239,8 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                 }
             }
 
-            dialogs.append(commentsHTML);
+            dialogs.html("");
+            dialogs.prepend(commentsHTML);
 
             initNoLink($(this).closest('.post'));
             initAnswerToComment($('.new .lenta-item-bottom a'));
@@ -246,7 +248,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
 
             isCommentsLoaded[topicId] = true;
 
-            }
+            //}
 
             dialogs.slideToggle(200);
         });
@@ -301,52 +303,82 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
                 message.anonName = $(this).closest('.input-group').find('.anonName').val();
             };
 
-            var returnComment = messageClient.postBlogMessage(message),
-                    classNoLink = "";
-
-            if(!isAuth){
-                message.avatar = "data/da.gif";
-                message.name = message.anonName;
-                message.userId = 0;
-                classNoLink = "no-link";
-            }else{
-                message.avatar = returnComment.userInfo.avatar;
-                message.name = returnComment.userInfo.firstName+" "+returnComment.userInfo.lastName;
-                message.userId = returnComment.userInfo.id ;
-            }
-
-            var newCommentHTML = '<div class="itemdiv dialogdiv new">'+
-                '<a href="profile-'+ message.userId +'" class="user '+ classNoLink +'">'+
-                        '<div class="avatar short2" style="background-image: url('+ message.avatar +')"></div>'+
-                        '</a>'+
-                        '<div class="body">'+
-                        '<div class="name">'+
-                        '<a href="profile-'+ message.userId +'" class="'+ classNoLink +'" >'+ message.name +'</a>'+
-                        '</div>'+
-                    '<div class="text">'+ message.content +'</div>'+
-            '<div class="lenta-item-bottom">'+
-                    '<span>'+ getTiming(message.created) +'</span>'+
-            '<a href="#">Ответить</a>'+
-            '</div>'+
-            '</div>'+
-            '</div>';
-
+            var returnComment = messageClient.postBlogMessage(message);
             var comments = $(this).closest('.post').find('.dialogs');
-            comments.append(newCommentHTML);
 
-            //document.location.replace('/');
+                var classNoLink = "";
 
-            initNoLink($('.new'));
-            initAnswerToComment($('.new .lenta-item-bottom a'));
-            $('.new').removeClass('new');
+                if(!isAuth){
+                    message.avatar = "data/da.gif";
+                    message.name = message.anonName;
+                    message.userId = 0;
+                    classNoLink = "no-link";
+                }else{
+                    message.avatar = returnComment.userInfo.avatar;
+                    message.name = returnComment.userInfo.firstName+" "+returnComment.userInfo.lastName;
+                    message.userId = returnComment.userInfo.id ;
+                }
 
-            $(this).closest('.input-group').hide();
-            $(this).closest('.input-group').find('textarea').val("");
+                var newCommentHTML = '<div class="itemdiv dialogdiv new">'+
+                    '<a href="profile-'+ message.userId +'" class="user '+ classNoLink +'">'+
+                            '<div class="avatar short2" style="background-image: url('+ message.avatar +')"></div>'+
+                            '</a>'+
+                            '<div class="body">'+
+                            '<div class="name">'+
+                            '<a href="profile-'+ message.userId +'" class="'+ classNoLink +'" >'+ message.name +'</a>'+
+                            '</div>'+
+                        '<div class="text">'+ message.content +'</div>'+
+                '<div class="lenta-item-bottom">'+
+                        '<span>'+ getTiming(message.created) +'</span>'+
+                '<a href="#">Ответить</a>'+
+                '</div>'+
+                '</div>'+
+                '</div>';
 
             if(comments.css('display') == 'none'){
+
                 $(this).closest('.post').find('.show-comment').trigger('click');
+
+            }else{
+                comments.append(newCommentHTML);
+
+                initNoLink($('.new'));
+                initAnswerToComment($('.new .lenta-item-bottom a'));
+                $('.new').removeClass('new');
             }
+
+            //setTimeout(tempFunc,1000,comments,newCommentHTML,message,$(this));
+
+                $(this).closest('.input-group').hide();
+                $(this).closest('.input-group').find('textarea').val("");
+
         });
+
+/*        function tempFunc(comments,newCommentHTML,message,selector){
+            if(comments.css('display') == 'none'){
+                var tempIsLoaded = isCommentsLoaded[message.topicId];
+                alert('0 '+tempIsLoaded);
+
+                selector.closest('.post').find('.show-comment').trigger('click');
+                alert('0 '+isCommentsLoaded[message.topicId]);
+
+                if(tempIsLoaded){
+                    alert('1');
+                    comments.append(newCommentHTML);
+
+                    initNoLink($('.new'));
+                    initAnswerToComment($('.new .lenta-item-bottom a'));
+                    $('.new').removeClass('new');
+                }
+            }else{
+                alert('2');
+                comments.append(newCommentHTML);
+
+                initNoLink($('.new'));
+                initAnswerToComment($('.new .lenta-item-bottom a'));
+                $('.new').removeClass('new');
+            }
+        }*/
 
         function getTiming(messageObjDate){
             var minute = 60*1000,

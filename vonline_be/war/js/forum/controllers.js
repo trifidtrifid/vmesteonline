@@ -2049,11 +2049,25 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         profile.userProfile = userClient.getUserProfile(userId);
 
-        if(!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone && !profile.userProfile.contacts.email
-            && !profile.userProfile.family && !profile.userProfile.family.relations && !profile.userProfile.family.childs && !profile.userProfile.family.pets
-            && !profile.userProfile.privacy && !profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts
-            && !profile.userProfile.interests && !profile.userProfile.interests.userInterests && !profile.userProfile.interests.job
-            && !profile.userProfile.notifications)
+        var isEmptyContacts = false,
+            isEmptyFamily = false,
+            isEmptyPrivacy = false,
+            isEmptyInterests = false,
+            isEmptyNotifications = false;
+
+        if(!profile.userProfile.contacts || (!profile.userProfile.contacts.homeAddress && !profile.userProfile.contacts.mobilePhone &&
+            !profile.userProfile.contacts.email)) isEmptyContacts = true;
+
+        if(!profile.userProfile.family || (!profile.userProfile.family.relations
+            && !profile.userProfile.family.childs && !profile.userProfile.family.pets)) isEmptyFamily = true;
+
+        if(!profile.userProfile.privacy || (!profile.userProfile.privacy.profile && !profile.userProfile.privacy.contacts)) isEmptyPrivacy = true;
+
+        if(!profile.userProfile.interests || (!profile.userProfile.interests.userInterests && !profile.userProfile.interests.job)) isEmptyInterests = true;
+
+        if(!profile.userProfile.notifications) isEmptyNotifications = true;
+
+        if(isEmptyContacts && isEmptyFamily && isEmptyPrivacy && isEmptyInterests && isEmptyNotifications)
             profile.isEmptyProfile = true;
 
         if(profile.userProfile.userInfo){
