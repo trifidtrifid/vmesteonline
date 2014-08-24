@@ -105,6 +105,8 @@ public class Defaults {
 			clearGroups(pm);
 			clearLocations(pm);
 			clearFiles(pm);
+			pm.flush();
+			
 			initializeGroups(pm);
 			List<String> locCodes = initializeTestLocations(loadInviteCodes, pm);
 			initializeUsers(locCodes, pm);
