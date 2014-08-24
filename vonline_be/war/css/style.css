@@ -154,6 +154,12 @@ h1 {
   color: #a6a6a6;
   border-top: 1px solid #ccc;
 }
+.footer .copypast {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: -1px;
+}
 .footer ul {
   margin: 0;
 }
@@ -174,6 +180,9 @@ h1 {
 }
 .footer.footer-bottom {
   padding: 20px 0;
+}
+.footer.footer-bottom .pull-left {
+  padding-left: 5px;
 }
 .footer.footer-login {
   position: absolute;
@@ -583,6 +592,12 @@ h1 {
   .navbar .form-search {
     width: 10%;
   }
+  .create-topic-btn {
+    clear: right;
+    float: left !important;
+    margin-left: 10px;
+    margin-top: -30px;
+  }
 }
 @media all and (max-width: 768px), screen and (device-width: 320px) {
   .sidebar#sidebar {
@@ -901,6 +916,12 @@ h1 {
   padding-right: 15px;
   font-size: 12px;
 }
+.lenta-item:last-child .wallitem-message {
+  border-bottom: 1px solid #5090c1;
+}
+.lenta-item .wallitem-topic .talks-title {
+  border-bottom: 0;
+}
 .answer-block {
   width: 100%;
 }
@@ -1013,6 +1034,9 @@ h1 {
   overflow: auto;
   position: relative;
   border-top: 1px solid #5090c1;
+}
+.talks-title:last-child {
+  border-bottom: 1px solid #5090c1;
 }
 .talks-title .talks-title-left {
   padding-right: 130px;
@@ -1547,6 +1571,7 @@ h1 {
 .about {
   text-align: left;
   padding-top: 10px;
+  padding-left: 10px;
 }
 .about p,
 .about li {
@@ -1554,6 +1579,9 @@ h1 {
 }
 .about .footer li {
   font-size: 13px;
+}
+.contacts {
+  padding-left: 10px;
 }
 .message-to-show {
   width: 100%;

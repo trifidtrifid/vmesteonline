@@ -162,6 +162,11 @@ transform()
   text-align left
   color #a6a6a6
   border-top 1px solid #CCCCCC
+  .copypast
+    display inline-block
+    vertical-align top
+    position relative
+    top -1px
   ul
     margin 0
     li
@@ -177,6 +182,8 @@ transform()
     margin-top 40px
   &.footer-bottom
     padding 20px 0
+    .pull-left
+      padding-left 5px
   &.footer-login
     position absolute
     bottom 0
@@ -532,6 +539,11 @@ transform()
 @media all and (max-width: 1000px)
   .navbar .form-search
     width 10%
+  .create-topic-btn
+    clear right
+    float left !important
+    margin-left 10px
+    margin-top -30px
 
 @media all and (max-width: 768px),screen and (device-width: 320px)
   .sidebar#sidebar
@@ -795,6 +807,10 @@ transform()
     padding-left 95px
     padding-right 15px
     font-size 12px
+  &:last-child .wallitem-message
+    border-bottom 1px solid #5090c1
+  .wallitem-topic .talks-title
+    border-bottom 0
 
 .answer-block
   width 100%
@@ -904,6 +920,8 @@ transform()
   overflow auto
   position relative
   border-top 1px solid rgb(80, 144, 193)
+  &:last-child
+    border-bottom 1px solid rgb(80, 144, 193)
   .talks-title-left
     //float left
     padding-right 130px
@@ -1340,10 +1358,13 @@ transform()
 .about
   text-align left
   padding-top 10px
+  padding-left 10px
   p,li
     font-size 14px
   .footer li
     font-size 13px
+.contacts
+  padding-left 10px
 
 .message-to-show
   width 100%

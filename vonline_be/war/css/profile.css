@@ -1,5 +1,4 @@
 .user-descr {
-  padding: 0 0 0 10px;
   font-size: 14px;
 }
 .user-descr .ava-area {
@@ -25,9 +24,6 @@
 .user-descr .soc-accounts .fa {
   font-size: 34px;
   margin: 10px 5px 0 5px;
-}
-.user-descr .text-area {
-  margin: 0 0 0 10px;
 }
 .user-descr .text-area .user-head h1 {
   display: inline-block;

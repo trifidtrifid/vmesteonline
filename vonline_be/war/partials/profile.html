@@ -24,8 +24,11 @@
                     
                     <div class="user-body-right">
                         <div ng-if="profile.isEmptyProfile" class="empty-messages">Информация скрыта</div>
-                        <div class="profile-item" ng-show="profile.userProfile.userInfo.birthday != 0 || profile.userProfile.userInfo.gender != 0">
-                            <div ng-show="profile.userProfile.userInfo.birthday != null && profile.userProfile.userInfo.birthday != 0"><span>День рождения: </span> {{profile.userProfile.userInfo.birthday*1000 | date: 'dd.MM.yyyy'}}</div>
+
+                        <div class="profile-item" ng-show="profile.userProfile.userInfo.birthday != 0">
+                            <div ng-show="profile.userProfile.userInfo.birthday != null && profile.userProfile.userInfo.birthday != 0">
+                                <span>День рождения: </span> {{profile.userProfile.userInfo.birthday*1000 | date: 'dd.MM.yyyy'}}
+                            </div>
                             <!--<div ng-show="profile.userProfile.userInfo.gender != null"><span>Пол: </span> {{profile.userProfile.userInfo.genderMeta}}</div>-->
                         </div>
 
@@ -43,15 +46,13 @@
                             <div ng-show="profile.userProfile.family.childs && profile.userProfile.family.childs.length != 0 && profile.userProfile.family.childs[0].name != '' ">
                                 <h4>Дети: </h4>
                                 <div ng-repeat="child in profile.userProfile.family.childs">
-                                    {{child.name}}
-                                    <span ng-show="child.birthday">, {{child.birthday*1000 | date: 'MM.yyyy'}}</span>
+                                    {{child.name}}<span ng-show="child.birthday">, {{child.birthday*1000 | date: 'MM.yyyy'}}</span>
                                 </div>
                             </div>
                             <div ng-show="profile.userProfile.family.pets != null && profile.userProfile.family.pets.length != 0 && profile.userProfile.family.pets[0].name != ''">
                                 <h4>Питомцы:</h4>
                                 <div ng-repeat="pet in profile.userProfile.family.pets">
-                                    {{pet.name}}
-                                    <span ng-show="pet.typeMeta">, {{pet.typeMeta}}</span>
+                                    {{pet.name}}<span ng-show="pet.typeMeta">, {{pet.typeMeta}}</span>
                                     <span ng-show="pet.breed">, {{pet.breed}}</span>
                                 </div>
 
