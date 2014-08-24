@@ -1,8 +1,6 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -11,8 +9,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.City;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
@@ -21,6 +17,7 @@ import com.vmesteonline.be.VoError;
 public class VoCity {
 	
 	public static VoCity createVoCity(VoCountry country, String name, PersistenceManager pm) throws InvalidOperation {
+		
 		List<VoCity> vcl = (List<VoCity>)pm.newQuery(VoCity.class, "countryId=="+country.getId()+" && name=='"+name+"'").execute();
 		if( vcl.size() ==1 ){
 			return vcl.get(0);

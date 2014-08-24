@@ -10,12 +10,9 @@ import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.util.Map;
-
-
 import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -24,10 +21,6 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-
-
-
 
 import org.datanucleus.util.Base64;
 

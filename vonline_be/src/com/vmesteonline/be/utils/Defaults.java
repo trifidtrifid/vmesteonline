@@ -106,8 +106,8 @@ public class Defaults {
 			clearLocations(pm);
 			clearFiles(pm);
 			initializeGroups(pm);
-			List<String> locCodes = initializeTestLocations(loadInviteCodes);
-			initializeUsers(locCodes);
+			List<String> locCodes = initializeTestLocations(loadInviteCodes, pm);
+			initializeUsers(locCodes, pm);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,12 +207,11 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	private static void initializeUsers(List<String> locCodes) throws InvalidOperation {
+	private static void initializeUsers(List<String> locCodes, PersistenceManager pm) throws InvalidOperation {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		PersistenceManager pm = PMF.getPm();
-		try {
+		
 			for (String uname : unames) {
 				try {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
@@ -231,9 +230,7 @@ public class Defaults {
 					e.printStackTrace();
 				}
 			}
-		} finally {
-			pm.close();
-		}
+
 		if (uids.size() == 0)
 			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
 
@@ -246,11 +243,9 @@ public class Defaults {
 	// inviteCode 4 addr zan 35 kv 35 staircase 1 user d
 	// inviteCode 5 addr resp 6 kv 5 staircase 1 user e
 
-	private static List<String> initializeTestLocations(boolean loadInviteCodes) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-
-		try {
-			List<String> locations = new ArrayList<String>();
+	private static List<String> initializeTestLocations(boolean loadInviteCodes, PersistenceManager pm) throws InvalidOperation {
+		
+		try{
 			VoStreet streetZ = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Заневский", pm);
 			VoStreet streetR = VoStreet.createVoStreet(VoCity.createVoCity(VoCountry.createVoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
 
@@ -286,8 +281,6 @@ public class Defaults {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. "
 					+ (e instanceof InvalidOperation ? ((InvalidOperation) e).why : e.getMessage()));
-		} finally {
-			pm.close();
 		}
 	}
 }
