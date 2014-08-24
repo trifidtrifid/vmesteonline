@@ -1,8 +1,6 @@
 package com.vmesteonline.be.jdo2.postaladdress;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -11,7 +9,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unowned;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.Street;
@@ -29,6 +26,7 @@ public class VoStreet {
 		} else if( vcl.size() == 0 ){
 			VoStreet vs = new VoStreet(city, name, pm);
 			pm.makePersistent(vs);
+			pm.flush();
 			return vs;
 		} else 
 			throw new InvalidOperation( VoError.GeneralError, "To many cities with name '"+name+"' ");

@@ -243,6 +243,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
 				uProfile.privacy = new UserPrivacy();
+				uProfile.userInfo.birthday = 0;
+				uProfile.userInfo.gender = 0;
 				return uProfile;
 			}
 
@@ -257,6 +259,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			if (uPrivacy.profile.getValue() < relation.getValue()) {// remove interest and family
 				uProfile.interests = new UserInterests();
 				uProfile.family = new UserFamily();
+				uProfile.userInfo.birthday = 0;
+				uProfile.userInfo.gender = 0;
 			}
 			
 			return uProfile;

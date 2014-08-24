@@ -47,8 +47,7 @@ public class UPDATEServlet extends HttpServlet {
 			for( String line: lines ){
 				String[] items = line.split(";");
 				
-				VoPostalAddress pa = new VoPostalAddress(vb, 
-						Byte.parseByte(items[7]), (byte)0, Integer.parseInt(items[8]), null);
+				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, Byte.parseByte(items[7]), (byte)0, Integer.parseInt(items[8]), null);
 				pm.makePersistent(pa);
 				VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
 				pm.makePersistent(ic);
@@ -67,8 +66,7 @@ public class UPDATEServlet extends HttpServlet {
 			for( String line: lines ){
 				String[] items = line.split(";");
 				
-				VoPostalAddress pa = new VoPostalAddress(vb, 
-						Byte.parseByte(items[7]), (byte)0, Integer.parseInt(items[8]), null);
+				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, Byte.parseByte(items[7]), (byte)0, Integer.parseInt(items[8]), null);
 				pm.makePersistent(pa);
 				VoInviteCode ic = new VoInviteCode(items[0], pa.getId());
 				pm.makePersistent(ic);
@@ -82,8 +80,7 @@ public class UPDATEServlet extends HttpServlet {
 				pm.makePersistent(cs);
 				vb = VoBuilding.createVoBuilding("188689", cs, "14к1", null, null, pm);
 				pm.makePersistent(vb);
-				VoPostalAddress pa = new VoPostalAddress(vb, 
-						(byte)1, (byte)0, 11, null);
+				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, (byte)1, (byte)0, 11, null);
 				pm.makePersistent(pa);
 				VoInviteCode ic = new VoInviteCode("123456", pa.getId());
 				pm.makePersistent(ic);

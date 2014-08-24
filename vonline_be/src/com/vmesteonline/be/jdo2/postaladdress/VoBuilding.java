@@ -131,6 +131,7 @@ public class VoBuilding {
 					+ vb.getFullNo();
 		}
 		pm.makePersistent(vb);
+		pm.flush();
 		return vb;
 	}
 

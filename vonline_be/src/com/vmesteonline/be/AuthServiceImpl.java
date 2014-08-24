@@ -208,6 +208,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
 			pm.makePersistent(voInviteCode);
+			pm.flush();
 
 			VoPostalAddress uaddress;
 			try {
