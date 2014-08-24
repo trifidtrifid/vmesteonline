@@ -1040,6 +1040,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
+        /*for(var i; i < wallItemsLength; i++){
+            lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
+        }*/
+
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
         //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
 
@@ -2086,7 +2090,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         if(profile.userProfile.family && profile.userProfile.family.relations == 0){
 
             if(profile.userProfile.userInfo.gender == 1){
-                profile.userProfile.family.relationsMeta = "За мужем";
+                profile.userProfile.family.relationsMeta = "Замужем";
             }else if(profile.userProfile.userInfo.gender == 2){
                 profile.userProfile.family.relationsMeta = "Женат";
             }
@@ -2812,6 +2816,27 @@ transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
+function replaceLink(str){
+    var strArr = str.split(" "),
+        len = strArr.length,
+        tempStr, result = "";
+
+    for(var i = 0; i < len; i++){
+        if(strArr[i].indexOf("http://") != -1 || strArr[i].indexOf("https://") != -1){
+            //tempStr = "<a href='"+ strArr[i] +"' target='_blank'>"+strArr[i]+"</a>";
+            tempStr = strArr[i].link(strArr[i]);
+
+            //tempStr = '<div>'+strArr[i]+'</div>';
+            strArr[i] = tempStr;
+        }
+
+        result += strArr[i]+" ";
+    }
+
+    //alert(result);
+    return result;
+
+}
 function getDefaultGroup(groups){
     var len = groups.length;
     for(var i = 0; i < len;i++){
@@ -2824,7 +2849,7 @@ function getDefaultGroup(groups){
 function showGroupOverBuilding(groups){
     var len = groups.length;
     for(var i = 0; i < len; i++){
-        if(groups[i].type < 3) groups[i].isShow = false;
+        if(groups[i].type < 4) groups[i].isShow = false; //4 = BUILDING
     }
 }
 
@@ -3221,6 +3246,7 @@ function postTopic(obj,isWall,isAdverts){
         newTopic.message = new com.vmesteonline.be.messageservice.Message();
         newTopic.message.groupId = obj.selectedGroup.id;
         newTopic.message.type = messageType;
+        //newTopic.message.content = replaceLink(messageContent);
         newTopic.message.content = messageContent;
         newTopic.message.images = obj.attachedImages;
         newTopic.message.documents = obj.attachedDocs;
@@ -3271,9 +3297,6 @@ function postTopic(obj,isWall,isAdverts){
             newTopic.lastUpdateEdit = getTiming(newTopic.message.created);
         }
 
-        console.log(messageContent + " " + messageType + " " + subject);
-        console.log("---");
-        console.log(newTopic.message.content);
     }
 
     return newTopic;
@@ -3309,7 +3332,13 @@ function postMessage(obj,isWall,isFirstLevel){
             return 0;
 
         }else {
-            var newMessage = messageClient.postMessage(message);
+            try {
+                // try на случай если топик был удален создателем, а юзер пытается
+                // его комментировать
+                var newMessage = messageClient.postMessage(message);
+            }catch(e){
+                document.location.replace('/');
+            }
 
             cleanAttached($('#attach-area-edit-' + attachId));
             cleanAttached($('#attach-doc-area-edit-' + attachId));
@@ -3369,7 +3398,12 @@ function postMessage(obj,isWall,isFirstLevel){
             if (message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
                 message.content = "";
             }
-            newMessage = messageClient.postMessage(message);
+
+            try {
+                newMessage = messageClient.postMessage(message);
+            }catch(e){
+                document.location.replace('/');
+            }
 
             obj.commentText = TEXT_DEFAULT_2;
             message.createdEdit = getTiming(newMessage.created);
