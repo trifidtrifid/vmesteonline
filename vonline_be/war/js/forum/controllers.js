@@ -1014,6 +1014,21 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('rightBarController',function($rootScope) {
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+
+        var importantTopicsLen = $rootScope.importantTopics.topics.length;
+        for(var i = 0; i < importantTopicsLen; i++){
+            $rootScope.importantTopics.topics[i].sliceContent =
+                $rootScope.importantTopics.topics[i].message.content;
+
+            if ($rootScope.importantTopics.topics[i].message.content.length > 50){
+                $rootScope.importantTopics.topics[i].sliceContent =
+                    $rootScope.importantTopics.topics[i].message.content.slice(0,50)+"...";
+            }
+
+        }
+
+        $('.ng-cloak').removeClass('ng-cloak');
+
     })
     .controller('LentaController',function($rootScope) {
 

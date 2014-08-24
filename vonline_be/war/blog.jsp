@@ -130,7 +130,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
     </div>
 
     <div class="footer footer-bottom clearfix">
-        <div class="pull-left">(c) Вместе Онлайн 2014</div>
+        <div class="pull-left"><span class="copypast">&copy;</span> ВместеОнлайн 2014</div>
         <div class="pull-right">
             <ul>
                 <li><a href="about">О сайте</a></li>

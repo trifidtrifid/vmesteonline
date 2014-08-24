@@ -176,7 +176,7 @@
 
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">
-                        (c) Вместе Онлайн 2014
+                        <span class="copypast">&copy;</span> ВместеОнлайн 2014
                         <!-- временная обработка ссылок пока не адаптирован блог, о нас и контакты под ангуляр -->
                         <ul>
                             <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>
@@ -185,7 +185,7 @@
                         </ul>
                     </div>
 				</aside>
-                <aside class="sidebar-right" ng-controller="rightBarController as rightbar">
+                <aside class="sidebar-right ng-cloak" ng-controller="rightBarController as rightbar">
                     <div class="importantly-top">
                         Важно
                     </div>
@@ -197,7 +197,7 @@
                             </div>
                             <div class="importantly-right">
                                 <h3>{{importantTopic.userInfo.firstName}}</h3>
-                                <p>{{ importantTopic.message.content.slice(0,50)+"..." }}</p>
+                                <p>{{ importantTopic.sliceContent }}</p>
 
                                 <div ng-switch on="importantTopic.message.type" >
 
@@ -244,7 +244,7 @@
 		</div>
         
         <div class="footer footer-bottom clearfix ng-cloak" ng-show="base.isFooterBottom">
-            <div class="pull-left">(c) Вместе Онлайн 2014</div>
+            <div class="pull-left"><span class="copypast">&copy;</span> ВместеОнлайн 2014</div>
             <div class="pull-right">
                 <ul>
                     <li><a href="about" onclick="document.location.replace('about');">О сайте</a></li>

@@ -154,6 +154,12 @@ h1 {
   color: #a6a6a6;
   border-top: 1px solid #ccc;
 }
+.footer .copypast {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: -1px;
+}
 .footer ul {
   margin: 0;
 }
