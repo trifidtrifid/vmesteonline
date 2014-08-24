@@ -37,7 +37,7 @@ public class VoCountry {
 	
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private Long id;
+	private long id;
 	
 	@Persistent
 	private String name;

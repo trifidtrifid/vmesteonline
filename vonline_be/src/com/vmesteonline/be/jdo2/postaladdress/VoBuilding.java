@@ -21,7 +21,7 @@ import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.VoUser;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
-public class VoBuilding {
+public class VoBuilding  {
 
 	private VoBuilding(String zip, VoStreet vs, String fullNo, BigDecimal longitude, BigDecimal latitude) throws InvalidOperation {
 		

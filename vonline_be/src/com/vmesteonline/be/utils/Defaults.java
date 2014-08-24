@@ -101,9 +101,10 @@ public class Defaults {
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
-			clearUsers(pm);
-			clearGroups(pm);
+			
 			clearLocations(pm);
+			clearGroups(pm);
+			clearUsers(pm);
 			clearFiles(pm);
 			pm.flush();
 			
@@ -156,7 +157,6 @@ public class Defaults {
 
 	private static void clearUsers(PersistenceManager pm) {
 		deletePersistentAll(pm, VoUserTopic.class);
-		deletePersistentAll(pm, VoUserGroup.class);
 		deletePersistentAll(pm, VoTopic.class);
 		deletePersistentAll(pm, VoMessage.class);
 		deletePersistentAll(pm, VoUser.class);
@@ -182,16 +182,15 @@ public class Defaults {
 	// ======================================================================================================================
 
 	private static void clearGroups(PersistenceManager pm) {
-		deletePersistentAll(pm, VoGroup.class);
+		deletePersistentAll(pm, VoUserGroup.class);
 	}
 
 	// ======================================================================================================================
 	private static void initializeGroups(PersistenceManager pm) {
-		Query q;
-		q = pm.newQuery(VoGroup.class);
-		q.setFilter("subscribedByDefault == true");
-		List<VoGroup> defGroups = (List<VoGroup>) q.execute();
-		if (defGroups.isEmpty()){
+		if( null==defaultGroups)
+			defaultGroups = new ArrayList<VoGroup>();
+		
+		if (defaultGroups.isEmpty()){
 			Iterator<Integer> impIterator = Arrays.asList( new Integer[]{ 101, 200, 500, 1000, 5000 }).iterator();
 			defaultGroups = new ArrayList<VoGroup>();
 			for (VoGroup dg : new VoGroup[] { 
@@ -202,10 +201,8 @@ public class Defaults {
 					}) {
 				dg.setImportantScore( impIterator.next() );
 				defaultGroups.add(dg);
-				pm.makePersistent(dg);
 			}
-		} else
-			defaultGroups = defGroups;
+		} 
 	}
 
 	// ======================================================================================================================

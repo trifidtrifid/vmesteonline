@@ -13,6 +13,7 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unowned;
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
@@ -22,14 +23,15 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 @PersistenceCapable
 public class VoPostalAddress implements Comparable<VoPostalAddress> {
 
-	private VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment) {
+	private VoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment, PersistenceManager pm) throws InvalidOperation {
 
 		this.buildingId = voBuilding.getId();
 		this.staircase = staircase;
 		this.floor = floor;
 		this.flatNo = flatNo;
 		this.comment = comment;
-
+		this.userGroup = VoUserGroup.createVoUserGroup(
+				voBuilding.getLongitude(), voBuilding.getLatitude(), 0, staircase, floor, "", 0, GroupType.FLAT.getValue(), pm);
 	}
 
 	public VoUserGroup getUserHomeGroup() {
@@ -95,7 +97,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		} else if (pal.size() > 1) 
 			throw new InvalidOperation(VoError.GeneralError, "There is two or more the same addresses registered. "+pal.get(0));
 			 
-		VoPostalAddress voPostalAddress = new VoPostalAddress(voBuilding, staircase, floor, flatNo, comment);
+		VoPostalAddress voPostalAddress = new VoPostalAddress(voBuilding, staircase, floor, flatNo, comment, pm);
 		pm.makePersistent(voPostalAddress);
 		pm.flush();
 		return voPostalAddress;
