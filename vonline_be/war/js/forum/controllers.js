@@ -276,20 +276,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 message.isEdit = false;
 
             }else{
+                var el = event.target;
+
+                //message.isFullText = true;
+                var h = $(el).closest('.text-container').find('.text').height()+24;
+                //message.isFullText = false;
+
                 message.isEdit = true;
 
                 if(message.answerInputIsShow) message.answerInputIsShow = false;
 
-                var el = event.target;
                 if(isTopic){
                     var textLen = message.message.content.length;
                 }else{
                     textLen = message.content.length;
                 }
 
-                var h = $(el).closest('.text-container').find('.text').height()+24;
-
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
+
+                if(textLen >= base.contentLength){
+
+                }
 
                 $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
 
@@ -870,7 +877,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 // значит создание
             }
 
-        }
+        };
+
+        base.toggleFullText = function(ctrl){
+            ctrl.isFullText ? ctrl.isFullText = false : ctrl.isFullText = true;
+        };
+
+        base.contentLength = 500;
 
         var lsGroupId = localStorage.getItem('groupId'),
             groupsLength = base.groups.length;
@@ -1015,16 +1028,19 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
 
-        var importantTopicsLen = $rootScope.importantTopics.topics.length;
-        for(var i = 0; i < importantTopicsLen; i++){
-            $rootScope.importantTopics.topics[i].sliceContent =
-                $rootScope.importantTopics.topics[i].message.content;
+        if($rootScope.importantTopics.topics) {
 
-            if ($rootScope.importantTopics.topics[i].message.content.length > 50){
+            var importantTopicsLen = $rootScope.importantTopics.topics.length;
+            for (var i = 0; i < importantTopicsLen; i++) {
                 $rootScope.importantTopics.topics[i].sliceContent =
-                    $rootScope.importantTopics.topics[i].message.content.slice(0,50)+"...";
-            }
+                    $rootScope.importantTopics.topics[i].message.content;
 
+                if ($rootScope.importantTopics.topics[i].message.content.length > 50) {
+                    $rootScope.importantTopics.topics[i].sliceContent =
+                        $rootScope.importantTopics.topics[i].message.content.slice(0, 50) + "...";
+                }
+
+            }
         }
 
         $('.ng-cloak').removeClass('ng-cloak');
