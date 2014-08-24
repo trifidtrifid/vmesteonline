@@ -75,7 +75,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	// instead
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
-		return getShortUserInfo(getCurrentUserId());
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return getShortUserInfo(getCurrentUserId(), pm);
+		} finally {
+			pm.close();
+		}
+		
 	}
 
 	@Override
@@ -97,20 +103,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	public static ShortUserInfo getShortUserInfo(long userId) {
+	public static ShortUserInfo getShortUserInfo(long userId, PersistenceManager pm) {
 		if (userId == 0)
 			return null;
-
-		PersistenceManager pm = PMF.getPm();
+		
 		try {
 			VoUser voUser = pm.getObjectById(VoUser.class, userId);
 			return voUser.getShortUserInfo();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.warning("request short user info for absent user " + userId);
-		} finally {
-			pm.close();
-		}
+		} 
 		return null;
 	}
 

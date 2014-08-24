@@ -67,13 +67,8 @@ public class TestWorkAround {
 
 	protected long getUserGroupId(String email, GroupType type) {
 		VoUser user = asi.getUserByEmail(email, pm);
-		for (Long ugid : user.getGroups()) {
-			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugid);
-			if (GroupType.findByValue(ug.getGroupType()) == type) {
-				return ug.getId();
-			}
-		}
-		return 0L;
+		VoUserGroup group = user.getGroup(type, pm);
+		return null == group ? 0L : group.getId();
 	}
 
 }
