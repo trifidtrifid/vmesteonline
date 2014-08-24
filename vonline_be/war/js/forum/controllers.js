@@ -268,20 +268,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-/*        var func = function(el,message){
-            var h = $(el).closest('.text-container').find('.text:eq(1)').height()+24;
-            $(el).closest('.text-container').find('.text:eq(1)').height();
-            alert('1');
-            message.isEdit = true;
-            alert(message.isEdit);
-
-            if(message.answerInputIsShow) message.answerInputIsShow = false;
-
-            if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
-
-            $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
-        };*/
-
         base.setEdit = function(event,message,isNeedAnswerShow){
             var isTopic;
             (message.message) ? isTopic = true : isTopic = false;
@@ -291,16 +277,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             }else{
                 var el = event.target;
-
-                //message.isFullText = true;
-                //setTimeout(func,100,el,message);
-
-                /*alert(h);
-                setTimeout(func,1000,el);
-                message.isFullText = false;*/
-
-                //alert($(el).closest('.text-container').find('.text:eq(1)').height());
-                //$(el).closest('.text-container').find('.text:eq(1)').css('display','block !important');
 
                 var h0 = $(el).closest('.text-container').find('.text:eq(0)').height(),
                     h1 = $(el).closest('.text-container').find('.text:eq(1)').height(),
@@ -1053,21 +1029,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
         $rootScope.importantIsLoadedFromTop = true;
-
-        /*if($rootScope.importantTopics.topics) {
-
-            var importantTopicsLen = $rootScope.importantTopics.topics.length;
-            for (var i = 0; i < importantTopicsLen; i++) {
-                $rootScope.importantTopics.topics[i].sliceContent =
-                    $rootScope.importantTopics.topics[i].message.content;
-
-                if ($rootScope.importantTopics.topics[i].message.content.length > 50) {
-                    $rootScope.importantTopics.topics[i].sliceContent =
-                        $rootScope.importantTopics.topics[i].message.content.slice(0, 50) + "...";
-                }
-
-            }
-        }*/
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -3216,6 +3177,7 @@ function getLabel(groupsArray,groupType){
 
         if(groupsArray[i].type == groupType){
             label = groupsArray[i].visibleName;
+            //alert(groupsArray[i].visibleName+" "+groupType);
         }
     }
 
