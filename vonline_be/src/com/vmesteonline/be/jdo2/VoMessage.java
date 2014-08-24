@@ -80,7 +80,12 @@ public class VoMessage extends VoBaseMessage {
 			}
 		}
 
-		VoTopic topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+		VoTopic topic;
+		try {
+			topic = pm.getObjectById(VoTopic.class, msg.getTopicId());
+		} catch (JDOObjectNotFoundException e1) {
+			throw new InvalidOperation(com.vmesteonline.be.VoError.IncorrectParametrs, "Topic deleted" + msg.getParentId());
+		}
 	
 		// вставка времени последнего апдейта
 		topic.setLastUpdate((int) (System.currentTimeMillis() / 1000L));
