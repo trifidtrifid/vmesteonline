@@ -45,6 +45,10 @@ $(document).ready(function(){
         // если страница регистрации или логина
         URL = document.location.hash;
 
+        var href = document.location.href;
+        var hrefInd = href.indexOf("/",9);
+        $('input[name="redirect_uri"]').val(href.substring(0,hrefInd)+"/oauth");
+
         if(URL) {
             // если страница регистрации
 

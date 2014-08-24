@@ -268,6 +268,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
+/*        var func = function(el,message){
+            var h = $(el).closest('.text-container').find('.text:eq(1)').height()+24;
+            $(el).closest('.text-container').find('.text:eq(1)').height();
+            alert('1');
+            message.isEdit = true;
+            alert(message.isEdit);
+
+            if(message.answerInputIsShow) message.answerInputIsShow = false;
+
+            if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
+
+            $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
+        };*/
+
         base.setEdit = function(event,message,isNeedAnswerShow){
             var isTopic;
             (message.message) ? isTopic = true : isTopic = false;
@@ -279,8 +293,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 var el = event.target;
 
                 //message.isFullText = true;
-                var h = $(el).closest('.text-container').find('.text').height()+24;
-                //message.isFullText = false;
+                //setTimeout(func,100,el,message);
+
+                /*alert(h);
+                setTimeout(func,1000,el);
+                message.isFullText = false;*/
+
+                //alert($(el).closest('.text-container').find('.text:eq(1)').height());
+                //$(el).closest('.text-container').find('.text:eq(1)').css('display','block !important');
+
+                var h0 = $(el).closest('.text-container').find('.text:eq(0)').height(),
+                    h1 = $(el).closest('.text-container').find('.text:eq(1)').height(),
+                    h;
+
+                (h0 > h1) ? h = h0+24 : h = h1;
 
                 message.isEdit = true;
 
@@ -292,14 +318,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     textLen = message.content.length;
                 }
 
+                /*if(textLen > base.contentLength){
+                    h = (textLen/base.contentLength).toFixed(0)*(h-24);
+                }*/
+
                 if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
 
-                if(textLen >= base.contentLength){
-
-                }
-
                 $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
-
             }
 
             if(isNeedAnswerShow){
@@ -2508,6 +2533,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         angular.element($('.settings')).css({'min-height': $(window).height()-125});
 
         $('.ng-cloak').removeClass('ng-cloak');
+
+        var href = document.location.href;
+        var hrefInd = href.indexOf("/",9);
+        $('input[name="redirect_uri"]').val(href.substring(0,hrefInd)+"/oauth");
 
     })
     .controller('dialogsController', function($rootScope,$state){
