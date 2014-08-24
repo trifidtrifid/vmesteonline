@@ -39,6 +39,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Контакты</title>
+    <link rel="shortcut icon" href="i/landing/vmesteonline.png">
     <link rel="stylesheet" href="css/lib/jquery-ui-1.10.3.full.min.css" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>

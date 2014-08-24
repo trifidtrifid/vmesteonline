@@ -423,6 +423,7 @@ to {
 
 .features {
 	margin:25px 0;
+    text-align: center;
 }
 .features p{
     font-size: 16px;

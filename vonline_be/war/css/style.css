@@ -175,6 +175,9 @@ h1 {
 .footer.footer-bottom {
   padding: 20px 0;
 }
+.footer.footer-bottom .pull-left {
+  padding-left: 5px;
+}
 .footer.footer-login {
   position: absolute;
   bottom: 0;
@@ -582,6 +585,12 @@ h1 {
 @media all and (max-width: 1000px) {
   .navbar .form-search {
     width: 10%;
+  }
+  .create-topic-btn {
+    clear: right;
+    float: left !important;
+    margin-left: 10px;
+    margin-top: -30px;
   }
 }
 @media all and (max-width: 768px), screen and (device-width: 320px) {
@@ -1547,6 +1556,7 @@ h1 {
 .about {
   text-align: left;
   padding-top: 10px;
+  padding-left: 10px;
 }
 .about p,
 .about li {
@@ -1554,6 +1564,9 @@ h1 {
 }
 .about .footer li {
   font-size: 13px;
+}
+.contacts {
+  padding-left: 10px;
 }
 .message-to-show {
   width: 100%;

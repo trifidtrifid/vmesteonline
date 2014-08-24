@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="css/lib/jquery.Jcrop.css" />
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css" />
 
+    <link rel="shortcut icon" href="i/landing/vmesteonline.png">
+
 <script src="js/lib/jquery-2.0.3.js"></script>
 <!--[if lt IE 9]>
     <script>
