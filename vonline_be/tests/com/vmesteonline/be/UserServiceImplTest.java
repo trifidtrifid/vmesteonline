@@ -68,6 +68,56 @@ public class UserServiceImplTest extends TestWorkAround {
 
 	}
 
+	private void profileIsVisible(String user, String pwd, long userAid) throws InvalidOperation {
+		UserProfile up;
+		asi.login(user, pwd);
+		up = usi.getUserProfile(userAid);
+		Assert.assertNotNull(up);
+		Assert.assertNotNull(up.family);
+		Assert.assertEquals(RelationsType.MARRIED, up.family.relations);
+	}
+
+	private void profileIsInVisible(String user, String pwd, long userAid) throws InvalidOperation {
+		UserProfile up;
+		asi.login(user, pwd);
+		up = usi.getUserProfile(userAid);
+		Assert.assertNotNull(up);
+		Assert.assertNull(up.family);
+
+	}
+
+	private long updateFamily(GroupType grType) throws InvalidOperation, TException {
+		long userAid = asi.getCurrentUserId();
+		usi.updateFamily(new UserFamily(RelationsType.MARRIED, null, null));
+		usi.updatePrivacy(new UserPrivacy(userAid, grType, grType));
+		return userAid;
+	}
+
+	private void contactsIsVisible(String user, String pwd, long userAid) throws InvalidOperation {
+
+		UserProfile up;
+		asi.login(user, pwd);
+		up = usi.getUserProfile(userAid);
+		Assert.assertNotNull(up);
+		Assert.assertNotNull(up.contacts);
+		Assert.assertEquals("+79213367346", up.contacts.mobilePhone);
+	}
+
+	private void contactsIsInVisible(String user, String pwd, long userAid) throws InvalidOperation {
+		UserProfile up;
+		asi.login(user, pwd);
+		up = usi.getUserProfile(userAid);
+		Assert.assertNotNull(up);
+		Assert.assertNull(up.contacts);
+	}
+
+	private long updateContacts(GroupType grType) throws InvalidOperation, TException {
+		long userAid = asi.getCurrentUserId();
+		usi.updateContacts(new UserContacts(0, UserStatus.CONFIRMED, null, "+79213367346", null));
+		usi.updatePrivacy(new UserPrivacy(userAid, grType, grType));
+		return userAid;
+	}
+
 	@Test
 	public void testGetUserShortProfile() {
 
@@ -508,22 +558,16 @@ public class UserServiceImplTest extends TestWorkAround {
 	}
 
 	@Test
-	public void testGetUserProfileByAnother() {
+	public void testGetUserProfileFloor() {
 		try {
-			long userAid = asi.getCurrentUserId();
-			usi.updateFamily(new UserFamily(RelationsType.MARRIED, null, null));
-			usi.updatePrivacy(new UserPrivacy(userAid, GroupType.BUILDING, GroupType.BUILDING));
 			asi.login(Defaults.user2email, Defaults.user2email);
-			UserProfile up = usi.getUserProfile(userAid);
-			Assert.assertNotNull(up);
-			Assert.assertNotNull(up.family);
-			Assert.assertEquals(RelationsType.MARRIED, up.family.relations);
-
-			asi.login(Defaults.user4email, Defaults.user4email);
-			up = usi.getUserProfile(userAid);
-			Assert.assertNotNull(up);
-			Assert.assertNotNull(up.family);
-			Assert.assertNull(up.family.relations);
+			long userAid = updateFamily(GroupType.FLOOR);
+			// same building same staircase same floor
+			profileIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			// same building another staircase
+			profileIsInVisible(Defaults.user1email, Defaults.user1email, userAid);
+			// another building
+			profileIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -531,24 +575,112 @@ public class UserServiceImplTest extends TestWorkAround {
 		}
 	}
 
-	
 	@Test
-	public void testGetUserContactsByAnother() {
+	public void testGetUserProfileStarecase() {
 		try {
-			long userAid = asi.getCurrentUserId();
-			usi.updateContacts(new UserContacts(0, UserStatus.CONFIRMED, null,"+79213367346", null));
-			usi.updatePrivacy(new UserPrivacy(userAid, GroupType.BUILDING, GroupType.BUILDING));
 			asi.login(Defaults.user2email, Defaults.user2email);
-			UserProfile up = usi.getUserProfile(userAid);
-			Assert.assertNotNull(up);
-			Assert.assertNotNull(up.contacts);
-			Assert.assertEquals("+79213367346", up.contacts.mobilePhone);
+			long userAid = updateFamily(GroupType.STAIRCASE);
+			// same building same staircase same floor
+			profileIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			// same building another staircase
+			profileIsInVisible(Defaults.user1email, Defaults.user1email, userAid);
+			// another building
+			profileIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
 
-			asi.login(Defaults.user4email, Defaults.user4email);
-			up = usi.getUserProfile(userAid);
-			Assert.assertNotNull(up);
-			Assert.assertNotNull(up.contacts);
-			Assert.assertNull(up.contacts.mobilePhone);
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserProfileBuilding() {
+		try {
+			asi.login(Defaults.user1email, Defaults.user1email);
+			long userAid = updateFamily(GroupType.BUILDING);
+			// same building same staircase same floor
+			profileIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			// same building another staircase
+			profileIsVisible(Defaults.user1email, Defaults.user1email, userAid);
+			// another building
+			profileIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserProfileNeighbors() {
+		try {
+			long userAid = updateFamily(GroupType.NEIGHBORS);
+			profileIsVisible(Defaults.user2email, Defaults.user2email, userAid);
+			profileIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			profileIsVisible(Defaults.user4email, Defaults.user4email, userAid);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserContactsNeighbors() {
+		try {
+			long userAid = updateContacts(GroupType.NEIGHBORS);
+			contactsIsVisible(Defaults.user2email, Defaults.user2email, userAid);
+			contactsIsVisible(Defaults.user4email, Defaults.user4email, userAid);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserContactsBuilding() {
+		try {
+			long userAid = updateContacts(GroupType.BUILDING);
+			asi.login(Defaults.user2email, Defaults.user2email);
+			contactsIsVisible(Defaults.user2email, Defaults.user2email, userAid);
+			contactsIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserContactsStarecase() {
+		try {
+			asi.login(Defaults.user2email, Defaults.user2email);
+			long userAid = updateContacts(GroupType.STAIRCASE);
+			// same building same staircase same floor
+			contactsIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			// same building another staircase
+			contactsIsInVisible(Defaults.user1email, Defaults.user1email, userAid);
+			// another building
+			contactsIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetUserContactsFloor() {
+		try {
+			asi.login(Defaults.user2email, Defaults.user2email);
+			long userAid = updateContacts(GroupType.FLOOR);
+			// same building same staircase same floor
+			contactsIsVisible(Defaults.user3email, Defaults.user3email, userAid);
+			// same building another staircase
+			contactsIsInVisible(Defaults.user1email, Defaults.user1email, userAid);
+			// another building
+			contactsIsInVisible(Defaults.user4email, Defaults.user4email, userAid);
 
 		} catch (Exception e) {
 			e.printStackTrace();
