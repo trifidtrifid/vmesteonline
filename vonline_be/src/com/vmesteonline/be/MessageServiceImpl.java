@@ -353,12 +353,15 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		try {
 			try {
 				if (0 == topic.getId()) {
+					
+					VoUser user = getCurrentUser(pm);
+					
 					int now = (int) (System.currentTimeMillis() / 1000L);
 					topic.lastUpdate = now;
 					topic.message.created = now;
 					topic.message.authorId = getCurrentUserId();
 
-					VoTopic votopic = new VoTopic(topic, pm);
+					VoTopic votopic = new VoTopic(topic, user, pm);
 					votopic.setSubject(topic.getSubject());
 
 					if (topic.poll != null) {
@@ -372,7 +375,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					pm.makePersistent(votopic);
 					topic.setId(votopic.getId());
 
-					VoUser user = getCurrentUser(pm);
+					
 					pm.getObjectById( VoUserGroup.class, votopic.getUserGroupId() );
 					topic.userInfo = user.getShortUserInfo();
 
@@ -618,10 +621,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		VoUser currentUser = getCurrentUser(pm);
 		if( -1 ==Collections.indexOfSubList( currentUser.getGroups(), Arrays.asList( new Long[]{newGroupId})) )
 			throw new InvalidOperation(VoError.IncorrectParametrs, "USer "+currentUser+" could not move message to group "+newGroupId+" he does not belongs to");
+		
 		if(newGroupId != theTopic.getUserGroupId()){
 			VoUserGroup newGroup = pm.getObjectById(VoUserGroup.class, newGroupId);
 			theTopic.setUserGroupId(newGroupId);
-			theTopic.setVisibleGroups( new ArrayList<Long>(newGroup.getVisibleGroups(pm)));
+			ArrayList<Long> visibleGroups = new ArrayList<Long>(newGroup.getVisibleGroups(pm));
+			visibleGroups.removeAll(currentUser.getGroups());
+			visibleGroups.addAll(currentUser.getGroups());
+			theTopic.setVisibleGroups( visibleGroups);
 		}
 	}
 
@@ -838,12 +845,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public Topic deleteTopic(long topicId) throws InvalidOperation, TException {
-		boolean isModerator = false;
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoTopic tpc = pm.getObjectById(VoTopic.class, topicId);
 			VoUser cu = getCurrentUser();
-			if( tpc.getAuthorId().getId() != cu.getId() && (isModerator = cu.isGroupModerator(tpc.getUserGroupId())))
+			if( tpc.getAuthorId().getId() != cu.getId() && cu.isGroupModerator(tpc.getUserGroupId()))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "USer is not the author and not a moderator");
 			
 			deleteAttachments(pm, tpc.getImages());
@@ -852,21 +859,24 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				pm.deletePersistent( pm.getObjectById(VoPoll.class, tpc.getPollId()));
 			}
 			
-			if(0==tpc.getMessageNum()){
-				try {
-					pm.deletePersistent(tpc);
-					return null;
-				} catch (Exception e) {
-					logger.severe("Failed to delete Topic: "+e.getMessage());
-					e.printStackTrace();
-					throw new InvalidOperation(VoError.GeneralError,
-							"Topic not deleted. "+e.getMessage());
+			if(0!=tpc.getMessageNum()){
+				List<VoMessage> childMsgs = (List<VoMessage>) pm.newQuery(VoMessage.class, "topicId=="+topicId).execute();
+				for( VoMessage msg: childMsgs){
+					deleteAttachments(pm, msg.getImages());
+					deleteAttachments(pm, msg.getDocuments());
+					pm.deletePersistent(msg);
 				}
-			} else {
-				tpc.setContent("Тема удалена пользователем "+ (isModerator ? "модератором." : "пользователем."));
-				tpc.setPollId(0L);
+			}
 
-				return tpc.getTopic(cu.getId(), pm);
+			try {
+				pm.deletePersistent(tpc);
+				return null;
+				
+			} catch (Exception e) {
+				logger.severe("Failed to delete Topic: "+e.getMessage());
+				e.printStackTrace();
+				throw new InvalidOperation(VoError.GeneralError,
+						"Topic not deleted. "+e.getMessage());
 			}
 			
 		} catch( JDOObjectNotFoundException onfe ){

@@ -20,7 +20,7 @@ import com.vmesteonline.be.messageservice.Topic;
 public class VoTopic extends VoBaseMessage {
 	// id, message, messageNum, viewers, usersNum, lastUpdate, likes, unlikes,
 	// rubricId
-	public VoTopic(Topic topic, PersistenceManager pm) throws InvalidOperation, IOException {
+	public VoTopic(Topic topic, VoUser author, PersistenceManager pm) throws InvalidOperation, IOException {
 		
 		super(topic.getMessage(), pm);
 		subject = topic.getSubject();
@@ -30,6 +30,8 @@ public class VoTopic extends VoBaseMessage {
 		rubricId = topic.getRubricId();
 		userGroupId = topic.getMessage().getGroupId();
 		visibleGroups = pm.getObjectById(VoUserGroup.class, userGroupId ).getVisibleGroups( pm );
+		visibleGroups.removeAll(author.getGroups()); //to avoid duplicates
+		visibleGroups.addAll(author.getGroups());
 		createDate = lastUpdate = (int) (System.currentTimeMillis() / 1000);
 	}
 
