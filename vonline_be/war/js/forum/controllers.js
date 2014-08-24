@@ -337,7 +337,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.pageTitle = "Новости";
 
-        base.user = userClient.getShortUserInfo();
+        base.user = shortUserInfo;
 
         base.bufferSelectedGroup = userClientGroups[1];
 
@@ -1052,8 +1052,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('rightBarController',function($rootScope) {
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = true;
 
-        if($rootScope.importantTopics.topics) {
+        /*if($rootScope.importantTopics.topics) {
 
             var importantTopicsLen = $rootScope.importantTopics.topics.length;
             for (var i = 0; i < importantTopicsLen; i++) {
@@ -1066,7 +1067,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 }
 
             }
-        }
+        }*/
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -1082,6 +1083,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             loadedLength = 10;
 
         lenta.selectedGroupInTop = $rootScope.currentGroup;
+
+        if(!$rootScope.importantIsLoadedFromTop)
+        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
 
         lenta.attachId = "0";
         $rootScope.base.initStartParamsForCreateTopic(lenta);
@@ -1417,6 +1422,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
 
+            if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+            $rootScope.importantIsLoadedFromTop = false;
+
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
             initTalks();
@@ -1471,6 +1480,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         talk.attachId = "00";
         talk.selectedGroup = $rootScope.currentGroup;
+
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
+
         talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
@@ -1722,6 +1736,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.isFooterBottom = false;
         showGroupOverBuilding($rootScope.groups);
 
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
+
         /*initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений*/
         initFancyBox($('.adverts'));
@@ -1787,6 +1805,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.lastLoadedId = 0;
         $rootScope.base.isEarliestMessages = false;
         $rootScope.base.endOfLoaded = false;
+
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
 
         advert.attachId = "00000";
         advert.selectedGroup = $rootScope.currentGroup;

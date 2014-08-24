@@ -197,7 +197,8 @@
                             </div>
                             <div class="importantly-right">
                                 <h3>{{importantTopic.userInfo.firstName}}</h3>
-                                <p>{{ importantTopic.sliceContent }}</p>
+                                <p ng-show="importantTopic.message.content.length <= 50">{{ importantTopic.message.content }}</p>
+                                <p ng-hide="importantTopic.message.content.length <= 50">{{ importantTopic.message.content.slice(0,50)+"..." }}</p>
 
                                 <div ng-switch on="importantTopic.message.type" >
 
