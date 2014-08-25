@@ -37,15 +37,15 @@
                                         <div ng-switch-when="message">
 
                                             <div ng-if="talks.fullTalkTopic.message.content.length < base.contentLength">
-                                                <div class="text">{{talks.fullTalkTopic.message.content}}</div>
+                                                <div class="text" ng-bind-html="talks.fullTalkTopic.message.content"></div>
                                             </div>
                                             <div ng-if="talks.fullTalkTopic.message.content.length >= base.contentLength">
                                                 <div class="text" ng-hide="talks.fullTalkTopic.message.isFullText">
-                                                    {{talks.fullTalkTopic.message.content.slice(0,base.contentLength-1)}}
+                                                    <div ng-bind-html="talks.fullTalkTopic.message.content.slice(0,base.contentLength-1)"></div>
                                                     <div><a href="#" ng-click="base.toggleFullText(talks.fullTalkTopic.message)">читать далее...</a></div>
                                                 </div>
                                                 <div class="text" ng-show="talks.fullTalkTopic.message.isFullText">
-                                                    {{talks.fullTalkTopic.message.content}}
+                                                    <div ng-bind-html="talks.fullTalkTopic.message.content"></div>
                                                     <div><a href="#" ng-click="base.toggleFullText(talks.fullTalkTopic.message)">свернуть</a></div>
                                                 </div>
                                             </div>
@@ -116,6 +116,7 @@
                                         </div>
                                 </div>
                             </div>
+                            <div class="clearfix"></div>
                             <div class="answer-input" ng-show="talks.fullTalkTopic.answerInputIsShow && !talks.fullTalkTopic.isEdit">
                                 <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=talks; ctrlId = talks.fullTalkTopic.id; initCreateMessage(ctrlId);"></div>
 
@@ -148,15 +149,15 @@
                                             <div ng-hide="firstMessage.isEdit">
 
                                                 <div ng-if="firstMessage.content.length < base.contentLength">
-                                                    <div class="text">{{firstMessage.content}}</div>
+                                                    <div class="text" ng-bind-html="firstMessage.content"></div>
                                                 </div>
                                                 <div ng-if="firstMessage.content.length >= base.contentLength">
                                                     <div class="text" ng-hide="firstMessage.isFullText">
-                                                        {{firstMessage.content.slice(0,base.contentLength-1)}}
+                                                        <div ng-bind-html="firstMessage.content.slice(0,base.contentLength-1)"></div>
                                                         <div><a href="#" ng-click="base.toggleFullText(firstMessage)">читать далее...</a></div>
                                                     </div>
                                                     <div class="text" ng-show="firstMessage.isFullText">
-                                                        {{firstMessage.content}}
+                                                        <div ng-bind-html="firstMessage.content"></div>
                                                         <div><a href="#" ng-click="base.toggleFullText(firstMessage)">свернуть</a></div>
                                                     </div>
                                                 </div>
@@ -203,6 +204,7 @@
                                                 <div class="topic-left">
                                                     <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
                                                         <div class="avatar short2" style="background-image: url({{message.userInfo.avatar}})"></div>
+                                                    </a>
                                                     <div class="topic-author" ng-show="message.childCount && message.childCount != 0">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="talks.toggleTree($event,message,firstMessage)"></a>
@@ -220,15 +222,15 @@
                                                     <div ng-hide="message.isEdit">
 
                                                         <div ng-if="message.content.length < base.contentLength">
-                                                            <div class="text">{{message.content}}</div>
+                                                            <div class="text" ng-bind-html="message.content"></div>
                                                         </div>
                                                         <div ng-if="message.content.length >= base.contentLength">
                                                             <div class="text" ng-hide="message.isFullText">
-                                                                {{message.content.slice(0,base.contentLength-1)}}
+                                                                <div ng-bind-html="message.content.slice(0,base.contentLength-1)"></div>
                                                                 <div><a href="#" ng-click="base.toggleFullText(message)">читать далее...</a></div>
                                                             </div>
                                                             <div class="text" ng-show="message.isFullText">
-                                                                {{message.content}}
+                                                                <div ng-bind-html="message.content"></div>
                                                                 <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
                                                             </div>
                                                         </div>

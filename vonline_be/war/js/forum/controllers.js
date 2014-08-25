@@ -1,8 +1,8 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
-    .controller('baseController',function($rootScope,$state) {
+angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'])
+    .controller('baseController',function($rootScope,$state,$filter) {
         $rootScope.isTopSearchShow = true;
         var base = this;
         base.neighboursLoadStatus = "";
@@ -275,7 +275,22 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             if(message.isEdit){
                 message.isEdit = false;
 
+                if(isTopic){
+                    message.message.content = getStrFromHTMLCode($filter('linky')(message.message.content, 'blank'));
+                    message.message.content = withTags(message.message.content);
+                }else{
+                    message.content = getStrFromHTMLCode($filter('linky')(message.commentText, 'blank'));
+                    message.content = withTags(message.content);
+                }
+
             }else{
+
+                if(isTopic){
+                    message.message.content = withoutTags(message.message.content);
+                }else{
+                    message.commentText = withoutTags(message.content);
+                }
+
                 var el = event.target;
 
                 var h0 = $(el).closest('.text-container').find('.text:eq(0)').height(),
@@ -307,6 +322,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 message.answerShow = true;
                 message.commentText = message.content;
                 message.isTalk = true;
+            }
+
+            if(message.isEdit) {
+                // здесь рассматривается ситуация когда мы возвращаемся из редактирования,
+                // но выше мы уже переключиди флаг, поэтому пишу message.isEdit, а не !message.isEdit
+                if (isTopic) {
+                    message.message.content = withoutTags(message.message.content);
+                } else {
+                    message.commentText = withoutTags(message.content);
+                }
             }
 
         };
@@ -506,15 +531,15 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             }else {
 
-                if (talk.content == TEXT_DEFAULT_3 && (talk.attachedImages || talk.attachedDocs || talk.isPollShow)) {
-                    talk.content = "";
+                if (talk.message.content == TEXT_DEFAULT_3 && (talk.attachedImages || talk.attachedDocs || talk.isPollShow)) {
+                    talk.message.content = "";
                 }
                 talk.isCreateTalkError = false;
 
                 var isWall = 0, isAdvert = false;
                 if(talk.isAdvert) isAdvert = true;
 
-                var newTopic = postTopic(talk, isWall,isAdvert);
+                var newTopic = postTopic(talk, isWall,isAdvert,$filter);
 
                 if(newTopic.poll && talk.poll) talk.poll.pollId = newTopic.poll.pollId;
 
@@ -566,7 +591,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                 ctrl.isCreateMessageError = false;
 
                 var isWall = 1,
-                newTopic = postTopic(ctrl, isWall);
+                newTopic = postTopic(ctrl, isWall,false,$filter);
 
                 if (ctrl.isEdit) {
                     cleanAttached($('#attach-area-edit-' + ctrl.id));
@@ -607,7 +632,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             wallItem.groupId = $rootScope.base.bufferSelectedGroup.id;
 
             var isWall = true,
-                message = postMessage(wallItem, isWall);
+                message = postMessage(wallItem, isWall,false,$filter);
 
             if(message == 0){
                 wallItem.isCreateCommentError = true;
@@ -633,7 +658,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             var isWall = false,
                 isFirstLevel = true,
-                newMessage = postMessage(talk,isWall,isFirstLevel);
+                newMessage = postMessage(talk,isWall,isFirstLevel,$filter);
 
             if(newMessage == 0){
                 talk.isCreateFirstMessageError = true;
@@ -723,7 +748,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             talk.parentId = parentId;
             talk.commentText = answer;
 
-            newMessage = postMessage(talk,isWall,isFirstLevel);
+            newMessage = postMessage(talk,isWall,isFirstLevel,$filter);
 
             if(newMessage == 0){
                 if(!message){
@@ -779,6 +804,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     attach = attachImg.concat(attachDoc);
 
                     // еще attach
+                    ctrl.commentText = getStrFromHTMLCode($filter('linky')(ctrl.commentText,'blank'));
+                    ctrl.commentText = withTags(ctrl.commentText);
                     dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText,attach);
 
                     cleanAttached($('#attach-area-edit-'+ctrl.attachId));
@@ -805,6 +832,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
                     newDialogMessage.created = Date.parse(new Date()) / 1000;
                     newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
 
+                    newDialogMessage.content = getStrFromHTMLCode($filter('linky')(newDialogMessage.content,'blank'));
+                    newDialogMessage.content = withTags(newDialogMessage.content);
                     var tempMessage = dialogClient.postMessage(ctrl.dialogId, newDialogMessage.content, attach);
 
                     newDialogMessage.images = tempMessage.images;
@@ -1062,9 +1091,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        /*for(var i; i < wallItemsLength; i++){
-            lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
-        }*/
+        for(var i = 0 ; i < wallItemsLength; i++){
+            //alert(lenta.wallItems[i].topic.message.content.indexOf('\n'));
+            //lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
+        }
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
         //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
@@ -1290,32 +1320,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
 
         };
-
-/*        wallSingle.createWallComment = function(event,wallItem){
-            event.preventDefault();
-
-            wallItem.groupId = $rootScope.currentGroup.id;
-
-            var isWall = true,
-                message = postMessage(wallItem, isWall);
-
-            if(message == 0){
-                wallItem.isCreateCommentError = true;
-                wallItem.createCommentErrorText = "Вы не ввели сообщение";
-            }else {
-                wallItem.isCreateCommentError = false;
-
-                if (wallItem.messages) {
-                    wallItem.messages.push(message);
-                } else {
-                    wallItem.messages = [];
-                    wallItem.messages[0] = message;
-                }
-
-                wallItem.answerShow = false;
-            }
-
-        };*/
 
         $('.ng-cloak').removeClass('ng-cloak');
     })
@@ -1563,7 +1567,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        talk.toggleTreeFirstMessage = function($event,firstMessage){
+        talk.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1590,7 +1594,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        talk.toggleTree = function($event,message,firstMessage){
+        talk.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -1888,7 +1892,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        advert.toggleTreeFirstMessage = function($event,firstMessage){
+        advert.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1915,7 +1919,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        advert.toggleTree = function($event,message,firstMessage){
+        advert.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!advert.fullTalkMessages[firstMessage.id]) advert.fullTalkMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -2859,26 +2863,78 @@ transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
-function replaceLink(str){
-    var strArr = str.split(" "),
+function withTags(str){
+    var result = str.replace(/&#10;/g,' <br> '); // пробел после <br> специально, чтобы не слипался с ссылками
+    result = result.replace(/&lt;br&gt;/g,' <br> ');
+    result = result.replace(/\n/g,' <br> ');
+        /*var strArr = result.split(" "),
         len = strArr.length,
-        tempStr, result = "";
+        tempStr;
 
+    result = "";
     for(var i = 0; i < len; i++){
         if(strArr[i].indexOf("http://") != -1 || strArr[i].indexOf("https://") != -1){
             //tempStr = "<a href='"+ strArr[i] +"' target='_blank'>"+strArr[i]+"</a>";
             tempStr = strArr[i].link(strArr[i]);
 
-            //tempStr = '<div>'+strArr[i]+'</div>';
             strArr[i] = tempStr;
         }
 
         result += strArr[i]+" ";
+    }*/
+
+
+   return result;
+
+}
+function withoutTags(str){
+    var result = str.replace(/<br>/g,'\n');
+        result = result.replace(/&lt;br&gt;/g,'\n');
+        result = result.replace(/<[^>]+>/g,'');
+    return result;
+}
+function getStrFromHTMLCode(str){
+    alert(str);
+    var strArr = str.split(';'),
+    len = strArr.length,
+        symb = [], counter = 0,result = "";
+
+    for(var i = 0; i < len; i++){
+        var strArr2 = strArr[i].split(" "),
+            len2 = strArr2.length;
+
+        if(len2 == 1) {
+            if (strArr2[0].indexOf('&') != -1) {
+                //alert(strArr2[0].substr(-4) == '&#10');
+                if(strArr2[0].substr(-4) != '&#10'){
+                    symb[counter] = String.fromCharCode(strArr2[0].substring(2));
+                    //alert("0 "+strArr2[0].substring(2)+" "+String.fromCharCode(strArr2[0].substring(2))+" "+symb[counter]);
+                }else{
+                    symb[counter] = strArr2[0].substring(0,strArr2[0].length-4)+'\n';
+                    //alert("1 "+strArr2[0].substring(2)+" "+String.fromCharCode(strArr2[0].substring(2))+" "+symb[counter]);
+                }
+            } else {
+                symb[counter] = strArr[i];
+            }
+            result += symb[counter++];
+        }else{
+            for(var j = 0; j < len2; j++){
+                if (strArr2[j].indexOf('&') != -1) {
+                    if(strArr2[0].substr(-4) != '&#10'){
+                        symb[counter] = String.fromCharCode(strArr2[j].substring(2));
+                    }else{
+                        symb[counter] = strArr2[j].substring(0,strArr2[j].length-4)+'\n';
+                    }
+                } else {
+                    symb[counter] = strArr2[j];
+                }
+                (j == len2-1) ? result += symb[counter++] : result += symb[counter++]+" ";
+            }
+        }
     }
 
-    //alert(result);
+    //return symb.join('');
     return result;
-
 }
 function getDefaultGroup(groups){
     var len = groups.length;
@@ -3177,7 +3233,6 @@ function getLabel(groupsArray,groupType){
 
         if(groupsArray[i].type == groupType){
             label = groupsArray[i].visibleName;
-            //alert(groupsArray[i].visibleName+" "+groupType);
         }
     }
 
@@ -3224,7 +3279,7 @@ function getTagColor(labelName){
     return color;
 }
 
-function postTopic(obj,isWall,isAdverts){
+function postTopic(obj,isWall,isAdverts,$filter){
     if(obj.id){
         // значит редактирование
         if (obj.isPollShow) {
@@ -3258,6 +3313,9 @@ function postTopic(obj,isWall,isAdverts){
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
 
+        obj.message.content = getStrFromHTMLCode($filter('linky')(obj.message.content, 'blank'));
+        obj.message.content = withTags(obj.message.content);
+
         obj.label = getLabel(userClientGroups,obj.selectedGroup.type);
         obj.tagColor = getTagColor(obj.label);
 
@@ -3290,8 +3348,17 @@ function postTopic(obj,isWall,isAdverts){
         newTopic.message = new com.vmesteonline.be.messageservice.Message();
         newTopic.message.groupId = obj.selectedGroup.id;
         newTopic.message.type = messageType;
-        //newTopic.message.content = replaceLink(messageContent);
-        newTopic.message.content = messageContent;
+
+        messageContent = getStrFromHTMLCode($filter('linky')(messageContent, 'blank'));
+        alert(messageContent);
+        newTopic.message.content = withTags(messageContent);
+        alert(newTopic.message.content);
+        //newTopic.message.content = messageContent;
+        //alert(newTopic.message.content);
+        //newTopic.message.content = $filter('linky')(messageContent, 'blank');
+
+        //alert(newTopic.message.content);
+
         newTopic.message.images = obj.attachedImages;
         newTopic.message.documents = obj.attachedDocs;
         newTopic.message.id = 0;
@@ -3323,6 +3390,7 @@ function postTopic(obj,isWall,isAdverts){
             newTopic.metaType = "poll";
         }
 
+        //alert(newTopic.message.content);
         var tempTopic = messageClient.postTopic(newTopic);
         newTopic.id = tempTopic.id;
         newTopic.message.images = tempTopic.message.images;
@@ -3347,7 +3415,7 @@ function postTopic(obj,isWall,isAdverts){
 
 }
 
-function postMessage(obj,isWall,isFirstLevel){
+function postMessage(obj,isWall,isFirstLevel,$filter){
     if((obj.id && obj.isEdit) || (obj.message && obj.message.isEdit)){
         // значит редактирование
 
@@ -3370,7 +3438,6 @@ function postMessage(obj,isWall,isFirstLevel){
         message.images = getAttachedImages($('#attach-area-edit-' + attachId));
         message.documents = getAttachedDocs($('#attach-doc-area-edit-' + attachId),true);
 
-
         if (message.content == "" && message.images.length == 0 && (message.documents === undefined || message.documents.length == 0)) {
 
             return 0;
@@ -3379,6 +3446,9 @@ function postMessage(obj,isWall,isFirstLevel){
             try {
                 // try на случай если топик был удален создателем, а юзер пытается
                 // его комментировать
+
+                message.content = getStrFromHTMLCode($filter('linky')(message.content,'blank'));
+                message.content = withTags(message.content);
                 var newMessage = messageClient.postMessage(message);
             }catch(e){
                 document.location.replace('/');
@@ -3442,6 +3512,9 @@ function postMessage(obj,isWall,isFirstLevel){
             if (message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
                 message.content = "";
             }
+
+            message.content = getStrFromHTMLCode($filter('linky')(message.content,'blank'));
+            message.content = withTags(message.content);
 
             try {
                 newMessage = messageClient.postMessage(message);
