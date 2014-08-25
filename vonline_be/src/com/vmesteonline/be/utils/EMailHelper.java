@@ -1,13 +1,15 @@
 package com.vmesteonline.be.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
-import com.google.appengine.api.mail.*;
-import com.google.appengine.api.mail.MailService.Message;
+import org.hamcrest.core.IsInstanceOf;
+
 import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.jdo2.VoUser;
 
@@ -20,19 +22,50 @@ public class EMailHelper {
 	public static void sendSimpleEMail( String from, String to, String subject, String body) throws IOException {
 		
 		logger.fine("Try to send MEssage to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
-		MailService mailService = MailServiceFactory.getMailService();
+		
+		try {
+	    URL url = new URL("https://mail.vmesteonline.ru/send.php"
+	    		+ "?from="+ URLEncoder.encode(fromAddress, "UTF-8") 
+	    		+"&to="+URLEncoder.encode(to, "UTF-8")
+	    		+"&cc="+URLEncoder.encode(fromAddress, "UTF-8")
+	    		+"&subject="+URLEncoder.encode(subject, "UTF-8")
+	    		+"&body="+URLEncoder.encode(body, "UTF-8"));
+	    InputStream is = url.openConnection().getInputStream();
+	    StringBuffer sb = new StringBuffer();
+	    byte[] buff = new byte[1024];
+	    int read;
+	    while( -1 != (read = is.read(buff))){
+	    	sb.append( new String(buff, 0, read));
+	    }
+	    if( sb.toString().equals("OK")){
+	    	logger.fine("MEssage sent to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
+	    	if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
+	  			logger.fine("MEssage body was: "+body);
+	  		}
+	    	return;
+	    } else {
+	    	logger.fine("MEssage script returns:'"+sb+"'");
+	    	
+	    }
+	    
+	    
+		} catch (Exception e) {
+			logger.severe("Failed to send message '"+to+"' from '"+fromAddress+"' " +e.getMessage());
+		} 
+		
+		/*MailService mailService = MailServiceFactory.getMailService();
 		Message message = new Message(from, to, subject, body);
 		message.setBcc( Arrays.asList( new String[]{fromAddress}));
 		message.setHtmlBody(body);
 		mailService.send(message);
 		logger.fine("MEssage sent to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
-		if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
+  	if (SystemProperty.environment.value() != SystemProperty.Environment.Value.Production) {
 			logger.fine("MEssage body was: "+body);
-		}
+		}*/
 	}
 	
 	public static void sendSimpleEMail( VoUser to, String subject, String body) throws IOException {
-		sendSimpleEMail( URLEncoder.encode(to.getName() + " " + to.getLastName(), "UTF-8") + " <"+to.getEmail()+">", 
+		sendSimpleEMail( to.getName() + " " + to.getLastName() + " <"+to.getEmail()+">", 
 				subject, body);
 	}
 	
