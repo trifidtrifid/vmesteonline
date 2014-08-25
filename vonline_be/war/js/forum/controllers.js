@@ -3177,7 +3177,6 @@ function getLabel(groupsArray,groupType){
 
         if(groupsArray[i].type == groupType){
             label = groupsArray[i].visibleName;
-            //alert(groupsArray[i].visibleName+" "+groupType);
         }
     }
 
@@ -3323,6 +3322,7 @@ function postTopic(obj,isWall,isAdverts){
             newTopic.metaType = "poll";
         }
 
+        alert(newTopic.message.content);
         var tempTopic = messageClient.postTopic(newTopic);
         newTopic.id = tempTopic.id;
         newTopic.message.images = tempTopic.message.images;
