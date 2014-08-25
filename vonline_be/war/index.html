@@ -25,7 +25,7 @@
 
         var href = document.location.href;
 
-        if(href.indexOf('https') == -1 && (href.indexOf('127.0.0.1') == -1 && href.indexOf('localhost') == -1) && href.indexOf('appspot.com') == -1))
+        if(href.indexOf('https') == -1 && (href.indexOf('127.0.0.1') == -1 && href.indexOf('localhost') == -1) && href.indexOf('appspot.com') == -1)
         document.location.replace('https://www.vmesteonline.ru');
 
         var transport = new Thrift.Transport("/thrift/AuthService");
