@@ -1563,7 +1563,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        talk.toggleTreeFirstMessage = function($event,firstMessage){
+        talk.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1590,7 +1590,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        talk.toggleTree = function($event,message,firstMessage){
+        talk.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -1888,7 +1888,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        advert.toggleTreeFirstMessage = function($event,firstMessage){
+        advert.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1915,7 +1915,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        advert.toggleTree = function($event,message,firstMessage){
+        advert.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!advert.fullTalkMessages[firstMessage.id]) advert.fullTalkMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -3322,7 +3322,7 @@ function postTopic(obj,isWall,isAdverts){
             newTopic.metaType = "poll";
         }
 
-        alert(newTopic.message.content);
+        //alert(newTopic.message.content);
         var tempTopic = messageClient.postTopic(newTopic);
         newTopic.id = tempTopic.id;
         newTopic.message.images = tempTopic.message.images;
