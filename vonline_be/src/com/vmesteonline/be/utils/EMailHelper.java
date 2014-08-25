@@ -1,10 +1,13 @@
 package com.vmesteonline.be.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.logging.Logger;
 
@@ -24,13 +27,26 @@ public class EMailHelper {
 		logger.fine("Try to send MEssage to '"+to+"' from '"+fromAddress+"' Subj: '"+subject+"'");
 		
 		try {
-	    URL url = new URL("https://mail.vmesteonline.ru/send.php"
-	    		+ "?from="+ URLEncoder.encode(fromAddress, "UTF-8") 
+	    URL url = new URL("https://mail.vmesteonline.ru/send.php");
+	    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+	    con.setRequestMethod("POST");
+	    
+	    String urlParameters =  "from="+ URLEncoder.encode(fromAddress, "UTF-8") 
 	    		+"&to="+URLEncoder.encode(to, "UTF-8")
 	    		+"&cc="+URLEncoder.encode(fromAddress, "UTF-8")
 	    		+"&subject="+URLEncoder.encode(subject, "UTF-8")
-	    		+"&body="+URLEncoder.encode(body, "UTF-8"));
-	    InputStream is = url.openConnection().getInputStream();
+	    		+"&body="+URLEncoder.encode(body, "UTF-8");
+	    con.addRequestProperty("Content-Length", ""+urlParameters.length());
+	    
+			// Send post request
+			con.setDoOutput(true);
+			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+	    
+	 
+	    InputStream is = con.getInputStream();
 	    StringBuffer sb = new StringBuffer();
 	    byte[] buff = new byte[1024];
 	    int read;
