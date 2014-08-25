@@ -44,8 +44,13 @@ $(document).ready(function(){
     }else{
         // если страница регистрации или логина
         URL = document.location.hash;
-
         var href = document.location.href;
+
+        if(!URL) {
+            if(href.indexOf('https') == -1 && (href.indexOf('127.0.0.1') == -1 && href.indexOf('localhost') == -1))
+                document.location.replace('https://www.vmesteonline.ru/login');
+        }
+
         var hrefInd = href.indexOf("/",9);
         $('input[name="redirect_uri"]').val(href.substring(0,hrefInd)+"/oauth");
 

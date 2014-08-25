@@ -35,15 +35,15 @@
                                         <div ng-switch-when="message">
 
                                             <div ng-if="adverts.fullTalkTopic.message.content.length < base.contentLength">
-                                                <div class="text">{{adverts.fullTalkTopic.message.content}}</div>
+                                                <div class="text" ng-bind-html="adverts.fullTalkTopic.message.content | linky"></div>
                                             </div>
                                             <div ng-if="adverts.fullTalkTopic.message.content.length >= base.contentLength">
                                                 <div class="text" ng-hide="adverts.fullTalkTopic.message.isFullText">
-                                                    {{adverts.fullTalkTopic.message.content.slice(0,base.contentLength-1)}}
+                                                    <div ng-bind-html="adverts.fullTalkTopic.message.content.slice(0,base.contentLength-1) | linky"></div>
                                                     <div><a href="#" ng-click="base.toggleFullText(adverts.fullTalkTopic.message)">читать далее...</a></div>
                                                 </div>
                                                 <div class="text" ng-show="adverts.fullTalkTopic.message.isFullText">
-                                                    {{adverts.fullTalkTopic.message.content}}
+                                                    <div ng-bind-html="adverts.fullTalkTopic.message.content | linky"></div>
                                                     <div><a href="#" ng-click="base.toggleFullText(adverts.fullTalkTopic.message)">свернуть</a></div>
                                                 </div>
                                             </div>
@@ -141,16 +141,17 @@
                                             <h2><a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">{{ firstMessage.userInfo.firstName +" "+ firstMessage.userInfo.lastName}}</a></h2>
 
                                             <div ng-hide="firstMessage.isEdit">
+
                                                 <div ng-if="firstMessage.content.length < base.contentLength">
-                                                    <div class="text">{{firstMessage.content}}</div>
+                                                    <div class="text" ng-bind-html="firstMessage.content | linky"></div>
                                                 </div>
                                                 <div ng-if="firstMessage.content.length >= base.contentLength">
                                                     <div class="text" ng-hide="firstMessage.isFullText">
-                                                        {{firstMessage.content.slice(0,base.contentLength-1)}}
+                                                        <div ng-bind-html="firstMessage.content.slice(0,base.contentLength-1) | linky"></div>
                                                         <div><a href="#" ng-click="base.toggleFullText(firstMessage)">читать далее...</a></div>
                                                     </div>
                                                     <div class="text" ng-show="firstMessage.isFullText">
-                                                        {{firstMessage.content}}
+                                                        <div ng-bind-html="firstMessage.content | linky"></div>
                                                         <div><a href="#" ng-click="base.toggleFullText(firstMessage)">свернуть</a></div>
                                                     </div>
                                                 </div>
@@ -195,6 +196,7 @@
                                                 <div class="topic-left">
                                                     <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
                                                         <div class="avatar short2" style="background-image: url({{message.userInfo.avatar}})"></div>
+                                                    </a>
                                                     <div class="topic-author" ng-show="message.childCount && message.childCount != 0">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"
                                                            ng-click="adverts.toggleTree($event,message,firstMessage)"></a>
@@ -209,16 +211,17 @@
                                                     <h2><a ui-sref="profile({ userId : {{ message.userInfo.id }} })">{{message.userInfo.firstName+" "+message.userInfo.lastName}}</a></h2>
 
                                                     <div ng-hide="message.isEdit">
+
                                                         <div ng-if="message.content.length < base.contentLength">
-                                                            <div class="text">{{message.content}}</div>
+                                                            <div class="text" ng-bind-html="message.content | linky"></div>
                                                         </div>
                                                         <div ng-if="message.content.length >= base.contentLength">
                                                             <div class="text" ng-hide="message.isFullText">
-                                                                {{message.content.slice(0,base.contentLength-1)}}
+                                                                <div ng-bind-html="message.content.slice(0,base.contentLength-1) | linky"></div>
                                                                 <div><a href="#" ng-click="base.toggleFullText(message)">читать далее...</a></div>
                                                             </div>
                                                             <div class="text" ng-show="message.isFullText">
-                                                                {{message.content}}
+                                                                <div ng-bind-html="message.content | linky"></div>
                                                                 <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
                                                             </div>
                                                         </div>

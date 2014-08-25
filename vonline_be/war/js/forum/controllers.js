@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'])
     .controller('baseController',function($rootScope,$state) {
         $rootScope.isTopSearchShow = true;
         var base = this;
@@ -268,20 +268,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-/*        var func = function(el,message){
-            var h = $(el).closest('.text-container').find('.text:eq(1)').height()+24;
-            $(el).closest('.text-container').find('.text:eq(1)').height();
-            alert('1');
-            message.isEdit = true;
-            alert(message.isEdit);
-
-            if(message.answerInputIsShow) message.answerInputIsShow = false;
-
-            if(h < TEXTAREA_DEFAULT_HEIGHT) h = TEXTAREA_DEFAULT_HEIGHT;
-
-            $(el).closest('.text-container').find('.edit-message textarea').height(h+'px');
-        };*/
-
         base.setEdit = function(event,message,isNeedAnswerShow){
             var isTopic;
             (message.message) ? isTopic = true : isTopic = false;
@@ -291,16 +277,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             }else{
                 var el = event.target;
-
-                //message.isFullText = true;
-                //setTimeout(func,100,el,message);
-
-                /*alert(h);
-                setTimeout(func,1000,el);
-                message.isFullText = false;*/
-
-                //alert($(el).closest('.text-container').find('.text:eq(1)').height());
-                //$(el).closest('.text-container').find('.text:eq(1)').css('display','block !important');
 
                 var h0 = $(el).closest('.text-container').find('.text:eq(0)').height(),
                     h1 = $(el).closest('.text-container').find('.text:eq(1)').height(),
@@ -337,7 +313,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         base.pageTitle = "Новости";
 
-        base.user = userClient.getShortUserInfo();
+        base.user = shortUserInfo;
 
         base.bufferSelectedGroup = userClientGroups[1];
 
@@ -1052,21 +1028,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
     .controller('rightBarController',function($rootScope) {
 
         $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-
-        if($rootScope.importantTopics.topics) {
-
-            var importantTopicsLen = $rootScope.importantTopics.topics.length;
-            for (var i = 0; i < importantTopicsLen; i++) {
-                $rootScope.importantTopics.topics[i].sliceContent =
-                    $rootScope.importantTopics.topics[i].message.content;
-
-                if ($rootScope.importantTopics.topics[i].message.content.length > 50) {
-                    $rootScope.importantTopics.topics[i].sliceContent =
-                        $rootScope.importantTopics.topics[i].message.content.slice(0, 50) + "...";
-                }
-
-            }
-        }
+        $rootScope.importantIsLoadedFromTop = true;
 
         $('.ng-cloak').removeClass('ng-cloak');
 
@@ -1083,6 +1045,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         lenta.selectedGroupInTop = $rootScope.currentGroup;
 
+        if(!$rootScope.importantIsLoadedFromTop)
+        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
+
         lenta.attachId = "0";
         $rootScope.base.initStartParamsForCreateTopic(lenta);
 
@@ -1096,9 +1062,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        /*for(var i; i < wallItemsLength; i++){
-            lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
-        }*/
+        for(var i = 0 ; i < wallItemsLength; i++){
+            //alert(lenta.wallItems[i].topic.message.content.indexOf('\n'));
+            //lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
+        }
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
         //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
@@ -1417,6 +1384,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
             $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
 
+            if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+            $rootScope.importantIsLoadedFromTop = false;
+
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
             initTalks();
@@ -1471,6 +1442,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         talk.attachId = "00";
         talk.selectedGroup = $rootScope.currentGroup;
+
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
+
         talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
         talk.fullTalkTopic = {};
         talk.fullTalkMessages = {};
@@ -1588,7 +1564,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        talk.toggleTreeFirstMessage = function($event,firstMessage){
+        talk.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1615,7 +1591,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        talk.toggleTree = function($event,message,firstMessage){
+        talk.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!talk.fullTalkMessages[firstMessage.id]) talk.fullTalkMessages[firstMessage.id] = messageClient.getMessages(talkId,talk.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -1722,6 +1698,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.isFooterBottom = false;
         showGroupOverBuilding($rootScope.groups);
 
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
+
         /*initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений*/
         initFancyBox($('.adverts'));
@@ -1787,6 +1767,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         $rootScope.base.lastLoadedId = 0;
         $rootScope.base.isEarliestMessages = false;
         $rootScope.base.endOfLoaded = false;
+
+        if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;
 
         advert.attachId = "00000";
         advert.selectedGroup = $rootScope.currentGroup;
@@ -1905,7 +1889,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
             }
         };
 
-        advert.toggleTreeFirstMessage = function($event,firstMessage){
+        advert.toggleTreeFirstMessage = function(event,firstMessage){
             event.preventDefault();
 
             firstMessage.isTreeOpen ?
@@ -1932,7 +1916,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
 
         };
 
-        advert.toggleTree = function($event,message,firstMessage){
+        advert.toggleTree = function(event,message,firstMessage){
             event.preventDefault();
 
             if(!advert.fullTalkMessages[firstMessage.id]) advert.fullTalkMessages[firstMessage.id] = messageClient.getMessages(advertId,advert.selectedGroup.id,1,firstMessage.id,0,1000).messages;
@@ -2876,25 +2860,26 @@ transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
-function replaceLink(str){
-    var strArr = str.split(" "),
+function withTags(str){
+    var result = str.replace(/\n/g,' <br> '), // пробел после <br> специально, чтобы не слипался с ссылками
+        strArr = result.split(" "),
         len = strArr.length,
-        tempStr, result = "";
+        tempStr;
 
+    result = "";
     for(var i = 0; i < len; i++){
         if(strArr[i].indexOf("http://") != -1 || strArr[i].indexOf("https://") != -1){
             //tempStr = "<a href='"+ strArr[i] +"' target='_blank'>"+strArr[i]+"</a>";
             tempStr = strArr[i].link(strArr[i]);
 
-            //tempStr = '<div>'+strArr[i]+'</div>';
             strArr[i] = tempStr;
         }
 
         result += strArr[i]+" ";
     }
 
-    //alert(result);
-    return result;
+
+   return result;
 
 }
 function getDefaultGroup(groups){
@@ -3273,6 +3258,7 @@ function postTopic(obj,isWall,isAdverts){
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
+        //obj.message.content = withTags(obj.message.content);
 
         obj.label = getLabel(userClientGroups,obj.selectedGroup.type);
         obj.tagColor = getTagColor(obj.label);
@@ -3306,8 +3292,12 @@ function postTopic(obj,isWall,isAdverts){
         newTopic.message = new com.vmesteonline.be.messageservice.Message();
         newTopic.message.groupId = obj.selectedGroup.id;
         newTopic.message.type = messageType;
-        //newTopic.message.content = replaceLink(messageContent);
+        //newTopic.message.content = withTags(messageContent);
+        //newTopic.message.content = $filter('linky')(messageContent, 'blank');
         newTopic.message.content = messageContent;
+
+        //alert(newTopic.message.content);
+
         newTopic.message.images = obj.attachedImages;
         newTopic.message.documents = obj.attachedDocs;
         newTopic.message.id = 0;
@@ -3339,6 +3329,7 @@ function postTopic(obj,isWall,isAdverts){
             newTopic.metaType = "poll";
         }
 
+        //alert(newTopic.message.content);
         var tempTopic = messageClient.postTopic(newTopic);
         newTopic.id = tempTopic.id;
         newTopic.message.images = tempTopic.message.images;
@@ -3386,7 +3377,6 @@ function postMessage(obj,isWall,isFirstLevel){
         message.images = getAttachedImages($('#attach-area-edit-' + attachId));
         message.documents = getAttachedDocs($('#attach-doc-area-edit-' + attachId),true);
 
-
         if (message.content == "" && message.images.length == 0 && (message.documents === undefined || message.documents.length == 0)) {
 
             return 0;
@@ -3395,6 +3385,8 @@ function postMessage(obj,isWall,isFirstLevel){
             try {
                 // try на случай если топик был удален создателем, а юзер пытается
                 // его комментировать
+
+                //message.content = withTags(message.content);
                 var newMessage = messageClient.postMessage(message);
             }catch(e){
                 document.location.replace('/');
@@ -3458,6 +3450,8 @@ function postMessage(obj,isWall,isFirstLevel){
             if (message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
                 message.content = "";
             }
+
+            //message.content = withTags(message.content);
 
             try {
                 newMessage = messageClient.postMessage(message);

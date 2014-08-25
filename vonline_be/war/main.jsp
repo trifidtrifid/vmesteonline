@@ -197,7 +197,8 @@
                             </div>
                             <div class="importantly-right">
                                 <h3>{{importantTopic.userInfo.firstName}}</h3>
-                                <p>{{ importantTopic.sliceContent }}</p>
+                                <p ng-show="importantTopic.message.content.length <= 50">{{ importantTopic.message.content }}</p>
+                                <p ng-hide="importantTopic.message.content.length <= 50">{{ importantTopic.message.content.slice(0,50)+"..." }}</p>
 
                                 <div ng-switch on="importantTopic.message.type" >
 
@@ -300,6 +301,8 @@
 <script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
 <script src="js/forum/angular/angular-ui-router.js"></script>
+<script src="js/forum/angular/sanitize.js"></script>
+<script src="js/forum/angular/linky.js"></script>
 
 	<script src="js/forum/app.js"></script>
 

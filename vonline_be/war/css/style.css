@@ -320,7 +320,7 @@ h1 {
 .widget-main {
   overflow: auto;
   padding: 0;
-  padding-bottom: 25px;
+  padding-bottom: 35px;
 }
 .talks-single .widget-main,
 .adverts-single .widget-main {
@@ -904,7 +904,7 @@ h1 {
 .lenta-item .dialogs {
   clear: left;
   margin: 0 0 0 30px;
-  padding-top: 15px;
+  padding-top: 11px;
   padding-right: 0;
 }
 .lenta-item .lenta-item-bottom {
@@ -921,6 +921,11 @@ h1 {
 }
 .lenta-item .wallitem-topic .talks-title {
   border-bottom: 0;
+}
+.lenta .bottom-border-line {
+  height: 1px;
+  background: #5090c1;
+  margin: 0 10px;
 }
 .answer-block {
   width: 100%;
