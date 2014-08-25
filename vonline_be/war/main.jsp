@@ -301,6 +301,8 @@
 <script src="js/forum/directives.js"></script>
 <script src="js/forum/controllers.js"></script>
 <script src="js/forum/angular/angular-ui-router.js"></script>
+<script src="js/forum/angular/sanitize.js"></script>
+<script src="js/forum/angular/linky.js"></script>
 
 	<script src="js/forum/app.js"></script>
 

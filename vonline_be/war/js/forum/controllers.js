@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'])
     .controller('baseController',function($rootScope,$state) {
         $rootScope.isTopSearchShow = true;
         var base = this;
@@ -1062,9 +1062,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll'])
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        /*for(var i; i < wallItemsLength; i++){
-            lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
-        }*/
+        for(var i = 0 ; i < wallItemsLength; i++){
+            //alert(lenta.wallItems[i].topic.message.content.indexOf('\n'));
+            //lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
+        }
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
         //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
@@ -2859,25 +2860,26 @@ transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
-function replaceLink(str){
-    var strArr = str.split(" "),
+function withTags(str){
+    var result = str.replace(/\n/g,' <br> '), // пробел после <br> специально, чтобы не слипался с ссылками
+        strArr = result.split(" "),
         len = strArr.length,
-        tempStr, result = "";
+        tempStr;
 
+    result = "";
     for(var i = 0; i < len; i++){
         if(strArr[i].indexOf("http://") != -1 || strArr[i].indexOf("https://") != -1){
             //tempStr = "<a href='"+ strArr[i] +"' target='_blank'>"+strArr[i]+"</a>";
             tempStr = strArr[i].link(strArr[i]);
 
-            //tempStr = '<div>'+strArr[i]+'</div>';
             strArr[i] = tempStr;
         }
 
         result += strArr[i]+" ";
     }
 
-    //alert(result);
-    return result;
+
+   return result;
 
 }
 function getDefaultGroup(groups){
@@ -3256,6 +3258,7 @@ function postTopic(obj,isWall,isAdverts){
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
+        //obj.message.content = withTags(obj.message.content);
 
         obj.label = getLabel(userClientGroups,obj.selectedGroup.type);
         obj.tagColor = getTagColor(obj.label);
@@ -3289,8 +3292,12 @@ function postTopic(obj,isWall,isAdverts){
         newTopic.message = new com.vmesteonline.be.messageservice.Message();
         newTopic.message.groupId = obj.selectedGroup.id;
         newTopic.message.type = messageType;
-        //newTopic.message.content = replaceLink(messageContent);
+        //newTopic.message.content = withTags(messageContent);
+        //newTopic.message.content = $filter('linky')(messageContent, 'blank');
         newTopic.message.content = messageContent;
+
+        //alert(newTopic.message.content);
+
         newTopic.message.images = obj.attachedImages;
         newTopic.message.documents = obj.attachedDocs;
         newTopic.message.id = 0;
@@ -3370,7 +3377,6 @@ function postMessage(obj,isWall,isFirstLevel){
         message.images = getAttachedImages($('#attach-area-edit-' + attachId));
         message.documents = getAttachedDocs($('#attach-doc-area-edit-' + attachId),true);
 
-
         if (message.content == "" && message.images.length == 0 && (message.documents === undefined || message.documents.length == 0)) {
 
             return 0;
@@ -3379,6 +3385,8 @@ function postMessage(obj,isWall,isFirstLevel){
             try {
                 // try на случай если топик был удален создателем, а юзер пытается
                 // его комментировать
+
+                //message.content = withTags(message.content);
                 var newMessage = messageClient.postMessage(message);
             }catch(e){
                 document.location.replace('/');
@@ -3442,6 +3450,8 @@ function postMessage(obj,isWall,isFirstLevel){
             if (message.content == TEXT_DEFAULT_2 && (message.images.length != 0 || message.documents.length != 0)) {
                 message.content = "";
             }
+
+            //message.content = withTags(message.content);
 
             try {
                 newMessage = messageClient.postMessage(message);
