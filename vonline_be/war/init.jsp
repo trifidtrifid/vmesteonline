@@ -1,13 +1,9 @@
+<%@page import="com.vmesteonline.be.data.PMF"%>
 <%@page import="com.vmesteonline.be.utils.Defaults"%>
+<%@page import="com.vmesteonline.be.utils.VoHelper"%>
+<%@page import="com.google.appengine.api.utils.SystemProperty"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
-<%@ page import="com.vmesteonline.be.Group"%>
-<%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.google.appengine.api.utils.SystemProperty"%>
-<%@ page import="com.google.appengine.api.users.UserService"%>
-<%@ page import="com.google.appengine.api.users.UserServiceFactory"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ page import="javax.jdo.PersistenceManager"%>
 <html>
 
 
@@ -17,10 +13,28 @@
 	<h2>Reset to defaults</h2>
 
 	<%
-	Defaults.initDefaultData();
+	if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
+		if(null==request.getParameter("key")){
+			%>
+			<h1>key parameter required!</h1>
+			<%
+		} else if( VoHelper.checkInitKey(request.getParameter("key"))){
+			Defaults.initDefaultData();
+			%>
+			<h1>Init done!</h1>
+			<%
+		} else {
+			%>
+			<h1>Init key sent!</h1>
+			<%
+		}
+	} else {
+		Defaults.initDefaultData();
 		%>
 		<h1>Init done!</h1>
 		<%
+	}
+		
 	//}
 	%>
 
