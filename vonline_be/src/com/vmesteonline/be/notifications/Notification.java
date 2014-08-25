@@ -227,8 +227,7 @@ public abstract class Notification {
 	static void decorateAndSendMessage(VoUser user, String subject, String body) {
 		body += "<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"http://" + host + "/blog\">блоге</a></p>";
 		try {
-			EMailHelper.sendSimpleEMail(user.getName() + " " + user.getLastName() + " <" + user.getEmail() + ">",
-					"ВместеОнлайн.ру: " + subject, body);
+			EMailHelper.sendSimpleEMail(user,"ВместеОнлайн.ру: " + subject, body);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
