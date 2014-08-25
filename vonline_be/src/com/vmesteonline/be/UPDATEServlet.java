@@ -1,5 +1,7 @@
 package com.vmesteonline.be;
 
+import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+
 import java.io.IOException;
 
 import javax.jdo.PersistenceManager;
@@ -10,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.http.HttpResponse;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskHandle;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
@@ -22,6 +27,14 @@ public class UPDATEServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
+		
+		if( null==arg0.getHeader("X-AppEngine-QueueName")){ //it's not a queue, so run the same request but in the queue
+			Queue queue = QueueFactory.getDefaultQueue();
+			TaskHandle th = queue.add(withUrl(arg0.getRequestURI()));
+			arg1.setStatus(HttpResponse.__200_OK, "OK");
+			arg1.getOutputStream().write(("Pushed to a queue with ID:"+th.toString()).getBytes());
+			return;
+		}
 		PersistenceManager pm = PMF.getPm();
 		pm.setMultithreaded(false);
 		pm.setIgnoreCache(true);
