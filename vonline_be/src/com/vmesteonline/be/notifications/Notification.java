@@ -50,7 +50,7 @@ public abstract class Notification {
 
 	protected static String host;
 	static {
-		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "1-dot-algebraic-depot-657.appspot.com" : "localhost:8888";
+		host = SystemProperty.environment.value() == SystemProperty.Environment.Value.Production ? "www.vmesteonline.ru" : "localhost:8888";
 	}
 
 	public abstract void makeNotification(Set<VoUser> users);

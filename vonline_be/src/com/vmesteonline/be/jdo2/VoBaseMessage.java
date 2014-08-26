@@ -50,6 +50,7 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 		importantNotificationSentDate = 0;
 		importantScore = 0;
 		popularityScore = 0;
+		lastUpdate = (int) (System.currentTimeMillis()/1000L);
 		
 		if (msg.images != null) {
 			List<Attach> savedImages = new ArrayList<Attach>();
@@ -79,6 +80,18 @@ public abstract class VoBaseMessage /*extends GeoLocation*/ {
 		}
 
 	}
+	
+	public int getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(int lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+	
+	@Persistent
+	protected int lastUpdate;
+	
 
 	public void setCreatedAt(int createdAt) {
 		this.createdAt = createdAt;

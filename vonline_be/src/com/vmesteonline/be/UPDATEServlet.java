@@ -106,7 +106,7 @@ public class UPDATEServlet extends HttpServlet {
 			}*/
 			arg1.setStatus(HttpResponse.__200_OK, "OK");
 			if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
-				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "arg0.getRequestURI() finished", "request "+arg0.getRequestURI()+" processed. It tooks "
+				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", arg0.getRequestURI()+" finished", "request "+arg0.getRequestURI()+" processed. It tooks "
 						+(System.currentTimeMillis() - now) +" ms");
 			}
 		} catch( Exception e){

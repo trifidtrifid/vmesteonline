@@ -60,7 +60,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
 	<servlet>
 		<servlet-name>Init</servlet-name>
-		<jsp-file>/init.jsp</jsp-file>
+		<servlet-class>com.vmesteonline.be.InitServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Init</servlet-name>
