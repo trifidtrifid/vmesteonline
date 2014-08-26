@@ -46,6 +46,7 @@
                                                 </div>
                                                 <div class="text" ng-show="talks.fullTalkTopic.message.isFullText">
                                                     <div ng-bind-html="talks.fullTalkTopic.message.content"></div>
+
                                                     <div><a href="#" ng-click="base.toggleFullText(talks.fullTalkTopic.message)">свернуть</a></div>
                                                 </div>
                                             </div>
@@ -158,6 +159,7 @@
                                                     </div>
                                                     <div class="text" ng-show="firstMessage.isFullText">
                                                         <div ng-bind-html="firstMessage.content"></div>
+
                                                         <div><a href="#" ng-click="base.toggleFullText(firstMessage)">свернуть</a></div>
                                                     </div>
                                                 </div>
@@ -222,6 +224,7 @@
                                                     <div ng-hide="message.isEdit">
 
                                                         <div ng-if="message.content.length < base.contentLength">
+
                                                             <div class="text" ng-bind-html="message.content"></div>
                                                         </div>
                                                         <div ng-if="message.content.length >= base.contentLength">
@@ -231,6 +234,7 @@
                                                             </div>
                                                             <div class="text" ng-show="message.isFullText">
                                                                 <div ng-bind-html="message.content"></div>
+
                                                                 <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
                                                             </div>
                                                         </div>

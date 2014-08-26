@@ -35,6 +35,7 @@
                         <div ng-hide="message.isEdit">
 
                             <div ng-if="message.content.length < base.contentLength">
+
                                 <div class="text" ng-bind-html="message.content"></div>
                             </div>
                             <div ng-if="message.content.length >= base.contentLength">
@@ -44,6 +45,7 @@
                                 </div>
                                 <div class="text" ng-show="message.isFullText">
                                     <div ng-bind-html="message.content"></div>
+
                                     <div><a href="#" ng-click="base.toggleFullText(message)">свернуть</a></div>
                                 </div>
                             </div>

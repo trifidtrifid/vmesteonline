@@ -31,6 +31,7 @@
                                 <div ng-hide="wallItem.topic.isEdit">
 
                                     <div ng-if="wallItem.topic.message.content.length < base.contentLength">
+
                                         <div class="text" ng-bind-html="wallItem.topic.message.content"></div>
                                     </div>
                                     <div ng-if="wallItem.topic.message.content.length >= base.contentLength">
@@ -40,6 +41,7 @@
                                         </div>
                                         <div class="text" ng-show="wallItem.topic.isFullText">
                                             <div ng-bind-html="wallItem.topic.message.content"></div>
+
                                             <div><a href="#" ng-click="base.toggleFullText(wallItem.topic)">свернуть</a></div>
                                         </div>
                                     </div>
@@ -130,6 +132,7 @@
                                     <div ng-hide="wallMessage.isEdit">
 
                                         <div ng-if="wallMessage.content.length < base.contentLength">
+
                                             <div class="text" ng-bind-html="wallMessage.content"></div>
                                         </div>
                                         <div ng-if="wallMessage.content.length >= base.contentLength">
@@ -139,6 +142,7 @@
                                             </div>
                                             <div class="text" ng-show="wallMessage.isFullText">
                                                 <div ng-bind-html="wallMessage.content"></div>
+
                                                 <div><a href="#" ng-click="base.toggleFullText(wallMessage)">свернуть</a></div>
                                             </div>
                                         </div>

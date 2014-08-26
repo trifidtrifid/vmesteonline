@@ -3,6 +3,7 @@
 /* Controllers */
 angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'])
     .controller('baseController',function($rootScope,$state,$filter) {
+
         $rootScope.isTopSearchShow = true;
         var base = this;
         base.neighboursLoadStatus = "";
@@ -843,8 +844,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     newDialogMessage.attachId = ctrl.dialogId+"-"+newDialogMessage.id;
 
                     ctrl.privateMessages.unshift(newDialogMessage);
-
                     $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
+
+                    if(ctrl.privateMessages.length == 1){
+                        // на случай если с 0 добавляется более 20 сообщений
+                        // чтобы подгружал от 1го сообщения а не от 0
+                        $rootScope.base.lastLoadedId = newDialogMessage.id;
+                    }
 
                     ctrl.commentText = TEXT_DEFAULT_1;
 
@@ -1213,11 +1219,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                         lastLoadedId = buff[buffLength - 1].topic.id;
 
-                        if( (lastLoadedIdFF != lastLoadedId)) {
-                            //lastLoadedIdFF используется для FF для корректной подгрузки
+                        if(lastLoadedIdFF != lastLoadedId) {
                             initWallItem(buff);
                             lenta.wallItems = lenta.wallItems.concat(buff);
-
                         }
 
                         lastLoadedIdFF = lastLoadedId;
@@ -1676,7 +1680,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         };
 
-        var buff;
+        var buff,
+            lastLoadedIdFF;
         talk.addMoreItems = function(){
             var temp = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
                 buff = temp.messages;
@@ -1686,10 +1691,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 if(buffLength != 0) {
 
                     $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
-                    $rootScope.base.initFirstMessages(buff);
 
-                    talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
+                        $rootScope.base.initFirstMessages(buff);
+                        talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                    }
 
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
 
                 }
             }else{
@@ -2001,7 +2009,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         };
 
-        var buff;
+        var buff,lastLoadedIdFF;
         advert.addMoreItems = function(){
             var temp = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
                 buff = temp.messages;
@@ -2011,10 +2019,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 if(buffLength != 0) {
 
                     $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
-                    $rootScope.base.initFirstMessages(buff);
 
-                    advert.fullTalkFirstMessages = advert.fullTalkFirstMessages.concat(buff);
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
+                        $rootScope.base.initFirstMessages(buff);
+                        advert.fullTalkFirstMessages = advert.fullTalkFirstMessages.concat(buff);
+                    }
 
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
 
                 }
             }else{
@@ -2589,6 +2600,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
+        $rootScope.base.lastLoadedId = 0;
 
         var dialog = this,
             lastLoadedId = 0,
@@ -2613,16 +2625,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
 
             if ($stateParams.dialogId) {
-                console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
+                //console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
                 try {
-                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, lastLoadedId);
+                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, 0);
                 } catch (e) {
                     $state.go('dialogs');
                 }
                 console.log('dialog after');
                 var privateMessagesLength = dialog.privateMessages.length;
 
-                if (privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
+                if (privateMessagesLength != 0) $rootScope.base.lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
 
                 for (var i = 0; i < privateMessagesLength; i++) {
                     dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
@@ -2639,20 +2651,24 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             $state.go('dialogs');
         }
 
+        var lastLoadedIdFF;
         dialog.addMoreItems = function(){
-            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
+            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,$rootScope.base.lastLoadedId);
             if(buff) {
                 var buffLength = buff.length;
 
                 if(buffLength != 0) {
 
-                    lastLoadedId = buff[buffLength - 1].id;
+                    $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
 
-                    for(var i = 0; i < buffLength; i++){
-                        buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
+                        for (var i = 0; i < buffLength; i++) {
+                            buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
+                        }
+                        dialog.privateMessages = dialog.privateMessages.concat(buff);
                     }
 
-                    dialog.privateMessages = dialog.privateMessages.concat(buff);
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
                 }
             }
 
@@ -2877,6 +2893,7 @@ function withTags(str){
     result = result.replace(/&lt;br&gt;/g,' <br> ');
     result = result.replace(/\n/g,' <br> ');
         /*var strArr = result.split(" "),
+
         len = strArr.length,
         tempStr;
 
@@ -2907,6 +2924,7 @@ function getStrFromHTMLCode(str){
     var strArr = str.split(';'),
     len = strArr.length,
         symb = [], counter = 0,result = "";
+
 
     for(var i = 0; i < len; i++){
         var strArr2 = strArr[i].split(" "),
@@ -3321,6 +3339,7 @@ function postTopic(obj,isWall,isAdverts,$filter){
         obj.message.images = obj.attachedImages;
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
+        //obj.message.content = withTags(obj.message.content);
 
         obj.message.content = $filter('linky')(obj.message.content, 'blank');
         obj.message.content = withTags(obj.message.content);
@@ -3451,6 +3470,7 @@ function postMessage(obj,isWall,isFirstLevel,$filter){
 
                 message.content = $filter('linky')(message.content,'blank');
                 message.content = withTags(message.content);
+
                 var newMessage = messageClient.postMessage(message);
             }catch(e){
                 document.location.replace('/');
