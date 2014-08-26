@@ -1,5 +1,6 @@
 package com.vmesteonline.be.utils;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +19,9 @@ import javax.jdo.PersistenceManager;
 
 import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.VoError;
+import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.GeoLocation;
+import com.vmesteonline.be.jdo2.VoInitKey;
 import com.vmesteonline.be.MatrixAsList;
 
 public class VoHelper {
@@ -386,6 +389,27 @@ public class VoHelper {
 		public CacheObjectUnit(int timestamp, T object) {
 			this.timestamp = timestamp;
 			this.object = object;
+		}
+	}
+	
+	public static boolean checkInitKey( String key ){
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoInitKey vik = VoInitKey.getVoInitKey(pm);
+			boolean result = vik.getCode().equals(key);
+			vik.resetCode();
+			pm.makePersistent(vik);
+			if(!result){
+				try {
+					EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "initialization code", vik.getCode());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return result;
+			
+		} finally {
+			pm.close();
 		}
 	}
 }

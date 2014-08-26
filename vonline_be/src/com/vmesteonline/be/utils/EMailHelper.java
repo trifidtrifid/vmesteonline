@@ -1,17 +1,12 @@
 package com.vmesteonline.be.utils;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.logging.Logger;
-
-import org.hamcrest.core.IsInstanceOf;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.jdo2.VoUser;
