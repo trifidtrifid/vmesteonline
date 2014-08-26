@@ -813,8 +813,15 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     newDialogMessage.isDialog = true;
                     newDialogMessage.attachId = ctrl.dialogId+"-"+newDialogMessage.id;
 
-                    ctrl.privateMessages.unshift(newDialogMessage);
+                    /*if (ctrl.privateMessages.length < 20 ||
+                        $rootScope.base.endOfLoaded ) {
 
+                        $rootScope.base.lastLoadedId = newDialogMessage.id;
+                        ctrl.privateMessages.unshift(newDialogMessage);
+                        $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
+
+                    }*/
+                    ctrl.privateMessages.unshift(newDialogMessage);
                     $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
 
                     ctrl.commentText = TEXT_DEFAULT_1;
@@ -1171,6 +1178,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         }
 
+        var lastLoadedIdFF;
         lenta.addMoreItems = function(){
             if(wallItemsLength == 10) {
                 var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
@@ -1181,9 +1189,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     if (buffLength != 0) {
 
                         lastLoadedId = buff[buffLength - 1].topic.id;
-                        initWallItem(buff);
 
-                        lenta.wallItems = lenta.wallItems.concat(buff);
+                        if(lastLoadedIdFF != lastLoadedId) {
+                            initWallItem(buff);
+                            lenta.wallItems = lenta.wallItems.concat(buff);
+                        }
+
+                        lastLoadedIdFF = lastLoadedId;
                     }
                 }
             }
@@ -1664,7 +1676,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         };
 
-        var buff;
+        var buff,
+            lastLoadedIdFF;
         talk.addMoreItems = function(){
             var temp = messageClient.getFirstLevelMessages(talkId,talk.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
                 buff = temp.messages;
@@ -1674,10 +1687,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 if(buffLength != 0) {
 
                     $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
-                    $rootScope.base.initFirstMessages(buff);
 
-                    talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
+                        $rootScope.base.initFirstMessages(buff);
+                        talk.fullTalkFirstMessages = talk.fullTalkFirstMessages.concat(buff);
+                    }
 
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
 
                 }
             }else{
@@ -1989,7 +2005,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         };
 
-        var buff;
+        var buff,lastLoadedIdFF;
         advert.addMoreItems = function(){
             var temp = messageClient.getFirstLevelMessages(advertId,advert.selectedGroup.id,1,$rootScope.base.lastLoadedId,0,10),
                 buff = temp.messages;
@@ -1999,10 +2015,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 if(buffLength != 0) {
 
                     $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
-                    $rootScope.base.initFirstMessages(buff);
 
-                    advert.fullTalkFirstMessages = advert.fullTalkFirstMessages.concat(buff);
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
+                        $rootScope.base.initFirstMessages(buff);
+                        advert.fullTalkFirstMessages = advert.fullTalkFirstMessages.concat(buff);
+                    }
 
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
 
                 }
             }else{
@@ -2601,7 +2620,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
 
             if ($stateParams.dialogId) {
-                console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
+                //console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
                 try {
                     dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, lastLoadedId);
                 } catch (e) {
@@ -2627,6 +2646,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             $state.go('dialogs');
         }
 
+        var lastLoadedIdFF;
         dialog.addMoreItems = function(){
             var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
             if(buff) {
@@ -2636,11 +2656,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                     lastLoadedId = buff[buffLength - 1].id;
 
-                    for(var i = 0; i < buffLength; i++){
-                        buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
+                    if(lastLoadedIdFF != lastLoadedId) {
+                        for (var i = 0; i < buffLength; i++) {
+                            buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
+                        }
+                        dialog.privateMessages = dialog.privateMessages.concat(buff);
                     }
 
-                    dialog.privateMessages = dialog.privateMessages.concat(buff);
+                    lastLoadedIdFF = lastLoadedId;
                 }
             }
 
