@@ -813,16 +813,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     newDialogMessage.isDialog = true;
                     newDialogMessage.attachId = ctrl.dialogId+"-"+newDialogMessage.id;
 
-                    /*if (ctrl.privateMessages.length < 20 ||
-                        $rootScope.base.endOfLoaded ) {
-
-                        $rootScope.base.lastLoadedId = newDialogMessage.id;
-                        ctrl.privateMessages.unshift(newDialogMessage);
-                        $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
-
-                    }*/
                     ctrl.privateMessages.unshift(newDialogMessage);
                     $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
+
+                    if(ctrl.privateMessages.length == 1){
+                        // на случай если с 0 добавляется более 20 сообщений
+                        // чтобы подгружал от 1го сообщения а не от 0
+                        $rootScope.base.lastLoadedId = newDialogMessage.id;
+                    }
 
                     ctrl.commentText = TEXT_DEFAULT_1;
 
@@ -2596,6 +2594,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         initFancyBox($('.dialog'));
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
+        $rootScope.base.lastLoadedId = 0;
 
         var dialog = this,
             lastLoadedId = 0,
@@ -2622,14 +2621,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             if ($stateParams.dialogId) {
                 //console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
                 try {
-                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, lastLoadedId);
+                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, 0);
                 } catch (e) {
                     $state.go('dialogs');
                 }
                 console.log('dialog after');
                 var privateMessagesLength = dialog.privateMessages.length;
 
-                if (privateMessagesLength != 0) lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
+                if (privateMessagesLength != 0) $rootScope.base.lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
 
                 for (var i = 0; i < privateMessagesLength; i++) {
                     dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
@@ -2648,22 +2647,22 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         var lastLoadedIdFF;
         dialog.addMoreItems = function(){
-            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,lastLoadedId);
+            var buff = dialogClient.getDialogMessages($stateParams.dialogId,0,loadedLength,$rootScope.base.lastLoadedId);
             if(buff) {
                 var buffLength = buff.length;
 
                 if(buffLength != 0) {
 
-                    lastLoadedId = buff[buffLength - 1].id;
+                    $rootScope.base.lastLoadedId = buff[buffLength - 1].id;
 
-                    if(lastLoadedIdFF != lastLoadedId) {
+                    if(lastLoadedIdFF != $rootScope.base.lastLoadedId) {
                         for (var i = 0; i < buffLength; i++) {
                             buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
                         }
                         dialog.privateMessages = dialog.privateMessages.concat(buff);
                     }
 
-                    lastLoadedIdFF = lastLoadedId;
+                    lastLoadedIdFF = $rootScope.base.lastLoadedId;
                 }
             }
 
