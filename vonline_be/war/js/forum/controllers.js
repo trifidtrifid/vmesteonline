@@ -276,10 +276,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 message.isEdit = false;
 
                 if(isTopic){
-                    message.message.content = getStrFromHTMLCode($filter('linky')(message.message.content, 'blank'));
+                    message.message.content = $filter('linky')(message.message.content, 'blank');
                     message.message.content = withTags(message.message.content);
                 }else{
-                    message.content = getStrFromHTMLCode($filter('linky')(message.commentText, 'blank'));
+                    message.content = $filter('linky')(message.commentText, 'blank');
                     message.content = withTags(message.content);
                 }
 
@@ -804,7 +804,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     attach = attachImg.concat(attachDoc);
 
                     // еще attach
-                    ctrl.commentText = getStrFromHTMLCode($filter('linky')(ctrl.commentText,'blank'));
+                    ctrl.commentText = $filter('linky')(ctrl.commentText,'blank');
                     ctrl.commentText = withTags(ctrl.commentText);
                     dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText,attach);
 
@@ -832,7 +832,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     newDialogMessage.created = Date.parse(new Date()) / 1000;
                     newDialogMessage.authorProfile = userClient.getUserProfile(newDialogMessage.author);
 
-                    newDialogMessage.content = getStrFromHTMLCode($filter('linky')(newDialogMessage.content,'blank'));
+                    newDialogMessage.content = $filter('linky')(newDialogMessage.content,'blank');
                     newDialogMessage.content = withTags(newDialogMessage.content);
                     var tempMessage = dialogClient.postMessage(ctrl.dialogId, newDialogMessage.content, attach);
 
@@ -3322,7 +3322,7 @@ function postTopic(obj,isWall,isAdverts,$filter){
         obj.message.documents = obj.attachedDocs;
         obj.message.groupId = obj.selectedGroup.id;
 
-        obj.message.content = getStrFromHTMLCode($filter('linky')(obj.message.content, 'blank'));
+        obj.message.content = $filter('linky')(obj.message.content, 'blank');
         obj.message.content = withTags(obj.message.content);
 
         obj.label = getLabel(userClientGroups,obj.selectedGroup.type);
@@ -3358,15 +3358,8 @@ function postTopic(obj,isWall,isAdverts,$filter){
         newTopic.message.groupId = obj.selectedGroup.id;
         newTopic.message.type = messageType;
 
-        messageContent = getStrFromHTMLCode($filter('linky')(messageContent, 'blank'));
-        //alert(messageContent);
+        messageContent = $filter('linky')(messageContent, 'blank');
         newTopic.message.content = withTags(messageContent);
-        //alert(newTopic.message.content);
-        //newTopic.message.content = messageContent;
-        //alert(newTopic.message.content);
-        //newTopic.message.content = $filter('linky')(messageContent, 'blank');
-
-        //alert(newTopic.message.content);
 
         newTopic.message.images = obj.attachedImages;
         newTopic.message.documents = obj.attachedDocs;
@@ -3456,7 +3449,7 @@ function postMessage(obj,isWall,isFirstLevel,$filter){
                 // try на случай если топик был удален создателем, а юзер пытается
                 // его комментировать
 
-                message.content = getStrFromHTMLCode($filter('linky')(message.content,'blank'));
+                message.content = $filter('linky')(message.content,'blank');
                 message.content = withTags(message.content);
                 var newMessage = messageClient.postMessage(message);
             }catch(e){
@@ -3522,7 +3515,7 @@ function postMessage(obj,isWall,isFirstLevel,$filter){
                 message.content = "";
             }
 
-            message.content = getStrFromHTMLCode($filter('linky')(message.content,'blank'));
+            message.content = $filter('linky')(message.content,'blank');
             message.content = withTags(message.content);
 
             try {

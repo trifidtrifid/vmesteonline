@@ -126,13 +126,15 @@ angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
       raw = raw.substring(i + match[0].length);
     }
     addText(raw);
-    return $sanitize(html.join(''));
+    //return $sanitize(html.join(''));
+    return html.join('');
 
     function addText(text) {
       if (!text) {
         return;
       }
-      html.push(sanitizeText(text));
+      //html.push(sanitizeText(text));
+      html.push(text);
     }
 
     function addLink(url, text) {
