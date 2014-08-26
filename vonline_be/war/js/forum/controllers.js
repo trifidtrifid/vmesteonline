@@ -1200,7 +1200,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         }
 
+        var lastLoadedIdFF;
         lenta.addMoreItems = function(){
+            //lastLoadedIdFF = lastLoadedId;
             if(wallItemsLength == 10) {
                 var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
                 if (buff) {
@@ -1210,9 +1212,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     if (buffLength != 0) {
 
                         lastLoadedId = buff[buffLength - 1].topic.id;
-                        initWallItem(buff);
 
-                        lenta.wallItems = lenta.wallItems.concat(buff);
+                        if( (lastLoadedIdFF != lastLoadedId)) {
+                            //lastLoadedIdFF используется для FF для корректной подгрузки
+                            initWallItem(buff);
+                            lenta.wallItems = lenta.wallItems.concat(buff);
+
+                        }
+
+                        lastLoadedIdFF = lastLoadedId;
+
                     }
                 }
             }
@@ -2894,7 +2903,7 @@ function withoutTags(str){
     return result;
 }
 function getStrFromHTMLCode(str){
-    alert(str);
+    //alert(str);
     var strArr = str.split(';'),
     len = strArr.length,
         symb = [], counter = 0,result = "";
@@ -3350,9 +3359,9 @@ function postTopic(obj,isWall,isAdverts,$filter){
         newTopic.message.type = messageType;
 
         messageContent = getStrFromHTMLCode($filter('linky')(messageContent, 'blank'));
-        alert(messageContent);
+        //alert(messageContent);
         newTopic.message.content = withTags(messageContent);
-        alert(newTopic.message.content);
+        //alert(newTopic.message.content);
         //newTopic.message.content = messageContent;
         //alert(newTopic.message.content);
         //newTopic.message.content = $filter('linky')(messageContent, 'blank');
