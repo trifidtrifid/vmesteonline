@@ -1,8 +1,7 @@
 package com.vmesteonline.be;
 
-import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
-
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
@@ -10,28 +9,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.http.HttpResponse;
-
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskHandle;
-import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
+import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
-import com.vmesteonline.be.jdo2.postaladdress.VoCity;
-import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.utils.EMailHelper;
-import com.vmesteonline.be.utils.VoHelper;
 
 public class UPDATEServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		
-		long now = System.currentTimeMillis();
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoDialog dlg = new VoDialog( Arrays.asList( new Long[]{ 4738086051250176L, 4771399428210688L}));
+			pm.makePersistent(dlg);
+			arg1.getOutputStream().write(("Dialog created!".getBytes()));
+		} catch( Exception e){
+			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
+
+		} finally {
+			pm.close();
+		}
+		
+		/*long now = System.currentTimeMillis();
 		
 		if( null==arg0.getHeader("X-AppEngine-QueueName")){ //it's not a queue, so run the same request but in the queue
 			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
@@ -72,38 +73,6 @@ public class UPDATEServlet extends HttpServlet {
 			}
 			initPostalAddresses(allusersL7.split("\\|"), pm, vb);
 
-			/*try {
-				vb = VoBuilding.createVoBuilding("188689", cs, "5", null, null, pm);
-				pm.makePersistent(vb);
-			} catch (InvalidOperation e) {
-				e.printStackTrace();
-				arg1.setStatus(HttpResponse.__500_Internal_Server_Error, e.why);
-				return;
-			}
-
-
-			initPostalAddresses(allusersL5.split("\\|"), pm, vb);
-
-			// проспект Солидарности 14 корпус 1 - 1-й подъезд
-
-			try {
-				vcty = VoCity.createVoCity(vc, "Санкт Петербург", pm);
-				pm.makePersistent(vcty);
-				cs = VoStreet.createVoStreet(vcty, "проспект Солидарности", pm);
-				pm.makePersistent(cs);
-				vb = VoBuilding.createVoBuilding("188689", cs, "14к1", null, null, pm);
-				pm.makePersistent(vb);
-
-				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, (byte) 1, (byte) 0, 11, null, pm);
-
-				pm.makePersistent(pa);
-				VoInviteCode ic = new VoInviteCode("123456", pa.getId());
-				pm.makePersistent(ic);
-			} catch (InvalidOperation e) {
-				e.printStackTrace();
-				arg1.setStatus(HttpResponse.__500_Internal_Server_Error, e.why);
-				return;
-			}*/
 			arg1.setStatus(HttpResponse.__200_OK, "OK");
 			if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
 				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", arg0.getRequestURI()+" finished", "request "+arg0.getRequestURI()+" processed. It tooks "
@@ -114,7 +83,7 @@ public class UPDATEServlet extends HttpServlet {
 			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
 		} finally {
 			pm.close();
-		}
+		}*/
 	}
 
 	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) throws NumberFormatException, InvalidOperation {
