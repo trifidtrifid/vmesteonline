@@ -3242,10 +3242,13 @@ function getTiming(messageObjDate){
         timing = "только что";
     }else if(timing < hour){
         timing = new Date(timing);
-        timing = timing.getMinutes()+" мин назад";
+        //timing = timing.getMinutes()+" мин назад";
+        timing = (timing/minute).toFixed(0)+" мин назад";
     }else if(timing < day){
         timing = new Date(timing);
-        timeTemp = timing.getHours();
+        //timeTemp = timing.getHours();
+        timeTemp = (timing/hour).toFixed(0);
+
         if(timeTemp == 1 || timeTemp == 0){
             timing = "1 час назад";
         }else if(timeTemp > 1 && timeTemp < 5){
@@ -3255,11 +3258,12 @@ function getTiming(messageObjDate){
         }
     }else if(timing < threeDays){
         timing = new Date(timing);
-        timeTemp = timing.getDate();
+        //timeTemp = timing.getDate();
+        timeTemp = (timing/day).toFixed(0);
         if(timeTemp == 1){
             timing = timeTemp+" день назад";
         }else{
-            timing = timeTemp+" дней назад";
+            timing = timeTemp+" дня назад";
         }
     }else{
         timeTemp = new Date(messageObjDate*1000).toLocaleDateString();
