@@ -84,7 +84,7 @@
                 </button>
 
                 <ul class="dropdown-menu dropdown-blue">
-                    <li ng-repeat="group in base.groups"><a href="#" ng-click="base.selectGroupInDropdown(group.id,ctrl)"># {{group.visibleName}}</a></li>
+                    <li ng-repeat="group in base.groups" ng-hide="group.type < 4 && ctrl.isAdvert"><a href="#" ng-click="base.selectGroupInDropdown(group.id,ctrl)"># {{group.visibleName}}</a></li>
                 </ul>
             </div>
         </div>

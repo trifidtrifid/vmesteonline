@@ -190,15 +190,12 @@
              * 3) Определям новую высоту с учетом высоты удаленного текста
              * */
 
-            //console.log("0 "+scrollHeight+" "+clientHeight);
             if(scrollHeight > clientHeight){
 
                 el.style.height = scrollHeight+'px';
             }else if(scrollHeight > defaultHeight){
                 textLengthPX = (parseInt(oldTextLength) - textLength) * 8; // 1
-                //console.log("2 "+textLengthPX+" "+clientWidth+" "+textLength);
                 if (textLengthPX > clientWidth){
-                    // console.log("3 "+textLengthPX+" "+clientWidth);
                     removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
                     newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
                     newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
@@ -207,10 +204,8 @@
                 }else{
                     el.style.height = scrollHeight-6+'px';
 
-                    //console.log("5 "+textLength+" "+textLength*8/clientWidth);
                 }
             }else{
-                //console.log('4');
                 el.style.height = defaultHeight+'px';
             }
             oldTextLength = textLength;

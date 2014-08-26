@@ -1821,6 +1821,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     $rootScope.base.initStartParamsForCreateTopic(advert.fullTalkTopic);
 
                     advert.fullTalkTopic.isTalk = true;
+                    advert.fullTalkTopic.isAdvert = true;
                     advert.fullTalkTopic.message.createdEdit = getTiming(advert.fullTalkTopic.message.created);
                     advert.fullTalkTopic.label = getLabel(advert.groups,advert.fullTalkTopic.groupType);
                     advert.fullTalkTopic.tagColor = getTagColor(advert.fullTalkTopic.label);
