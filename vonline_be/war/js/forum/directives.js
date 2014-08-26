@@ -26,14 +26,6 @@ angular.module('forum.directives', []).
                     scope.$apply(attrs.ngHasfocus + " = false");
             });
         }
-    })
-    .directive('ngSetAreaHeight',function(){
-        alert('1');
-        return function(scope,element,attrs){
-            alert('2');
-            alert(element[0].width());
-        }
-
     });
 
 

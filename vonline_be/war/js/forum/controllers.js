@@ -1774,6 +1774,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         };
 
+        $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
+
         $('.ng-cloak').removeClass('ng-cloak');
 
     })
@@ -2846,6 +2848,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.mapsChangeGroup = function(groupId){
              maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
         };
+        $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
     });
     /*.controller('BlogController',function($state,$rootScope) {
         var blog = this;
@@ -2970,11 +2973,28 @@ function getDefaultGroup(groups){
     return groups[0];
 }
 
-function showGroupOverBuilding(groups){
+function showGroupOverBuilding(groups,currentGroup){
     var len = groups.length;
     for(var i = 0; i < len; i++){
-        if(groups[i].type < 4) groups[i].isShow = false; //4 = BUILDING
+        if(groups[i].type < 4) {
+            groups[i].isShow = false;
+        } //4 = BUILDING
     }
+}
+function getBuildingGroup(currentGroup) {
+    var len = userClientGroups.length,
+        group;
+    if (currentGroup.type < 4){
+        for (var j = 0; j < len; j++) {
+            if (userClientGroups[j].type == 4) {
+                group = userClientGroups[j];
+            }
+        }
+        return group;
+    }else{
+        return currentGroup;
+    }
+
 }
 
 function getCorrectDate(str){
