@@ -37,7 +37,7 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			return ugl.get(0);
 			
 		} else if( 1<ugl.size() ) {
-			throw new InvalidOperation(VoError.GeneralError, "Two or more the same groups already registered + "+ugl.get(0));
+			throw new InvalidOperation(VoError.GeneralError, "Two or more the same groups already registered + "+ugl.get(0)); 
 			
 		} else {
 			VoUserGroup ug = new VoUserGroup(longitude, latitude, radius, staircase, floor, name, impScore, gType, pm);
@@ -45,7 +45,6 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 			pm.makePersistent(ug);
 			resetVisibiltyGroups(ug, pm);
 			pm.makePersistent(ug);
-			pm.flush();
 			return ug;
 		}
 	}

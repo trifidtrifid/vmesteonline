@@ -109,7 +109,7 @@ public class NewTopicsNotification extends Notification {
 		String topicTxt = new Date(((long) tpc.getCreatedAt()) * 1000L) + " " + pm.getObjectById(VoUser.class, tpc.getAuthorId()).getName();
 		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "<br/>";
 		topicTxt += StringEscapeUtils.escapeHtml4(tpc.getContent().substring( 0, Math.min(255, tpc.getContent().length())));
-		if( tpc.getContent().length() > 255 ) topicTxt += "<a href=\"http://"+host+"/wall-single-"+tpc.getId()+"\">...</a>";
+		if( tpc.getContent().length() > 255 ) topicTxt += "<a href=\"https://"+host+"/wall-single-"+tpc.getId()+"\">...</a>";
 		topicTxt += "<br/>--------------------------------------------------------<br/><br/>";
 		return topicTxt;
 	}

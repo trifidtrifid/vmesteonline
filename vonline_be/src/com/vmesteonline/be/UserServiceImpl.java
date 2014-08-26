@@ -276,7 +276,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) {
+	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) throws InvalidOperation {
 		/*//--------------- implementation faster then commented below but it requires that groups are in the same order and the same Type
 		Iterator<Long> ugit = user.getGroups().iterator();
 		Iterator<Long> cugit = currentUser.getGroups().iterator();
@@ -313,7 +313,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} else { // lets determine the relation as according to the distance
 
 			VoPostalAddress userAddress = pm.getObjectById( VoPostalAddress.class, user.getAddress());
-			int maxRadius = VoHelper.calculateRadius( userAddress.getUserHomeGroup(), cuAddr.getUserHomeGroup());
+			int maxRadius = VoHelper.calculateRadius( userAddress.getUserHomeGroup( pm ), cuAddr.getUserHomeGroup(pm ));
 			if (maxRadius <= Defaults.radiusNeighbors)
 				relation = GroupType.NEIGHBORS;
 			else if (maxRadius <= Defaults.radiusBlock)

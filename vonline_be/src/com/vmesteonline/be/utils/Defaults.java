@@ -98,6 +98,7 @@ public class Defaults {
 	public static boolean initDefaultData(boolean loadInviteCodes) {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
+		pm.setMultithreaded(false);
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
 			

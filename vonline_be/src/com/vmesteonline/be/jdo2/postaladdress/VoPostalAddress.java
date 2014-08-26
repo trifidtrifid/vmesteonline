@@ -30,11 +30,15 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		this.floor = floor;
 		this.flatNo = flatNo;
 		this.comment = comment;
-		this.userGroup = VoUserGroup.createVoUserGroup(
-				voBuilding.getLongitude(), voBuilding.getLatitude(), 0, staircase, floor, "", 0, GroupType.FLAT.getValue(), pm);
+		this.userGroup = null;
 	}
 
-	public VoUserGroup getUserHomeGroup() {
+	public VoUserGroup getUserHomeGroup(PersistenceManager pm) throws InvalidOperation {
+		if(null==userGroup){
+			VoBuilding voBuilding = pm.getObjectById(VoBuilding.class, buildingId);
+			userGroup = VoUserGroup.createVoUserGroup(
+					voBuilding.getLongitude(), voBuilding.getLatitude(), 0, staircase, floor, "", 0, GroupType.FLOOR.getValue(), pm);
+		}
 		return userGroup;
 	}
 

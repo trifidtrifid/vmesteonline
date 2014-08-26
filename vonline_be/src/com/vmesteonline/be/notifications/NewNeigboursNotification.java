@@ -78,7 +78,7 @@ public class NewNeigboursNotification extends Notification {
 	private String createUserContactContent(PersistenceManager pm, VoUserGroup ug, VoUser vuc) {
 		
 		VoPostalAddress address = pm.getObjectById(VoPostalAddress.class,vuc.getAddress());
-		String contactTxt = "<a href=\"http://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
+		String contactTxt = "<a href=\"https://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
 		
 		if( ug.getRadius() == 0 ) 
 			contactTxt += " живет в квартире " + address.getFlatNo();

@@ -148,11 +148,11 @@ public abstract class Notification {
 			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
 			String subject = "важное сообщение";
-			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")";
+			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")<br/><br/>";
 
 			body += "<i>" + StringEscapeUtils.escapeHtml4(it.getContent()) + "</i>";
 
-			body += "<br/><br/><a href=\"http://" + host + "/wall-single-" + it.getId() + "\">Обсудить, ответить ...</a>";
+			body += "<br/><br/><a href=\"https://" + host + "/wall-single-" + it.getId() + "\">Обсудить, ответить ...</a>";
 			for (VoUser rcpt : usersForMessage) {
 				decorateAndSendMessage(rcpt, subject, body);
 			}
@@ -175,8 +175,8 @@ public abstract class Notification {
 						lastMsg.getAuthorId() != mi.next().getAuthorId()) {
 
 					try {
-						String body = author.getName() + " " + author.getLastName() + " написал вам: <br/><i>" + lastMsg.getContent()
-								+ "</i><br/><br/><a href=\"http://" + host + "/dialog-single-" + dlg.getId() + "\">Ответить...</a>";
+						String body = author.getName() + " " + author.getLastName() + " написал вам: <br/><br/><i>" + lastMsg.getContent()
+								+ "</i><br/><br/><a href=\"https://" + host + "/dialog-single-" + dlg.getId() + "\">Ответить...</a>";
 
 						decorateAndSendMessage(rcpt, "сообщение от " + author.getName(), body);
 
@@ -213,7 +213,7 @@ public abstract class Notification {
 		
 		body += "<br/> Мы создали этот сайт, чтобы Ваша жизнь стала чуть комфортней, от того что вы будете в курсе что происходит в вашем доме. <br/><br/>";
 		if (!newUser.isEmailConfirmed()) {
-			body += "Для доступа к сайту, подтвердите ваш email перейдя по <a href=\"http://" + host + "/confirm/profile-" + newUser.getId() + ","
+			body += "Для доступа к сайту, подтвердите ваш email перейдя по <a href=\"https://" + host + "/confirm/profile-" + newUser.getId() + ","
 					+ newUser.getConfirmCode() + "\">этой ссылке</a><br/></br>";
 			pm.makePersistent(newUser);// to save confirm code
 		}
@@ -225,10 +225,9 @@ public abstract class Notification {
 	}
 
 	static void decorateAndSendMessage(VoUser user, String subject, String body) {
-		body += "<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"http://" + host + "/blog\">блоге</a></p>";
+		body += "<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"https://" + host + "/blog\">блоге</a></p>";
 		try {
-			EMailHelper.sendSimpleEMail(user.getName() + " " + user.getLastName() + " <" + user.getEmail() + ">",
-					"ВместеОнлайн.ру: " + subject, body);
+			EMailHelper.sendSimpleEMail(user,"ВместеОнлайн.ру: " + subject, body);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -260,7 +259,7 @@ public abstract class Notification {
 		try {
 			String body = user.getName() + " " + user.getLastName() + ", <br/>"
 					+ "<p>На сайте Вашего дома было запрошено восстановление пароля доступа для адреса вашей электронной почты. "
-					+ "Если вы хотите выполнить эту действие, воспользуйтесь " + "<a href=\"http://" + host + "/remember_passw.html#" + +user.getConfirmCode()
+					+ "Если вы хотите выполнить эту действие, воспользуйтесь " + "<a href=\"https://" + host + "/remember_passw.html#" + +user.getConfirmCode()
 					+ "-" + URLEncoder.encode(user.getEmail(), "UTF-8") + "\">этой ссылкой</a>.</p>"
 					+ "<p>Если у вас возникли трудности с доступом к сайту или есть вопросы, вы можете задать их нам в ответном письме.</p>";
 			decorateAndSendMessage(user, "восстановление пароля", body);

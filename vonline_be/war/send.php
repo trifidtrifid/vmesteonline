@@ -1,18 +1,26 @@
 <?
 
 // пример запроса
-// vmesteonline.ru/send.php?from=a@a.ru&password=123&to=b@b.ru&cc=asd&subject=asd&body=asdfgh
+// vmesteonline.ru/send.php?from=a@a.ru&to=b@b.ru&cc=asd&subject=asd&body=asdfgh
 
 $message = '<html><head>
- <title>'.$_GET['subject'].'</title>
+ <title>'.$_POST['subject'].'</title>
 </head>
-<body>'.$_GET['body'].'<br> Пароль: '.$_GET['password'].'</body>
+<body>'.$_POST['body'].'</body>
 </html>';
 
-$headers  = "Content-type: text/html; charset=utf-8 \r\n";
-$headers .= "From: ".$_GET['from']."\r\n";
-$headers .= "Bcc: ".$_GET['cc']."\r\n";
+$message = wordwrap($message,70);
 
-mail($_GET['to'], $_GET['subject'], $message, $headers);
+$headers  = "Content-type: text/html; charset=utf-8 \r\n";
+$headers .= "From: ".$_POST['from']."\r\n";
+$headers .= "Bcc: ".$_POST['cc']."\r\n";
+$headers .= "To: ".$_POST['to']."\r\n";
+$newsubject = '=?UTF-8?B?'.base64_encode($_POST['subject']).'?=';
+
+if( mail($_POST['to'], $newsubject, $message, $headers)){
+	echo 'OK';
+} else {
+	echo 'FAIL';
+}
 
 ?>
