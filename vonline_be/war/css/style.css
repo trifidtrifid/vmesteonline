@@ -1588,6 +1588,9 @@ h1 {
 .contacts {
   padding-left: 10px;
 }
+.contacts textarea.content {
+  overflow: hidden;
+}
 .message-to-show {
   width: 100%;
   text-align: center;

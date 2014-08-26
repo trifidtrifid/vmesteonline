@@ -6,7 +6,7 @@
 
     <textarea ng-model="ctrl.message.content" class="topic-textarea no-resize" ng-keyup="base.messageChange($event,1)"
               ng-blur="base.textareaBlur(ctrl.message.content,ctrl.message.default,ctrl,true)" ng-focus="base.textareaFocus(ctrl.message.content,ctrl.message.default,ctrl,true)"
-              ng-setareaheight="true"></textarea>
+              ></textarea>
 
     <div class="create-poll" ng-show="ctrl.isPollShow">
         <a class="poll-cancel pull-right" title="отмена опроса" href="#" ng-click="ctrl.isPollShow = false;ctrl.isPollAvailable = true;">&times;</a>
@@ -84,7 +84,7 @@
                 </button>
 
                 <ul class="dropdown-menu dropdown-blue">
-                    <li ng-repeat="group in base.groups"><a href="#" ng-click="base.selectGroupInDropdown(group.id,ctrl)"># {{group.visibleName}}</a></li>
+                    <li ng-repeat="group in base.groups" ng-hide="group.type < 4 && ctrl.isAdvert"><a href="#" ng-click="base.selectGroupInDropdown(group.id,ctrl)"># {{group.visibleName}}</a></li>
                 </ul>
             </div>
         </div>

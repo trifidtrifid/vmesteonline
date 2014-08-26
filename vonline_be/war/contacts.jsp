@@ -102,14 +102,14 @@
 
                 </c:choose>
 
-                <textarea class="content" onblur="if(this.value=='') this.value='Сообщение';" onfocus="if(this.value=='Сообщение') this.value='';">Сообщение</textarea>
+                <textarea class="content no-resize" onblur="if(this.value=='') this.value='Сообщение';" onfocus="if(this.value=='Сообщение') this.value='';">Сообщение</textarea>
 
                 <button class="btn btn-sm btn-primary no-border send">Отправить</button>
                 <span class="info-good hidden">Ваше сообщение отправлено</span>
             </form>
                 <br/>
                 <div>
-                    <a href="/main">Вернуться на главную</a>
+                    <a href="/">Вернуться на главную</a>
                 </div>
                 <br/>
             </div>
@@ -165,6 +165,51 @@
         function hideInfo(){
             $('.info-good').addClass('hidden');
         }
+
+        var oldTextLength = 0;
+        $('.content').keyup(function(event){
+
+            var el = event.target,
+                    clientHeight = el.clientHeight,
+                    scrollHeight = el.scrollHeight,
+                    textLength = el.textLength,
+                    clientWidth = el.clientWidth,
+                    textLengthPX, newHeight,removeRowCount,
+                    defaultHeight, newRowCount;
+
+            defaultHeight = 100;
+
+            /*
+             Исходные данные:
+             На один символ приходится ~8px в ширину
+             Высота строки текста ~14px
+
+             * Здесь выполняем такие действия :
+             * 1) Считаем длину текста в пикселях
+             * 2) Определяем целое количестов строк, которые удалили
+             * 3) Определям новую высоту с учетом высоты удаленного текста
+             * */
+
+            if(scrollHeight > clientHeight){
+
+                el.style.height = scrollHeight+'px';
+            }else if(scrollHeight > defaultHeight){
+                textLengthPX = (parseInt(oldTextLength) - textLength) * 8; // 1
+                if (textLengthPX > clientWidth){
+                    removeRowCount = Math.floor(textLengthPX/clientWidth); // 2
+                    newHeight = parseInt(event.target.style.height) - removeRowCount*14; // 3
+                    newHeight > defaultHeight ? event.target.style.height = newHeight+"px":
+                            event.target.style.height = defaultHeight+'px';
+
+                }else{
+                    el.style.height = scrollHeight-6+'px';
+
+                }
+            }else{
+                el.style.height = defaultHeight+'px';
+            }
+            oldTextLength = textLength;
+        });
     });
 </script>
 
