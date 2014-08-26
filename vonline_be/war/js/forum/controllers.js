@@ -2889,9 +2889,8 @@ protocol = new Thrift.Protocol(transport);
 var fileClient = new com.vmesteonline.be.fileservice.FileServiceClient(protocol);
 
 function withTags(str){
-    var result = str.replace(/&#10;/g,' <br> '); // пробел после <br> специально, чтобы не слипался с ссылками
-    result = result.replace(/&lt;br&gt;/g,' <br> ');
-    result = result.replace(/\n/g,' <br> ');
+    var result = str.replace(/&#10;/g,'<br>' ); // пробел после <br> специально, чтобы не слипался с ссылками
+    result = result.replace(/\n/g,'<br>');
         /*var strArr = result.split(" "),
 
         len = strArr.length,
@@ -2915,7 +2914,6 @@ function withTags(str){
 }
 function withoutTags(str){
     var result = str.replace(/<br>/g,'\n');
-        result = result.replace(/&lt;br&gt;/g,'\n');
         result = result.replace(/<[^>]+>/g,'');
     return result;
 }
