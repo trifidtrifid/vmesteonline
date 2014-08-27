@@ -142,15 +142,14 @@ public class Defaults {
 
 	// ======================================================================================================================
 	private static void deletePersistentAll(PersistenceManager pm, Class pc) {
-		Extent ext = pm.getExtent(pc);
-		if (null != ext)
-			for (Object i : ext) {
-				try {
-					pm.deletePersistent(i);
-				} catch (Exception e) {
-					// e.printStackTrace();
-				}
-			}
+		while(true){
+			Query newQuery = pm.newQuery(pc,"");
+			newQuery.setRange(0, 200);
+			List list = (List) newQuery.execute();
+			if( 0==list.size())
+				break;
+			pm.deletePersistentAll(list);
+		}
 	}
 
 	// ======================================================================================================================

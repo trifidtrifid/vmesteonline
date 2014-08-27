@@ -97,14 +97,6 @@ public class VoTopic extends VoBaseMessage {
 		this.usersNum = usersNum;
 	}
 
-	public int getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public void setLastUpdate(int lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
-
 	public long getRubricId() {
 		return rubricId;
 	}
@@ -167,9 +159,6 @@ public class VoTopic extends VoBaseMessage {
 	@Persistent
 	@Unindexed
 	private int usersNum;
-
-	@Persistent
-	private int lastUpdate;
 	
 	@Persistent
 	@Unindexed

@@ -412,6 +412,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 					user.setPassword(newPwd);
 					user.setConfirmCode(System.currentTimeMillis()); // just to reset
+					user.setEmailConfirmed(true);
+					
 					pm.makePersistent(user);
 					saveUserInSession(pm, user);
 					return true;

@@ -435,6 +435,8 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 
 			VoMessage vomsg = new VoMessage(msg, MessageType.BLOG);
+			vomsg.setChildMessageNum(0);
+			vomsg.setLastUpdate((int) (System.currentTimeMillis() / 1000));
 			pm.makePersistent(vomsg);
 			msg.setId(vomsg.getId());
 			return msg;
