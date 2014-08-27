@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
 
-                                <div class="edit-message ttt" ng-show="wallItem.topic.isEdit">
+                                <div class="edit-message" ng-show="wallItem.topic.isEdit">
 
                                     <div ng-include="'templates/createTopic.html'" onload="ctrl=wallItem.topic; initCreateTopic(wallItem.topic);"></div>
 
@@ -114,7 +114,13 @@
                         </div>
 
                         <div class="dialogs">
-                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.messages">
+
+                            <div ng-show="wallItem.messages.length > COMMENTS_DEFAULT_COUNT" class="show-all-comments">
+                                <a href="#" ng-hide="wallItem.isOpen" ng-click="lenta.toggleComments($event,wallItem)">Показать все {{wallItem.messages.length}} комментариев</a>
+                                <a href="#" ng-show="wallItem.isOpen" ng-click="lenta.toggleComments($event,wallItem)">Скрыть комментарии</a>
+                            </div>
+
+                            <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallItem.bufferMessages"> <!-- ng-repeat="wallMessage in wallItem.messages" -->
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
                                     <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
                                 </a>
@@ -169,41 +175,9 @@
                                 </div>
                             </div>
                         </div>
+
                         <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallItem; ctrlId = wallItem.topic.id;initCreateMessage(ctrlId);"></div>
 
-                        <!--<div class="input-group">
-                            <textarea name="answerInput{{wallItem.topic.id}}" id="name{{wallItem.topic.id}}" class="message-textarea no-resize" ng-model="wallItem.commentText"
-                                      ng-hasfocus="wallItem.isFocus" ng-show="wallItem.answerShow" ng-keyup="base.messageChange($event,1)"
-                                onblur="if(this.value=='') this.value='Ваш ответ';"
-                                onfocus="if(this.value=='Ваш ответ') this.value='';" ></textarea>
-
-                                <div id="attach-area-{{wallItem.topic.id}}" class="attach-area">
-                                    <div class="loading hidden">
-                                        <img ng-src="i/loading2.gif" alt="картинка"/>
-                                    </div>
-                                </div>
-                                <div id="attach-doc-area-{{wallItem.topic.id}}" class="attach-area attach-area-doc"></div>
-
-                                <span class="input-group-btn" ng-show="wallItem.answerShow">
-                                    <button class="btn btn-sm btn-info no-radius no-border" type="button" ng-click="lenta.createWallComment($event,wallItem)">
-                                        <i class="icon-share-alt"></i>
-                                        Отправить
-                                    </button>
-                                    <span class="error-info" ng-show="wallItem.isCreateCommentError" ng-click>{{wallItem.createCommentErrorText}}</span>
-
-                                    <div class="btn-group attach-dropdown pull-right">
-                                        <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border" data-producerid="0">
-                                            <span class="btn-group-text">Прикрепить</span>
-                                            <span class="icon-caret-down icon-on-right"></span>
-                                        </button>
-
-                                        <ul class="dropdown-menu dropdown-blue">
-                                            <li><input id="attachImage-{{wallItem.topic.id}}" type="file"/></li>
-                                            <li><input id="attachDoc-{{wallItem.topic.id}}" type="file"/></li>
-                                        </ul>
-                                    </div>
-                                </span>
-                        </div>-->
                     </div>
 
                     <div class="wallitem-topic" ng-switch-when="1">

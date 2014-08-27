@@ -644,9 +644,19 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                 if (wallItem.messages) {
                     wallItem.messages.push(message);
+
+                    var mesLen = wallItem.messages.length;
+
+                    (mesLen >= $rootScope.COMMENTS_DEFAULT_COUNT && !wallItem.isOpen) ?
+                        wallItem.bufferMessages = wallItem.messages.slice(mesLen-$rootScope.COMMENTS_DEFAULT_COUNT):
+                        wallItem.bufferMessages = wallItem.messages;
+
                 } else {
                     wallItem.messages = [];
                     wallItem.messages[0] = message;
+
+                    wallItem.bufferMessages = [];
+                    wallItem.bufferMessages[0] = wallItem.messages[0];
                 }
 
             }
@@ -1078,6 +1088,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             lastLoadedId = 0,
             loadedLength = 10;
 
+        $rootScope.COMMENTS_DEFAULT_COUNT = 4;
         lenta.selectedGroupInTop = $rootScope.currentGroup;
 
         if(!$rootScope.importantIsLoadedFromTop)
@@ -1097,13 +1108,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        for(var i = 0 ; i < wallItemsLength; i++){
-            //alert(lenta.wallItems[i].topic.message.content.indexOf('\n'));
-            //lenta.wallItems[i].topic.message.content = $sce.trustAsHtml(lenta.wallItems[i].topic.message.content);
-        }
+        /*for(var i = 0 ; i < wallItemsLength; i++){
+        }*/
 
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
-        //if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[0].topic.id;
 
         initWallItem(lenta.wallItems);
 
@@ -1165,6 +1173,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 wallItems[i].label = getLabel($rootScope.base.groups,wallItems[i].topic.groupType);
 
                 wallItems[i].tagColor = getTagColor(wallItems[i].label);
+                wallItems[i].isOpen = false;
 
                 if(wallItems[i].topic.message.important == 1){
                     wallItems[i].topic.message.importantText = 'Снять метку "Важное"';
@@ -1195,6 +1204,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                         $rootScope.base.initStartParamsForCreateMessage(wallItems[i].messages[j]);
                     }
 
+                    (mesLen >= $rootScope.COMMENTS_DEFAULT_COUNT) ?
+                    wallItems[i].bufferMessages = wallItems[i].messages.slice(mesLen-$rootScope.COMMENTS_DEFAULT_COUNT):
+                        wallItems[i].bufferMessages = wallItems[i].messages;
+
+
 
                     if(wallItems[i].topic.poll != null){
                         //значит это опрос
@@ -1205,6 +1219,25 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 }
             }
         }
+
+        lenta.toggleComments = function(event,wallItem){
+            event.preventDefault();
+
+            var mesLen = wallItem.messages.length;
+
+            if(wallItem.isOpen){
+                wallItem.isOpen = false;
+
+                (mesLen >= $rootScope.COMMENTS_DEFAULT_COUNT) ?
+                    wallItem.bufferMessages = wallItem.messages.slice(mesLen-$rootScope.COMMENTS_DEFAULT_COUNT):
+                    wallItem.bufferMessages = wallItem.messages;
+
+                //wallItem.bufferMessages = wallItem.messages.slice(mesLen-lenta.COMMENTS_DEFAULT_COUNT);
+            }else{
+                wallItem.isOpen = true;
+                wallItem.bufferMessages = wallItem.messages;
+            }
+        };
 
         var lastLoadedIdFF;
         lenta.addMoreItems = function(){
