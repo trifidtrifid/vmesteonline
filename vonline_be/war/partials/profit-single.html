@@ -17,7 +17,7 @@
                                     <div class="topic-author">
                                     </div>
                                 </div>
-                                <div class="topic-right text-container" ng-switch on="adverts.fullTalkTopic.metaType">
+                                <div class="topic-right text-container">
 
                                     <div class="message-tools pull-right" ng-show="adverts.fullTalkTopic.userInfo.id == base.me.id">
                                         <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(adverts.fullTalkTopic,adverts.topics,true,false)">&times;</a>
@@ -32,7 +32,7 @@
                                             <span>{{adverts.fullTalkTopic.subject}}</span>
                                         </h2>
 
-                                        <div ng-switch-when="message">
+                                        <div>
 
                                             <div ng-if="adverts.fullTalkTopic.message.content.length < base.contentLength">
 
@@ -62,7 +62,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="poll" ng-switch-when="poll"  ng-switch on="adverts.fullTalkTopic.poll.alreadyPoll" ng-cloak>
+                                    <div class="poll" ng-if="adverts.fullTalkTopic.metaType == 'poll'"  ng-switch on="adverts.fullTalkTopic.poll.alreadyPoll" ng-cloak>
 
                                         <h5>{{adverts.fullTalkTopic.poll.subject}}</h5>
 
