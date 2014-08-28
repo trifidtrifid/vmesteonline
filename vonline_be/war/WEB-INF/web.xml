@@ -174,5 +174,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>doUpdate</servlet-name>
 		<url-pattern>/update/doupdate</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>getCodes</servlet-name>
+		<servlet-class>com.vmesteonline.be.RegisterAddressesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>getCodes</servlet-name>
+		<url-pattern>/update/getCodes</url-pattern>
+	</servlet-mapping>
 
 </web-app>

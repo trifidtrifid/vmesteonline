@@ -165,7 +165,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoInviteCode invite = VoInviteCode.getInviteCode(code.trim(), pm);
+			VoInviteCode invite = VoInviteCode.getInviteCode(code.trim().toUpperCase(), pm);
 			VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class, invite.getPostalAddressId());
 			VoBuilding vBuilding = pm.getObjectById(VoBuilding.class, pa.getBuilding());
 			if (vBuilding.getLatitude() == null || vBuilding.getLongitude() == null) {
@@ -199,7 +199,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		PersistenceManager pm = PMF.getPm();
 
 		try {
-
+			inviteCode = inviteCode.toUpperCase();
 			VoInviteCode voInviteCode = VoInviteCode.getInviteCode(inviteCode, pm);
 			voInviteCode.registered();
 

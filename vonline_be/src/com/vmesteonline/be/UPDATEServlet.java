@@ -9,50 +9,38 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.http.HttpResponse;
+
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskHandle;
+import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoCity;
+import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.EMailHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
-public class UPDATEServlet extends HttpServlet {
+public class UPDATEServlet extends QueuedServletWithKeyHelper {
 
 	@Override
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoDialog dlg = new VoDialog( Arrays.asList( new Long[]{ 4738086051250176L, 4771399428210688L}));
-			pm.makePersistent(dlg);
-			arg1.getOutputStream().write(("Dialog created!".getBytes()));
-		} catch( Exception e){
-			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
-
-		} finally {
-			pm.close();
+		long now = System.currentTimeMillis();
+		
+		if( keyRequestAndQueuePush(arg0, arg1) ){
+		
+			Defaults.initDefaultData();
+			String resultText = "Init DONE";
+			sendTheResultNotification(arg0, arg1, now, resultText);
 		}
 		
-		/*long now = System.currentTimeMillis();
-		
-		if( null==arg0.getHeader("X-AppEngine-QueueName")){ //it's not a queue, so run the same request but in the queue
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
-				if( null==arg0.getParameter("key") ){
-					arg1.setStatus(HttpResponse.__200_OK, "OK");
-					arg1.getOutputStream().write("key parameter must be used on production".getBytes());
-					return;
-				} else if( !VoHelper.checkInitKey(arg0.getParameter("key"))){
-					arg1.setStatus(HttpResponse.__200_OK, "OK");
-					arg1.getOutputStream().write("key sent".getBytes());
-					return;
-				}
-			}
-			
-			Queue queue = QueueFactory.getDefaultQueue();
-			TaskHandle th = queue.add(withUrl(arg0.getRequestURI()));
-			arg1.setStatus(HttpResponse.__200_OK, "OK");
-			arg1.getOutputStream().write(("Pushed to a queue with ID:"+th.toString()).getBytes());
-			return;
-		}
 		PersistenceManager pm = PMF.getPm();
 		pm.setMultithreaded(false);
 		pm.setIgnoreCache(true);
@@ -73,17 +61,14 @@ public class UPDATEServlet extends HttpServlet {
 			}
 			initPostalAddresses(allusersL7.split("\\|"), pm, vb);
 
-			arg1.setStatus(HttpResponse.__200_OK, "OK");
-			if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
-				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", arg0.getRequestURI()+" finished", "request "+arg0.getRequestURI()+" processed. It tooks "
-						+(System.currentTimeMillis() - now) +" ms");
-			}
+			sendTheResultNotification( arg0, arg1, now, "Loaded");
+			
 		} catch( Exception e){
 			e.printStackTrace();
 			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
 		} finally {
 			pm.close();
-		}*/
+		}
 	}
 
 	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) throws NumberFormatException, InvalidOperation {
