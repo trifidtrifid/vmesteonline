@@ -922,6 +922,12 @@ h1 {
 .lenta-item .wallitem-topic .talks-title {
   border-bottom: 0;
 }
+.lenta-item .show-all-comments {
+  text-align: center;
+  padding: 5px 0;
+  margin-top: -9px;
+  font-size: 13px;
+}
 .lenta .bottom-border-line {
   height: 1px;
   background: #5090c1;
