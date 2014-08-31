@@ -240,6 +240,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						products.add(product.getProduct(pm));
 				}
 				
+				
 				try {
 					putObjectToCache(key, products);
 				} catch (Exception e) {
