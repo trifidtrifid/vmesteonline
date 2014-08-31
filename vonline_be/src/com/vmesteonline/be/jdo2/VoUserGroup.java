@@ -60,7 +60,8 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 				List<VoTopic> nnbgTopics = (List<VoTopic>)pm.newQuery(VoTopic.class, "userGroupId=="+nbgGrp).execute();
 				if( null!=nnbgTopics)
 					for( VoTopic tpc: nnbgTopics){
-						tpc.setVisibleGroups(nbGroup.getVisibleGroups());
+						ArrayList<Long> groups = new ArrayList<Long>(nbGroup.getVisibleGroups());
+						tpc.setVisibleGroups( groups);
 						pm.makePersistent(tpc);
 					}
 				pm.makePersistent(nbGroup);
@@ -79,6 +80,10 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		this.staircase = staircase;
 		this.floor = floor;
 	} 
+	
+	public VisibleGroup getVisibleGroup(){
+		return new VisibleGroup( id.getId(), groupType); 
+	}
 	
 	public int getRadius() {
 		return radius;

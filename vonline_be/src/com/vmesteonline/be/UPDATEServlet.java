@@ -2,6 +2,7 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
@@ -17,6 +18,7 @@ import com.google.appengine.api.taskqueue.TaskHandle;
 import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
+import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
@@ -41,7 +43,7 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 			sendTheResultNotification(arg0, arg1, now, resultText);
 		}
 		
-		PersistenceManager pm = PMF.getPm();
+		/*PersistenceManager pm = PMF.getPm();
 		pm.setMultithreaded(false);
 		pm.setIgnoreCache(true);
 		try {
@@ -68,7 +70,7 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 			arg1.getOutputStream().write(("Failed to initialize! "+e.getMessage()).getBytes());
 		} finally {
 			pm.close();
-		}
+		}*/
 	}
 
 	private void initPostalAddresses(String[] lines, PersistenceManager pm, VoBuilding vb) throws NumberFormatException, InvalidOperation {

@@ -36,6 +36,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.utils.Defaults;
+import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoUser /* extends GeoLocation */{
@@ -117,7 +118,8 @@ public class VoUser /* extends GeoLocation */{
 		this.relations = relations;
 	}
 
-	public ShortUserInfo getShortUserInfo() {
+	public ShortUserInfo getShortUserInfo( VoUser askedUser, PersistenceManager pm) {
+		boolean commonGroups = askedUser.getVisibleGroups(pm).retainAll( this.getVisibleGroups(pm)); 
 		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
 		if (null != moderationGroups)
 			shortUserInfo.moderationGroups = moderationGroups;
@@ -247,6 +249,8 @@ public class VoUser /* extends GeoLocation */{
 			VoUserGroup ug = VoUserGroup.createVoUserGroup(building.getLongitude(), building.getLatitude(), 
 					group.getRadius(), userAddress.getStaircase(), userAddress.getFloor(),
 					group.getVisibleName(), group.getImportantScore(), group.getGroupType(), pm);
+			
+			UserServiceImpl.usersByGroup.forget( new Object[]{ ug.getId() });
 			groups.add(ug.getId());
 		}
 
@@ -275,6 +279,26 @@ public class VoUser /* extends GeoLocation */{
 
 	public void setId(long id) {
 		this.id = 0 == id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
+	}
+
+	public Set<VisibleGroup> getVisibleGroups(PersistenceManager pm) {
+		if( null == visibleGroups ){
+			updateVisibleGroups(pm);
+		}
+		return visibleGroups;
+	}
+
+	private void updateVisibleGroups(PersistenceManager pm) {
+		visibleGroups = new HashSet<VisibleGroup>();
+		for( Long ug : getGroups() ){
+			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, ug);
+			for( Long vug : userGroup.getVisibleGroups(pm))
+				visibleGroups.add( pm.getObjectById(VoUserGroup.class, vug ).getVisibleGroup() );
+		}
+	}
+
+	public void setVisibleGroups(Set<VisibleGroup> visibleGroups) {
+		this.visibleGroups = visibleGroups;
 	}
 
 	@PrimaryKey
@@ -394,6 +418,11 @@ public class VoUser /* extends GeoLocation */{
 	@Persistent
 	@Unindexed
 	private Set<Long> moderationGroups;
+	
+	@Persistent
+	@Unindexed
+	private Set<VisibleGroup> visibleGroups;
+	
 
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, GroupType.BUILDING, GroupType.STAIRCASE) : privacy;

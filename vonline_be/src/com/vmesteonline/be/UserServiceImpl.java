@@ -757,13 +757,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-
+	
+	public static CachableObject<List<ShortUserInfo>> usersByGroup = new CachableObject();
 	@Override
 	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
+		return usersByGroup.create(this, "getNeighborsByGroupDo", new Object[]{ groupId });
+	}
+
+	private void getNeighborsByGroupDo(long groupId) throws InvalidOperation {
+		Object userOfGroup;
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
-			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+			userOfGroup = VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+			
 		} finally {
 			pm.close();
 		}
