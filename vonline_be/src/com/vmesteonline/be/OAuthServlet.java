@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +18,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.utils.StorageHelper;
+import com.vmesteonline.be.utils.VoHelper;
 
 /*import com.restfb.DefaultFacebookClient;
  import com.restfb.FacebookClient;
@@ -29,19 +29,6 @@ import com.vmesteonline.be.utils.StorageHelper;
 public class OAuthServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6391276180341584453L;
-
-	private String generatePassword() {
-		StringBuilder sb = new StringBuilder();
-		int n = 8; // how many characters in password
-		String set = "ABCDEFJHIJKLMNOPQRSTUVWXYZabcdefjhijklmnopqrstuvwxyz1234567890"; // characters to choose from
-
-		for (int i = 0; i < n; i++) {
-			Random rand = new Random(System.nanoTime());
-			int k = rand.nextInt(set.length()); // random number between 0 and set.length()-1 inklusive
-			sb.append(set.charAt(k));
-		}
-		return sb.toString();
-	}
 
 	protected String getDomain(String state) {
 		return new String();
@@ -104,7 +91,7 @@ public class OAuthServlet extends HttpServlet {
 
 				if (inviteCode.startsWith("inviteCode:")) {
 					inviteCode = inviteCode.substring(inviteCode.lastIndexOf(":") + 1);
-					String password = generatePassword();
+					String password = VoHelper.generatePassword();
 					authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), password, email, inviteCode, o.getInt("sex"), false);
 					authServiceImpl.allowUserAccess(email, "", false);
 

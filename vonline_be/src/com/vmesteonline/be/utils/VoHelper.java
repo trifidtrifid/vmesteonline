@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.TreeMap;
 
 import javax.jdo.Extent;
@@ -411,5 +412,32 @@ public class VoHelper {
 		} finally {
 			pm.close();
 		}
+	}
+
+	public static final String passwordCharSet = "ABCDEFJHIJKLMNPQRSTUVWXYZabcdefjhijkmnpqrstuvwxyz23456789"; // characters to choose from
+	
+	public static String generatePassword( ) {
+		return generatePassword(8);
+	}
+
+	public static String generatePassword(int n) {
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i = 0; i < n; i++) {
+			Random rand = new Random(System.nanoTime());
+			int k = rand.nextInt(passwordCharSet.length()); // random number between 0 and set.length()-1 inklusive
+			sb.append(passwordCharSet.charAt(k));
+		}
+		return sb.toString();
+	}
+	public static long getMaxPassValue(int len){
+		return (long)Math.pow( (double)passwordCharSet.length(), (double)len);
+	}
+	public static long passwordToLong(String passCode){
+		long passValue = 0L;
+		for( int cp=passCode.length()-1; cp>=0; cp--){
+			passValue = passValue * passwordCharSet.length() + passwordCharSet.indexOf(passCode.charAt(cp));
+		}
+		return passValue;
 	}
 }
