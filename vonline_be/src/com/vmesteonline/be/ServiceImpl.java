@@ -21,6 +21,8 @@ import javax.servlet.http.HttpSession;
 
 
 
+
+
 import com.vmesteonline.be.access.VoUserAccessBase;
 import com.vmesteonline.be.authservice.CurrentAttributeType;
 import com.vmesteonline.be.data.PMF;
@@ -254,7 +256,7 @@ public class ServiceImpl {
 		}
 	}
 	
-	public static class CachableObject<T> {
+	public static class CachableObject<T extends Serializable> {
 		String createNewObjectMethodName;
 		Class[] argTypes;
 		
@@ -264,13 +266,17 @@ public class ServiceImpl {
 				ArrayList<Class> argTypesAL = new ArrayList<Class>();
 				for (Object arg : args) {
 					argTypesAL.add( arg.getClass());
-					argTypes = (Class[]) argTypesAL.toArray();
 				}
+				argTypes = new Class[argTypesAL.size()];
+				argTypesAL.toArray(argTypes);
 			}
 			try {
-				T result = ServiceImpl.getObjectFromCache( createKey( args )); 
-				if( result == null )
+				Object key = createKey( args );
+				T result = ServiceImpl.getObjectFromCache( key); 
+				if( result == null ){
 					result = (T)object.getClass().getMethod(methodName, argTypes ).invoke(object, args);
+					ServiceImpl.putObjectToCache(key, result);
+				}
 				return result;
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {

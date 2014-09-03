@@ -14,6 +14,7 @@ import javax.jdo.Query;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
 import com.vmesteonline.be.messageservice.Attach;
@@ -30,7 +31,8 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 	public Dialog getDialog(List<Long> users, int after) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			long currentUserId = getCurrentUserId();
+			VoUser cuser;
+			long currentUserId = (cuser = getCurrentUser(pm)).getId();
 			// sort users
 			SortedSet userss = new TreeSet<Long>();
 			userss.addAll(users);
@@ -54,7 +56,7 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 			} else {
 				dlg = oldDialog.get(0);
 			}
-			return dlg.getDialog(pm);
+			return dlg.getDialog(cuser, pm);
 
 		} finally {
 			pm.close();
@@ -218,7 +220,8 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 	public Dialog getDialogById(long dialogId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			return pm.getObjectById(VoDialog.class, dialogId).getDialog(pm);
+			VoUser cuser = getCurrentUser( pm );
+			return pm.getObjectById(VoDialog.class, dialogId).getDialog(cuser, pm);
 		} catch (JDOObjectNotFoundException onfe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No dialog found by ID=" + dialogId);
 		} catch (Exception oe) {

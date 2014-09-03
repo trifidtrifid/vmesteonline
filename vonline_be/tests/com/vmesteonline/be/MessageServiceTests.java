@@ -437,11 +437,11 @@ public class MessageServiceTests extends TestWorkAround {
 
 			rTopic = msi.getTopics(getUserGroupId(Defaults.user2email, GroupType.BUILDING), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(0, rTopic.totalSize);
+			Assert.assertEquals(1, rTopic.totalSize);
 
 			rTopic = msi.getTopics(getUserGroupId(Defaults.user2email, GroupType.NEIGHBORS), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(0, rTopic.totalSize);
+			Assert.assertEquals(1, rTopic.totalSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -466,7 +466,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			rTopic = msi.getTopics(getUserGroupId(Defaults.user4email, GroupType.NEIGHBORS), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(0, rTopic.totalSize);
+			Assert.assertEquals(1, rTopic.totalSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -565,7 +565,7 @@ public class MessageServiceTests extends TestWorkAround {
 
 			rTopic = msi.getTopics(getUserGroupId(Defaults.user4email, GroupType.NEIGHBORS), 0, 0, 0L, 10);
 			Assert.assertNotNull(rTopic);
-			Assert.assertEquals(0, rTopic.totalSize);
+			Assert.assertEquals(1, rTopic.totalSize);
 
 		} catch (Exception e) {
 			e.printStackTrace();

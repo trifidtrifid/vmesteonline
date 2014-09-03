@@ -1,9 +1,13 @@
 package com.vmesteonline.be;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +23,8 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
@@ -37,9 +43,70 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 		long now = System.currentTimeMillis();
 		
 		if( keyRequestAndQueuePush(arg0, arg1) ){
-		
-			Defaults.initDefaultData();
-			String resultText = "Init DONE";
+			String resultText = "init";
+			String action = (String) arg0.getParameter("action");
+			
+			if( "init".equalsIgnoreCase(action) ){
+				Defaults.initDefaultData();
+				resultText = "Init DONE";
+				
+			
+			} else if( "updateTopics".equalsIgnoreCase(action)){
+				PersistenceManager pm = PMF.getPm();
+				try {
+					Extent<VoUserGroup> vugs = pm.getExtent( VoUserGroup.class );
+					ArrayList<VoUserGroup> vugssrtd = new ArrayList<VoUserGroup>();
+					for (VoUserGroup vug : vugs) { //collect all UserGroups and sort it from lowest to higest
+						vugssrtd.add(vug);
+					}
+					Collections.sort( vugssrtd, new Comparator<VoUserGroup>() {
+
+						@Override
+						public int compare(VoUserGroup o1, VoUserGroup o2) {
+							return -Integer.compare( o1.getGroupType(), o2.getGroupType());
+						}
+					});
+					for (VoUserGroup vug : vugssrtd) { //collect all UserGroups and sort it from highest to lowest
+						try {
+							vug.setVisibleGroups(null);
+							vug.getVisibleGroups(pm);
+							
+						} catch (Exception e) {
+							resultText += " </br>\r\ngetVisibleGroups ERROR: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
+							e.printStackTrace();
+						}
+					}
+					for (VoUserGroup vug : vugssrtd) { //collect all UserGroups and sort it from highest to lowest
+						try {
+							vug.getUpperLevelGroups(pm);
+							
+						} catch (Exception e) {
+							resultText += " </br>\r\ngetUpperLevelGroups ERROR: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
+							e.printStackTrace();
+						}
+					}
+
+					
+					Extent<VoTopic> topics = pm.getExtent( VoTopic.class );
+					for (VoTopic voTopic : topics) {
+						try {
+							voTopic.setVisibleGroups( pm.getObjectById(VoUserGroup.class, voTopic.getUserGroupId()).getUpperLevelGroups(pm) );
+						} catch (Exception e) {
+							resultText += " </br>\r\nvoTopic.setVisibleGroups ERROR: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
+							e.printStackTrace();
+						}
+					}
+					Extent<VoUser> users = pm.getExtent( VoUser.class );
+					for (VoUser user : users) {
+						user.initRootGroup(pm);
+					}
+						
+				} catch(Exception e){
+					resultText += " </br>\r\nERROR: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
+				} finally {
+					pm.close();
+				}
+			}
 			sendTheResultNotification(arg0, arg1, now, resultText);
 		}
 		

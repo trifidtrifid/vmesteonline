@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -105,7 +106,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId(),pm);
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(user, voTopic.getAuthorId().getId(),pm);
 
 					MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
 					if (mlp.totalSize > 0)
@@ -317,13 +318,14 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				VoUser user = getCurrentUser(pm);
 				pm.retrieve(user);
 				
-				List<Long> userGroups = user.getGroups();
+				
 				List<Long> groupsToSearch = new ArrayList<Long>();
-				for( Long ugId : userGroups ){
+				groupsToSearch.add( groupId );
+				/*for( Long ugId : userGroups ){
 					groupsToSearch.add(ugId);
 					if( ugId == groupId ) //usergGroups MUST be ordered from smaller to bigger one, so if topics of current group are added, it's time to finish collecting
 						break;	
-				}
+				}*/
 				
 				List<VoTopic> topics = getTopics(groupsToSearch, type, lastLoadedTopicId, length, importantOnly, pm);
 			
@@ -331,7 +333,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				for (VoTopic voTopic : topics) {
 					Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-					tpc.userInfo = UserServiceImpl.getShortUserInfo(voTopic.getAuthorId().getId(), pm);
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(user, voTopic.getAuthorId().getId(), pm);
 					tpc.setMessageNum( voTopic.getMessageNum());
 					mlp.addToTopics(tpc);
 				}
@@ -377,7 +379,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 					
 					pm.getObjectById( VoUserGroup.class, votopic.getUserGroupId() );
-					topic.userInfo = user.getShortUserInfo();
+					topic.userInfo = user.getShortUserInfo(null,pm);
 
 
 				} else {
@@ -427,7 +429,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 				VoUser voUser = getCurrentUser();
 				msg.anonName += voUser.getName() + " " + voUser.getLastName();
-				msg.userInfo = voUser.getShortUserInfo();
+				msg.userInfo = voUser.getShortUserInfo(null, pm);
 				msg.authorId = voUser.getId();
 			} catch (InvalidOperation e) {
 				if (msg.getAnonName() == null || msg.getAnonName().isEmpty())
@@ -465,7 +467,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 					pm.makePersistent(topic);
 
 					if (msg.type != MessageType.BLOG)
-						msg.userInfo = getCurrentUser(pm).getShortUserInfo();
+						msg.userInfo = getCurrentUser(pm).getShortUserInfo(null,pm);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -516,11 +518,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			logger.warning("try to create MessagePartList from null object");
 			return mlp;
 		}
+		VoUser user = 0 == userId ? null : pm.getObjectById(VoUser.class, userId );
 		mlp.totalSize = lst.size();
 		for (VoMessage voMessage : lst) {
 			Message msg = voMessage.getMessage(userId, pm);
 			if (voMessage.getAuthorId() != null)
-				msg.userInfo = UserServiceImpl.getShortUserInfo(voMessage.getAuthorId().getId(), pm);
+				msg.userInfo = UserServiceImpl.getShortUserInfo(user, voMessage.getAuthorId().getId(), pm);
 			mlp.addToMessages(msg);
 		}
 		return mlp;
@@ -884,6 +887,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		} catch( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs,
 					"Topic not found");
+
+		} finally {
+			pm.close();
+		}
+	}
+
+	@Override
+	public Map<Long, Integer> getDialogUpdates() throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			return getCurrentSession(pm).getDialogUpdates();
 
 		} finally {
 			pm.close();

@@ -2,12 +2,14 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -87,6 +89,7 @@ public class VoUser /* extends GeoLocation */{
 		this.importancy = BASE_USER_SCORE;
 		this.popularuty = BASE_USER_SCORE;
 		this.lastNotified = this.registered = (int) (System.currentTimeMillis() / 1000L);
+		this.rootGroup = 0L;
 	}
 
 	public UserProfile getUserProfile() {
@@ -118,9 +121,20 @@ public class VoUser /* extends GeoLocation */{
 		this.relations = relations;
 	}
 
+	public ShortUserInfo getShortUserInfo( PersistenceManager pm) {
+		
+		return new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null);
+	}
+
 	public ShortUserInfo getShortUserInfo( VoUser askedUser, PersistenceManager pm) {
-		boolean commonGroups = askedUser.getVisibleGroups(pm).retainAll( this.getVisibleGroups(pm)); 
-		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic());
+		
+		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null);
+		if( null!=askedUser )
+			if( askedUser != this)
+				shortUserInfo.setGroupType( UserServiceImpl.getRelations( askedUser, this, pm ));
+			else 
+				shortUserInfo.setGroupType( GroupType.FLAT );
+		
 		if (null != moderationGroups)
 			shortUserInfo.moderationGroups = moderationGroups;
 		return shortUserInfo;
@@ -253,6 +267,7 @@ public class VoUser /* extends GeoLocation */{
 			UserServiceImpl.usersByGroup.forget( new Object[]{ ug.getId() });
 			groups.add(ug.getId());
 		}
+		if( groups.size() > 0 ) rootGroup = groups.get(0);
 
 		pm.makePersistent(this);
 	}
@@ -281,24 +296,10 @@ public class VoUser /* extends GeoLocation */{
 		this.id = 0 == id ? null : KeyFactory.createKey(this.getClass().getSimpleName(), id);
 	}
 
-	public Set<VisibleGroup> getVisibleGroups(PersistenceManager pm) {
-		if( null == visibleGroups ){
-			updateVisibleGroups(pm);
-		}
-		return visibleGroups;
-	}
 
-	private void updateVisibleGroups(PersistenceManager pm) {
-		visibleGroups = new HashSet<VisibleGroup>();
-		for( Long ug : getGroups() ){
-			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, ug);
-			for( Long vug : userGroup.getVisibleGroups(pm))
-				visibleGroups.add( pm.getObjectById(VoUserGroup.class, vug ).getVisibleGroup() );
-		}
-	}
-
-	public void setVisibleGroups(Set<VisibleGroup> visibleGroups) {
-		this.visibleGroups = visibleGroups;
+	
+	public long getRootGroup() {
+		return rootGroup;
 	}
 
 	@PrimaryKey
@@ -421,7 +422,8 @@ public class VoUser /* extends GeoLocation */{
 	
 	@Persistent
 	@Unindexed
-	private Set<VisibleGroup> visibleGroups;
+	private long rootGroup;
+	
 	
 
 	public UserPrivacy getPrivacy() {
@@ -599,6 +601,17 @@ public class VoUser /* extends GeoLocation */{
 			moderationGroups.add(groupId);
 		else
 			moderationGroups.remove(groupId);
+	}
+
+	public void initRootGroup(PersistenceManager pm) {
+		VoUserGroup lowestGroup = null;
+		for (Long gid: getGroups()) {
+			VoUserGroup ug = pm.getObjectById(VoUserGroup.class, gid);
+			if( null == lowestGroup || ug.getGroupType() < lowestGroup.getGroupType() )
+				lowestGroup = ug;
+		}
+		if( null!=lowestGroup )
+			rootGroup = lowestGroup.getId();
 	}
 
 }

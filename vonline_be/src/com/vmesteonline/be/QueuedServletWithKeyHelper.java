@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.mortbay.http.HttpResponse;
 
 import com.google.appengine.api.taskqueue.Queue;
@@ -22,12 +23,17 @@ import com.vmesteonline.be.utils.VoHelper;
 
 public class QueuedServletWithKeyHelper extends HttpServlet {
 
+	private static Logger logger = Logger.getLogger(QueuedServletWithKeyHelper.class);
+	
 	protected void sendTheResultNotification(HttpServletRequest arg0, HttpServletResponse arg1, long now, String resultText) throws IOException {
 		arg1.setStatus(HttpResponse.__200_OK, "OK");
 		arg1.getOutputStream().write(resultText.getBytes());
 		if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
 			EMailHelper.sendSimpleEMail("info@vmesteonline.ru", arg0.getRequestURI() +"finished", "request "+arg0.getRequestURI()+" processed. It tooks "
-					+(System.currentTimeMillis() - now) +" ms");
+					+(System.currentTimeMillis() - now) +" ms"+"</br>\r\n"+resultText);
+		} else {
+			logger.warn( "request "+arg0.getRequestURI()+" processed. It tooks "
+					+(System.currentTimeMillis() - now) +" ms"+"</br>\r\n"+resultText );
 		}
 	}
 
