@@ -63,7 +63,7 @@
                 strMonth = "Aug";
                 break;
             case 'Сентябрь':
-                strMonth = "Sen";
+                strMonth = "Sep";
                 break;
             case 'Октябрь':
                 strMonth = "Oct";
@@ -85,12 +85,15 @@
     function SetOrderDates(currentCal){
         try{
         var metaTime = parseInt(getMetaDate(currentCal.picker)/1000);
+
+            //alert(metaTime+" "+currentCal.picker+" "+getMetaDate(currentCal.picker));
         metaTime -= metaTime%86400;
         var day = 3600*24;
         var currentDateItem = new Date(metaTime*1000);
         var currentMonth = currentDateItem.getMonth(),
             prevMonth = currentMonth - 1,
             nextMonth = currentMonth + 1;
+
 
         if (globalUserAuth){
             orders = (orders) ? orders : client.getOrdersByStatus(metaTime-180*day,metaTime+180*day,0);
