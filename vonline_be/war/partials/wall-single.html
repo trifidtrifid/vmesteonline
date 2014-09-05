@@ -9,6 +9,7 @@
                         <div class="first-message clearfix" >
                             <a ui-sref="profile({userId: {{ wallSingle.wallItem.topic.userInfo.id }} })" class="user">
                                 <div class="avatar" style="background-image: url({{wallSingle.wallItem.topic.userInfo.avatar}})"></div>
+                                <div ng-if="wallSingle.wallItem.topic.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(wallSingle.wallItem.topic.userInfo.groupType)"></div>
                             </a>
 
                             <div class="body text-container"> <!--  ng-switch on="wallSingle.wallItem.topic.metaType" -->
@@ -96,6 +97,7 @@
                             <div class="itemdiv dialogdiv" ng-repeat="wallMessage in wallSingle.wallItem.messages">
                                 <a ui-sref="profile({userId: {{ wallMessage.userInfo.id }} })" class="user">
                                     <div class="avatar short2" style="background-image: url({{wallMessage.userInfo.avatar}})"></div>
+                                    <div ng-if="wallMessage.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(wallMessage.userInfo.groupType)"></div>
                                 </a>
 
                                 <div class="body text-container">

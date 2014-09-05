@@ -19,6 +19,9 @@
 
                 <div class="talks-title-left load-talk">
                     <a ui-sref="profile({ userId : {{advert.userInfo.id}} })" class="avatar short2 pull-left" style="background-image: url('{{ advert.userInfo.avatar }}')"></a>
+
+                    <div class="user-ribbon pull-left short2" ng-class="base.getUserColor(advert.userInfo.groupType)"></div>
+
                     <div class="talks-title-links">
                         <a ui-sref="profit-single({ advertId : {{advert.id}} })">{{advert.subject}}</a>
                         <a ui-sref="profile({ userId : {{advert.userInfo.id}} })">{{advert.userInfo.firstName + " "+advert.userInfo.lastName}}</a>

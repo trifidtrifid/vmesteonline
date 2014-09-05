@@ -13,6 +13,7 @@
                                 <div class="topic-left">
                                     <a ui-sref="profile({ userId : {{ talks.fullTalkTopic.userInfo.id }} })">
                                         <div class="avatar" style="background-image: url({{talks.fullTalkTopic.userInfo.avatar}})"></div>
+                                        <div ng-if="talks.fullTalkTopic.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(talks.fullTalkTopic.userInfo.groupType)"></div>
                                     </a>
                                     <div class="topic-author">
                                     </div>
@@ -132,6 +133,8 @@
                                         <div class="topic-left">
                                             <a ui-sref="profile({userId: {{ firstMessage.userInfo.id }} })">
                                                 <div class="avatar short2" style="background-image: url({{firstMessage.userInfo.avatar}})"></div>
+                                                <div ng-if="firstMessage.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(firstMessage.userInfo.groupType)"></div>
+                                            </a>
                                             <div class="topic-author" ng-show="firstMessage.childCount && firstMessage.childCount != 0">
                                                 <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !firstMessage.isTreeOpen,'fa-minus' : firstMessage.isTreeOpen}"
                                                    ng-click="talks.toggleTreeFirstMessage($event,firstMessage)"></a>
@@ -204,6 +207,7 @@
                                                 <div class="topic-left">
                                                     <a ui-sref="profile({ userId : {{ message.userInfo.id }} })">
                                                         <div class="avatar short2" style="background-image: url({{message.userInfo.avatar}})"></div>
+                                                        <div ng-if="message.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(message.userInfo.groupType)"></div>
                                                     </a>
                                                     <div class="topic-author" ng-show="message.childCount && message.childCount != 0">
                                                         <a class="fa plus-minus" href="#" ng-class="{ 'fa-plus' : !message.isTreeOpen,'fa-minus' : message.isTreeOpen}"

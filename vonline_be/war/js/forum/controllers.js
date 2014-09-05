@@ -186,6 +186,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 firstMessages[i].isLoaded = false;
                 firstMessages[i].answerMessage = TEXT_DEFAULT_2;
                 firstMessages[i].createdEdit = getTiming(firstMessages[i].created);
+
             }
 
             return lastLoadedId;
@@ -925,6 +926,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         };
 
+        base.getUserColor = function(groupType){
+          return getTagColor(getLabel(base.groups,groupType));
+        };
+
         base.toggleFullText = function(ctrl){
             ctrl.isFullText ? ctrl.isFullText = false : ctrl.isFullText = true;
         };
@@ -1173,6 +1178,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 wallItems[i].label = getLabel($rootScope.base.groups,wallItems[i].topic.groupType);
 
                 wallItems[i].tagColor = getTagColor(wallItems[i].label);
+
                 wallItems[i].isOpen = false;
 
                 if(wallItems[i].topic.message.important == 1){
@@ -1636,6 +1642,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 talk.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
                 talk.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(talk.fullTalkMessages[firstMessage.id][i].created);
                 talk.fullTalkMessages[firstMessage.id][i].commentText = TEXT_DEFAULT_2;
+
             }
 
         };
@@ -1858,6 +1865,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     advert.fullTalkTopic.message.createdEdit = getTiming(advert.fullTalkTopic.message.created);
                     advert.fullTalkTopic.label = getLabel(advert.groups,advert.fullTalkTopic.groupType);
                     advert.fullTalkTopic.tagColor = getTagColor(advert.fullTalkTopic.label);
+
                 }
             }
             if(advert.fullTalkTopic.poll != null){
@@ -1968,6 +1976,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 advert.fullTalkMessages[firstMessage.id][i].isParentOpen = true;
                 advert.fullTalkMessages[firstMessage.id][i].createdEdit = getTiming(advert.fullTalkMessages[firstMessage.id][i].created);
                 advert.fullTalkMessages[firstMessage.id][i].answerMessage = TEXT_DEFAULT_2;
+
             }
 
         };

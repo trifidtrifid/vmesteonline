@@ -12,6 +12,8 @@
                 <div class="private-message-left pull-left">
                     <div class="private-message-ava pull-left">
                         <div class="avatar middle" style="background-image: url({{dialog.anotherUser.avatar}})"></div>
+
+                        <div ng-if="dialog.anotherUser.groupType" class="user-ribbon" ng-class="base.getUserColor(dialog.anotherUser.groupType)"></div>
                     </div>
                     <div class="private-message-author">
                         <div><a ui-sref="profile({ userId : {{ dialog.anotherUser.id }} })" ng-click="$event.stopPropagation()">{{dialog.anotherUser.firstName + " "+ dialog.anotherUser.lastName}}</a></div>

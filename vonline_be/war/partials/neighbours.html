@@ -17,6 +17,7 @@
             <a ui-sref="profile({ userId : neighboor.id})" class="nextdoor-left pull-left">
             <span class="nextdoor-ava pull-left">
                 <div class="avatar short2" style="background-image: url({{neighboor.avatar}})"></div>
+                <div ng-if="neighboor.groupType" class="user-ribbon" ng-class="base.getUserColor(neighboor.groupType)"></div>
             </span>
                 <span class="nextdoor-name">{{neighboor.firstName+" "+neighboor.lastName}}</span>
             </a>
