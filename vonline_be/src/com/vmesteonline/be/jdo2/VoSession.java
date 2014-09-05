@@ -86,6 +86,14 @@ public class VoSession {
 	@Unindexed
 	private Map<Integer, Long> curAttrMap;
 
+	/**
+	 * Map that contains quantity of mew messages in dialogs that are not opened by user recently
+	 */
+	@Persistent
+	@Unindexed
+	private Map<Long, Integer> newDialogMessages;
+	
+	
 	public int getLastUpdateTs() {
 		return lastUpdateTs;
 	}
@@ -134,6 +142,29 @@ public class VoSession {
 		return "VoSession [id=" + id + ", name=" + name + ", lastName=" + lastName + ", userId=" + userId + ", lastActivityTs=" + lastActivityTs
 				+ ", lastUpdateTs=" + lastUpdateTs + "]";
 	}
+	
+	public void postNewDialogMessage( long dialogId ){
+		if( null==newDialogMessages )
+			newDialogMessages = new HashMap<Long, Integer>();
+		Integer newVal = ( newVal = newDialogMessages.get(dialogId)) == null ? 1 : newVal++;
+		newDialogMessages.put(dialogId, newVal);
+		setLastUpdateTs((int) (System.currentTimeMillis() / 1000L));
+	}
+
+	public void dialogMarkDialogRead( long dialogId ){
+		if( null!=newDialogMessages ){
+			newDialogMessages.remove(dialogId);
+		}
+	}
+	
+	public boolean newDialogUpdates( ){
+		return null!=newDialogMessages && newDialogMessages.size() > 0;
+	} 
+	
+	public Map<Long, Integer> getDialogUpdates(){
+		return newDialogMessages;
+	}
+	
 }
 
 // ", longitude=" + getLongitude()+ ", latitude=" + getLatitude() + 

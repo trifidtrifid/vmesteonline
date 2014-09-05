@@ -29,9 +29,7 @@ public class VoTopic extends VoBaseMessage {
 		viewers = 1;
 		rubricId = topic.getRubricId();
 		userGroupId = topic.getMessage().getGroupId();
-		visibleGroups = pm.getObjectById(VoUserGroup.class, userGroupId ).getVisibleGroups( pm );
-		/*visibleGroups.removeAll(author.getGroups()); //to avoid duplicates
-		visibleGroups.addAll(author.getGroups());*/
+		visibleGroups = pm.getObjectById(VoUserGroup.class, userGroupId ).getUpperLevelGroups(pm);
 		createDate = lastUpdate = (int) (System.currentTimeMillis() / 1000);
 	}
 

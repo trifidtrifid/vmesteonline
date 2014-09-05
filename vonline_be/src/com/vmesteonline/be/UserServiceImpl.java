@@ -1,5 +1,6 @@
 package com.vmesteonline.be;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			return getShortUserInfo(getCurrentUserId(), pm);
+			return getShortUserInfo( null, getCurrentUserId(), pm);
 		} finally {
 			pm.close();
 		}
@@ -103,13 +104,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	public static ShortUserInfo getShortUserInfo(long userId, PersistenceManager pm) {
+	public static ShortUserInfo getShortUserInfo( VoUser cuser, long userId, PersistenceManager pm) {
 		if (userId == 0)
 			return null;
 		
 		try {
 			VoUser voUser = pm.getObjectById(VoUser.class, userId);
-			return voUser.getShortUserInfo();
+			return voUser.getShortUserInfo( cuser, pm);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.warning("request short user info for absent user " + userId);
@@ -469,7 +470,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId);
+			q.setFilter("countryId==" + countryId);
 			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());
@@ -490,9 +491,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Street> cl = new ArrayList<Street>();
-			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == :key");
-			List<VoStreet> cs = (List<VoStreet>) q.execute(cityId);
+			Query q = pm.newQuery(VoStreet.class, "cityId=="+cityId);
+			List<VoStreet> cs = (List<VoStreet>) q.execute();
 			for (VoStreet c : cs) {
 				pm.retrieve(c);
 				cl.add(c.getStreet());
@@ -513,9 +513,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<Building> cl = new ArrayList<Building>();
-			Query q = pm.newQuery(VoBuilding.class);
-			q.setFilter("streetId == :key");
-			List<VoBuilding> cs = (List<VoBuilding>) q.execute(KeyFactory.createKey(VoStreet.class.getSimpleName(), streetId));
+			Query q = pm.newQuery(VoBuilding.class, "streetId=="+streetId);
+			List<VoBuilding> cs = (List<VoBuilding>) q.execute();
 			for (VoBuilding c : cs) {
 				cl.add(c.getBuilding());
 			}
@@ -757,27 +756,51 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			pm.close();
 		}
 	}
-
+	
+	public static CachableObject< ArrayList<ShortUserInfo> > usersByGroup = new CachableObject();
 	@Override
 	public List<ShortUserInfo> getNeighboursByGroup(long groupId) throws InvalidOperation, TException {
+		return usersByGroup.create(this, "getNeighborsByGroupDo", new Object[]{ groupId });
+	}
+
+	public ArrayList<ShortUserInfo> getNeighborsByGroupDo(Long groupId) throws InvalidOperation {
+		ArrayList<ShortUserInfo> sug = new ArrayList<ShortUserInfo>();
 		PersistenceManager pm = PMF.getPm();
 		try {
 			List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
-			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+			for (VoUser voUser : users) {
+				sug.add( voUser.getShortUserInfo(pm));
+			}
+			Collections.sort( sug, new Comparator<ShortUserInfo>(){
+				@Override
+				public int compare(ShortUserInfo o1, ShortUserInfo o2) {
+					return (o1.lastName + o1.firstName).compareTo(o2.lastName+o2.firstName);
+				}
+			} );
+			return sug;
 		} finally {
 			pm.close();
 		}
 	}
 
-	public static List<VoUser> getUsersByLocation(VoUserGroup group, PersistenceManager pm) {
-		List<VoUser> users = new ArrayList<VoUser>();
-		if( null!= group )
+	private static Comparator<VoUser> uIdCOmp = new Comparator<VoUser>(){
+		@Override
+		public int compare(VoUser o1, VoUser o2) {
+			return Long.compare(o1.getId(), o2.getId());
+	}};
 		
+	public static List<VoUser> getUsersByLocation(VoUserGroup group, PersistenceManager pm) {
+
+		Set<VoUser> users = new TreeSet<VoUser>(uIdCOmp);
+		if( null!= group ){
 			for( Long g : group.getVisibleGroups(pm)) {
 				String filter = "groups=="+g +" && emailConfirmed==true";
 				users.addAll( (List<VoUser>)pm.newQuery(VoUser.class, filter).execute());
 			}
-		return users;
+		}
+		List<VoUser> ul = new ArrayList<VoUser>();
+		ul.addAll(users);
+		return ul;
 	}
 
 	@Override
@@ -861,5 +884,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public List<Rubric> getUserRubrics() throws InvalidOperation, TException {
 		return tmpRubrics;
+	}
+
+//	public static CachableObject<GroupType> usersRelation = new CachableObject<GroupType>();
+	
+	public static GroupType getRelations(VoUser askedUser, VoUser voUser, PersistenceManager pm) {
+		Query nq = pm.newQuery( VoUserGroup.class, "visibleGroups=="+askedUser.getRootGroup()+" && visibleGroups=="+voUser.getRootGroup());
+		nq.setOrdering( "groupType");
+		List<VoUserGroup> gtl = (List<VoUserGroup>) nq.execute();
+		return gtl.size() > 0  ? GroupType.findByValue( gtl.get(0).getGroupType()) : GroupType.NEIGHBORS;  //it should not be called elsewhere
 	}
 }

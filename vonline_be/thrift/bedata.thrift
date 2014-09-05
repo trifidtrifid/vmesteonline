@@ -39,17 +39,9 @@ struct UserLocation{
 	1:string address,
 	2:string locationId,
 	3:string mapUrl
-	
 }
 
-
-enum FriendshipType { UNCONFIRMED=0, CONFIRMED=1, REQUESTED=2, WAIT_CONFIRMATION=3, HIDE=4 }
-
-struct Friendship {
-	1: i64 userId,
-	2: i64 friendId, //'идентификатор друга',
-	3: FriendshipType state // 'состояние - запрос, подтверждено, отклонено ',
-} // 'список друзей';
+enum GroupType { NOBODY=0, FLAT=1, FLOOR=2, STAIRCASE=3, BUILDING=4, NEIGHBORS=5, BLOCK=6, DISTRICT=7, TOWN=8 }
 
 struct ShortUserInfo{
 	1: i64 id,
@@ -57,7 +49,8 @@ struct ShortUserInfo{
 	3: string lastName,
 	4: i32 rating
 	5: string avatar,
-	6:optional set<i64> moderationGroups;
+	6: GroupType groupType,
+	7: optional set<i64> moderationGroups,
 }
 
 struct ShortProfile{
@@ -80,8 +73,6 @@ struct UserInfo{
 	5: i32 gender,
 	6: string avatar
 }
-
-enum GroupType { NOBODY=0, FLAT=1, FLOOR=2, STAIRCASE=3, BUILDING=4, NEIGHBORS=5, BLOCK=6, DISTRICT=7, TOWN=8 }
 
 struct UserPrivacy{
 	1: i64 userId,

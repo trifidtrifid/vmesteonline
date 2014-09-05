@@ -131,7 +131,7 @@ public class UserServiceImplTest extends TestWorkAround {
 			Assert.assertEquals(voUserA.getId(), sp.getId());
 			Assert.assertEquals(Defaults.user1name, sp.getFirstName());
 			Assert.assertEquals(Defaults.user1lastName, sp.getLastName());
-			Assert.assertEquals("Республиканская, 32/3", sp.getAddress());
+			Assert.assertEquals("Россия,Санкт Петербург,Заневский,32к3", sp.getAddress());
 			Assert.assertEquals("/data/da.gif", sp.getAvatar());
 			Assert.assertEquals("", sp.getBalance());
 			Assert.assertEquals(0, sp.getRating());
@@ -191,7 +191,7 @@ public class UserServiceImplTest extends TestWorkAround {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
 			UserContacts uc = new UserContacts();
-			uc.email = "z@z";
+			uc.email = "z@z.zz";
 			uc.mobilePhone = "7921336";
 			usi.updateContacts(uc);
 
@@ -229,19 +229,11 @@ public class UserServiceImplTest extends TestWorkAround {
 				VoUser uB = asi.getCurrentUser(pmB);
 				List<Long> voUserGroupsB = uB.getGroups();
 
-				Assert.assertEquals(5, voUserGroupsB.size());
+				Assert.assertEquals(4, voUserGroupsB.size());
 				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(0)).getRadius());
-				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(1)).getRadius());
-				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(2)).getRadius());
-				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(3)).getRadius());
-				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(4)).getRadius());
-
-				Assert.assertEquals(5, voUserGroupsA.size());
-				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(0)).getRadius());
-				Assert.assertEquals(20, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(1)).getRadius());
-				Assert.assertEquals(200, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(2)).getRadius());
-				Assert.assertEquals(2000, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(3)).getRadius());
-				Assert.assertEquals(5000, pmA.getObjectById(VoUserGroup.class, voUserGroupsA.get(4)).getRadius());
+				Assert.assertEquals(0, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(1)).getRadius());
+				Assert.assertEquals(Defaults.radiusBuilding, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(2)).getRadius());
+				Assert.assertEquals(Defaults.radiusNeighbors, pmA.getObjectById(VoUserGroup.class, voUserGroupsB.get(3)).getRadius());
 
 				/*
 				 * Assert.assertEquals(voUserGroupsA.get(0).getLongitude(), new BigDecimal("59.9331461"));
@@ -277,20 +269,18 @@ public class UserServiceImplTest extends TestWorkAround {
 			asi.login(Defaults.user2email, Defaults.user2pass);
 			List<Group> userBgroups = usi.getUserGroups();
 
-			Assert.assertEquals(5, userAgroups.size());
-			Assert.assertEquals(0, userAgroups.get(0).getRadius());
-			Assert.assertEquals(20, userAgroups.get(1).getRadius());
-			Assert.assertEquals(200, userAgroups.get(2).getRadius());
-			Assert.assertEquals(2000, userAgroups.get(3).getRadius());
-			Assert.assertEquals(5000, userAgroups.get(4).getRadius());
-
-			Assert.assertEquals(5, userBgroups.size());
-			Assert.assertEquals(0, userBgroups.get(0).getRadius());
-			Assert.assertEquals(20, userBgroups.get(1).getRadius());
-			Assert.assertEquals(200, userBgroups.get(2).getRadius());
-			Assert.assertEquals(2000, userBgroups.get(3).getRadius());
-			Assert.assertEquals(5000, userBgroups.get(4).getRadius());
-
+			Assert.assertEquals(4, userAgroups.size());
+			Assert.assertEquals(Defaults.radiusZero, userAgroups.get(0).getRadius());
+			Assert.assertEquals(Defaults.radiusZero, userAgroups.get(1).getRadius());
+			Assert.assertEquals(Defaults.radiusBuilding, userAgroups.get(2).getRadius());
+			Assert.assertEquals(Defaults.radiusNeighbors, userAgroups.get(3).getRadius());
+			
+			Assert.assertEquals(4, userBgroups.size());
+			Assert.assertEquals(Defaults.radiusZero, userBgroups.get(0).getRadius());
+			Assert.assertEquals(Defaults.radiusZero, userBgroups.get(1).getRadius());
+			Assert.assertEquals(Defaults.radiusBuilding, userBgroups.get(2).getRadius());
+			Assert.assertEquals(Defaults.radiusNeighbors, userBgroups.get(3).getRadius());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
@@ -301,11 +291,11 @@ public class UserServiceImplTest extends TestWorkAround {
 	public void testGetUserGroups() {
 		try {
 			List<Group> userGroups = usi.getUserGroups();
-			boolean homeFound = false;
+			int homeFound = 0;
 			for (Group ug : userGroups) {
 				if (0 == ug.getRadius()) {
-					Assert.assertFalse(homeFound);
-					homeFound = true;
+					Assert.assertFalse(homeFound==3);
+					homeFound++;
 					ug.getName();
 				}
 			}
@@ -438,71 +428,7 @@ public class UserServiceImplTest extends TestWorkAround {
 		}
 	}
 
-	@Test
-	public void testAddUserAddress() {
-		try {
-			byte floor, flat, staircase;
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT);
-			boolean created = usi.addUserAddress(newAddress);
-			Assert.assertTrue(created);
-			Set<PostalAddress> userAddresses = usi.getUserAddresses();
-			PostalAddress found = null;
-			int addressCount = userAddresses.size();
-			for (PostalAddress pa : userAddresses) {
-				if (pa.getFloor() == floor && pa.getFlatNo() == flat && staircase == pa.getStaircase())
-					if (found != null)
-						fail("Adsress dublicate detected!");
-					else
-						found = pa;
-			}
-			Assert.assertNotNull(found);
-			Assert.assertEquals(found.getBuilding().getId(), newBuilding.getId());
-			Assert.assertEquals(found.getStreet().getId(), newStreet.getId());
-			Assert.assertEquals(found.getCity().getId(), newCity.getId());
-			Assert.assertEquals(found.getCountry().getId(), newCountry.getId());
-			Assert.assertEquals(found.getComment(), COMMENT);
-
-			created = usi.addUserAddress(newAddress);
-			int nextAddressCount = usi.getUserAddresses().size();
-			Assert.assertEquals(addressCount, nextAddressCount);
-
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 3, COMMENT));
-			int next2AddressCount = usi.getUserAddresses().size();
-			Assert.assertEquals(addressCount, next2AddressCount);
-
-			created = usi.addUserAddress(new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase = 1, floor = 2, flat = 4, COMMENT));
-			int next3AddressCount = usi.getUserAddresses().size();
-			Assert.assertEquals(addressCount + 1, next3AddressCount);
-
-		} catch (TException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
-
-	@Test
-	public void testRemoveUserAddress() {
-		try {
-			byte floor = 2, flat = 3, staircase = 1;
-			PostalAddress newAddress = new PostalAddress(newCountry, newCity, newStreet, newBuilding, staircase, floor, flat, COMMENT);
-			Assert.assertTrue(usi.addUserAddress(newAddress));
-			PostalAddress newAddress1 = new PostalAddress(newCountry, newCity, newStreet1, newBuilding, staircase, floor, flat, COMMENT);
-			Assert.assertTrue(usi.addUserAddress(newAddress1));
-
-			Set<PostalAddress> userAddresses = usi.getUserAddresses();
-			Assert.assertEquals(2, userAddresses.size());
-
-			usi.deleteUserAddress(newAddress1);
-
-			userAddresses = usi.getUserAddresses();
-			Assert.assertEquals(1, userAddresses.size());
-
-		} catch (TException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-	}
-
+	
 	@Test
 	public void testGetUserAddress() {
 		try {
@@ -688,4 +614,51 @@ public class UserServiceImplTest extends TestWorkAround {
 		}
 	}
 
+	@Test
+	public void testGetUserAandBRelation() {
+
+		try {
+			PersistenceManager pmA = PMF.getPm();
+			PersistenceManager pmB = PMF.getPm();
+
+			try {
+
+				asi.login(Defaults.user1email, Defaults.user1pass);
+				//VoUser uA = asi.getCurrentUser(pmA);
+				
+				List<Group> uAgroups = usi.getUserGroups();
+
+				Assert.assertEquals(4, uAgroups.size());
+				List<ShortUserInfo> uAFloorGroup = usi.getNeighboursByGroup( uAgroups.get(0).getId() );
+				List<ShortUserInfo> uAStaircaseGroup = usi.getNeighboursByGroup( uAgroups.get(1).getId() );
+				List<ShortUserInfo> uABuildingGroup = usi.getNeighboursByGroup( uAgroups.get(2).getId() );
+				List<ShortUserInfo> uANgrGroup = usi.getNeighboursByGroup( uAgroups.get(3).getId() );
+				
+				Assert.assertEquals(1, uAFloorGroup.size());
+				Assert.assertEquals(1, uAStaircaseGroup.size());
+				Assert.assertEquals(3, uABuildingGroup.size());
+				Assert.assertEquals(4, uANgrGroup.size());
+				
+				asi.login(Defaults.user2email, Defaults.user2pass);
+				uAgroups = usi.getUserGroups();
+				Assert.assertEquals(4, uAgroups.size());
+				uAFloorGroup = usi.getNeighboursByGroup( uAgroups.get(0).getId() );
+				uAStaircaseGroup = usi.getNeighboursByGroup( uAgroups.get(1).getId() );
+				uABuildingGroup = usi.getNeighboursByGroup( uAgroups.get(2).getId() );
+				uANgrGroup = usi.getNeighboursByGroup( uAgroups.get(3).getId() );
+				
+				Assert.assertEquals(2, uAFloorGroup.size());
+				Assert.assertEquals(2, uAStaircaseGroup.size());
+				Assert.assertEquals(3, uABuildingGroup.size());
+				Assert.assertEquals(4, uANgrGroup.size());
+
+			} finally {
+				pmA.close();
+				pmB.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 }

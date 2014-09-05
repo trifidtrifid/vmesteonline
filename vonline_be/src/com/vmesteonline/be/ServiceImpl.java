@@ -1,6 +1,9 @@
 package com.vmesteonline.be;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -12,6 +15,12 @@ import javax.cache.CacheManager;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpSession;
+
+
+
+
+
+
 
 
 import com.vmesteonline.be.access.VoUserAccessBase;
@@ -246,6 +255,49 @@ public class ServiceImpl {
 				pm.close();
 		}
 	}
+	
+	public static class CachableObject<T extends Serializable> {
+		String createNewObjectMethodName;
+		Class[] argTypes;
+		
+		public T create( Object object, String methodName, Object[] args ){
+			createNewObjectMethodName = methodName;
+			if( null == argTypes ){
+				ArrayList<Class> argTypesAL = new ArrayList<Class>();
+				for (Object arg : args) {
+					argTypesAL.add( arg.getClass());
+				}
+				argTypes = new Class[argTypesAL.size()];
+				argTypesAL.toArray(argTypes);
+			}
+			try {
+				Object key = createKey( args );
+				T result = ServiceImpl.getObjectFromCache( key); 
+				if( result == null ){
+					result = (T)object.getClass().getMethod(methodName, argTypes ).invoke(object, args);
+					ServiceImpl.putObjectToCache(key, result);
+				}
+				return result;
+				
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public void forget( Object[] args ){
+			ServiceImpl.removeObjectFromCache( createKey(args));
+		};
+		
+		private Object createKey( Object[] args ){
+			String key = createNewObjectMethodName;
+			for (Object object : args) {
+				key+=":"+object;
+			}
+			return key;
+		}
+		
+	} 
 
 	/**
 	 * Method return true if method should have public access through Thrift interface, false to check access by USer ID

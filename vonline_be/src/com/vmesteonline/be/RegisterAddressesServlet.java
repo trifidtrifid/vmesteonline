@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
@@ -29,10 +30,13 @@ import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
+	
+	private static Logger logger = Logger.getLogger(RegisterAddressesServlet.class.getSimpleName());
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String fileLink = req.getParameter("file");
+		logger.fine("Got request with file param ["+fileLink +"] and key="+req.getParameter("key"));
 		if( null==fileLink){
 			resp.setStatus(HttpResponse.__200_OK, "OK");
 			resp.getOutputStream().write("No 'file' parameter set".getBytes());
@@ -74,7 +78,7 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 			VoCity vcty;
 			VoCountry vc;
 			try {
-				List<String> firstLine = csvData.get(0);
+				List<String> firstLine = csvData.get(1);
 				vc = VoCountry.createVoCountry( firstLine.get(2), pm);
 				vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
 				cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
@@ -101,7 +105,8 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 		
 		Set codeSet = new HashSet<String>();
 		
-		for (List<String> items : rows) {
+		for (int idx = 1; idx< rows.size(); idx ++) {
+			List<String> items = rows.get(idx);
 			VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, Byte.parseByte(items.get(7)), (byte) Integer.parseInt(items.get(9)), Integer.parseInt(items.get(8)), null,pm);
 			pm.makePersistent(pa);
 			
@@ -115,7 +120,9 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 					continue;
 				break;
 			}
+			codeSet.add(passCode);
 			VoInviteCode ic = new VoInviteCode( passCode, pa.getId() );
+			
 			pm.makePersistent(ic);
 			items.set(0, passCode);
 		}

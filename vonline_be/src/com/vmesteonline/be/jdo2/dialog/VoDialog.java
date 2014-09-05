@@ -28,6 +28,7 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
+import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.messageservice.Attach;
 import com.vmesteonline.be.messageservice.Dialog;
@@ -37,11 +38,13 @@ import com.vmesteonline.be.utils.StorageHelper.FileSource;
 @PersistenceCapable
 public class VoDialog {
 	
-	public Dialog getDialog( PersistenceManager pm ) throws InvalidOperation {
+	public Dialog getDialog( VoUser cuser, PersistenceManager pm ) throws InvalidOperation {
+		
 		List< ShortUserInfo > usis = new ArrayList<ShortUserInfo>();
 		for( Long uid : users){
 			try {
-				usis.add( pm.getObjectById(VoUser.class, uid).getShortUserInfo() );
+				VoUser user = pm.getObjectById(VoUser.class, uid);
+				usis.add( user.getShortUserInfo(cuser, pm) );
 			} catch (JDOObjectNotFoundException e) {
 				
 				throw new InvalidOperation(VoError.GeneralError, "Invalid dialog properties. USer registered in dialog but not found. Remove him!");
@@ -150,12 +153,18 @@ public class VoDialog {
 		pm.makePersistent(this);
 		
 		Queue queue = QueueFactory.getDefaultQueue();
-    for( Long recipient : users )
+    for( Long recipient : users ){
     	if( recipient != currentUserId )
 				queue.add(withUrl("/tasks/notification").param("rt", "ndm")
 		    		.param("dg", ""+getId())
 		    		.param("ar", ""+currentUserId)
 		    		.param("rcpt", ""+recipient));
+    	List<VoSession> sessList = (List<VoSession>) pm.newQuery(VoSession.class, "userId=="+recipient).execute();
+    	for( VoSession s:sessList ){
+    		s.postNewDialogMessage(id);
+    		pm.makePersistent( s );
+    	}
+    }
 		return dmsg;
 	}
 	
