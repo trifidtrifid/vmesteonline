@@ -184,18 +184,18 @@ $(document).ready(function(){
     });
 
     $('.login-forum').keypress(function(eventObject){
-        /*if(eventObject.which == ){
+        if(eventObject.which == 13){
 
-         var url = "/main";
-         var toURL = $('#login-box .btn-login').attr('data-tourl');
-         if(toURL && toURL.indexOf('favicon') == -1) {
-         url = toURL;
-         $('#login-box .btn-login').attr('data-tourl',"");
-         }
+             var url = "/main";
+             var toURL = $('#login-box .btn-login').attr('data-tourl');
+             if(toURL && toURL.indexOf('favicon') == -1) {
+             url = toURL;
+             $('#login-box .btn-login').attr('data-tourl',"");
+             }
 
-         login(url);
+             login(url);
 
-        }*/
-        alert('Вы ввели символ с клавиатуры. Его код равен ' + eventObject.which);
+        }
+        //alert('Вы ввели символ с клавиатуры. Его код равен ' + eventObject.which);
     });
 });

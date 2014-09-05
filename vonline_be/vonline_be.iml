@@ -68,6 +68,7 @@
     <orderEntry type="library" exported="" name="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/datastore-v1beta2r14lv1.16.0-rc" level="application" />
     <orderEntry type="library" exported="" name="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/storage-v1r1lv1.16.0-rc" level="application" />
     <orderEntry type="library" exported="" name="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/oauth2-v2r69lv1.16.0-rc" level="application" />
+    <orderEntry type="library" name="vonline_be node_modules" level="project" />
   </component>
 </module>
 
