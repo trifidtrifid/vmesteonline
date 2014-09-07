@@ -564,13 +564,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							
 							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
-<<<<<<< HEAD
 							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
 							curProduct.setScore( curProduct.getScore() + voOrderLine.getQuantity() );
 
-=======
-							
->>>>>>> FE
 							// merge packets for prepack product
 							if (voProduct.isPrepackRequired()) {
 								mergeOrderLinePackets(voOrderLine, currentOL);
