@@ -107,8 +107,12 @@
                 <li ng-class="navbar.mapsBtnStatus"><a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="maps">Карты</a></li>
 
-                <li ng-class="navbar.privateMessagesBtnStatus"><a class="btn btn-info no-border private-messages-link"
-                                                                  ui-sref="dialogs">Личные сообщения</a></li>
+                <li ng-class="navbar.privateMessagesBtnStatus">
+                    <a class="btn btn-info no-border private-messages-link"
+                                                                  ui-sref="dialogs">Личные сообщения</a>
+
+                    <a ui-sref="dialog-single({dialogId: {{base.biggestCountDialogId}} })" class="new-private-message-count" ng-if="base.newPrivateMessagesCount">{{base.newPrivateMessagesCount}}</a>
+                </li>
 
                 <li ng-class="navbar.neighboursBtnStatus"><a class="btn btn-info no-border nextdoors-link"
                                                             ui-sref="neighbours">Соседи</a></li>

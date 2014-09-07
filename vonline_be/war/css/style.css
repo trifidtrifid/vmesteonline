@@ -58,6 +58,17 @@ h1 {
 .navbar .form-search .icon-search:hover {
   text-decoration: none;
 }
+.new-private-message-count {
+  width: 10px;
+  height: 7px;
+  border-radius: 5px;
+  color: #fff;
+  background: #f00;
+  text-align: center;
+  padding-top: 3px;
+  position: absolute;
+  z-index: 2;
+}
 .ace-nav>li a {
   padding: 11px 12px 0 12px;
   line-height: 1.428571429;

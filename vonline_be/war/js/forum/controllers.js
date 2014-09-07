@@ -934,6 +934,33 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             ctrl.isFullText ? ctrl.isFullText = false : ctrl.isFullText = true;
         };
 
+        base.newPrivateMessagesCount = 0;
+
+        var timeStamp = 0;
+        base.checkUpdates = function(){
+            timeStamp = messageClient.checkUpdates(timeStamp);
+
+            var updateMap,
+                old = 0;
+
+            if(timeStamp == 0){
+                updateMap = messageClient.getDialogUpdates();
+                base.newPrivateMessagesCount = 0;
+
+                for(var p in updateMap){
+                    base.newPrivateMessagesCount += updateMap[p];
+
+                    if(updateMap[p] > old){
+                        base.biggestCountDialogId = p;
+                    }
+
+                    old = updateMap[p];
+                }
+            }
+        };
+
+        setInterval(base.checkUpdates,5000);
+
         base.contentLength = 500;
 
         var lsGroupId = localStorage.getItem('groupId'),
