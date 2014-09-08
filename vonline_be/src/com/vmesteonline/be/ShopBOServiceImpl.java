@@ -915,7 +915,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					continue;
 				}
 				// collect all order line information
-				ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
+				/*ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
 				ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_" + od.orderId + "_lines.csv", orderLineFIelds);
 				List<List<String>> lfieldsData = new ArrayList<List<String>>();
 
@@ -939,11 +939,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
 				toFieldsData.add( createModifableListFromArray( new String[]{ "Вес: "+od.weight, "Доставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
 				toFieldsData.add( createModifableListFromArray( new String[]{ "=======","===================","================","=======","===================","================"})); //order
-				toFieldsData.add( createModifableListFromArray( new String[]{ ""})); //delimiter
+				toFieldsData.add( createModifableListFromArray( new String[]{ ""})); //delimiter*/
 			}
 			
 		// collect total orders CSV
-			ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
+			/*ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
 			CSVHelper.writeCSV(tobaos, toFieldsData, null, null, null);		
 			tobaos.close();
 			byte[] toFileDate = tobaos.toByteArray();
@@ -951,13 +951,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
 			ordersLinesTO.setUrl(StorageHelper.saveImage(toFileDate, "text/csv", currentUserId, false, pm, ordersLinesTO.getFileName()));
 			ordersLinesTO.setFieldsData( VoHelper.matrixToList(toFieldsData) );
-			ds.addToData(ordersLinesTO);
+			ds.addToData(ordersLinesTO);*/
 			
 			//create orders matrix
 			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, productsList, usersMap, pm));
 			
 			//add total orders info
-			ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
+			/*ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(oInstance, ExchangeFieldType.ORDER_ID, orderFields), odl, fieldsData);
@@ -966,7 +966,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			byte[] fileData2 = baos.toByteArray();
 			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm, ordersIE.getFileName()));
 
-			ds.addToData(ordersIE);
+			ds.addToData(ordersIE);*/
 
 			return ds;
 
@@ -1056,7 +1056,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ordersMtxIE.setFieldsData( VoHelper.matrixToList(productsMatrix) );
 		baos.close();
 		byte[] fileData = baos.toByteArray();
-		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, null));
+		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, "orders.csv"));
 
 		return ordersMtxIE;
 	}

@@ -154,8 +154,24 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 	// ======================================================================================================================
+	@Override
+	public List<OrderDate> getOrderDates(int afterDate, int before) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
+		}
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			return voShop.getOrderDates(afterDate, before);
+		} catch (Exception e) { 
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
+	}
 
-	
 	// ======================================================================================================================
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation {
