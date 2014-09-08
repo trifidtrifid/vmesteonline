@@ -517,7 +517,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		try {
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			if (null != voOrder) {
-				double addCost = 0;
+				double addCost = 0.0;
+				double addWeigth = 0.0;
 				VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 				
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
@@ -535,6 +536,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 						currentOdrerLines.put(voOrderLine.getProductId(), newOrderLine.getId().getId());
 						addCost += voOrderLine.getQuantity() * price;
+						addWeigth += voOrderLine.getQuantity() * voProduct.getWeight();
 					}
 
 				} else {
@@ -546,18 +548,19 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 						long pid = voOrderLine.getProductId();
-
+						
 						if (currentOdrerLines.containsKey(pid)) {
-
+							
 							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
-							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
-
+							
 							// merge packets for prepack product
-							if (curProduct.isPrepackRequired()) {
+							if (voProduct.isPrepackRequired()) {
 								mergeOrderLinePackets(voOrderLine, currentOL);
 							}
+							
 							pm.makePersistent(currentOL);
+							
 
 						} else {
 							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()),
@@ -567,10 +570,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 							currentOdrerLines.put(voOrderLine.getProductId(), newOrderLine.getId().getId());
 						}
+						addWeigth += voOrderLine.getQuantity() * voProduct.getWeight();
 						addCost += voOrderLine.getQuantity() * price;
 					}
 				}
 				currentOrder.addCost(addCost);
+				currentOrder.addWeigth(addWeigth);
+				
 				pm.makePersistent(currentOrder);
 				return currentOrder.getOrderDetails(pm);// addCost;
 			}

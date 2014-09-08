@@ -320,4 +320,9 @@ public class VoOrder {
 				+ ", delivery=" + delivery + ", deliveryCost=" + deliveryCost + ", deliveryTo=" + deliveryTo + ", paymentType=" + paymentType
 				+ ", paymentStatus=" + paymentStatus + "]";
 	}
+
+	public void addWeigth(double addWeigth) {
+		weightGramm += (int)(addWeigth*1000.0);
+		
+	}
 }
