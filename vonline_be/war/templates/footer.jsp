@@ -6,9 +6,9 @@
         <div>email: info@voclub.co</div>
 
         <!-- Yandex.Metrika informer -->
-        <a href="https://metrika.yandex.ru/stat/?id=25690787&amp;from=informer" target="_blank" rel="nofollow" class="ya-informer">
+        <%--<a href="https://metrika.yandex.ru/stat/?id=25690787&amp;from=informer" target="_blank" rel="nofollow" class="ya-informer">
             <img src="//bs.yandex.ru/informer/25690787/3_1_FFFFFFFF_EFEFEFFF_0_pageviews" style="width:18px; height:13px; border:0;" alt="Яндекс.Метрика" title="ЯМ" onclick="try{Ya.Metrika.informer({i:this,id:25690787,lang:'ru'});return false}catch(e){}"/>
-        </a>
+        </a>--%>
         <!-- /Yandex.Metrika informer -->
 
         <!-- Yandex.Metrika counter -->

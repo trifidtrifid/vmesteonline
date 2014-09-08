@@ -16,3 +16,11 @@
 <div class="modal modal-auth">
 </div>
 
+<div class="modal modal-chooseDate">
+    <div class="modal-body">
+
+        <input type="text" class="datepicker-chooseDate"/>
+
+    </div>
+</div>
+
