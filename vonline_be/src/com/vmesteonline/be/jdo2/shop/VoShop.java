@@ -570,7 +570,7 @@ public class VoShop {
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
 				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
-				int start = d.orderDay > afterDateDayOfWeek ? from : from + 7 - afterDateDayOfWeek;
+				int start = d.orderDay > afterDateDayOfWeek ? from : from + 7 - d.orderDay;
 				while( start < to ){
 					odates.add( new OrderDate( start, d.getPriceTypeToUse() ));
 					start += 7*86400;
