@@ -82,7 +82,8 @@
     }
 
     //var orders;
-    var orderDays;
+    var orderDays,
+        chooseDateFlag = false;
     function SetOrderDates(currentCal){
 
         try{
@@ -98,7 +99,7 @@
             nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
-            orderDays = (orderDays) ? orderDays : client.getOrderDates(now,now+180*day);
+            orderDays = (orderDays) ? orderDays : client.getOrderDates(now+day,now+180*day);
             //alert('2');
 
             //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
@@ -131,12 +132,14 @@
             var dateVal = new Date(orderDays[0].orderDate*1000);
 
             var dateDay = dateVal.getDate()+"",
-            dateMonth = dateVal.getMonth()+"";
+            dateMonth = dateVal.getMonth()+1+"";
 
             if (dateDay.length < 2) dateDay = "0"+dateDay;
             if (dateMonth.length < 2) dateMonth = "0"+dateMonth;
 
-            $('.chooseDate').attr('data-date',orderDays[0].orderDate).text(dateDay+"."+dateMonth);
+            if(!chooseDateFlag) {
+                $('.chooseDate').attr('data-date', orderDays[0].orderDate).text(dateDay + "." + dateMonth);
+            }
         }
         }catch(e){
 
@@ -149,19 +152,28 @@
         }
     }
 
+    /*function convertFromTimeStampToString(timestamp){
+        var date = new Date(timestamp*1000);
+
+
+        return date;
+    }*/
+
     function initOrderDay(){
 
         $('.order-day').click(function() {
 
-            var dateVal = new Date(orderDays[0].orderDate*1000);var orderDate = $(this).attr('id');
+            var dateVal = new Date($(this).attr('id')*1000);
+            var orderDate = $(this).attr('id');
 
-            var dateDay = dateVal.getDate(),
-                dateMonth = dateVal.getMonth();
+            var dateDay = dateVal.getDate()+"",
+                dateMonth = dateVal.getMonth()+1+"";
 
             if (dateDay.length < 2) dateDay = "0"+dateDay;
             if (dateMonth.length < 2) dateMonth = "0"+dateMonth;
 
             $('.chooseDate').attr('data-date',orderDate).text(dateDay+"."+dateMonth);
+            chooseDateFlag = true;
 
         });
 
@@ -632,7 +644,7 @@
 			}
 			yearCont.html(html);
                 SetOrderDates(this);
-               initOrderDay(this.createOrdersHtml,this.initOrderPlusMinus,this.setSidebarHeight,this.filterByStatus,this.filterByDelivery,this.filterBySearch)
+               initOrderDay();
 	},
 
 		updateNavArrows: function() {
