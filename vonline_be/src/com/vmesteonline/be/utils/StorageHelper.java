@@ -18,9 +18,13 @@ import java.util.Map;
 
 
 
+
+
+
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,6 +44,18 @@ import com.vmesteonline.be.jdo2.VoFileAccessRecord;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord.VersionCreator;
 
 public class StorageHelper {
+	
+	public static class FileSource {
+		
+		public FileSource(String fname2, String contentType2, InputStream is2) {
+			this.fname = fname2;
+			this.contentType = contentType2;
+			this.is = is2;
+		}
+		public String fname;
+		public String contentType;
+		public InputStream is;
+	}
 
 	private static Logger logger = Logger.getLogger(StorageHelper.class.getCanonicalName());
 
@@ -73,50 +89,12 @@ public class StorageHelper {
 		return saveImage(urlOrContent, null, ownerId, isPublic, _pm, null);
 		
 	}
+	//===================================================================================================================
+
 	public static String saveImage(byte[] urlOrContent, String _contentType, long ownerId, boolean isPublic, PersistenceManager _pm, String fileName) throws IOException {
 
-		if (null == urlOrContent || 0 == urlOrContent.length) {
-			throw new IOException("Invalid content. Failed to store null or empty content");
-
-		} else {
-			String fname;
-			InputStream is = null;
-			String contentType = null==_contentType ? "binary/stream" : _contentType;
-
-			try { // try to create URL from content
-				URL url = new URL(new String(urlOrContent));
-				if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
-					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-					httpConnection.connect();
-					httpConnection.getHeaderFields();
-					contentType = httpConnection.getContentType();
-					is = httpConnection.getInputStream();
-				} else {
-					is = url.openStream();
-					// file name for the same sources will be the same
-				}
-				fname = url.getFile();
-
-			} catch (MalformedURLException e) {
-				String contentString = new String(urlOrContent);
-				String[] split = contentString.split("[():;,]");
-				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
-					if( split[3].equals("base64")){
-						is = new ByteArrayInputStream( Base64.decode(split[4]));
-						contentType = split[2];
-					} 
-				}
-				if( null == is )
-					is = new ByteArrayInputStream(urlOrContent);
-				
-				fname = ( null==fileName || 0 == fileName.trim().length()) ? 
-						numberToString((long) (Math.random() * Long.MAX_VALUE)) : 
-							URLEncoder.encode (fileName, "UTF-8");
-				
-			}
-
-			return saveImage(fname, contentType, ownerId, isPublic, is, _pm);
-		}
+		FileSource fs = createFileSource( urlOrContent, _contentType, fileName);
+		return saveImage(fs.fname, fs.contentType, ownerId, isPublic, fs.is, _pm);
 	}
 
 	// ===================================================================================================================
@@ -138,23 +116,26 @@ public class StorageHelper {
 		if(  urlOrContent.equals( oldURL ) ) return oldURL;
 		
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
+		String contentType = "image/jpeg";
+		String fname = "img.jpeg";
 		try {
 			if( null != oldURL ){
 			long oldFileId = getFileId(oldURL);
 			
 				try {
 					VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+					contentType = oldFile.getContentType();
+					fname = oldFile.getFileName();
+					
 					if (0 == userId)
 						userId = oldFile.getUserId();
 					if (null == isPublic)
 						isPublic = oldFile.isPublic();
 					deleteImage(oldFile.getGSFileName());
-					oldFile.deleteAllVersions(pm);
-					pm.deletePersistent(oldFile);
 				} catch (JDOObjectNotFoundException onfe) {
 				}
 			}
-			return saveImage(urlOrContent.getBytes(), "image/jpeg", userId, isPublic, pm, "img.jpeg");
+			return saveImage(urlOrContent.getBytes(), contentType, userId, isPublic, pm, fname);
 		} finally {
 			if (null == _pm)
 				pm.close();
@@ -254,6 +235,15 @@ public class StorageHelper {
 
 	public static String saveImage(String fileName, String contentType, long userId, boolean isPublic, InputStream is, PersistenceManager _pm)
 			throws IOException {
+			VoFileAccessRecord vfar = saveAttach(fileName, contentType, userId, isPublic, is, _pm);
+			return createFullFileName(fileName, contentType, vfar);
+		
+	}
+	
+//===================================================================================================================
+	
+	public static VoFileAccessRecord saveAttach(String fileName, String contentType, long userId, boolean isPublic, InputStream is, PersistenceManager _pm)
+			throws IOException {
 		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName, contentType);
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		try {
@@ -264,15 +254,36 @@ public class StorageHelper {
 		}
 		try {
 			saveFileData(is, vfar);
-			int liop; // append with '.bin' extension if no extension is set
-			String url = getURL(vfar.getId(), -1 == (liop = fileName.lastIndexOf('.')) ? 
-					(contentType.equals("binary/stream") ? "dat" : new ContentType(vfar.getContentType()).getSubType()) : fileName.substring(liop + 1));
-			logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
-			return url;
+			
+			return vfar;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException("Failed to save file. " + e.getMessage(), e);
 		}
+	}
+	
+//===================================================================================================================
+
+	private static String createFullFileName(String fileName, String contentType, VoFileAccessRecord vfar)  {
+		int liop = fileName.lastIndexOf('.'); // append with '.bin' extension if no extension is set
+		ContentType cType = null;;
+		try {
+			cType = new ContentType(contentType);
+		} catch (Exception e) {
+			logger.warn("Failed to parse content type string '"+contentType+"'. Default would be used");
+			try {
+				cType = new ContentType(contentType = "binary/stream");
+			} catch (ParseException e1) {
+			}
+		}
+		String url = getURL(vfar.getId(), 
+				-1 == liop ? 	
+						(contentType.equals("binary/stream") ? 
+								"dat" : cType.getSubType())
+								: 
+								fileName.substring(liop + 1));
+		logger.debug( "File '" + vfar.getFileName() + "' stored with GSNAme:" + vfar.getGSFileName() + " with objectID:" + vfar.getId() + " URL:" + url);
+		return url;
 	}
 
 	public static void saveFileData(InputStream is, VoFileAccessRecord vfar) throws IOException {
@@ -289,8 +300,6 @@ public class StorageHelper {
 			try {
 				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
 				deleteImage(oldFile.getGSFileName());
-				oldFile.deleteAllVersions(pm);
-				pm.deletePersistent(oldFile);
 				return true;
 			} catch (JDOObjectNotFoundException onfe) {
 				return false;
@@ -351,6 +360,100 @@ public class StorageHelper {
 				return original;
 			}
 		};
+	}
+
+	//===================================================================================================================
+	
+	public static FileSource createFileSource( byte[] urlOrContent, String _contentType, String fileName) throws IOException {
+		if (null == urlOrContent || 0 == urlOrContent.length) {
+			throw new IOException("Invalid content. Failed to store null or empty content");
+
+		} else {
+			String fname = null == fileName ? null : fileName;
+			String contentType = null==_contentType ? "binary/stream" : _contentType;
+			String ext = ".bin";
+			InputStream is = null;
+			
+			String contentString = new String(urlOrContent);
+			
+			if( contentString.startsWith("url(")){
+				
+				String[] split = contentString.split("[():;,]");
+				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
+					if( split[3].equals("base64")){
+						is = new ByteArrayInputStream( Base64.decode(split[4]));
+						contentType = split[2];
+					} 
+				}
+				
+				try {
+					String st = new ContentType(contentType).getSubType();
+					ext = (null==st || st.length() == 0) ? ".bin" : "."+st;
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				fname = numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext;
+						
+			} else if( contentString.startsWith("obj(")){
+				//obj(name:<base64.name>;data:image/png;content:<base64.content>)
+				String[] avps = contentString.substring(4, contentString.length()-1).split(";");
+				if( avps.length < 3 ){
+					logger.warn("Faild to parse OBJ representation of content '"+contentString+"' ");
+					
+				} else {
+					if( !avps[0].startsWith("name:"))
+						logger.warn("Faild to parse OBJ representation of content. No name: at first pos of '"+contentString+"' ");
+					else {
+						fname = new String( Base64.decode(avps[0].split(":")[1]), "UTF-8");
+					}
+					if( !avps[1].startsWith("data:"))
+						logger.warn("Faild to parse OBJ representation of content. No data: at second pos of '"+contentString+"' ");
+					else {
+						contentType = avps[1].split(":")[1];
+					}
+					if( !avps[1].startsWith("content:"))
+						logger.warn("Faild to parse OBJ representation of content. No content: at third pos of '"+contentString+"' ");
+					else {
+						is = new ByteArrayInputStream( Base64.decode(avps[2].split(":")[1]) );
+					}
+				}
+					
+				
+			} else 
+			
+			try { // try to create URL from content
+				URL url = new URL(contentString);
+				if (null != url.getProtocol() && url.getProtocol().toLowerCase().startsWith("http")) {
+					HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
+					httpConnection.connect();
+					httpConnection.getHeaderFields();
+					contentType = httpConnection.getContentType();
+					is = httpConnection.getInputStream();
+				} else {
+					is = url.openStream();
+					// file name for the same sources will be the same
+				}
+				fname = null == fname ? url.getFile() : fname;
+
+			} catch (MalformedURLException e) {
+				
+				if( contentString.length() % 4 == 0 ){
+					try {
+						is = new ByteArrayInputStream( Base64.decode( contentString ));
+					} catch( Exception ee){
+					}
+				}
+					
+				if( null==is )
+					is = new ByteArrayInputStream( urlOrContent );
+				
+				fname =  null==fname  ? 
+						numberToString((long) (Math.random() * Long.MAX_VALUE)) + ext : 
+							fname ;
+				
+			}
+			return new FileSource( fname, contentType, is);
+		}
 	}
 
 }

@@ -45,7 +45,7 @@ public class VoGeocoderTest {
 		}
 		for (VoBuilding voBuilding : vbe) {
 			try {
-				Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+				Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
 				Assert.assertTrue(position != null);
 				Assert.assertTrue(Float.valueOf(position.first) > -90);
 				Assert.assertTrue(Float.valueOf(position.first) < 90);

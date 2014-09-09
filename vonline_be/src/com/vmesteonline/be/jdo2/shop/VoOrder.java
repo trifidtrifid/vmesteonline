@@ -122,6 +122,7 @@ public class VoOrder {
 				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
 						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment, weightGramm);
 		
+		
 		if(null!=orderLines) 
 			for(Long olid: orderLines.values()){
 				od.odrerLines.add( pm.getObjectById(VoOrderLine.class,olid).getOrderLine(pm));
@@ -319,5 +320,10 @@ public class VoOrder {
 		return "VoOrder [id=" + id + ", user=" + user + ", date=" + date + ", status=" + status + ", totalCost=" + totalCost + ", createdAt=" + createdAt
 				+ ", delivery=" + delivery + ", deliveryCost=" + deliveryCost + ", deliveryTo=" + deliveryTo + ", paymentType=" + paymentType
 				+ ", paymentStatus=" + paymentStatus + "]";
+	}
+
+	public void addWeigth(double addWeigth) {
+		weightGramm += (int)(addWeigth*1000.0);
+		
 	}
 }

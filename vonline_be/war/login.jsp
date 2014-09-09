@@ -85,10 +85,6 @@
 
 									</div>
 
-									<div>
-										<a href="#" class="user-signup-link"> Регистрация <i class="icon-arrow-right"></i>
-										</a>
-									</div>
 								</div>
 							</div>
 							<!-- /widget-body -->

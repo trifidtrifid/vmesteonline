@@ -126,7 +126,7 @@ public class VoHelper {
 
 	// ===================================================================================================================
 	public static void copyIfNotNull(Object owner, String fieldName, Object objToCopy) throws NoSuchFieldException {
-		if (null != objToCopy && objToCopy instanceof Number && ((Number)objToCopy).doubleValue() != 0.0 ) {
+		if (null != objToCopy && (!(objToCopy instanceof Number) || ((Number)objToCopy).doubleValue() != 0.0 )) {
 			Field field = null;
 			try {
 				field = owner.getClass().getField(fieldName);

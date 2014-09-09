@@ -182,6 +182,7 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
             function makeHistoryNav(e) {
                 // действия для корректной навигации по истории
                 $('.navbar').removeClass('over-rightbar');
+                $('.modal-backdrop').hide();
                 var isHistoryNav = true;
                 if (e.state) {
                     if (e.state.type == 'modal') {

@@ -230,6 +230,10 @@ footer ul{
 	margin:0;
 	padding:0;
 }
+.ya-informer {
+    float: right;
+    margin-top: -10px;
+}
 
 /*colors and backgrounds*/
 body{

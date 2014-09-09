@@ -112,8 +112,8 @@ public class VoSession {
 	}
 
 	public long getSessionAttribute(CurrentAttributeType type) {
-		Long val = curAttrMap.get(type.getValue());
-		return val == null ? 0 : val;
+		Long val;
+		return null == curAttrMap || (val = curAttrMap.get(type.getValue())) == null ? 0 : val;
 	}
 
 	public void setSessionAttribute(int key, long value) {

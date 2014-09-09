@@ -16,10 +16,8 @@ import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.access.VoUserAccessBase;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoBaseMessage;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
-import com.vmesteonline.be.jdo2.VoUserGroup;
 
 public class ServiceImpl {
 
@@ -41,6 +39,10 @@ public class ServiceImpl {
 		}
 	}
 
+	public static void releaseCache(){
+		cache.clear();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T getObjectFromCache(Object key) {
 		T rslt = null;
