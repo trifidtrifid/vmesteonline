@@ -73,7 +73,7 @@ public class VoShopAccessRoles extends VoUserAccessBaseRoles {
 		fillRoleMethods( methodsAccessMask, VoUserAccessBaseRoles.ANYBODY, new String[] {
 				"getUserShopRole", "getProducers", "parseCSVfile","getShops","getShop","getDates","getNextOrderDate","getProducer",
 				"getProductCategories","getProducts","getProductDetails","getProductsByCategories",
-				"getVotes", "isActivated", "getShopPages"
+				"getVotes", "isActivated", "getShopPages", "getOrderDates"
 		});
 	}
 	
