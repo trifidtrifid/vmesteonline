@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.FullProductInfo;
 import com.vmesteonline.be.shop.Order;
+import com.vmesteonline.be.shop.OrderDate;
 import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDatesType;
 import com.vmesteonline.be.shop.OrderDetails;
@@ -1640,5 +1642,50 @@ public class ShopServiceImplTest {
 		}
 	}
 	
-	
+	@Test
+	public void testGetOrderDates() {
+		try {
+
+			Shop shop = new Shop(0L, NAME, DESCR, userAddress, LOGO, userId, topicSet, tags, deliveryCosts, paymentTypes,null);
+
+			Long id = sbi.registerShop(shop);
+			si.getShop(id);
+			
+			asi.registerNewUser("fn1", "ln1", "pswd1", "eml1", userHomeLocation);
+			asi.login("eml1", "pswd1");
+			sbi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, 1, 3, 0, PriceType.INET ));
+			sbi.setDate(new OrderDates(OrderDatesType.ORDER_WEEKLY, 3, 1, 0, PriceType.RETAIL));
+			
+			
+			int from = (int)(System.currentTimeMillis()/1000L);
+			int to = (int)(System.currentTimeMillis()/1000L + 30*86400);
+			List<OrderDate> orderDates = si.getOrderDates( from, to);
+			Calendar cldr = Calendar.getInstance();
+			
+			Assert.assertTrue( orderDates.size() >= 8 );
+			
+			for (OrderDate orderDate : orderDates) {
+				
+				if( orderDate.getPriceType() == PriceType.INET ){
+					cldr.setTimeInMillis(((long)orderDate.orderDate) * 1000L);
+					Assert.assertEquals( cldr.get(Calendar.DAY_OF_WEEK), Calendar.MONDAY);
+		
+				} else if( orderDate.getPriceType() == PriceType.RETAIL ){
+					cldr.setTimeInMillis(((long)orderDate.orderDate) * 1000L);
+					Assert.assertEquals( cldr.get(Calendar.DAY_OF_WEEK), Calendar.WEDNESDAY);
+				
+				} else {
+					Assert.fail("Unknown date");
+				} 
+				Assert.assertTrue( orderDate.orderDate < to );
+				Assert.assertTrue( orderDate.orderDate > from );
+			}
+			
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			fail("Exception thrown: " + e.getMessage());
+		}
+
+	}
 }
