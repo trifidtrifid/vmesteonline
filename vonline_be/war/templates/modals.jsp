@@ -18,8 +18,18 @@
 
 <div class="modal modal-chooseDate">
     <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
-        <input type="text" class="datepicker-chooseDate"/>
+        <div class="clearfix"></div>
+        <p></p>
+        <h3>Выберите день доставки</h3>
+
+        <div class="datepicker-chooseDate"></div>
+        <%--<input type="text" class="datepicker-chooseDate"/>--%>
+
+        <div class="align-right">
+            <a class="btn no-border btn-primary" href="#">Далее</a>
+        </div>
 
     </div>
 </div>

@@ -1,6 +1,8 @@
 require.config({
     baseUrl: "/build", // /js/shop
     paths: {
+        "datepicker-backoffice": "../js/shop/backoffice/bootstrap-datepicker-backoffice",
+        "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru"
         /*"jquery"   : "../lib/jquery-2.1.1.min",
         "ace_spinner": "../lib/fuelux/fuelux.spinner",
         "bootstrap": "../lib/bootstrap.min",
@@ -10,10 +12,22 @@ require.config({
         "bootbox":"../bootbox.min"*/
     },
     shim:{
-      /*'ace_spinner':{
-         deps: ['jquery',"ace_elements","jquery_ui"],
-         exports: 'ace_spinner'
-      },*/
+        'datepicker-backoffice':{
+            deps: ['jquery','jquery_ui'],
+            exports: 'datepicker-backoffice'
+        },
+        'datepicker-ru':{
+            deps: ['jquery','datepicker-backoffice'],
+            exports: 'datepicker-ru'
+        }
+        /*'datepicker-ru':{
+            deps: ['jquery','datepicker-backoffice'],
+            exports: 'datepicker-ru'
+        }*/
+        /*'ace_spinner':{
+           deps: ['jquery',"ace_elements","jquery_ui"],
+           exports: 'ace_spinner'
+        },*/
      /* 'jquery_ui':{
           deps: ['jquery'],
           exports: 'jquery_ui'
@@ -33,7 +47,7 @@ require.config({
     }
 });
 
-require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
+require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker-backoffice','datepicker-ru'],
     function($,modules,commonM,loginModule) {
 
 
@@ -76,7 +90,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min'],
                 }
             }
         }
-
 
         if($('.shop-landing').length){
             /* history */

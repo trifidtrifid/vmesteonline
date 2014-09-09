@@ -94,7 +94,6 @@
             prevMonth = currentMonth - 1,
             nextMonth = currentMonth + 1;
 
-
         if (globalUserAuth){
             orders = (orders) ? orders : client.getOrdersByStatus(metaTime-180*day,metaTime+180*day,0);
             //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
@@ -431,7 +430,7 @@
 			this.setValue();
 		},
 
-		setValue: function() {
+		setValue: function(d) {
 			var formatted = this.getFormattedDate();
 			if (!this.isInput) {
 				if (this.component){
