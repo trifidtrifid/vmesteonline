@@ -27,8 +27,9 @@
         <div class="datepicker-chooseDate"></div>
         <%--<input type="text" class="datepicker-chooseDate"/>--%>
 
+        <h5 class="pull-left">Дата доставки: <span class="chooseDate"></span></h5>
         <div class="align-right">
-            <a class="btn no-border btn-primary" href="#">Далее</a>
+            <a class="btn no-border btn-primary create-order-btn" href="#">Далее</a>
         </div>
 
     </div>

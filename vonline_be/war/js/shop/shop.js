@@ -1,7 +1,7 @@
 require.config({
-    baseUrl: "/build", // /js/shop
+    baseUrl:  "/build", //"/js/shop"
     paths: {
-        "datepicker-backoffice": "../js/shop/backoffice/bootstrap-datepicker-backoffice",
+        "datepicker": "../js/shop/datepicker",
         "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru"
         /*"jquery"   : "../lib/jquery-2.1.1.min",
         "ace_spinner": "../lib/fuelux/fuelux.spinner",
@@ -12,44 +12,39 @@ require.config({
         "bootbox":"../bootbox.min"*/
     },
     shim:{
-        'datepicker-backoffice':{
+        'datepicker':{
             deps: ['jquery','jquery_ui'],
-            exports: 'datepicker-backoffice'
+            exports: 'datepicker'
         },
         'datepicker-ru':{
-            deps: ['jquery','datepicker-backoffice'],
+            deps: ['jquery','datepicker'],
             exports: 'datepicker-ru'
-        }
-        /*'datepicker-ru':{
-            deps: ['jquery','datepicker-backoffice'],
-            exports: 'datepicker-ru'
-        }*/
-        /*'ace_spinner':{
+        }/*,
+        'ace_spinner':{
            deps: ['jquery',"ace_elements","jquery_ui"],
            exports: 'ace_spinner'
-        },*/
-     /* 'jquery_ui':{
+        },
+      'jquery_ui':{
           deps: ['jquery'],
           exports: 'jquery_ui'
-      },*/
-    /*'bootstrap':{
+      },
+    'bootstrap':{
         deps: ['jquery'],
         exports: 'bootstrap'
-    },*/
-    /*'flexslider':{
+    },
+    'flexslider':{
         deps: ['jquery'],
         exports: 'flexslider'
-    },*/
-    /*'bootbox':{
+    },
+    'bootbox':{
         deps: ['jquery','bootstrap'],
         exports: 'bootbox'
     }*/
     }
 });
 
-require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker-backoffice','datepicker-ru'],
+require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker','datepicker-ru'],
     function($,modules,commonM,loginModule) {
-
 
         var urlHash = document.location.hash;
 

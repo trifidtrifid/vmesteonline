@@ -318,6 +318,7 @@ footer.short-footer .container {
   min-width: 40px;
   margin-right: 0 !important;
   padding: 8px 5px;
+  cursor: pointer !important;
 }
 .datepicker {
   padding: 0 2px 5px 2px;
