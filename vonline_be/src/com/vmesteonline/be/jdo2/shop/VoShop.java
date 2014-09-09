@@ -3,6 +3,8 @@ package com.vmesteonline.be.jdo2.shop;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -563,20 +565,27 @@ public class VoShop {
 		
 		Calendar afterDateCldr = Calendar.getInstance();
 		afterDateCldr.setTimeInMillis(((long)from)*1000L);
-		
-		Calendar toDateCldr = Calendar.getInstance();
-		toDateCldr.setTimeInMillis(((long)to)*1000L);
+		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK) - afterDateCldr.getFirstDayOfWeek() + 1) * 86400; //day of week of the date
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
-				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
-				int start = d.orderDay > afterDateDayOfWeek ? from : from + 7 - afterDateDayOfWeek;
+				int start = startOfWeek + d.orderDay *86400;
+				if( start < from ) 
+					start += 7 * 86400;
+				
 				while( start < to ){
 					odates.add( new OrderDate( start, d.getPriceTypeToUse() ));
 					start += 7*86400;
 				}
 			} 
 		}
+		Collections.sort( odates, new Comparator<OrderDate>(){
+
+			@Override
+			public int compare(OrderDate o1, OrderDate o2) {
+				return Integer.compare(o1.orderDate, o2.orderDate);
+			}
+		});
 		return odates;
 	}
 	
