@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,6 +83,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 
+	private final class ProdcutScoreComparator implements Comparator<VoProduct>, Serializable {
+		@Override
+	public int compare(VoProduct o1, VoProduct o2) {
+		return -Double.compare(o1.getScore(),o2.getScore());
+	}
+}
 	ShopServiceImpl() {
 	}
 
@@ -147,8 +154,24 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 	// ======================================================================================================================
+	@Override
+	public List<OrderDate> getOrderDates(int afterDate, int before) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
+		if (null == shopId || 0 == shopId) {
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
+		}
+		try {
+			VoShop voShop = pm.getObjectById(VoShop.class, shopId.longValue());
+			return voShop.getOrderDates(afterDate, before);
+		} catch (Exception e) { 
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
+		} finally {
+			pm.close();
+		}
+	}
 
-	
 	// ======================================================================================================================
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation {
@@ -197,19 +220,16 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		}
 	}
 
-	private SortedSet<Product> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
-		SortedSet<Product> rslt = new TreeSet<Product>(new ProdcutNameComparator());
+	private List<VoProduct> getProductsFromCategory(Long categoryId, Long shopId, PersistenceManager pm) {
+		List<VoProduct> rslt = new ArrayList<VoProduct>();
 		List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class,
 				"shopId == " + shopId + " && parentId == " + categoryId).execute();
 		for (VoProductCategory cat : vpcl) {
 			rslt.addAll(getProductsFromCategory(cat.getId(), shopId, pm));
 		}
-		List<VoProduct> vpl = (List<VoProduct>) pm.newQuery(VoProduct.class, "categories == " + categoryId).execute();
-
-		for (VoProduct product : vpl) {
-			if(!product.isDeleted())
-				rslt.add(product.getProduct(pm));
-		}
+		Query pQuery = pm.newQuery(VoProduct.class, "categories == " + categoryId);
+		//pQuery.setOrdering("score DESC");
+		rslt.addAll((List<VoProduct>) pQuery.execute());
 		return rslt;
 	}
 
@@ -229,7 +249,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			if (null == products) { // no data in cache
 
 				products = new ArrayList<Product>();
-				products.addAll(getProductsFromCategory(categoryId, shopId, pm));
+				List<VoProduct> vpl = getProductsFromCategory(categoryId, shopId, pm);
+				Collections.sort(vpl, new ProdcutScoreComparator());
+				for (VoProduct product : vpl) {
+					if(!product.isDeleted())
+						products.add(product.getProduct(pm));
+				}
+				
+				
 				try {
 					putObjectToCache(key, products);
 				} catch (Exception e) {
@@ -441,7 +468,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
 		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
-		htmlBody += "<br/>Стоимость: "+ currentOrder.getTotalCost()+" руб";
+		htmlBody += "<br/>Стоимость: "+ VoHelper.roundDouble( currentOrder.getTotalCost(), 2) + " руб";
 		if( currentOrder.getDeliveryCost() > 0) htmlBody += "<br/>Из них доставка: "+ currentOrder.getDeliveryCost()+" руб";
 		htmlBody += "<br/>Вес: "+ currentOrder.getWeightGramm()/1000+" кг";
 		htmlBody += "<br/>Контактный номер: "+customer.getMobilePhone();
@@ -553,7 +580,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							
 							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
-							
+							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
+							curProduct.setScore( curProduct.getScore() + voOrderLine.getQuantity() );
+
 							// merge packets for prepack product
 							if (voProduct.isPrepackRequired()) {
 								mergeOrderLinePackets(voOrderLine, currentOL);
@@ -647,8 +676,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						// would be actual
 						VoOrderLine voOrderLine = new VoOrderLine(currentOrder, oldOrderLineProduct, oldLine.getQuantity(), price, oldLine.getComment(),
 								oldLine.getPackets());
+						oldOrderLineProduct.setScore( oldOrderLineProduct.getScore() + oldLine.getQuantity() );
 						pm.makePersistent(voOrderLine);
 						currentOdrerLines.put(oldLine.getProductId(), voOrderLine.getId().getId());
+						
 						currentOrder.addCost(price * oldLine.getQuantity());
 					}
 				}
@@ -676,8 +707,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
+			double oldQ = 0;
+			if(currentOdrerLines.get(productId)!=null){ //decrease score
+				oldQ = pm.getObjectById(VoOrderLine.class,currentOdrerLines.get(productId)).getQuantity();
+			}
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
-	
+			voProduct.setScore( voProduct.getScore() + quantity - oldQ);
 			double price = voProduct.getPrice(currentOrder.getPriceType());
 
 			Map<Double, Integer> packsRounded;
@@ -742,6 +777,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
+			voProduct.setScore( voProduct.getScore() - removedLine.getQuantity() );
 			
 			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
 			currentOrder.setWeightGramm( currentOrder.getWeightGramm() - (int)(removedLine.getQuantity() * voProduct.getWeight()));
@@ -1046,6 +1082,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public List<Order> getOrdersByStatus(int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
+		if( 0==dateFrom ) //it's to expensive to show all orders
+			dateFrom = getNextOrderDate( (int) (System.currentTimeMillis()/1000L - 7 * 86400L)).orderDate;
+
 		return getOrdersByStatus( 0, dateFrom, dateTo, status);
 	}
 
@@ -1072,6 +1111,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 				ps = (List<VoOrder>) pcq.execute(userId, dateFrom);
 			} else  {
+					
 				pcq.setFilter("shopId == " + shopId + " && date >= " + dateFrom + 
 						(status != OrderStatus.UNKNOWN ? " && status == '" + status + "'": ""));
 				ps = (List<VoOrder>) pcq.execute(dateFrom);
@@ -1079,8 +1119,19 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			List<Order> lo = new ArrayList<Order>();
 			int now = (int)(System.currentTimeMillis()/1000L);
 			OrderDate nextDate;
-			for (VoOrder nextOrder : ps) {
-				
+			Iterator<VoOrder> oit = ps.iterator();
+			while ( oit.hasNext() )
+			{
+				VoOrder nextOrder;
+				try{
+					nextOrder = oit.next();
+				} catch( RuntimeException tre ){
+					tre.printStackTrace();
+					continue;
+				} catch( Exception e ){
+					e.printStackTrace();
+					continue;
+				}
 				if( 0!= userId && OrderStatus.NEW == status && nextOrder.getDate() < (nextDate = getNextOrderDate( now )).orderDate ){
 					nextOrder.setDate(nextDate.orderDate);
 					nextOrder.setPriceType(nextDate.priceType, pm);
@@ -1093,7 +1144,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return lo;
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrders for shopId=" + shopId + "." + e);
+			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrdersByStatus for shopId=" + shopId + "." + e);
 		} finally {
 			pm.close();
 		}
@@ -1174,7 +1225,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			try {
 				if( 0 == shopId )
 						shopId = ShopServiceHelper.getCurrentShopId( this, pm );
-				List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId ).execute();
+				Query prodQuery = pm.newQuery(VoProduct.class, "shopId=="+shopId );
+				//prodQuery.setOrdering("score DESC");
+				List<VoProduct> products = (List<VoProduct>) prodQuery.execute();
+				Collections.sort(products, new ProdcutScoreComparator());
 				for (VoProduct voProduct : products) {
 					for(Long catId : voProduct.getCategories()){
 						if(!cpm.containsKey(catId)){
@@ -1202,7 +1256,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		return catwithProcuts;
 	}
 
-	static Object createShopProductsByCategoryKey(long shopId) {
+	static public Object createShopProductsByCategoryKey(long shopId) {
 		return "createShopProductsByCategoryKey"+shopId;
 	}
 	
@@ -1216,8 +1270,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			throws InvalidOperation {
 		
 		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург "+buildingAddressText);
-		if( null == addrInfo.getBuildingNo() )
-			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found. Be sure that you entered a house number.");
+		if( null == addrInfo.getBuildingNo() || !addrInfo.isExact()){
+			addrInfo.setStreetName( buildingAddressText );
+			addrInfo.getBuildingNo("");
+			addrInfo.setCityName("Санкт Петербург");
+			addrInfo.setCountryName("Россия");
+			addrInfo.setLongitude("1"); 
+			addrInfo.setLattitude("1");
+		}
 		
 		PersistenceManager pm = PMF.getPm();
 		try {
@@ -1226,8 +1286,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoCity voCity = new VoCity( voCountry, addrInfo.getCityName(), pm );
 			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(),pm );
 			String no = addrInfo.getBuildingNo();
-			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
-			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, (byte)flatNo, comment );
+			VoBuilding voBuilding = new VoBuilding(voStreet, no, 
+					addrInfo.getLongitude(), 
+					addrInfo.getLattitude(), pm);
+			VoPostalAddress pa = new VoPostalAddress( voBuilding, staircase, floor, flatNo, comment );
 			currentUser.addDeliveryAddress( pa, buildingAddressText);
 			return pa.getPostalAddress(pm);
 			

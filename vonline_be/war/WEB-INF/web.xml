@@ -5,6 +5,15 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 
+   	<servlet>
+		<servlet-name>UpdateSomething</servlet-name>
+		<servlet-class>com.vmesteonline.be.utils.UpdateSomething</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UpdateSomething</servlet-name>
+		<url-pattern>/utils/doupdate</url-pattern>
+	</servlet-mapping>
+	
 	<servlet>
 		<servlet-name>OAuthServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.OAuthServlet</servlet-class>
@@ -28,14 +37,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>UserServiceServlet</servlet-name>
 		<url-pattern>/thrift/UserService</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>MessageServiceServlet</servlet-name>
-		<servlet-class>com.vmesteonline.be.MessageServiceServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>MessageServiceServlet</servlet-name>
-		<url-pattern>/thrift/MessageService</url-pattern>
 	</servlet-mapping>
 	<servlet>
 		<servlet-name>ShopServiceServlet</servlet-name>
@@ -158,13 +159,5 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	
-	<servlet>
-		<servlet-name>UpdateSomething</servlet-name>
-		<servlet-class>com.vmesteonline.be.utils.UpdateSomething</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>UpdateSomething</servlet-name>
-		<url-pattern>/utils/doupdate</url-pattern>
-	</servlet-mapping>
 
 </web-app>

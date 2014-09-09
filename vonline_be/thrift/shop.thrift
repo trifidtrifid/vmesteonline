@@ -157,7 +157,7 @@ service ShopFEService {
 	UserShopRole getUserShopRole(1:i64 shopId ) throws (1:error.InvalidOperation exc),
 	//frontend functions================================================================================================
 	list<Shop> getShops() throws (1:error.InvalidOperation exc),
-	//map<i32,DateType> getDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
+	list<OrderDate> getOrderDates(1:i32 from, 2: i32 to) throws (1:error.InvalidOperation exc),
 	/**
 	* MEthod returns the next date to create or change order is avialable.
 	* If  afterDate = 0 then current date used instead of it

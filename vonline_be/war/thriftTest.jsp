@@ -6,7 +6,6 @@
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
-<%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.FileServiceImpl"%>
 <%@ page import="com.vmesteonline.be.Group"%>
 
@@ -15,16 +14,16 @@
 
     UserServiceImpl userService = new UserServiceImpl(sess);
     AuthServiceImpl authService = new AuthServiceImpl(sess.getId());
-    MessageServiceImpl messageService = new MessageServiceImpl(sess.getId());
     ShopServiceImpl shopService = new ShopServiceImpl(sess.getId());
     ShopBOServiceImpl shopBOService = new ShopBOServiceImpl(sess.getId());
     FileServiceImpl fileService = new FileServiceImpl();
 
-    String email = ""+'a';
-    String passw = ""+'a';
+    String email = "mariva@vomoloko.ru";
+    String passw = "aaaa";
     Boolean isLogin = authService.login(email,passw);
-
     List<Group> Groups = userService.getUserGroups();
+
+    
 %>
 
 <!DOCTYPE html>

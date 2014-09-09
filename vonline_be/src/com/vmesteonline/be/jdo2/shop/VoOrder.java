@@ -122,6 +122,7 @@ public class VoOrder {
 				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
 						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment, weightGramm);
 		
+		
 		if(null!=orderLines) 
 			for(Long olid: orderLines.values()){
 				od.odrerLines.add( pm.getObjectById(VoOrderLine.class,olid).getOrderLine(pm));

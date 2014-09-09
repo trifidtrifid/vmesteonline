@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.mail.Part;
 import javax.servlet.http.HttpServlet;
@@ -73,6 +74,9 @@ public class VoFileAccess extends HttpServlet {
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
 			}
 
+		} catch (JDOObjectNotFoundException onfE) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No file found by URL");
+			
 		} catch (InvalidOperation e) {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warn("Failed to process request:" + e.getMessage() + " ");

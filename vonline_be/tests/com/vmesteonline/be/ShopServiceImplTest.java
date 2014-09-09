@@ -1,6 +1,7 @@
 package com.vmesteonline.be;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -30,24 +31,16 @@ import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.shop.VoOrder;
 import com.vmesteonline.be.jdo2.shop.VoOrderLine;
-import com.vmesteonline.be.messageservice.MessageType;
-import com.vmesteonline.be.messageservice.Topic;
-import com.vmesteonline.be.shop.bo.DataSet;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
-import com.vmesteonline.be.shop.bo.ExchangeFieldType;
 import com.vmesteonline.be.shop.FullProductInfo;
-import com.vmesteonline.be.IdNameChilds;
-import com.vmesteonline.be.shop.bo.ImExType;
-import com.vmesteonline.be.shop.bo.ImportElement;
-import com.vmesteonline.be.MatrixAsList;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDates;
 import com.vmesteonline.be.shop.OrderDatesType;
@@ -64,6 +57,10 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.shop.ProductListPart;
 import com.vmesteonline.be.shop.Shop;
 import com.vmesteonline.be.shop.UserShopRole;
+import com.vmesteonline.be.shop.bo.DataSet;
+import com.vmesteonline.be.shop.bo.ExchangeFieldType;
+import com.vmesteonline.be.shop.bo.ImExType;
+import com.vmesteonline.be.shop.bo.ImportElement;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
@@ -88,9 +85,7 @@ public class ShopServiceImplTest {
 	private UserServiceImpl usi;
 	ShopServiceImpl si;
 	ShopBOServiceImpl sbi;
-	MessageServiceImpl msi;
 	private static String TAG = "TAG";
-	Topic topic;
 	PostalAddress userAddress;
 	PostalAddress userAddress2;
 
@@ -139,17 +134,12 @@ public class ShopServiceImplTest {
 		si = new ShopServiceImpl(sessionId);
 		sbi = new ShopBOServiceImpl(sessionId);
 		
-		msi = new MessageServiceImpl(sessionId);
-
+		
 		userAddress = usi.getUserHomeAddress();
 		List<Group> userGroups = usi.getUserGroups();
 		if(userGroups.size() > 0 ){
 			long gId = userGroups.get(0).getId();
 	
-			topic = msi.createTopic(gId, "AAA", MessageType.BASE, "", new HashMap<MessageType, Long>(), new HashMap<Long, String>(), usi.getUserRubrics()
-					.get(0).getId(), 0);
-	
-			topicSet.add(topic.getId());
 		} 
 		Country country = usi.getCounties().get(0);
 		City city = usi.getCities(country.getId()).get(0);
@@ -1491,7 +1481,7 @@ public class ShopServiceImplTest {
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
 			VoStreet voStreet = new VoStreet( city, streetName, pm );
 			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
-			Pair<String, String> position = VoGeocoder.getPosition(voBuilding);
+			Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
 			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
 			pm.makePersistent(voPostalAddress);

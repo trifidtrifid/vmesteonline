@@ -195,7 +195,7 @@ public class VoUser extends GeoLocation {
 		//check if location is set
 		if( null == building.getLatitude() || 0 == building.getLatitude().intValue() ){
 			try {
-				VoGeocoder.getPosition(building);
+				VoGeocoder.getPosition(building,false);
 				
 			} catch (InvalidOperation e) {
 				e.printStackTrace();

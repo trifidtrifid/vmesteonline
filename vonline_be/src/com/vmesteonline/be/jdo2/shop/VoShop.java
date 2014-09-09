@@ -27,7 +27,6 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.PostalAddress;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.shop.DateType;
 import com.vmesteonline.be.shop.DeliveryType;
@@ -558,7 +557,32 @@ public class VoShop {
 
 	//=====================================================================================================================
 	
-	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
+	public List<OrderDate> getOrderDates(int from, int to){
+
+		List<OrderDate> odates = new ArrayList<OrderDate>();
+		
+		Calendar afterDateCldr = Calendar.getInstance();
+		afterDateCldr.setTimeInMillis(((long)from)*1000L);
+		
+		Calendar toDateCldr = Calendar.getInstance();
+		toDateCldr.setTimeInMillis(((long)to)*1000L);
+		
+		for( OrderDates d : dates ){
+			if( d.type == OrderDatesType.ORDER_WEEKLY ){
+				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int start = d.orderDay > afterDateDayOfWeek ? from : from + 7 - afterDateDayOfWeek;
+				while( start < to ){
+					odates.add( new OrderDate( start, d.getPriceTypeToUse() ));
+					start += 7*86400;
+				}
+			} 
+		}
+		return odates;
+	}
+	
+	//=====================================================================================================================
+
+	public OrderDate getNextOrderDate(int afterDate ) throws InvalidOperation {
 		
 		afterDate -= afterDate % 86400;
 		

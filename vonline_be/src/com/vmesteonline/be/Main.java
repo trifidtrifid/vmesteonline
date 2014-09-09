@@ -39,7 +39,8 @@ public class Main implements javax.servlet.Filter {
 		
 		if ( SystemProperty.environment.value() == SystemProperty.Environment.Value.Production){
 			
-			doAuthFilter(srequest, sresponse);
+			if( doAuthFilter(srequest, sresponse)) //redirection made by AuthFCIlter
+				return;
 			
 			HttpServletRequest request = (HttpServletRequest) srequest;
 			HttpServletResponse response = (HttpServletResponse) sresponse;
@@ -74,6 +75,7 @@ public class Main implements javax.servlet.Filter {
 						String shopHome = "http://"+host+"/"+shopContext;
 						logger.fine("Send redirect to "+shopHome);
 						response.sendRedirect( shopHome);
+						return;
 					} else {
 						logger.fine("No redirect required shopContext:"+shopContext+" request.getRequestURI():"+request.getRequestURI());
 					}
@@ -89,7 +91,8 @@ public class Main implements javax.servlet.Filter {
 								request.getRequestURI().equals("/") ){
 							String shopHome = "http://www."+host+"/"+shopContext;
 							logger.fine("Send redirect to "+shopHome);
-							response.sendRedirect( shopHome);
+							response.sendRedirect( shopHome );
+							return;
 						} else {
 							logger.fine("No redirect required shopContext:"+shopContext+" request.getRequestURI():"+request.getRequestURI());
 						}
@@ -106,6 +109,25 @@ public class Main implements javax.servlet.Filter {
 				logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
 				response.sendRedirect(landingPage);
 				return;
+			} finally {
+				pm.close();
+			}
+		} else {
+			
+			HttpServletRequest request = (HttpServletRequest) srequest;
+			HttpServletResponse response = (HttpServletResponse) sresponse;
+			PersistenceManager pm = PMF.getPm();
+			try {
+				List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "").execute();
+				if( 0!=shops.size() ){
+					VoShop voShop = shops.get(0);
+					ServiceImpl si = new ServiceImpl( request.getSession());
+					try {
+						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+					} catch (InvalidOperation e) {
+						e.printStackTrace();
+					}
+				}
 			} finally {
 				pm.close();
 			}
@@ -127,7 +149,7 @@ public class Main implements javax.servlet.Filter {
 		}
 	}
 	
-	public void doAuthFilter(ServletRequest arg0, ServletResponse arg1) throws IOException, ServletException {
+	public boolean doAuthFilter(ServletRequest arg0, ServletResponse arg1) throws IOException, ServletException {
 		
 		String rt = arg0.getParameter("rt"); //type of request, auth or confirm
 		HttpServletRequest req = (HttpServletRequest) arg0;
@@ -168,12 +190,13 @@ public class Main implements javax.servlet.Filter {
 							rs.setUserId(userId);
 							logger.fine("User id="+userId+" successfully attached to session '"+si+"' from session '"+req.getSession().getId()+"' REdirect req to '"+URLDecoder.decode(bu)+"'");
 							resp.sendRedirect( URLDecoder.decode(bu) );
-							
+							return true;
 
 							
 						} catch( Exception e){
 							logger.warning("Failed to confirm user."+e.getMessage());
 							resp.sendRedirect(ref);
+							return true; 
 							
 						} finally {
 							pm.close();
@@ -185,5 +208,6 @@ public class Main implements javax.servlet.Filter {
 				logger.warning("Failed filter." + e.getMessage());
 			}
 		}
+		return false;
 	}
 }
