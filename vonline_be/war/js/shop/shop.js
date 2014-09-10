@@ -341,18 +341,6 @@ require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker
                     $('.modal-login').modal();
                 });
 
-                /*$('.navbar-brand').click(function () {
-                    $('.back-to-shop a').trigger('click');
-                    return false;
-                });*/
-
-                /*$('html,body').click(function (e) {
-                    //e.stopPropagation();
-
-                    if ($('.user-short').hasClass('open')) {
-                        $('.navbar').removeClass('over-rightbar');
-                    }
-                });*/
 
             } catch (e) {
                 //alert(e + ' Ошибка в простых обработчиках');

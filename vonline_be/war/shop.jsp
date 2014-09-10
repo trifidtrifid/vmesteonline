@@ -12,7 +12,7 @@
     }
 
     List<ProductCategory> ArrayProductCategory = shopService.getProductCategories(0);
-    ProductListPart productsListPart = shopService.getProducts(0,1000,0);
+    ProductListPart productsListPart = shopService.getProducts(0,15,0);
     //out.print(productsListPart.products.size());
 
     if (productsListPart.products.size() > 0){
