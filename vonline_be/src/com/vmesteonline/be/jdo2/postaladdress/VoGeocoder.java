@@ -129,7 +129,7 @@ public class VoGeocoder {
 	public static String createMapImageURL(BigDecimal longitude, BigDecimal latitude, int width, int height ) {
 		double ws = VoHelper.roundDouble(0.00001*width, 5);
 		double hs = VoHelper.roundDouble(0.00001*height, 5);
-		return "http://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+ws+","+hs;
+		return "https://static-maps.yandex.ru/1.x/?l=map&pt="+longitude+","+latitude+",pm2blm&size="+width+","+height+"&spn="+ws+","+hs;
 	}
 
 	private static class YAMLGecodingHandler extends DefaultHandler implements AddressInfo {

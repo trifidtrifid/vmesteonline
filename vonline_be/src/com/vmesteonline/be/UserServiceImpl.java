@@ -857,7 +857,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 						hs = VoHelper.roundDouble(loDelta, 5);
 					}
 					
-						url = "http://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
+						url = "https://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
 								+"&size="+width+","+height+"&spn="+ws+","+hs +
 									"&pl=c:" + color + ",f:" + color + ",w:1";	
 		

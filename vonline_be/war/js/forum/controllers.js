@@ -3068,7 +3068,7 @@ function getBuildingGroup(currentGroup) {
 }
 
 function getCorrectDate(str){
-    var arrDate = str.split('.'),
+    var arrDate = str.split(/[./]/),
         month = arrDate[1],
         monthStr;
 
@@ -3336,7 +3336,8 @@ function getTiming(messageObjDate){
         }
     }else{
         timeTemp = new Date(messageObjDate*1000).toLocaleDateString();
-        var arr = timeTemp.split('[./]');
+
+        var arr = timeTemp.split(/[./]/);
         if(arr[0].length == 1) arr[0] = "0"+arr[0];
         if(arr[1].length == 1) arr[1] = "0"+arr[1];
         timing = arr[0]+"."+arr[1]+"."+arr[2];

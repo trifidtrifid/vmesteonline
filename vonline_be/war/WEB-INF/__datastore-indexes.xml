@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<datastore-indexes autoGenerate="false">
-	<datastore-index kind="VoDialog" ancestor="false" source="manual">
-        	<property name="users" direction="asc"/>
-	     <property name="lastMessageDate" direction="asc"/>
-    	</datastore-index>
-</datastore-indexes>
