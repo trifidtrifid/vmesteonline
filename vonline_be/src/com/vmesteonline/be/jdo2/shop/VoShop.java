@@ -565,12 +565,13 @@ public class VoShop {
 		
 		Calendar afterDateCldr = Calendar.getInstance();
 		afterDateCldr.setTimeInMillis(((long)from)*1000L);
-		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK) - afterDateCldr.getFirstDayOfWeek() + 1) * 86400; //day of week of the date
+		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK)) * 86400; //day of week of the date
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
 				int start = startOfWeek + d.orderDay *86400;
-				if( start < from ) 
+				start -= start % 86400;
+				if( start - d.orderBefore * 86400 < from ) 
 					start += 7 * 86400;
 				
 				while( start < to ){
