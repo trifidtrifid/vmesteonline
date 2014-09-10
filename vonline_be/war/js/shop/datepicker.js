@@ -113,17 +113,17 @@
                 $('.day').each(function(){
                     if (tempMonth == currentMonth){
                         if ($(this).text() == dayStr && !$(this).hasClass('old') && !$(this).hasClass('new')){
-                            $(this).addClass('order-day').attr('id',orderDays[i].orderDate);
+                            $(this).addClass('delivery-day').attr('id',orderDays[i].orderDate);
                         }
                     }
                     if (tempMonth == nextMonth){
                         if ($(this).text() == dayStr && $(this).hasClass('new')){
-                            $(this).addClass('order-day').attr('id',orderDays[i].orderDate);
+                            $(this).addClass('delivery-day').attr('id',orderDays[i].orderDate);
                         }
                     }
                     /*if (tempMonth == prevMonth){
                         if ($(this).text() == dayStr && $(this).hasClass('old')){
-                            $(this).addClass('order-day').attr('id',orderDays[i].orderDate);
+                            $(this).addClass('delivery-day').attr('id',orderDays[i].orderDate);
                         }
                     }*/
                 });
@@ -154,7 +154,7 @@
 
     function initOrderDay(){
 
-        $('.order-day').click(function() {
+        $('.delivery-day').click(function() {
 
             var dateVal = new Date($(this).attr('id')*1000);
             var orderDate = $(this).attr('id');

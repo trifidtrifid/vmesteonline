@@ -353,6 +353,13 @@ th.next,
   content: "День с заказом";
   margin-left: -100px;
 }
+.delivery-day {
+  background-color: #bfa6c4;
+}
+.delivery-day:after {
+  content: "День доставки";
+  margin-left: -100px;
+}
 .free-day {
   background-color: #62c462;
 }
@@ -382,6 +389,7 @@ th.next,
   margin-left: -60px;
 }
 .order-day:after,
+.delivery-day:after,
 .free-day:after,
 .day-with-order:after,
 .special-day:after,
@@ -394,6 +402,7 @@ th.next,
   display: none;
 }
 .order-day:hover:after,
+.delivery-day:hover:after,
 .free-day:hover:after,
 .day-with-order:hover:after,
 .special-day:hover:after,
