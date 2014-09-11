@@ -938,6 +938,9 @@ th.next,
   color: #656565;
   margin-bottom: 10px;
 }
+.modal .product-options span {
+  margin-left: 0;
+}
 .modal .modal-body {
   padding: 10px;
   position: static;
