@@ -82,8 +82,6 @@ if($('.container.backoffice').hasClass('noAccess')){
 
     window.history.replaceState(state,null,urlHash);
 
-    window.addEventListener('popstate', makeHistoryNav, false);
-
     function makeHistoryNav(e) {
         // действия для корректной навигации по истории
         $('.navbar').removeClass('over-rightbar');
@@ -115,6 +113,8 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
         }
     }
+    
+    window.addEventListener('popstate', makeHistoryNav, false);
 
     $('.bo-link').parent().addClass('active');
 
