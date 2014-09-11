@@ -1024,8 +1024,7 @@ if(isAuth){
 <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
 <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
 
-<%--<script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>--%>
-<script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
+<script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
 
 <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>
