@@ -55,8 +55,8 @@ public class VoGeocoder {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreet());
-			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
-			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
+			VoCity city = pm.getObjectById(VoCity.class, street.getCity().getId());
+			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry().getId());
 			
 			String address = country.getName() + "," + city.getName() + "," + street.getName() + ","
 					+ building.getFullNo();
@@ -80,7 +80,7 @@ public class VoGeocoder {
 																																																							// street
 																																																							// name
 									List<VoStreet> streets = (List<VoStreet>) pm.newQuery(VoStreet.class,
-											"cityId=="+street.getCity()+" && name == '" + addrInfo.getStreetName().trim() + "'").execute();
+											"city ==:key && name == '" + addrInfo.getStreetName().trim() + "'").execute(street.getCity().getId());
 	
 									VoStreet rightStreet;
 									if (streets.size() > 0) {
@@ -91,7 +91,7 @@ public class VoGeocoder {
 									}
 									building.setStreetId(rightStreet.getId());
 									// check if old street has a buildings
-									List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId=="+street.getId()).execute();
+									List<VoBuilding> buildings = (List<VoBuilding>) pm.newQuery(VoBuilding.class, "streetId==:key").execute(street.getId());
 									if (buildings.size() == 0) {
 										pm.deletePersistent(street);
 									}

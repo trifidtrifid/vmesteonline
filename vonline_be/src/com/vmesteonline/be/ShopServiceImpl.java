@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -250,10 +251,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 				products = new ArrayList<Product>();
 				List<VoProduct> vpl = getProductsFromCategory(categoryId, shopId, pm);
-				Collections.sort(vpl, new ProdcutScoreComparator());
+
+				Collections.sort(vpl, productCategoryNameComparator);
+				Set<Long> productIds = new HashSet<Long>();
 				for (VoProduct product : vpl) {
-					if(!product.isDeleted())
+					if(!product.isDeleted() && !productIds.contains(product.getId())){
 						products.add(product.getProduct(pm));
+						productIds.add(product.getId());
+					}
 				}
 				
 				
@@ -276,7 +281,18 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			pm.close();
 		}
 	}
+	//======================================================================================================================
+	
+	private static Comparator<VoProduct> productCategoryNameComparator = new Comparator<VoProduct>(){
 
+		@Override
+		public int compare(VoProduct o1, VoProduct o2) {
+			if( o1.getCategories().size() == 0 || o2.getCategories().size() == 0 ) return Integer.compare( o1.getCategories().size(), o2.getCategories().size());
+			int ccomp = Long.compare(o1.getCategories().get(0),o2.getCategories().get(0));
+			return ccomp != 0 ? ccomp : o1.getName().compareTo(o2.getName());
+		}
+		
+	};
 	// ======================================================================================================================
 	@Override
 	public ProductDetails getProductDetails(long productId) throws InvalidOperation {
