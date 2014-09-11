@@ -514,6 +514,19 @@ if(isAuth){
                     </ul>
                     <div class="tab-content">
                         <div id="edit-product" class="tab-pane active">
+                            <%--<div class="btn-group producers-dropdown pull-right">
+                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                    <span class="btn-group-text">Выбрать производителя</span>
+                                    <span class="icon-caret-down icon-on-right"></span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-blue">
+                                    <c:forEach var="producer" items="${producers}">
+                                        <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>--%>
+
                             <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить продукт</a>
 
                             <div class="table-add table-add-product">
@@ -590,39 +603,223 @@ if(isAuth){
                                 <span class="error-info"></span>
                             </div>
 
-
                             <div class="table-overflow products-table" id="doublescroll-2">
                                 <table>
                                     <thead>
                                     <tr>
                                         <td>Название</td>
                                         <td>Сокр. описание</td>
-                                        <td>Полное описание</td>
+                                        <%--<td>Полное описание</td>--%>
                                         <td>Аватар</td>
-                                        <td>Другие изображения</td>
+                                        <%--<td>Другие изображения</td>
                                         <td>Категории</td>
-                                        <td>Производитель</td>
+                                        <td>Производитель</td>--%>
                                         <td>Вес</td>
                                         <td>Цена</td>
                                         <td>Ед.изм</td>
                                         <td>Мин.шаг</td>
-                                        <td>Опции</td>
-                                        <td>Ссылки</td>
+                                        <%--<td>Опции</td>
+                                        <td>Ссылки</td>--%>
                                         <td>Весовой</td>
                                     </tr>
                                     </thead>
                                     <c:forEach var="product" items="${products}">
                                         <tr id="${product.id}">
                                             <td class="product-name">
-                                                <textarea>${product.name}</textarea> </td>
+                                                ${product.name}
+
+                                                    <div class="modal modal-editProduct">
+                                                        <div class="modal-body">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+                                                            <h3>Редактирование продукта</h3>
+                                                            <p></p>
+
+                                                            <ul class="edit-product-list clearfix">
+                                                                <li>
+                                                                    <label>Название</label>
+                                                                    <span class="edit-product-item product-name"><textarea>${product.name}</textarea></span>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Сокр. описание</label>
+                                                                    <span class="edit-product-item product-shortDescr"><textarea>${product.shortDescr}</textarea></span>
+                                                                </li>
+                                                                <li>
+                                                                    <label>Полное описание</label>
+                                                                    <span class="edit-product-item product-fullDescr"><textarea>${product.name}</textarea></span>
+                                                                </li>
+                                                                <li class="pull-left short1">
+                                                                    <label>Аватар</label>
+                                                                        <span class="edit-product-item product-imageURL">
+                                                                            <input type="file" id="imageURL-${product.id}">
+                                                                            <c:choose>
+                                                                                <c:when test="${product.imageURL != null}">
+                                                                                    <img src="${product.imageURL}" alt="картинка"/>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <img src="../i/no-photo.png" alt="картинка"/>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+                                                                        </span>
+                                                                </li>
+                                                                <li class="pull-left short1">
+                                                                    <label>Другие изображения</label>
+                                            <span class="edit-product-item product-imagesSet">
+                                                <input type="file" id="imagesSetURL">
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short1 clear">
+                                                                    <label>Категории</label>
+                                                                    <span class="edit-product-item product-categories"></span>
+                                                                </li>
+                                                                <li class="pull-left short1">
+                                                                    <label>Производитель</label>
+                                            <span class="edit-product-item product-producer" data-producerid="${product.producerId}">
+
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short2 clear">
+                                                                    <label>Вес</label>
+                                            <span class="edit-product-item product-weight">
+                                                <input type="text" value="${product.weight}"/>
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short2">
+                                                                    <label>Цена</label>
+                                            <span class="edit-product-item product-price">
+                                                <input type="text" value="${product.price}"/>
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short2">
+                                                                    <label>Ед.изм</label>
+                                            <span class="edit-product-item product-unitName">
+                                                <input type="text" value="${product.unitName}"/>
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short2">
+                                                                    <label>Мин.шаг</label>
+                                            <span class="edit-product-item product-pack">
+                                                <input type="text" value="${product.minClientPack}"/>
+                                            </span>
+                                                                </li>
+                                                                <li class="pull-left short2">
+                                                                    <label>Весовой</label>
+                                                                    <span class="edit-product-item product-prepack">
+                                                                        <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
+                                                                    </span>
+                                                                </li>
+
+                                                                <li class="pull-left short1 clear">
+                                                                    <label>Опции</label>
+                                                                    <span class="edit-product-item product-options"></span>
+                                                                </li>
+                                                                <li class="pull-left short1">
+                                                                    <label>Ссылки</label>
+                                                                    <span class="edit-product-item product-links">
+                                                                        <table>
+                                                                            <tbody>
+                                                                            <tr>
+                                                                                <td class="link-key">vk</td>
+                                                                                <td><input type="text"/></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="link-key">fb</td>
+                                                                                <td><input type="text"/></td>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+
+                                                            <a class="btn btn-sm btn-primary no-border save-products clear" href="#">Сохранить</a>
+
+                                                                <%--                                                <table>
+                                                                                                                    <thead>
+                                                                                                                    <tr>
+                                                                                                                        <td>Название</td>
+                                                                                                                        <td>Сокр. описание</td>
+                                                                                                                            &lt;%&ndash;<td>Полное описание</td>&ndash;%&gt;
+                                                                                                                        <td>Аватар</td>
+                                                                                                                            &lt;%&ndash;<td>Другие изображения</td>
+                                                                                                                            <td>Категории</td>
+                                                                                                                            <td>Производитель</td>&ndash;%&gt;
+                                                                                                                        <td>Вес</td>
+                                                                                                                        <td>Цена</td>
+                                                                                                                        <td>Ед.изм</td>
+                                                                                                                        <td>Мин.шаг</td>
+                                                                                                                            &lt;%&ndash;<td>Опции</td>
+                                                                                                                            <td>Ссылки</td>&ndash;%&gt;
+                                                                                                                        <td>Весовой</td>
+                                                                                                                    </tr>
+                                                                                                                    </thead>
+                                                                                                                    <c:forEach var="product" items="${products}">
+                                                                                                                        <tr id="${product.id}">
+                                                                                                                            <td class="product-name">
+                                                                                                                                    ${product.name}</td>
+                                                                                                                            <td class="product-shortDescr">
+                                                                                                                                    ${product.shortDescr}
+                                                                                                                            </td>
+                                                                                                                                &lt;%&ndash;<td class="product-fullDescr">
+                                                                                                                                    <textarea></textarea>
+                                                                                                                                </td>&ndash;%&gt;
+                                                                                                                            <td class="product-imageURL">
+                                                                                                                                    &lt;%&ndash;<input type="file" id="imageURL-${product.id}">&ndash;%&gt;
+                                                                                                                                <c:choose>
+                                                                                                                                    <c:when test="${product.imageURL != null}">
+                                                                                                                                        <img src="${product.imageURL}" alt="картинка"/>
+                                                                                                                                    </c:when>
+                                                                                                                                    <c:otherwise>
+                                                                                                                                        <img src="../i/no-photo.png" alt="картинка"/>
+                                                                                                                                    </c:otherwise>
+                                                                                                                                </c:choose>
+                                                                                                                            </td>
+                                                                                                                                &lt;%&ndash;<td class="product-imagesSet">
+                                                                                                                                    <input type="file" id="imagesSetURL">
+                                                                                                                                </td>
+                                                                                                                                <td class="product-categories"></td>
+                                                                                                                                <td class="product-producer" data-producerid="${product.producerId}"></td>&ndash;%&gt;
+                                                                                                                            <td class="product-weight">${product.weight}</td>
+                                                                                                                            <td class="product-price">${product.price}</td>
+                                                                                                                            <td class="product-unitName">${product.unitName}</td>
+                                                                                                                            <td class="product-pack">${product.minClientPack}</td>
+                                                                                                                                &lt;%&ndash;<td class="product-options"></td>
+                                                                                                                                <td class="product-links">
+                                                                                                                                    <table>
+                                                                                                                                        <tbody>
+                                                                                                                                            <tr>
+                                                                                                                                                <td class="link-key">vk</td>
+                                                                                                                                                <td><input type="text"/></td>
+                                                                                                                                            </tr>
+                                                                                                                                            <tr>
+                                                                                                                                                <td class="link-key">fb</td>
+                                                                                                                                                <td><input type="text"/></td>
+                                                                                                                                            </tr>
+                                                                                                                                        </tbody>
+                                                                                                                                    </table>
+                                                                                                                                </td>&ndash;%&gt;
+                                                                                                                            <td class="product-prepack">
+                                                                                                                                <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
+                                                                                                                            </td>
+                                                                                                                            <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
+                                                                                                                        </tr>
+                                                                                                                    </c:forEach>
+
+                                                                                                                </table>--%>
+
+                                                        </div>
+                                                    </div>
+
+
+                                            </td>
                                             <td class="product-shortDescr">
-                                                <textarea>${product.shortDescr}</textarea>
+                                                ${product.shortDescr}
                                             </td>
-                                            <td class="product-fullDescr">
+                                            <%--<td class="product-fullDescr">
                                                 <textarea></textarea>
-                                            </td>
+                                            </td>--%>
                                             <td class="product-imageURL">
-                                                <input type="file" id="imageURL-${product.id}">
+                                                <%--<input type="file" id="imageURL-${product.id}">--%>
                                                 <c:choose>
                                                     <c:when test="${product.imageURL != null}">
                                                         <img src="${product.imageURL}" alt="картинка"/>
@@ -632,16 +829,16 @@ if(isAuth){
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td class="product-imagesSet">
+                                            <%--<td class="product-imagesSet">
                                                 <input type="file" id="imagesSetURL">
                                             </td>
                                             <td class="product-categories"></td>
-                                            <td class="product-producer" data-producerid="${product.producerId}"></td>
-                                            <td class="product-weight"><input type="text" value="${product.weight}"/></td>
-                                            <td class="product-price"><input type="text" value="${product.price}"/></td>
-                                            <td class="product-unitName"><input type="text" value="${product.unitName}"/></td>
-                                            <td class="product-pack"><input type="text" value="${product.minClientPack}"/></td>
-                                            <td class="product-options"></td>
+                                            <td class="product-producer" data-producerid="${product.producerId}"></td>--%>
+                                            <td class="product-weight">${product.weight}</td>
+                                            <td class="product-price">${product.price}</td>
+                                            <td class="product-unitName">${product.unitName}</td>
+                                            <td class="product-pack">${product.minClientPack}</td>
+                                            <%--<td class="product-options"></td>
                                             <td class="product-links">
                                                 <table>
                                                     <tbody>
@@ -655,17 +852,19 @@ if(isAuth){
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                            </td>
+                                            </td>--%>
                                             <td class="product-prepack">
                                                 <input type="checkbox" <c:if test="${product.prepackRequired}"> checked </c:if> />
                                             </td>
                                             <td class="product-remove"><a href="#" title="Удалить" class="remove-item">&times;</a></td>
                                         </tr>
+
                                     </c:forEach>
 
                                 </table>
                             </div>
-                            <a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>
+                            <%--<a class="btn btn-sm btn-primary no-border save-products" href="#">Сохранить изменения</a>--%>
+
                         </div>
                         <div id="edit-category" class="tab-pane">
                             <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить категорию</a>
@@ -824,7 +1023,9 @@ if(isAuth){
 <script src="/build/gen-js/shop_types.js" type="text/javascript"></script>
 <script src="/build/gen-js/ShopFEService.js" type="text/javascript"></script>
 <script src="/build/gen-js/shop.bo_types.js" type="text/javascript"></script>
-<script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>
+
+<%--<script src="/build/gen-js/ShopBOService.js" type="text/javascript"></script>--%>
+<script src="/gen-js/ShopBOService.js" type="text/javascript"></script>
 
 <script src="/build/gen-js/authservice_types.js" type="text/javascript"></script>
 <script src="/build/gen-js/AuthService.js" type="text/javascript"></script>

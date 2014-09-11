@@ -988,6 +988,38 @@ height 50px
   .chooseDate-block
     margin 20px 0 0 20px
 
+.modal-editProduct
+  width 850px
+  height 590px
+  margin-left -350px
+  top 30px
+  .edit-product-list
+    li
+      list-style none
+      label
+        float left
+        width 150px
+      .edit-product-item
+        margin-left 160px
+        display block
+        margin-bottom 10px
+      &.short1
+        margin-right 20px
+        .edit-product-item
+          width 200px
+      &.short2
+        margin-right 20px
+        .edit-product-item
+          width 70px
+          min-width 0
+          margin-left 60px
+        label
+          width 50px
+      .clear
+        clear left
+      .btn
+        display inline-block
+
 .sidebar#sidebar
   height 100%
   left 0
@@ -1721,6 +1753,8 @@ height 50px
     .btn-save
       margin-top 10px
 .bo-edit
+  .tab-content
+    position static
   .table-add //
     display none
   .table-overflow
@@ -1736,6 +1770,12 @@ height 50px
       top 0
   .products-table
     overflow-y hidden
+    >table>tbody>tr
+      cursor pointer
+      &:hover
+        background #e7ffc5
+      .modal
+        cursor default
     tbody td
       border-bottom 1px solid #ccc
   table

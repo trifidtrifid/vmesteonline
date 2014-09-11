@@ -1164,6 +1164,47 @@ height 50px
 .modal-chooseDate .chooseDate-block {
   margin: 20px 0 0 20px;
 }
+.modal-editProduct {
+  width: 850px;
+  height: 590px;
+  margin-left: -350px;
+  top: 30px;
+}
+.modal-editProduct .edit-product-list li {
+  list-style: none;
+}
+.modal-editProduct .edit-product-list li label {
+  float: left;
+  width: 150px;
+}
+.modal-editProduct .edit-product-list li .edit-product-item {
+  margin-left: 160px;
+  display: block;
+  margin-bottom: 10px;
+}
+.modal-editProduct .edit-product-list li.short1 {
+  margin-right: 20px;
+}
+.modal-editProduct .edit-product-list li.short1 .edit-product-item {
+  width: 200px;
+}
+.modal-editProduct .edit-product-list li.short2 {
+  margin-right: 20px;
+}
+.modal-editProduct .edit-product-list li.short2 .edit-product-item {
+  width: 70px;
+  min-width: 0;
+  margin-left: 60px;
+}
+.modal-editProduct .edit-product-list li.short2 label {
+  width: 50px;
+}
+.modal-editProduct .edit-product-list li .clear {
+  clear: left;
+}
+.modal-editProduct .edit-product-list li .btn {
+  display: inline-block;
+}
 .sidebar#sidebar {
   height: 100%;
   left: 0;
@@ -2080,6 +2121,9 @@ height 50px
 .bo-settings #settings-shedule .btn-save {
   margin-top: 10px;
 }
+.bo-edit .tab-content {
+  position: static;
+}
 .bo-edit .table-add {
   display: none;
 }
@@ -2100,6 +2144,15 @@ height 50px
 }
 .bo-edit .products-table {
   overflow-y: hidden;
+}
+.bo-edit .products-table >table>tbody>tr {
+  cursor: pointer;
+}
+.bo-edit .products-table >table>tbody>tr:hover {
+  background: #e7ffc5;
+}
+.bo-edit .products-table >table>tbody>tr .modal {
+  cursor: default;
 }
 .bo-edit .products-table tbody td {
   border-bottom: 1px solid #ccc;
