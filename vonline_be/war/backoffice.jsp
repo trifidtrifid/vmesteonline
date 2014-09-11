@@ -416,6 +416,14 @@ if(isAuth){
                             </label>
                             <input id="settings-delivery-link" type="text"/>
                         </div>
+                        <div class="settings-links-item">
+                            <label for="settings-socvk-link">
+                                Социальные сети
+                            </label>
+                            <input id="settings-socvk-link" placeholder="vk" type="text"/><br>
+                            <label></label>
+                            <input id="settings-socfb-link" placeholder="fb" type="text"/>
+                        </div>
 
                         <a class="btn btn-sm no-border btn-primary btn-save" href="#">Сохранить</a>
                     </div>

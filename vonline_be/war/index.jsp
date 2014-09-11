@@ -172,6 +172,14 @@
 								    </span>
 							    </a>
 
+                                <c:if test="${shopPages.socialNetworks != null}">
+                                    <div class="shop-social">
+                                        <c:forEach var="soc" items="${shopPages.socialNetworks}">
+                                            <a href="${soc.value}"><img src="../i/${soc.key}.png" alt="лого"/></a>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
+
                                 <div>
                                 <span class="voice-counter"></span>
 

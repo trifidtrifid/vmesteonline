@@ -649,6 +649,15 @@ PRINT STYLESHEET
     color: #000;
     text-decoration: none;
 }
+.shops .shop-social{
+    margin-left: 110px;
+    margin-bottom: 10px;
+    height: 20px;
+}
+.shops .shop-social a{
+    display: inline-block;
+    margin-right: 5px;
+}
 
 .align-center {
     text-align: center;
