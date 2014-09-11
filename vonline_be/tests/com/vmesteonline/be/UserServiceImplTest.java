@@ -191,7 +191,7 @@ public class UserServiceImplTest extends TestWorkAround {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
 			UserContacts uc = new UserContacts();
-			uc.email = "z@z";
+			uc.email = "z@z.zzz";
 			uc.mobilePhone = "7921336";
 			usi.updateContacts(uc);
 
