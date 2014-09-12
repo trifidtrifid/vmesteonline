@@ -2155,6 +2155,49 @@ height 50px
   height: 185px;
   background-color: transparent;
 }
+.bo-edit .table-add-product .product-imagesSet .ace-file-input input {
+  height: 0;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .file-label {
+  height: 30px;
+  line-height: 20px;
+  border: 0;
+  width: 70%;
+  margin: 0 auto;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .file-label:before {
+  font-size: 14px;
+  margin: 0;
+  color: #428bca;
+  font-weight: normal;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .file-name {
+  display: inline-block;
+  vertical-align: middle;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .file-name:after {
+  display: none;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .remove {
+  z-index: 100;
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input .remove i {
+  display: block;
+  font-size: 10px;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input.added {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0;
+}
+.bo-edit .table-add-product .product-imagesSet .ace-file-input.added .file-label {
+  height: auto;
+  width: 100%;
+}
 .bo-edit .products-table {
   overflow-y: hidden;
 }
