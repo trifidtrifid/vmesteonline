@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.jdo.PersistenceManager;
@@ -564,8 +565,9 @@ public class VoShop {
 		List<OrderDate> odates = new ArrayList<OrderDate>();
 		
 		Calendar afterDateCldr = Calendar.getInstance();
+		afterDateCldr.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
 		afterDateCldr.setTimeInMillis(((long)from)*1000L);
-		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK) - afterDateCldr.getFirstDayOfWeek() + 1 ) * 86400; //day of week of the date
+		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK)) * 86400; //day of week of the date
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
@@ -597,6 +599,7 @@ public class VoShop {
 		afterDate -= afterDate % 86400;
 		
 		Calendar afterDateCldr = Calendar.getInstance();
+		afterDateCldr.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
 		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
 		int closestDelta = 1000;
 		PriceType pt = PriceType.INET;
