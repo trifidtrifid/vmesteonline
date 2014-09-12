@@ -1182,6 +1182,9 @@ height 50px
   display: block;
   margin-bottom: 10px;
 }
+.modal-editProduct .edit-product-list li .edit-product-item input {
+  width: 100%;
+}
 .modal-editProduct .edit-product-list li.short1 {
   margin-right: 20px;
 }
@@ -2135,12 +2138,22 @@ height 50px
 .bo-edit .table-add-product {
   position: relative;
 }
-.bo-edit .table-add-product .categories-dropdown,
-.bo-edit .table-add-product .producers-dropdown {
-  position: static !important;
+.bo-edit .table-add-product textarea {
+  width: 100%;
 }
-.bo-edit .table-add-product .dropdown-menu {
-  top: 0;
+.bo-edit .table-add-product .product-imageURL {
+  height: 185px;
+}
+.bo-edit .table-add-product .product-imageURL .ace-file-input {
+  height: 185px;
+  position: absolute;
+}
+.bo-edit .table-add-product .product-imageURL .ace-file-input .file-label {
+  border: 0;
+  position: absolute;
+  width: 185px;
+  height: 185px;
+  background-color: transparent;
 }
 .bo-edit .products-table {
   overflow-y: hidden;

@@ -113,7 +113,7 @@ if($('.container.backoffice').hasClass('noAccess')){
             }
         }
     }
-    
+
     window.addEventListener('popstate', makeHistoryNav, false);
 
     $('.bo-link').parent().addClass('active');

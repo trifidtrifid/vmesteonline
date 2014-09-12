@@ -514,23 +514,143 @@ if(isAuth){
                     </ul>
                     <div class="tab-content">
                         <div id="edit-product" class="tab-pane active">
-                            <%--<div class="btn-group producers-dropdown pull-right">
-                                <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
-                                    <span class="btn-group-text">Выбрать производителя</span>
-                                    <span class="icon-caret-down icon-on-right"></span>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-blue">
-                                    <c:forEach var="producer" items="${producers}">
-                                        <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
-                                    </c:forEach>
-                                </ul>
-                            </div>--%>
 
                             <a class="btn btn-sm no-border btn-primary edit-show-add" href="#">Добавить продукт</a>
 
                             <div class="table-add table-add-product">
-                                <div class="table-overflow">
+                            <div class="modal modal-editProduct">
+                                <div class="modal-body">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+                                    <h3>Создание продукта</h3>
+                                    <p></p>
+
+                                    <ul class="edit-product-list clearfix">
+                                        <li>
+                                            <label>Название</label>
+                                            <span class="edit-product-item product-name"><textarea></textarea></span>
+                                        </li>
+                                        <li>
+                                            <label>Сокр. описание</label>
+                                            <span class="edit-product-item product-shortDescr"><textarea></textarea></span>
+                                        </li>
+                                        <li>
+                                            <label>Полное описание</label>
+                                            <span class="edit-product-item product-fullDescr"><textarea></textarea></span>
+                                        </li>
+                                        <li class="pull-left short1">
+                                            <label>Аватар</label>
+                                            <span class="edit-product-item product-imageURL">
+                                                <input type="file" id="imageURL-add">
+                                                <img src="../i/no-photo.png" alt="картинка"/>
+                                                <%--<c:choose>
+                                                    <c:when test="${product.imageURL != null}">
+                                                        <img src="${product.imageURL}" alt="картинка"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="../i/no-photo.png" alt="картинка"/>
+                                                    </c:otherwise>
+                                                </c:choose>--%>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short1">
+                                            <label>Другие изображения</label>
+                                            <span class="edit-product-item product-imagesSet">
+                                                <input type="file" id="imageURLSet-add">
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short1 clear">
+                                            <label>Категории</label>
+                                            <span class="edit-product-item product-categories"></span>
+                                        </li>
+                                        <li class="pull-left short1">
+                                            <label>Производитель</label>
+                                            <span class="edit-product-item product-producer" data-producerid="${product.producerId}">
+
+                                                <div class="btn-group producers-dropdown">
+                                                    <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
+                                                        <span class="btn-group-text">Выбрать производителя</span>
+                                                        <span class="icon-caret-down icon-on-right"></span>
+                                                    </button>
+
+                                                    <ul class="dropdown-menu dropdown-blue">
+                                                        <c:forEach var="producer" items="${producers}">
+                                                            <li data-producerid="${producer.id}"><a href="#">${producer.name}</a></li>
+                                                        </c:forEach>
+                                                    </ul>
+                                                </div>
+
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short2 clear">
+                                            <label>Вес</label>
+                                            <span class="edit-product-item product-weight">
+                                                <input type="text" value=""/>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short2">
+                                            <label>Цена</label>
+                                            <span class="edit-product-item product-price">
+                                                <input type="text" value=""/>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short2">
+                                            <label>Ед.изм</label>
+                                            <span class="edit-product-item product-unitName">
+                                                <input type="text" value=""/>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short2">
+                                            <label>Мин.шаг</label>
+                                            <span class="edit-product-item product-pack">
+                                                <input type="text" value=""/>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short2">
+                                            <label>Весовой</label>
+                                            <span class="edit-product-item product-prepack">
+                                                <input type="checkbox"/>
+                                            </span>
+                                        </li>
+
+                                        <li class="pull-left short1 clear">
+                                            <label>Опции</label>
+                                            <span class="edit-product-item product-options">
+                                                <table>
+                                                    <tr>
+                                                        <td><input type='text' placeholder="опция"></td>
+                                                        <td><input type='text' placeholder="описание"></td>
+                                                        <td class='td-remove-options'><a href='#' class='remove-options-item remove-item'>&times;</a></td>
+                                                    </tr>
+                                                </table>
+                                            <a href='#' class='add-options-item add-item'>Добавить</a>
+                                            </span>
+                                        </li>
+                                        <li class="pull-left short1">
+                                            <label>Ссылки</label>
+                                            <span class="edit-product-item product-links">
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td class="link-key">vk</td>
+                                                        <td><input type="text"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="link-key">fb</td>
+                                                        <td><input type="text"/></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </span>
+                                        </li>
+                                    </ul>
+
+                                    <a class="btn btn-sm btn-primary no-border edit-add clear" href="#">Сохранить</a>
+
+                                </div>
+                            </div>
+
+                                <%--<div class="table-overflow">
                                 <table>
                                     <tr>
                                         <td class="product-name">
@@ -550,7 +670,7 @@ if(isAuth){
                                         </td>
                                         <td class="product-categories"><a href="#">Добавить категорию</a></td>
                                         <td class="product-producer">
-                                            <%--    <input type="text" value="Производитель"/>--%>
+                                            &lt;%&ndash;    <input type="text" value="Производитель"/>&ndash;%&gt;
                                             <div class="btn-group producers-dropdown">
                                                 <button data-toggle="dropdown" class="btn btn-info btn-sm dropdown-toggle no-border">
                                                     <span class="btn-group-text">Выбрать производителя</span>
@@ -600,7 +720,7 @@ if(isAuth){
                                 </table>
                                 </div>
                                 <a class="btn btn-sm no-border btn-primary edit-add" href="#">Добавить</a>
-                                <span class="error-info"></span>
+                                <span class="error-info"></span>--%>
                             </div>
 
                             <div class="table-overflow products-table" id="doublescroll-2">
