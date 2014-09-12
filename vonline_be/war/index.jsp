@@ -264,7 +264,7 @@
 	<script defer src="js/shop/landing/flexslider/jquery.flexslider-min.js"></script>
 	<script src="js/shop/landing/initSlider.js"></script>
 
-	<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+	<script type="text/javascript" data-main="/build/buildv1.js" src="/js/shop/require.min.js"></script>
 
 </body>
 </html>

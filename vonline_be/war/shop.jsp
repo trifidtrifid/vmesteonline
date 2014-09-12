@@ -48,7 +48,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="/build/buildv1.js" src="/js/shop/require.min.js"></script>
 
     <%--<script src="../js/lib/jquery-2.1.1.min.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
