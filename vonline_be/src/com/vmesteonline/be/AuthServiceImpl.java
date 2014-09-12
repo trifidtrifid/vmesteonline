@@ -200,7 +200,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 		try {
 			inviteCode = inviteCode.toUpperCase();
-			VoUser user;	
+	
 			VoInviteCode voInviteCode = VoInviteCode.getInviteCode(inviteCode, pm);
 
 			voInviteCode.registered();

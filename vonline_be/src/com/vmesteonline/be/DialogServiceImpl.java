@@ -1,6 +1,7 @@
 package com.vmesteonline.be;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.SortedSet;
@@ -14,6 +15,7 @@ import javax.jdo.Query;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
@@ -83,12 +85,22 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 		
 		PersistenceManager pm = PMF.getPm();
 		try {
-			long currentUserId = getCurrentUserId();
+			VoSession sess = getCurrentSession(pm);
+			long currentUserId = sess.getUserId();
 			VoDialog vdlg = pm.getObjectById(VoDialog.class, dialogID);
 			if (!new HashSet<Long>(vdlg.getUsers()).contains(currentUserId))
 				throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
 
-			return VoHelper.convertMutableSet(vdlg.getMessages(afterDate, tailSize, lastLoadedId, pm), new ArrayList<DialogMessage>(), new DialogMessage(), pm);
+			Collection<VoDialogMessage> msgs = vdlg.getMessages(afterDate, tailSize, lastLoadedId, pm);
+			Integer dmsgs = sess.getDialogUpdates().get(dialogID);
+			if(null!=dmsgs ) {
+				if( dmsgs > msgs.size())
+					sess.getDialogUpdates().put(dialogID,dmsgs-msgs.size());
+				else
+					sess.getDialogUpdates().remove(dialogID);
+			}
+				
+			return VoHelper.convertMutableSet(msgs, new ArrayList<DialogMessage>(), new DialogMessage(), pm);
 
 		} finally {
 			pm.close();

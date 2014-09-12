@@ -146,8 +146,8 @@ public class VoSession {
 	public void postNewDialogMessage( long dialogId ){
 		if( null==newDialogMessages )
 			newDialogMessages = new HashMap<Long, Integer>();
-		Integer newVal = ( newVal = newDialogMessages.get(dialogId)) == null ? 1 : newVal++;
-		newDialogMessages.put(dialogId, newVal);
+		Integer newVal = newDialogMessages.get(dialogId);
+		newDialogMessages.put(dialogId, null == newVal ? 1 : ++newVal);
 		setLastUpdateTs((int) (System.currentTimeMillis() / 1000L));
 	}
 

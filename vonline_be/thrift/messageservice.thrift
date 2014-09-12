@@ -164,7 +164,6 @@ service MessageService {
 	i32 checkUpdates( 1:i32 lastResposeTimestamp ) throws (1:error.InvalidOperation exc),
 	map<i64,i32> getDialogUpdates( ) throws (1:error.InvalidOperation exc),
 	
-
 	TopicListPart getBlog(2:i64 lastLoadedTopicId, 3:i32 length) throws (1:error.InvalidOperation exc),
 	Message postBlogMessage( 1:Message msg ) throws (1:error.InvalidOperation exc),
 
