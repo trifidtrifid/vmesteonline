@@ -95,7 +95,7 @@
             nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
-            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-180*day,metaTime+180*day,0);
+            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
             //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
             var ordersLength = orders.length;
 
@@ -144,7 +144,7 @@
             }else{
                 var orderDate = parseInt($(this).attr('id'));
                 var day = 3600*24;
-                var orders = client.getOrdersByStatus(orderDate-100*day,orderDate+100*day,0);
+                var orders = client.getOrdersByStatus(orderDate-30*day,orderDate+30*day,0);
                 var ordersLength = orders.length;
                 var orderList = [];
                 var counter = 0;

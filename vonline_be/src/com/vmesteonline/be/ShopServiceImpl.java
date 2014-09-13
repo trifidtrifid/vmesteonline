@@ -482,8 +482,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		String htmlBody = "<!DOCTYPE html><html><head><style>table, th, td{ border-collapse:collapse;border:1px solid black;}"
 				+ "th, td{padding:5px;}</style></head><body>";
 		htmlBody += "<h3>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h3>";
-		htmlBody += "<p>Номер  заказа: "+ currentOrder.getId()+" </p>";
-		htmlBody += "<p>Номер клиента: "+ customer.getId()+" </p>";
+		htmlBody += "<p>Номер  заказа: "+ currentOrder.getId()+" <br/>";
+		htmlBody += "Номер клиента: "+ customer.getId()+" </p>";
 		
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
 		htmlBody += "<br/>Стоимость: "+ VoHelper.roundDouble( currentOrder.getTotalCost(), 2) + " руб";
@@ -789,8 +789,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			Long removedLineID = currentOdrerLines.remove(productId);
-			if (null == removedLineID)
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
+			if (null == removedLineID){
+				logger.warn("No order line found for product id=" + productId +" in order: "+orderId);
+				return false;
+			}
 
 			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
