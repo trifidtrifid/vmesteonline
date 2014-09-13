@@ -481,8 +481,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		String htmlBody = "<!DOCTYPE html><html><head><style>table, th, td{ border-collapse:collapse;border:1px solid black;}"
 				+ "th, td{padding:5px;}</style></head><body>";
-		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
-		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
+		htmlBody += "<h3>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h3>";
+		htmlBody += "<p>Номер  заказа: "+ currentOrder.getId()+" </p>";
+		htmlBody += "<p>Номер клиента: "+ customer.getId()+" </p>";
+		
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
 		htmlBody += "<br/>Стоимость: "+ VoHelper.roundDouble( currentOrder.getTotalCost(), 2) + " руб";
 		if( currentOrder.getDeliveryCost() > 0) htmlBody += "<br/>Из них доставка: "+ currentOrder.getDeliveryCost()+" руб";
@@ -495,7 +497,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			htmlBody += "<br/>Коментарий: "+comment;
 		
 		htmlBody += "<br/><table><caption>Состав заказа</caption>";
-		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th><th>Комментарий</th></tr>";
+		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th></tr>";
 		Map<Long, Long> orderLines = currentOrder.getOrderLines();
 		if(null!=orderLines)
 			for (Long lineId: orderLines.values()) {
@@ -518,7 +520,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				}
 				htmlBody += "<td>" + orderLine.getPrice() + "</td>";
 				htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
-				htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
 				htmlBody += "</tr>";
 			}
 		
