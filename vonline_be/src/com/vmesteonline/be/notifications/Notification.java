@@ -63,7 +63,7 @@ public abstract class Notification {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		int twoDaysAgo = (int) now - 86400 * 2;
-		int weekAgo = (int) now - 86400 * 2;
+		int weekAgo = (int) now - 86400 * 7;
 		List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
 		for (VoSession vs : vsl) {
 			VoUser vu;
