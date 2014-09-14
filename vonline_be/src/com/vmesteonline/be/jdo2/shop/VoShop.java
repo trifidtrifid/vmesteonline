@@ -573,7 +573,7 @@ public class VoShop {
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
 				int start = startOfWeek + d.orderDay *86400; 
 				start -= start % 86400;
-				while( start - d.orderBefore * 86400 <= from - from % 86400 ) 
+				while( start - (d.orderBefore - 1)* 86400 < from - from % 86400 ) 
 					start += 7 * 86400;
 				
 				while( start < to ){
