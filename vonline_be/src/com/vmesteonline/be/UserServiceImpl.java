@@ -585,7 +585,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
