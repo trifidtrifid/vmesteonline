@@ -565,7 +565,7 @@ public class VoShop {
 		List<OrderDate> odates = new ArrayList<OrderDate>();
 		
 		Calendar afterDateCldr = Calendar.getInstance();
-		afterDateCldr.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+		from -= TimeZone.getTimeZone("Europe/Moscow").getRawOffset()/1000L;
 		afterDateCldr.setTimeInMillis(((long)from)*1000L);
 		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK)) * 86400; //day of week of the date
 		
@@ -599,7 +599,6 @@ public class VoShop {
 		afterDate -= afterDate % 86400;
 		
 		Calendar afterDateCldr = Calendar.getInstance();
-		afterDateCldr.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
 		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
 		int closestDelta = 1000;
 		PriceType pt = PriceType.INET;

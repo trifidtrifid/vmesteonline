@@ -137,6 +137,7 @@ public class VoHelper {
 				if (null != field && field.isAccessible())
 					field.set(owner, objToCopy);
 				else {
+					
 					Method method = owner.getClass().getMethod("set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1),
 							new Class[] { objToCopy.getClass() });
 					method.invoke(owner, new Object[] { objToCopy });

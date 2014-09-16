@@ -85,7 +85,7 @@ public class VoProduct {
 			if( null!=newInfo.details.getPricesMap() ) 
 				this.pricesMap.putAll( convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>()) );
 			
-			VoHelper.copyIfNotNull(this, "optionsMap", newInfo.details.optionsMap);
+			VoHelper.copyIfNotNull(this, "optionsMap", (Map<String, String>)newInfo.details.optionsMap);
 			
 			if (null != newInfo.details.getTopicSet()){
 				this.topicSet = new ArrayList<Long>();
