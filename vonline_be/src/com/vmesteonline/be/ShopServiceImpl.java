@@ -480,6 +480,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
+			recalculateOrder(orderId);
+			
 			sendConfirmationMessage( currentOrder, pm );
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
 			pm.makePersistent(currentOrder);
@@ -1275,8 +1277,61 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	}
 
 	// ======================================================================================================================
-	
+	static String productMapCacheKey( long shopId ){
+		return "productMapCacheKey:"+shopId;
+	}
+	// ======================================================================================================================
+	public void recalculateOrder(long orderId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+			
+			removeObjectFromCache( generateOrderDetailsKey(orderId));
+			
+			List<VoOrderLine> olines = (List<VoOrderLine>) pm.newQuery(VoOrderLine.class, "orderId=="+voOrder.getId()).execute();
+			double totalCost = 0.0D;
+			int weightGramm = 0;
+			
+			long shopId = voOrder.getShopId();
+			HashMap<Long, VoProduct> productsMap = getProductMapFromCacheByShopId(pm, shopId);
 
+			for (VoOrderLine voOrderLine : olines) {
+				VoProduct voProduct = productsMap.get(voOrderLine.getProductId());
+				if(null!=voProduct){
+					totalCost += voOrderLine.getQuantity() * voProduct.getPrice( voOrder.getPriceType());
+					weightGramm += voOrderLine.getQuantity() * voProduct.getWeight();
+				}
+			}
+			voOrder.setTotalCost(totalCost);
+			voOrder.setWeightGramm(weightGramm);
+			updateDeliveryCost(pm.getObjectById(VoShop.class, shopId), voOrder, null, pm);
+			pm.makePersistent(voOrder);
+		} finally {
+			pm.close();
+		}
+	}
+
+	//======================================================================================================================
+	
+	private static HashMap<Long, VoProduct> getProductMapFromCacheByShopId(PersistenceManager pm, long shopId) {
+		String productMapCacheKey = productMapCacheKey(shopId);
+		HashMap<Long,VoProduct> productsMap = getObjectFromCache( productMapCacheKey);
+		
+		if( null==productsMap){
+			productsMap = new HashMap<Long, VoProduct>();
+			List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId).execute();
+			for (VoProduct voProduct : products) {
+				if(!voProduct.isDeleted())
+					productsMap.put( voProduct.getId(), pm.detachCopy(voProduct) );
+			}
+			putObjectToCache(productMapCacheKey, productsMap);	
+		}
+		return productsMap;
+	}
+
+	static void dropProductMapFromCache( long shopId){
+		removeObjectFromCache(productMapCacheKey(shopId));
+	}
 	// ======================================================================================================================
 
 	@Override

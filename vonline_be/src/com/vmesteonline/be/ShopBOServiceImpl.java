@@ -137,6 +137,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 	@Override
 	public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws InvalidOperation {
+		
 		PersistenceManager pm = PMF.getPm();
 		List<Long> productIds;
 		
@@ -175,6 +176,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(category.getId(), shopId));
 			}
 			removeObjectFromCache(ShopServiceHelper.getProcutsOfCategoryCacheKey(0, shopId));
+			ShopServiceImpl.dropProductMapFromCache(shopId);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -547,6 +549,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			vop.update(newInfoWithOldId, cuid, pm);
 			
 			removeCategoryFromCache(vop.getShopId(), vop.getCategories(), pm);
+			ShopServiceImpl.dropProductMapFromCache(vop.getShopId());
 			
 			pm.makePersistent(vop);
 		} catch (Exception e) {
@@ -790,7 +793,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoProduct product = VoProduct.createObject(shop, fpi, pm);
 			
 			removeCategoryFromCache(product.getShopId(), product.getCategories(), pm);
-						
+			ShopServiceImpl.dropProductMapFromCache(product.getShopId());
+			
 			return product.getId();
 		} finally {
 			if (_pm == null)

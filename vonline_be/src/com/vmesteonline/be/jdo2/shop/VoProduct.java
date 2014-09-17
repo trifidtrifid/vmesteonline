@@ -30,7 +30,7 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
-@PersistenceCapable
+@PersistenceCapable(detachable="true")
 public class VoProduct {
 
 	//private static Logger logger = Logger.getLogger(VoProduct.class);
@@ -402,7 +402,7 @@ public class VoProduct {
 	@Unindexed
 	private List<String> imagesURLset;
 
-	@Persistent
+	@Persistent(defaultFetchGroup="true")
 	@Unindexed
 	private Map<Integer, Double> pricesMap;
 
@@ -530,7 +530,7 @@ public class VoProduct {
 		if( null==priceType )
 			priceType = PriceType.INET;
 		
-		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
+		return null==pricesMap || !pricesMap.containsKey( priceType.getValue() ) ? price : pricesMap.get(priceType.getValue());
 	}
 
 	public void setPrice(double price) {
