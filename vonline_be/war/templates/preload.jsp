@@ -62,11 +62,11 @@
     int ArrayShopsSize = ArrayShops.size();
     boolean isAdminka = false;
     Shop shop = null;
-    try{
+    /*try{
     	shop = shopService.getShop(0);
     } catch (InvalidOperation io){
     	//no shop set as current
-    }
+    }*/
 
     if( ArrayShops != null && ArrayShopsSize > 0){
 
@@ -107,12 +107,12 @@
             		shop = shopService.getShop( Long.parseLong( pathWords[ pathWords.length-1]));
             	} catch (Exception nfe){
             		//There is not a Long at the end of reuqest path
-            	} 
+            	}
             }
                 // если по hostName
 
-			if(null==shop){                
-                
+			if(null==shop){
+
                 for(int i = 0; i < ArrayShopsSize; i++){
 					String hostName = ArrayShops.get(i).hostName;
                     if(null!=hostName && (hostName.equals(serverName) || hostName.equals("www"+serverName))){
@@ -120,6 +120,9 @@
                     }
 
                     //if(shop == null) throw new InvalidOperation();
+                    if(shop == null) {
+                        shop = shopService.getShop(0);
+                    }
                 }
              }
 
