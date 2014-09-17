@@ -203,7 +203,8 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 			VoInviteCode voInviteCode = VoInviteCode.getInviteCode(inviteCode, pm);
 			voInviteCode.registered();
 
-			VoUser user = new VoUser(firstname.trim(), lastname.trim(), email.toLowerCase().trim(), password);
+			VoUser user = null == userByEmail ? 
+					new VoUser(firstname.trim(), lastname.trim(), email.toLowerCase().trim(), password) : userByEmail;
 			user.setGender(gender);
 			user.setEmailConfirmed(!needConfirmEmail);
 			pm.makePersistent(user);
