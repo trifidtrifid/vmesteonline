@@ -81,7 +81,10 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 					vc = VoCountry.createVoCountry( firstLine.get(2), pm);
 					vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
 					cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
-					vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, firstLine.get(5), null, null, pm);
+					String korp = firstLine.get(6);
+					String fullNo = null==korp || 0 == korp.trim().length() || korp.trim().equals("0") ?  firstLine.get(5)  : 
+						firstLine.get(5) + (korp.matches("[1-9]+") ? "к" + korp : korp);
+					vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, fullNo , null, null, pm);
 					
 					initPostalAddresses( csvData, pm, vb); 
 					
