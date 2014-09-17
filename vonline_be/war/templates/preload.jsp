@@ -120,6 +120,9 @@
                     }
 
                     //if(shop == null) throw new InvalidOperation();
+                    if(shop == null) {
+                        shop = shopService.getShop(0);
+                    }
                 }
              }
 
