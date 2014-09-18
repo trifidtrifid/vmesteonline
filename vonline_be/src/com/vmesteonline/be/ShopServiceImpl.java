@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -50,7 +47,6 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDate;
 import com.vmesteonline.be.shop.OrderDetails;
-import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
 import com.vmesteonline.be.shop.OrderUpdateInfo;
 import com.vmesteonline.be.shop.PaymentType;
@@ -585,11 +581,12 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return getOrderDetails(oldOrderId);
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
-		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOldOrder = pm.getObjectById(VoOrder.class, oldOrderId);
-			if (null != voOldOrder) {
+			HashMap<Long, VoProduct> prdMap = getProductMapFromCacheByShopId(pm, voOldOrder.getShopId());
+			
+			 {
 				double addCost = 0.0;
 				double addWeigth = 0.0;
 				VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
@@ -600,7 +597,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				if (currentOdrerLines.isEmpty()) {
 					for (VoOrderLine voOrderLine : oldOrderLinesList) {
 
-						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
+						VoProduct voProduct = prdMap.get( voOrderLine.getProductId());
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 
 						VoOrderLine newOrderLine = new VoOrderLine(currentOrder, voProduct, voOrderLine.getQuantity(), price, voOrderLine.getComment(),
@@ -617,7 +614,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 					for (VoOrderLine voOrderLine : oldOrderLinesList) {
 
-						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
+						VoProduct voProduct = prdMap.get( voOrderLine.getProductId());
 
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 						long pid = voOrderLine.getProductId();
@@ -626,7 +623,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							
 							VoOrderLine currentOL = getOrderLineByProductId(currentOrderLinesList,pid);
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
-							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
+							VoProduct curProduct = prdMap.get( currentOL.getProductId());
 							curProduct.setScore( curProduct.getScore() + voOrderLine.getQuantity() );
 
 							// merge packets for prepack product
@@ -638,7 +635,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							
 
 						} else {
-							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()),
+							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, prdMap.get( voOrderLine.getProductId()),
 									voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets());
 
 							pm.makePersistent(newOrderLine);
@@ -655,7 +652,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				pm.makePersistent(currentOrder);
 				return currentOrder.getOrderDetails(pm);// addCost;
 			}
-			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to appendOrder Id=" + oldOrderId + ". " + e);

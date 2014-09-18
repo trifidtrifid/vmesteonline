@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable(detachable="true")
-public class VoProduct {
+public class VoProduct implements Serializable {
 
 	//private static Logger logger = Logger.getLogger(VoProduct.class);
 	
