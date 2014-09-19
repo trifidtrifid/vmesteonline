@@ -1,7 +1,7 @@
 define(
-		'shop-category.min',
-		[ 'jquery', 'shop-initThrift.min', 'shop-basket.min', 'shop-common.min',
-				'shop-spinner.min','shop-search.min' ],
+		'shop-category',
+		[ 'jquery', 'shop-initThrift', 'shop-basket', 'shop-common',
+				'shop-spinner','shop-search' ],
 		function($, thriftModule, basketModule, commonModule, spinnerModule, searchModule) {
             //setCookie('arrayPrevCat',0); setCookie('prevCatCounter',0);  setCookie('catid',0);
 
@@ -29,7 +29,7 @@ define(
                         }
                     }
 					var myPic;
-					var commonModule = require('shop-common.min');
+					var commonModule = require('shop-common');
 					(productsList[i].imageURL) ? myPic = productsList[i].imageURL
 							: myPic = commonModule.noPhotoPic;
 					productsHtml += '<tr class="product new" data-prepack="'
@@ -78,7 +78,7 @@ define(
 			function InitLoadCategory(catID) {
 				//try {
 					/* замена меню категорий */
-					var commonModule = require('shop-common.min');
+					var commonModule = require('shop-common');
 					var productCategories = thriftModule.client.getProductCategories(catID);
 					var categoriesLength = productCategories.length;
 					var shopMenu = '';
@@ -144,7 +144,7 @@ define(
 
                     var producerDropdownId = $('.producer-dropdown .btn').data('producerid');
                     if(producerDropdownId != 0){
-                        var searchModule = require('shop-search.min');
+                        var searchModule = require('shop-search');
                         searchModule.filterByProducer(producerDropdownId);
                     }
 
@@ -154,9 +154,9 @@ define(
 
 				/* подключение событий */
 				spinnerModule.initProductsSpinner($('.product.new'));
-				var basketModule = require('shop-basket.min');
+				var basketModule = require('shop-basket');
 				commonModule.InitProductDetailPopup($('.product.new .product-link'));
-				basketModule.InitAddToBasket($('product.new .fa-shopping-cart'));
+				basketModule.InitAddToBasket($('.product.new .fa-shopping-cart'));
 				InitClickOnCategory();
 				commonModule.setSidebarHeight();
                 initCategorysHover();
@@ -312,17 +312,17 @@ define(
 
                             $('.main-content .catalog table tbody').append(createProductsTableHtml(productsList));
 
-                            var commonModule = require('shop-common.min');
+                            var commonModule = require('shop-common');
                             commonModule.markAddedProduct();
 
                             var producerDropdownId = $('.producer-dropdown .btn').data('producerid');
                             if (producerDropdownId != 0) {
-                                var searchModule = require('shop-search.min');
+                                var searchModule = require('shop-search');
                                 searchModule.filterByProducer(producerDropdownId);
                             }
 
                             spinnerModule.initProductsSpinner($('.product.new'));
-                            var basketModule = require('shop-basket.min');
+                            var basketModule = require('shop-basket');
                             commonModule.InitProductDetailPopup($('.product.new .product-link'));
                             basketModule.InitAddToBasket($('.product.new .fa-shopping-cart'));
                             commonModule.setSidebarHeight();

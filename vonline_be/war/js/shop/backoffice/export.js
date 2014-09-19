@@ -1,6 +1,6 @@
 define(
-    'export.min',
-    ['jquery','shop-initThrift.min','bo-common.min','multiselect'],
+    'export',
+    ['jquery','shop-initThrift','bo-common','multiselect'],
     function( $,thriftModule, boCommon ){
 
         function initExport(){

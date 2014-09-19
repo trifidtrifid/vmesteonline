@@ -1,7 +1,7 @@
 define(
-    'shop-common.min',
-    ['jquery','flexslider','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min','bootstrap'],
-    //['jquery','shop-initThrift.min','shop-basket.min','shop-spinner.min','shop-orders.min','shop-category.min'],
+    'shop-common',
+    ['jquery','flexslider','shop-initThrift','shop-basket','shop-spinner','shop-orders','shop-category','bootstrap'],
+    //['jquery','shop-initThrift','shop-basket','shop-spinner','shop-orders','shop-category'],
     function( $ ,flexslider, thriftModule,basketModule,spinnerModule,categoryModule,ordersModule ){
 
         var noPhotoPic = "/i/no-photo.png";
@@ -720,7 +720,7 @@ define(
                     var shopProducts = $('.shop-products');
                     if(shopProducts.find('.shop-menu .shopmenu-back').length){
                         // если у нас загружена подкатегория а не коренвая, то нужно загрузить коренвую
-                        var categoryModule = require('shop-category.min');
+                        var categoryModule = require('shop-category');
                         categoryModule.InitLoadCategory(0);
                     }
                     shopProducts.show(function(){
@@ -735,9 +735,9 @@ define(
                 }else if($(this).hasClass('go-to-orders')){
                         /* history */
                     /**/
-                    var ordersModule = require('shop-orders.min');
+                    var ordersModule = require('shop-orders');
                     if (!globalUserAuth){
-                        var basketModule = require('shop-basket.min');
+                        var basketModule = require('shop-basket');
                         basketModule.callbacks.add(ordersModule.GoToOrdersTrigger);
                         openModalAuth();
                     }else{

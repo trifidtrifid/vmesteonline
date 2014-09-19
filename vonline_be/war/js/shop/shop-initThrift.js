@@ -1,5 +1,5 @@
 define(
-    'shop-initThrift.min',
+    'shop-initThrift',
     ['jquery'],
     function( $ ){
         var transport = new Thrift.Transport("/thrift/ShopService");

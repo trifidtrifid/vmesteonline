@@ -1,6 +1,6 @@
 define(
-    'import.min',
-    ['jquery','shop-initThrift.min','bo-common.min'],
+    'import',
+    ['jquery','shop-initThrift','bo-common'],
     function( $,thriftModule,boCommon ){
 
         function initImport(){

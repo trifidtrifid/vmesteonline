@@ -1,6 +1,6 @@
 define(
-    'shop-orders.min',
-    ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min','shop-spinner.min'],
+    'shop-orders',
+    ['jquery','shop-initThrift','shop-basket','shop-common','shop-spinner'],
     function( $,thriftModule,basketModule,commonModule,spinnerModule ){
 
         var producers;
@@ -40,7 +40,7 @@ define(
                         }
                     }
 
-                    commonModule = require('shop-common.min');
+                    commonModule = require('shop-common');
                     (orderLines[j].product.imageURL) ? myPic = orderLines[j].product.imageURL : myPic = commonModule.noPhotoPic;
                     if (orderLines[j].product.unitName){unitName = orderLines[j].product.unitName;}
                     ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
@@ -64,7 +64,7 @@ define(
                     }else{
                         ordersProductsHtml += '<input type="text"';
 
-                        var commonModule = require('shop-common.min');
+                        var commonModule = require('shop-common');
                         if (orderLines[j].packs && commonModule.getPacksLength(orderLines[j].packs) > 1){
                             ordersProductsHtml += 'disabled="disabled"';
                         }
@@ -158,7 +158,7 @@ define(
                     var orderMonth = tempDate.getMonth()+1;
                     orderMonth = (orderMonth < 10)? "0" + orderMonth: orderMonth;
 
-                    var basketModule = require('shop-basket.min');
+                    var basketModule = require('shop-basket');
                     var weekDay = basketModule.getWeekDay(tempDate.getDay());
 
                     ordersHtml += '<div class="order-item orders-no-init" data-orderid="'+ orders[i].id +'">'+
@@ -243,7 +243,7 @@ define(
                   activeOrder.find('.btn-cancel').trigger('click',true);
 
                   /*thriftModule.client.cancelOrder(orderId);
-                  var basketModule = require('shop-basket.min');
+                  var basketModule = require('shop-basket');
                   basketModule.cleanBasket();*/ //
               }else{
                   thriftModule.client.deleteOrder(orderId);
@@ -281,8 +281,8 @@ define(
                                 }
                             }
 
-                            var basketModule = require('shop-basket.min');
-                            var commonModule = require('shop-common.min');
+                            var basketModule = require('shop-basket');
+                            var commonModule = require('shop-common');
                             basketModule.InitAddToBasket(orderProducts.find('.fa-shopping-cart'));
                             commonModule.InitProductDetailPopup(orderProducts.find('.product-link'));
                             commonModule.markAddedProduct();
@@ -313,12 +313,12 @@ define(
                 var orderDetails,
                     tabPaneActive = $('.tab-pane.active'),
                     oldOrderId = tabPaneActive.data('orderid');
-                var basketModule = require('shop-basket.min');
+                var basketModule = require('shop-basket');
 
                     if (!oldOrderId){
                         // если заказ еще не создан
 
-                        var basketModule = require('shop-basket.min');
+                        var basketModule = require('shop-basket');
                         basketModule.initChooseDatepicker(true,orderId,null,null,null,null,null,addType);
 
                         /*var oldOrder = thriftModule.client.createOrder(0);
@@ -351,7 +351,7 @@ define(
                             curProd = orderLines[i].product;
                             spinVal = orderLines[i].quantity;
                             spinnerDisable = false;
-                            var commonModule = require('shop-common.min');
+                            var commonModule = require('shop-common');
                             if (orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1) {
                                 spinnerDisable = true;
                             }
@@ -370,7 +370,7 @@ define(
                 spinVal,
                 tabPaneActive = $('.tab-pane.active'),
                 oldOrderId = tabPaneActive.data('orderid'),
-                basketModule = require('shop-basket.min');
+                basketModule = require('shop-basket');
 
             if (addType == 'replace') {
                 orderDetails = thriftModule.client.getOrderDetails(orderId);
@@ -393,7 +393,7 @@ define(
                 curProd = orderLines[i].product;
                 spinVal = orderLines[i].quantity;
                 spinnerDisable = false;
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 if (orderLines[i].packs && commonModule.getPacksLength(orderLines[i].packs) > 1) {
                     spinnerDisable = true;
                 }
@@ -401,7 +401,7 @@ define(
             }
 
 
-            var commonModule = require('shop-common.min');
+            var commonModule = require('shop-common');
             commonModule.markAddedProduct();
 
             tabPaneActive.find('.weight span').text(commonModule.getOrderWeight(orderId, orderDetails));
@@ -471,7 +471,7 @@ define(
                     initOrderBtns(ordersNoInit);
                     ordersNoInit.removeClass('orders-no-init');
                     offsetOrders += lengthOrders;
-                    var commonModule = require('shop-common.min');
+                    var commonModule = require('shop-common');
                     commonModule.setSidebarHeight();
                 });
             /*}catch(e){

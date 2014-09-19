@@ -1,6 +1,6 @@
 define(
-    'commonM.min',
-    ['jquery','shop-initThrift.min','shop-search.min','shop-common.min'],
+    'commonM',
+    ['jquery','shop-initThrift','shop-search','shop-common'],
     function( $,thriftModule,searchModule, commonModule ){
 
         function init(){
@@ -73,7 +73,7 @@ define(
                 userInfo.lastName = newSurname;
                 userContacts.mobilePhone = newPhone;
 
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 if (commonModule.isValidEmail(newEmail)){
                     userContacts.email = newEmail;
                 }else{
@@ -248,7 +248,7 @@ define(
                 }else{
                     currentForm.find('.error-info').hide();
 
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
 
                 var street = currentForm.find('.street-delivery').val();
                 var building = currentForm.find('.building-delivery').val();

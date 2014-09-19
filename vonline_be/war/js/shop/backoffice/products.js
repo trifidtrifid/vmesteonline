@@ -1,6 +1,6 @@
 define(
-    'products.min',
-    ['jquery','shop-initThrift.min','bo-common.min'],
+    'products',
+    ['jquery','shop-initThrift','bo-common'],
     function( $,thriftModule,boCommon){
 
         var isProductInitSet = 0,

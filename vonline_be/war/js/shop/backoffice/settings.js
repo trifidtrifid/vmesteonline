@@ -1,6 +1,6 @@
 define(
-    'settings.min',
-    ['jquery','shop-initThrift.min'],
+    'settings',
+    ['jquery','shop-initThrift'],
     function( $,thriftModule ){
 
         var isSettingsInitSet = 0;

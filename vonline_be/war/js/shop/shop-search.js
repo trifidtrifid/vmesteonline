@@ -1,7 +1,7 @@
 define(
-    'shop-search.min',
-    ['jquery','jquery_ui','shop-initThrift.min','shop-basket.min','shop-orders.min','shop-category.min','shop-common.min','shop-spinner.min'],
-    //['jquery','shop-initThrift.min','shop-basket.min','shop-orders.min','shop-category.min','shop-common.min','shop-spinner.min'],
+    'shop-search',
+    ['jquery','jquery_ui','shop-initThrift','shop-basket','shop-orders','shop-category','shop-common','shop-spinner'],
+    //['jquery','shop-initThrift','shop-basket','shop-orders','shop-category','shop-common','shop-spinner'],
     function( $,jquery_ui,thriftModule,basketModule,ordersModule,categoryModule,commonModule,spinnerModule ){
 
         //try{
@@ -44,8 +44,8 @@ define(
                 select: function(event,ui){
                     event.preventDefault();
 
-                    //var basketModule = require('shop-basket.min');
-                    var commonModule = require('shop-common.min');
+                    //var basketModule = require('shop-basket');
+                    var commonModule = require('shop-common');
 
                     $('.form-search').trigger('submit');
 
@@ -80,10 +80,10 @@ define(
 
                 /* подключение событий */
                 spinnerModule.initProductsSpinner();
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup($('.product-link'));
                 commonModule.markAddedProduct();
-                var basketModule = require('shop-basket.min');
+                var basketModule = require('shop-basket');
                 basketModule.InitAddToBasket($('.fa-shopping-cart'));
             });
 

@@ -43,7 +43,7 @@ require.config({
     }
 });
 
-require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker','datepicker-ru'],
+require(["jquery",'shop-modules','commonM','loginModule','datepicker','datepicker-ru'],
     function($,modules,commonM,loginModule) {
 
         var urlHash = document.location.hash;

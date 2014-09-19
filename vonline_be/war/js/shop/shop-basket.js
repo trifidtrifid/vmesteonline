@@ -1,6 +1,6 @@
 define(
-    'shop-basket.min',
-    ['jquery','shop-initThrift.min','shop-spinner.min','shop-common.min','shop-search.min','shop-orders.min','bootbox'],
+    'shop-basket',
+    ['jquery','shop-initThrift','shop-spinner','shop-common','shop-search','shop-orders','bootbox'],
     function( $,thriftModule,spinnerModule,commonModule,searchModule,ordersModule ){
 
         function isValidPhone(myPhone) {
@@ -11,7 +11,7 @@ define(
         });
 
         function cleanBasket(){
-            var commonModule = require('shop-common.min');
+            var commonModule = require('shop-common');
             commonModule.remarkAddedProduct();
             if($('.tab-pane').length > 1){
                 // если есть другие заказы, то каркас оставляем
@@ -71,7 +71,7 @@ define(
                                 }
                             });
 
-                            var commonModule = require('shop-common.min');
+                            var commonModule = require('shop-common');
                             if(inConfirm){
                                 // если на странице конфирма, то обновляем и корзину на главной
                                 myOrderDetails = (orderDetails) ? orderDetails : thriftModule.client.getOrderDetails(orderId);
@@ -129,7 +129,7 @@ define(
                     if (!globalUserAuth){
                         // если пользователь не залогинен
                         selectorForCallbacks = $(this);
-                        var commonModule = require('shop-common.min');
+                        var commonModule = require('shop-common');
                         commonModule.openModalAuth();
                     }else{
                         // если пользователь залогинен
@@ -269,7 +269,7 @@ define(
                     addTabToBasketHtml(order.date, order.id, orderDetails);
 
                     if(addType) {
-                        var ordersModule = require('shop-orders.min');
+                        var ordersModule = require('shop-orders');
 
                         ordersModule.addOrderTo(orderId, addType, orderDetails)
                     }else{
@@ -437,7 +437,7 @@ define(
                 // в этом случае на календаре должна будет отображаться другая дата
             });
 
-            var spinnerModule = require('shop-spinner.min');
+            var spinnerModule = require('shop-spinner');
             spinnerModule.initRefresh();
 
             var activeOrder = $('.tabs-days .tab-pane.active');
@@ -480,7 +480,7 @@ define(
 
                 if(!orderDetails) orderDetails = thriftModule.client.getOrderDetails(currentTab.attr('data-orderid'));
 
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 var amount = commonModule.countAmount(currentTab.find('.catalog-order'),orderDetails);
                 var weight = $('.weight span').text();
                 var catalogHtml = currentTab.find('.catalog-order').html();
@@ -581,7 +581,7 @@ define(
                 });
 
                 InitDeleteProduct(confirmOrder.find('.delete-product'),orderDetails);
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 commonModule.InitProductDetailPopup(confirmOrder.find('.product-link'));
                 spinnerModule.initRefresh();
 
@@ -740,7 +740,7 @@ define(
             var addedProductFlag = 0;
             var currentTab = $('.tab-pane.active');
             var orderId = currentTab.data('orderid');
-            var commonModule = require('shop-common.min');
+            var commonModule = require('shop-common');
 
             $('.catalog-order li').each(function(){
                 if ($(this).data('productid') == currentProduct.id){
@@ -785,7 +785,7 @@ define(
         function AddSingleProductToBasket(currentProduct,spinnerValue,spinnerDisable,orderDetails){
             //try{
                 var myPic;
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 myPic = (currentProduct.imageURL) ? currentProduct.imageURL : commonModule.noPhotoPic;
 
                 var productHtml = '<li class="product" data-productid="'+ currentProduct.id +'" data-prepack="'+ currentProduct.prepackRequired +'">'+
@@ -928,7 +928,7 @@ define(
 
                     // добавление в базу нового города, страны, улицы и т.д (если курьером)
 
-                    var commonModule = require('shop-common.min');
+                    var commonModule = require('shop-common');
                     commonModule.addAddressToBase(addressInput,deliveryAddress);
                     writeAddress(deliveryAddress);
 
@@ -954,7 +954,7 @@ define(
             $('.radio input').click(function(){
                 var itogoRight = $('.itogo-right span');
                 var orderId = $('.tab-pane.active').data('orderid');
-                var commonModule = require('shop-common.min');
+                var commonModule = require('shop-common');
                 var orderDetails;
                 var userAddresses = thriftModule.client.getUserDeliveryAddresses().elems;
 
@@ -991,7 +991,7 @@ define(
                     triggerDelivery = 1;
 
                     if (autocompleteAddressFlag){
-                        var searchModule = require('shop-search.min');
+                        var searchModule = require('shop-search');
                         searchModule.initAutocompleteAddress($('.address-input'));
                         autocompleteAddressFlag = 0;
                     }
@@ -1022,7 +1022,7 @@ define(
                 $('.delivery-cost').text('0');
             }
 
-            var commonModule = require('shop-common.min');
+            var commonModule = require('shop-common');
 
             var container = (basketProductsContainer) ? basketProductsContainer : $('.catalog-confirm');
             $('.itogo-right span,.amount span').text(commonModule.countAmount(container,orderDetails));

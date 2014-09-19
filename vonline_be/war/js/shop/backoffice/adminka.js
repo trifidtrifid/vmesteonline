@@ -1,6 +1,6 @@
 define(
-    'adminka.min',
-    ['jquery','shop-initThrift.min','bo-common.min'],
+    'adminka',
+    ['jquery','shop-initThrift','bo-common'],
     function( $,thriftModule, boCommon ){
 
         function initAdminka(){

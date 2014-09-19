@@ -1,6 +1,6 @@
 define(
-    'bo-common.min',
-    ['jquery','shop-initThrift.min'],
+    'bo-common',
+    ['jquery','shop-initThrift'],
     function( $,thriftModule ){
         var w = $(window);
 

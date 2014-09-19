@@ -1,6 +1,6 @@
 define(
-    'loginModule.min',
-    ['jquery','shop-initThrift.min','shop-basket.min','shop-common.min'],
+    'loginModule',
+    ['jquery','shop-initThrift','shop-basket','shop-common'],
     function( $,thriftModule,basketModule, commonModule ){
         function initLogin(){
 
@@ -159,7 +159,7 @@ define(
 
             // callbacks
             commonModule.initBasketInReload();
-            var basketModule = require('shop-basket.min');
+            var basketModule = require('shop-basket');
             basketModule.callbacks.fire(basketModule.selectorForCallbacks);
             basketModule.callbacks.empty();
 

@@ -1,6 +1,6 @@
 define(
-    'shop-modules.min',
-    ["jquery",'shop-initThrift.min','shop-common.min','shop-spinner.min','shop-category.min','shop-basket.min','shop-orders.min'],
+    'shop-modules',
+    ["jquery",'shop-initThrift','shop-common','shop-spinner','shop-category','shop-basket','shop-orders'],
     function($,thriftModule,commonModule,spinnerModule,categoryModule,basketModule,ordersModule) {
         return {
             shopCommonModule: commonModule,

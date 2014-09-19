@@ -1,6 +1,6 @@
 define(
-    'orders.min',
-    ['jquery','shop-initThrift.min','shop-orders.min','bo-common.min','datepicker-backoffice','datepicker-ru'],
+    'orders',
+    ['jquery','shop-initThrift','shop-orders','bo-common','datepicker-backoffice','datepicker-ru'],
     function( $,thriftModule,ordersModule, boCommon ){
 
         function initBackofficeOrders(){
