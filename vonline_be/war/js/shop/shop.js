@@ -46,7 +46,6 @@ require.config({
 require(["jquery",'shop-modules.min','commonM.min','loginModule.min','datepicker','datepicker-ru'],
     function($,modules,commonM,loginModule) {
 
-
         var urlHash = document.location.hash;
 
         var state = {

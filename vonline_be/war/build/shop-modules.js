@@ -1,0 +1,1 @@
+define("shop-modules.min",["jquery","shop-initThrift.min","shop-common.min","shop-spinner.min","shop-category.min","shop-basket.min","shop-orders.min"],function(a,b,c,d,e,f,g){return{shopCommonModule:c,spinnerModule:d,categoryModule:e,basketModule:f,ordersModule:g}});
