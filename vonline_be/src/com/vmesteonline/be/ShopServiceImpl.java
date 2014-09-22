@@ -2,7 +2,6 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,9 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -50,7 +47,6 @@ import com.vmesteonline.be.shop.DeliveryType;
 import com.vmesteonline.be.shop.Order;
 import com.vmesteonline.be.shop.OrderDate;
 import com.vmesteonline.be.shop.OrderDetails;
-import com.vmesteonline.be.shop.OrderLine;
 import com.vmesteonline.be.shop.OrderStatus;
 import com.vmesteonline.be.shop.OrderUpdateInfo;
 import com.vmesteonline.be.shop.PaymentType;
@@ -364,22 +360,32 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	}
 
 	// ======================================================================================================================
+	private String generateOrderDetailsKey( long orderId ){
+		return "generateOrderDetailsKey:"+orderId;
+	}
+	
+	
 	@Override
 	public OrderDetails getOrderDetails(long orderId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
-			if (null != voOrder) {
-				pm.retrieve(voOrder);
-				return voOrder.getOrderDetails(pm);
+		
+		OrderDetails od = (OrderDetails)getObjectFromCache(generateOrderDetailsKey(orderId));
+		if( null == od ){
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
+				if (null != voOrder) {
+					pm.retrieve(voOrder);
+					od = voOrder.getOrderDetails(pm);
+				} else 
+					throw new InvalidOperation(VoError.GeneralError, "Not found");
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + orderId);
+			} finally {
+				pm.close();
 			}
-			throw new InvalidOperation(VoError.GeneralError, "Not found");
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + orderId);
-		} finally {
-			pm.close();
 		}
+		return od;
 	}
 
 	// ======================================================================================================================
@@ -403,6 +409,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			long id = voOrder.getId();
 
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), id, pm);
+			
+			removeObjectFromCache( generateOrderDetailsKey(id));
+			
 			return voOrder.getOrder();
 		} finally {
 			pm.close();
@@ -421,6 +430,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			pm.makePersistent(currentOrder);
 			//recalculate delivery cost for all other orders that gona be delivered to the same address for the user
 			updateDeliveryCost(pm.getObjectById(VoShop.class, currentOrder.getShopId()), currentOrder, null, pm);
+			removeObjectFromCache( generateOrderDetailsKey(orderId));
 			return currentOrder.getId();
 		} finally {
 			pm.close();
@@ -430,6 +440,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public long deleteOrder(long orderId) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
@@ -459,12 +472,18 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+			updateDeliveryCost( pm.getObjectById( VoShop.class, currentOrder.getShopId() ), currentOrder, null, pm);
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
+			recalculateOrder(orderId);
+			
 			sendConfirmationMessage( currentOrder, pm );
 			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
 			pm.makePersistent(currentOrder);
+			
+			removeObjectFromCache( generateOrderDetailsKey(orderId));
+			
 			return currentOrder.getId();
 		} finally {
 			pm.close();
@@ -481,8 +500,10 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		String htmlBody = "<!DOCTYPE html><html><head><style>table, th, td{ border-collapse:collapse;border:1px solid black;}"
 				+ "th, td{padding:5px;}</style></head><body>";
-		htmlBody += "<h2>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h2>";
-		htmlBody += "<p>Номер заказа: "+ currentOrder.getId()+" </p>";
+		htmlBody += "<h3>Заказ от <a href=\"mailto:"+customer.getEmail()+"\">"+customer.getName() +" "+customer.getLastName() +" "+"</a></h3>";
+		htmlBody += "<p>Номер  заказа: "+ currentOrder.getId()+" <br/>";
+		htmlBody += "Номер клиента: "+ customer.getId()+" </p>";
+		
 		htmlBody += "<br/>Дата реализации: "+ new SimpleDateFormat("yyyy-MM-dd").format(new Date((long)currentOrder.getDate() * 1000L));
 		htmlBody += "<br/>Стоимость: "+ VoHelper.roundDouble( currentOrder.getTotalCost(), 2) + " руб";
 		if( currentOrder.getDeliveryCost() > 0) htmlBody += "<br/>Из них доставка: "+ currentOrder.getDeliveryCost()+" руб";
@@ -495,7 +516,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			htmlBody += "<br/>Коментарий: "+comment;
 		
 		htmlBody += "<br/><table><caption>Состав заказа</caption>";
-		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th><th>Комментарий</th></tr>";
+		htmlBody += "<tr><th>Код товара</th><th>Производитель</th><th>Наименование</th><th>Кол-во</th><th>Развес</th><th>Стоимость</th><th>Цена</th></tr>";
 		Map<Long, Long> orderLines = currentOrder.getOrderLines();
 		if(null!=orderLines)
 			for (Long lineId: orderLines.values()) {
@@ -518,7 +539,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				}
 				htmlBody += "<td>" + orderLine.getPrice() + "</td>";
 				htmlBody += "<td>" + VoHelper.roundDouble( orderLine.getPrice() * orderLine.getQuantity(), 2 )  + "</td>";
-				htmlBody += "<td>" + null == orderLine.getComment() ? "-" : orderLine.getComment() + "</td>";
 				htmlBody += "</tr>";
 			}
 		
@@ -556,21 +576,28 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	 **/
 	@Override
 	public OrderDetails appendOrder(long orderId, long oldOrderId) throws InvalidOperation {
+		
+		if( orderId == oldOrderId)
+			return getOrderDetails(oldOrderId);
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		PersistenceManager pm = PMF.getPm();
 		try {
-			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
-			if (null != voOrder) {
+			VoOrder voOldOrder = pm.getObjectById(VoOrder.class, oldOrderId);
+			HashMap<Long, VoProduct> prdMap = getProductMapFromCacheByShopId(pm, voOldOrder.getShopId());
+			
+			 {
 				double addCost = 0.0;
 				double addWeigth = 0.0;
 				VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 				
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
+				List<VoOrderLine> oldOrderLinesList = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+oldOrderId).execute();
 
 				if (currentOdrerLines.isEmpty()) {
-					for (Long voOrderLineId : voOrder.getOrderLines().values()) {
+					for (VoOrderLine voOrderLine : oldOrderLinesList) {
 
-						VoOrderLine voOrderLine = pm.getObjectById(VoOrderLine.class, voOrderLineId);
-						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
+						VoProduct voProduct = prdMap.get( voOrderLine.getProductId());
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 
 						VoOrderLine newOrderLine = new VoOrderLine(currentOrder, voProduct, voOrderLine.getQuantity(), price, voOrderLine.getComment(),
@@ -583,20 +610,20 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 					}
 
 				} else {
+					List<VoOrderLine> currentOrderLinesList = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+orderId).execute();
 
-					for (Long voOrderLineId : voOrder.getOrderLines().values()) {
+					for (VoOrderLine voOrderLine : oldOrderLinesList) {
 
-						VoOrderLine voOrderLine = pm.getObjectById(VoOrderLine.class, voOrderLineId);
-						VoProduct voProduct = pm.getObjectById(VoProduct.class, voOrderLine.getProductId());
+						VoProduct voProduct = prdMap.get( voOrderLine.getProductId());
 
 						double price = voProduct.getPrice(currentOrder.getPriceType());
 						long pid = voOrderLine.getProductId();
 						
 						if (currentOdrerLines.containsKey(pid)) {
 							
-							VoOrderLine currentOL = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(pid));
+							VoOrderLine currentOL = getOrderLineByProductId(currentOrderLinesList,pid);
 							currentOL.setQuantity(currentOL.getQuantity() + voOrderLine.getQuantity());
-							VoProduct curProduct = pm.getObjectById(VoProduct.class, currentOL.getProductId());
+							VoProduct curProduct = prdMap.get( currentOL.getProductId());
 							curProduct.setScore( curProduct.getScore() + voOrderLine.getQuantity() );
 
 							// merge packets for prepack product
@@ -608,7 +635,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 							
 
 						} else {
-							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, pm.getObjectById(VoProduct.class, voOrderLine.getProductId()),
+							VoOrderLine newOrderLine = new VoOrderLine(currentOrder, prdMap.get( voOrderLine.getProductId()),
 									voOrderLine.getQuantity(), price, voOrderLine.getComment(), voOrderLine.getPackets());
 
 							pm.makePersistent(newOrderLine);
@@ -620,18 +647,27 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 					}
 				}
 				currentOrder.addCost(addCost);
-				currentOrder.addWeigth(addWeigth);
+				currentOrder.addWeigth(addWeigth/1000.0);
 				
 				pm.makePersistent(currentOrder);
 				return currentOrder.getOrderDetails(pm);// addCost;
 			}
-			throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + oldOrderId);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to appendOrder Id=" + oldOrderId + ". " + e);
 		} finally {
 			pm.close();
 		}
+	}
+
+	// ======================================================================================================================
+
+	private VoOrderLine getOrderLineByProductId(List<VoOrderLine> currentOrderLinesList, long productId) {
+		for (VoOrderLine voOrderLine : currentOrderLinesList) {
+			if( voOrderLine.getProductId() == productId) return voOrderLine;
+		};
+		return null;
 	}
 
 	// ======================================================================================================================
@@ -675,15 +711,24 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	 **/
 	@Override
 	public OrderDetails mergeOrder(long orderId, long oldOrderId) throws InvalidOperation {
+		
+		if( orderId == oldOrderId)
+			return getOrderDetails(oldOrderId);
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			VoOrder voOrder = pm.getObjectById(VoOrder.class, oldOrderId);
+
 			if (null != voOrder) {
-				for (Long oldLineId : voOrder.getOrderLines().values()) {
-					VoOrderLine oldLine = pm.getObjectById(VoOrderLine.class, oldLineId);
+				List<VoOrderLine> oldOrderLinesList = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+oldOrderId).execute();
+
+				for (VoOrderLine oldLine  : oldOrderLinesList) {
+					
 					if (!currentOdrerLines.containsKey(oldLine.getProductId())) {
 						// there is no such product in the current order
 						VoProduct oldOrderLineProduct = pm.getObjectById(VoProduct.class, oldLine.getProductId());
@@ -714,6 +759,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public OrderUpdateInfo setOrderLine(long orderId, long productId, double quantity, String comment, Map<Double, Integer> packs) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		if (0 == quantity) {
 			removeOrderLine(orderId, productId);
 			return null;
@@ -755,17 +803,18 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				currentOrder.addCost(quantity * price);
 				weightDiff = (int) (quantity * voProduct.getWeight());
 			}
-			VoShop voShop = pm.getObjectById(VoShop.class, currentOrder.getShopId());
-			Map<Integer, Integer> deliveryByWeightIncrement = voShop.getDeliveryByWeightIncrement();
 			Integer oldWeight = currentOrder.getWeightGramm();
 			currentOrder.setWeightGramm( oldWeight + weightDiff );
+			
+			/*VoShop voShop = pm.getObjectById(VoShop.class, currentOrder.getShopId());
+			Map<Integer, Integer> deliveryByWeightIncrement = voShop.getDeliveryByWeightIncrement();
 			
 			if( null!=deliveryByWeightIncrement && DeliveryType.SELF_PICKUP != currentOrder.getDelivery()  &&
 					//check if order line breaks the weight step 
 					!increaseDeliveryForWeight(voShop, oldWeight ).equals(increaseDeliveryForWeight(voShop, weightDiff + oldWeight ))){ 
 					
 				updateDeliveryCost(voShop, currentOrder, null, pm);
-			}
+			}*/
 			
 			pm.makePersistent(currentOrder);
 			return new OrderUpdateInfo( currentOrder.getTotalCost(), currentOrder.getDelivery(), currentOrder.getDeliveryCost(), 
@@ -782,14 +831,19 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public boolean removeOrderLine(long orderId, long productId) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			Long removedLineID = currentOdrerLines.remove(productId);
-			if (null == removedLineID)
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No order line found for product id=" + productId);
+			if (null == removedLineID){
+				logger.warn("No order line found for product id=" + productId +" in order: "+orderId);
+				return false;
+			}
 
 			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
@@ -810,6 +864,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public OrderDetails setOrderDeliveryType(long orderId, DeliveryType deliveryType, PostalAddress pa) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
@@ -857,6 +914,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// One user can have several orders that should be delivered together and pay only once
 	// delivery cost depend on distance, address substring and weight
 	private double updateDeliveryCost(VoShop shop, VoOrder order, VoPostalAddress oldAddress, PersistenceManager pm) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(order.getId()));
 		
 		double newDeliveryCost = 0;
 		VoPostalAddress newAddress = order.getDeliveryTo();
@@ -1035,6 +1094,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public boolean setOrderPaymentType(long orderId, PaymentType paymentType) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
@@ -1068,6 +1130,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public OrderDetails setOrderDeliveryAddress(long orderId, PostalAddress deliveryAddress) throws InvalidOperation {
+		
+		removeObjectFromCache( generateOrderDetailsKey(orderId));
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
@@ -1197,6 +1262,9 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+			
+			removeObjectFromCache( generateOrderDetailsKey(orderId));
+			
 			voOrder.setDate(date);
 			voOrder.setComment(comment);
 			pm.makePersistent(voOrder);
@@ -1206,8 +1274,61 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	}
 
 	// ======================================================================================================================
-	
+	static String productMapCacheKey( long shopId ){
+		return "productMapCacheKey:"+shopId;
+	}
+	// ======================================================================================================================
+	public void recalculateOrder(long orderId) throws InvalidOperation {
+		PersistenceManager pm = PMF.getPm();
+		try {
+			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+			
+			removeObjectFromCache( generateOrderDetailsKey(orderId));
+			
+			List<VoOrderLine> olines = (List<VoOrderLine>) pm.newQuery(VoOrderLine.class, "orderId=="+voOrder.getId()).execute();
+			double totalCost = 0.0D;
+			int weightGramm = 0;
+			
+			long shopId = voOrder.getShopId();
+			HashMap<Long, VoProduct> productsMap = getProductMapFromCacheByShopId(pm, shopId);
 
+			for (VoOrderLine voOrderLine : olines) {
+				VoProduct voProduct = productsMap.get(voOrderLine.getProductId());
+				if(null!=voProduct){
+					totalCost += voOrderLine.getQuantity() * voProduct.getPrice( voOrder.getPriceType());
+					weightGramm += voOrderLine.getQuantity() * voProduct.getWeight();
+				}
+			}
+			voOrder.setTotalCost(totalCost);
+			voOrder.setWeightGramm(weightGramm);
+			updateDeliveryCost(pm.getObjectById(VoShop.class, shopId), voOrder, null, pm);
+			pm.makePersistent(voOrder);
+		} finally {
+			pm.close();
+		}
+	}
+
+	//======================================================================================================================
+	
+	private static HashMap<Long, VoProduct> getProductMapFromCacheByShopId(PersistenceManager pm, long shopId) {
+		String productMapCacheKey = productMapCacheKey(shopId);
+		HashMap<Long,VoProduct> productsMap = getObjectFromCache( productMapCacheKey);
+		
+		if( null==productsMap){
+			productsMap = new HashMap<Long, VoProduct>();
+			List<VoProduct> products = (List<VoProduct>) pm.newQuery(VoProduct.class, "shopId=="+shopId).execute();
+			for (VoProduct voProduct : products) {
+				if(!voProduct.isDeleted())
+					productsMap.put( voProduct.getId(), pm.detachCopy(voProduct) );
+			}
+			putObjectToCache(productMapCacheKey, productsMap);	
+		}
+		return productsMap;
+	}
+
+	static void dropProductMapFromCache( long shopId){
+		removeObjectFromCache(productMapCacheKey(shopId));
+	}
 	// ======================================================================================================================
 
 	@Override

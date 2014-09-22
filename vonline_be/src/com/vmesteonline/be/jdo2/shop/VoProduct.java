@@ -1,6 +1,7 @@
 package com.vmesteonline.be.jdo2.shop;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,8 +31,8 @@ import com.vmesteonline.be.shop.ProductDetails;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
-@PersistenceCapable
-public class VoProduct {
+@PersistenceCapable(detachable="true")
+public class VoProduct implements Serializable {
 
 	//private static Logger logger = Logger.getLogger(VoProduct.class);
 	
@@ -85,7 +86,7 @@ public class VoProduct {
 			if( null!=newInfo.details.getPricesMap() ) 
 				this.pricesMap.putAll( convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>()) );
 			
-			VoHelper.copyIfNotNull(this, "optionsMap", newInfo.details.optionsMap);
+			VoHelper.copyIfNotNull(this, "optionsMap", (Map<String, String>)newInfo.details.optionsMap);
 			
 			if (null != newInfo.details.getTopicSet()){
 				this.topicSet = new ArrayList<Long>();
@@ -402,7 +403,7 @@ public class VoProduct {
 	@Unindexed
 	private List<String> imagesURLset;
 
-	@Persistent
+	@Persistent(defaultFetchGroup="true")
 	@Unindexed
 	private Map<Integer, Double> pricesMap;
 
@@ -530,7 +531,7 @@ public class VoProduct {
 		if( null==priceType )
 			priceType = PriceType.INET;
 		
-		return pricesMap.containsKey(priceType.getValue()) ? pricesMap.get(priceType.getValue()) : price;
+		return null==pricesMap || !pricesMap.containsKey( priceType.getValue() ) ? price : pricesMap.get(priceType.getValue());
 	}
 
 	public void setPrice(double price) {

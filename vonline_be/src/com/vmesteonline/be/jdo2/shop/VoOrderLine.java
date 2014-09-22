@@ -39,8 +39,10 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 				for (Entry<Double, Integer> pe : packets.entrySet()) {
 					tq += pe.getKey() * pe.getValue();
 				}
-				if( VoHelper.roundDouble( tq, 5 ) != quantity )
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Total quantity("+quantity+") of '"+product.getName()+"' does not meet summary of packets ("+tq+")!");
+				if( VoHelper.roundDouble( tq, 5 ) != quantity ){
+					//throw new InvalidOperation(VoError.IncorrectParametrs, "Total quantity("+quantity+") of '"+product.getName()+"' does not meet summary of packets ("+tq+")!");
+					quantity = VoHelper.roundDouble( tq, 5 );
+				}
 			} else { 
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Not prepacked product '"+product.getName()+"' can't have packets set, but provided "+packets.size()+"!");
 			}

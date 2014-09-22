@@ -49,13 +49,13 @@ public class Main implements javax.servlet.Filter {
 			String host = request.getServerName();
 			
 			if( host.contains( landingURL+postfix )){
-				chain.doFilter( srequest, sresponse );
 				ServiceImpl si = new ServiceImpl( request.getSession() );
 				try {
 					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0 );
 				} catch (InvalidOperation e) {
 					e.printStackTrace();
 				}
+				chain.doFilter( srequest, sresponse );
 				return;
 			}
 			

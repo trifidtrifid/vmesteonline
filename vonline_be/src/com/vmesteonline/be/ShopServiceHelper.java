@@ -39,6 +39,7 @@ public class ShopServiceHelper {
 		}
 	}
 
+	 
 	// ======================================================================================================================
 	static VoOrder getCurrentOrder(ServiceImpl si, PersistenceManager _pm) throws InvalidOperation {
 
