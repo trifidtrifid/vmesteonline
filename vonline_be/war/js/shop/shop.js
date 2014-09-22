@@ -3,13 +3,13 @@ require.config({
     paths: {
         "datepicker": "../js/shop/datepicker",
         "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru"
-        /*"jquery"   : "../lib/jquery-2.1.1.min",
-        "ace_spinner": "../lib/fuelux/fuelux.spinner",
-        "bootstrap": "../lib/bootstrap.min",
-        "ace_elements": "../lib/ace-elements.min",
-        "flexslider": "../lib/jquery.flexslider-min",
-        "jquery_ui": "../lib/jquery-ui-1.10.3.full.min",
-        "bootbox":"../bootbox.min"*/
+        /*"jquery"   : "../js/lib/jquery-2.1.1.min",
+        "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
+        "bootstrap": "../js/lib/bootstrap.min",
+        "ace_elements": "../js/lib/ace-elements.min",
+        "flexslider": "../js/lib/jquery.flexslider-min",
+        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
+        "bootbox":"../js/bootbox.min"*/
     },
     shim:{
         'datepicker':{

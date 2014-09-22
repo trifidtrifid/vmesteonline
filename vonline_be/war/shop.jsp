@@ -34,9 +34,6 @@
 <meta charset="utf-8" />
 <title>Магазин</title>
 
-
-
-
 <link rel="stylesheet" href="/build/shop.min.css" />
 <!--[if lt IE 9]>
     <script>

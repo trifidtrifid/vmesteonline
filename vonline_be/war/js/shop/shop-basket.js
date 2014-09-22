@@ -616,18 +616,24 @@ define(
         }
 
         function initBtnOrderClick(selector,options){
+            var isAddedAddressSave = false;
             selector.click(function(){
                 var phoneDelivery = $('#phone-delivery');
                 var alertDeliveryPhone = $('.alert-delivery-phone'),
                     orderId = options.orderId,
                     shop = options.shop,
-                    isEmptyAddressDelivery = $('.delivery-address').find('.error-info').length > 0;
+                    isEmptyAddressDelivery = $('.delivery-address').find('.error-info').length > 0,
+                    isAddressInput = false;
 
-                if(!phoneDelivery.val()){
+                if($('.address-input').css('display')=='block' && !isAddedAddressSave){
+                    $('.add-address').trigger('click');
+                    if(!isAddError) isAddedAddressSave = true;
+                }else if(!phoneDelivery.val()){
                     alertDeliveryPhone.text('Пожалуйста введите номер телефона.').show();
                     $('#phone-delivery').focus();
 
-                }else{
+                }else { //if(!isAddressInput || $('.street-delivery').val() && $('.building-delivery').val() && $('.flat-delivery').val()){
+
                     var haveError = 0;
                     try{
                         if (options.userContacts.mobilePhone != phoneDelivery.val()){
@@ -860,6 +866,7 @@ define(
 
         var mapWidthConst = 400;
         var mapHeightConst = 300;
+        var isAddError = false;
         function setDeliveryDropdown(orderId,userAddresses,NoAddAddressAgain){
             var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
@@ -912,8 +919,10 @@ define(
                     flat = $('.flat-delivery').val();
 
                 if (!$('.country-delivery').val() || !$('.city-delivery').val() || !street || !building || !flat){
-                    $('.alert-delivery-phone').hide();
-                    $('.alert-delivery-addr').text('Введите полный адрес доставки !').show();
+                    $('.alert-delivery-phone').css('display','none');
+                    $('.alert-delivery-addr').text('Введите полный адрес доставки !').css('display','block');
+
+                    isAddError = true;
                 }else{
                     var addressText =  street + " " + building;
                     var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
@@ -936,6 +945,8 @@ define(
                     setDeliveryCost(orderId,orderDetails);
                     var NoAddAddressAgain = true;
                     setDeliveryDropdown(orderId,0,NoAddAddressAgain);
+
+                    isAddError = false;
                 }
 
             });
