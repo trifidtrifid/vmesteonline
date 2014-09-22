@@ -1,5 +1,5 @@
 
-require(["jquery",'loginModule.min'],
+require(["jquery",'loginModule'],
     function($,loginModule) {
         loginModule.initLogin();
     });

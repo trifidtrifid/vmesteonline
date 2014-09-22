@@ -1,0 +1,1 @@
+define("shop-modules",["jquery","shop-initThrift","shop-common","shop-spinner","shop-category","shop-basket","shop-orders"],function(a,b,c,d,e,f,g){return{shopCommonModule:c,spinnerModule:d,categoryModule:e,basketModule:f,ordersModule:g}});

@@ -58,8 +58,8 @@ var deliveryFilterFlag= 0,
     searchFilterFlag = 0,
     orders;
 
-require(["jquery",'shop-initThrift.min','commonM.min','shop-orders.min',
-        'shop-common.min','bo-modules.min','bo-common.min','datepicker-backoffice','datepicker-ru',
+require(["jquery",'shop-initThrift','commonM','shop-orders',
+        'shop-common','bo-modules','bo-common','datepicker-backoffice','datepicker-ru',
         'bootstrap','multiselect'],
     function($,thriftModule,commonM,ordersModule,commonModule,boModules,boCommon) {
         var w = $(window);
