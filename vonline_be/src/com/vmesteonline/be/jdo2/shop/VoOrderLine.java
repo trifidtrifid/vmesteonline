@@ -49,6 +49,14 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 		}
 	}
 
+	public OrderLine getOrderLine( Map<Long, VoProduct> productsMap, PersistenceManager pm) {
+		OrderLine orderLine = new OrderLine( productsMap.get(productId).getProduct(pm), quantity, price);
+		orderLine.product.price = price;
+		if( null!=comment && comment.length() > 0 ) orderLine.setComment(comment);
+		if( packets != null && packets.size() > 0 ) orderLine.setPacks(packets);
+		return orderLine;
+	}
+	
 	public OrderLine getOrderLine( PersistenceManager pm) {
 		OrderLine orderLine = new OrderLine(pm.getObjectById(VoProduct.class, productId).getProduct(pm), quantity, price);
 		orderLine.product.price = price;
@@ -146,6 +154,9 @@ public class VoOrderLine implements Comparable<VoOrderLine>{
 	}
 	public void setPackets(HashMap<Double, Integer> pMap) {
 		packets = pMap;
+	}
+	public void setId(Key id2) {
+		id = id2;
 	}
 
 }

@@ -86,7 +86,7 @@ public class VoProduct implements Serializable {
 			if( null!=newInfo.details.getPricesMap() ) 
 				this.pricesMap.putAll( convertFromPriceTypeMap(newInfo.details.getPricesMap(), new HashMap<Integer, Double>()) );
 			
-			VoHelper.copyIfNotNull(this, "optionsMap", (Map<String, String>)newInfo.details.optionsMap);
+			if( null!=newInfo.details.optionsMap ) setOptionsMap(optionsMap);
 			
 			if (null != newInfo.details.getTopicSet()){
 				this.topicSet = new ArrayList<Long>();

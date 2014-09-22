@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -117,18 +120,27 @@ public class VoOrder {
 	public Order getOrder(){
 		return new Order(id.getId(), date, status, priceType, totalCost, user.getId(), user.getName() + " " + user.getLastName());
 	} 
-	public OrderDetails getOrderDetails(PersistenceManager pm){
+	public OrderDetails getOrderDetails(Map<Long, VoProduct> productsMap, PersistenceManager pm){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
 				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
 						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment, weightGramm);
 		
+		List<VoOrderLine> oLines = (List<VoOrderLine>) pm.newQuery(VoOrderLine.class,"orderId=="+id.getId()).execute();
+		od.odrerLines = new ArrayList<OrderLine>();
+		Set<Long> productIds = new HashSet<Long>();
 		
-		if(null!=orderLines) 
-			for(Long olid: orderLines.values()){
-				od.odrerLines.add( pm.getObjectById(VoOrderLine.class,olid).getOrderLine(pm));
+		for( VoOrderLine ol : oLines ){
+			if( productIds.add( ol.getProductId())){
+				OrderLine orderLine = ol.getOrderLine( productsMap, pm );
+				od.odrerLines.add( orderLine);
+			} else {
+				continue;
+			}
 		}
 		return od;
 	}
+	
+	
 	
 	public VoOrderLine getOrderLineByProduct( long productId, PersistenceManager pm ){
 		return pm.getObjectById(VoOrderLine.class, orderLines.get(productId));
@@ -322,8 +334,8 @@ public class VoOrder {
 				+ ", paymentStatus=" + paymentStatus + "]";
 	}
 
-	public void addWeigth(double addWeigth) {
-		weightGramm += (int)(addWeigth*1000.0);
+	public void addWeigthGramm(double addWeigth) {
+		weightGramm += (int)(addWeigth);
 		
 	}
 }
