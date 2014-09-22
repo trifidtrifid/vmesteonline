@@ -272,67 +272,67 @@ define(
 
             productsListGlobalLen = productsListGlobal.length;
 
-            $(window).scroll(function(){
-                var h1 = $(window).height(),
-                    h2 = $('.shop-page').height(),
-                    categoryId = 0;
+            if($('.backoffice').length == 0) {
+                $(window).scroll(function () {
+                    var h1 = $(window).height(),
+                        h2 = $('.shop-page').height(),
+                        categoryId = 0;
 
-                //console.log($(this).scrollTop());
+                    //console.log($(this).scrollTop());
 
-                if(h2 > h1){
+                    if (h2 > h1) {
 
-                    console.log(h1+$(this).scrollTop()+" "+h2);
+                        if (h1 + $(this).scrollTop() > h2 - 100) {
+                            //var productsList = thriftModule.client.getProducts(offset,1000,categoryIdGlobal);
 
-                    if(h1 + $(this).scrollTop() > h2-100){
-                        //var productsList = thriftModule.client.getProducts(offset,1000,categoryIdGlobal);
+                            if (!productsListGlobal.length) {
 
-                        if(!productsListGlobal.length){
+                                if (!categoryIdGlobal) categoryIdGlobal = 0;
 
-                            if(!categoryIdGlobal) categoryIdGlobal = 0;
+                                productsListGlobal = thriftModule.client.getProducts(0, 1000, categoryIdGlobal).products;
 
-                            productsListGlobal = thriftModule.client.getProducts(0,1000,categoryIdGlobal).products;
-
-                            productsListGlobalLen = productsListGlobal.length;
-                        }
-
-                        if(!productsEndFlag) {
-
-                            if (productsListGlobalLen < offset + 25) {
-                                end = productsListGlobalLen;
-                                productsEndFlag = true;
-                            } else {
-                                end = offset + 25;
+                                productsListGlobalLen = productsListGlobal.length;
                             }
 
-                            var productsList = productsListGlobal.slice(offset, end);
+                            if (!productsEndFlag) {
 
-                            //alert(productsListGlobal.length + " "+offset+" "+end);
+                                if (productsListGlobalLen < offset + 25) {
+                                    end = productsListGlobalLen;
+                                    productsEndFlag = true;
+                                } else {
+                                    end = offset + 25;
+                                }
 
-                            offset += 25;
+                                var productsList = productsListGlobal.slice(offset, end);
 
-                            $('.main-content .catalog table tbody').append(createProductsTableHtml(productsList));
+                                //alert(productsListGlobal.length + " "+offset+" "+end);
 
-                            var commonModule = require('shop-common');
-                            commonModule.markAddedProduct();
+                                offset += 25;
 
-                            var producerDropdownId = $('.producer-dropdown .btn').data('producerid');
-                            if (producerDropdownId != 0) {
-                                var searchModule = require('shop-search');
-                                searchModule.filterByProducer(producerDropdownId);
+                                $('.main-content .catalog table tbody').append(createProductsTableHtml(productsList));
+
+                                var commonModule = require('shop-common');
+                                commonModule.markAddedProduct();
+
+                                var producerDropdownId = $('.producer-dropdown .btn').data('producerid');
+                                if (producerDropdownId != 0) {
+                                    var searchModule = require('shop-search');
+                                    searchModule.filterByProducer(producerDropdownId);
+                                }
+
+                                spinnerModule.initProductsSpinner($('.product.new'));
+                                var basketModule = require('shop-basket');
+                                commonModule.InitProductDetailPopup($('.product.new .product-link'));
+                                basketModule.InitAddToBasket($('.product.new .fa-shopping-cart'));
+                                commonModule.setSidebarHeight();
+
+                                $('.product.new').removeClass('new');
                             }
-
-                            spinnerModule.initProductsSpinner($('.product.new'));
-                            var basketModule = require('shop-basket');
-                            commonModule.InitProductDetailPopup($('.product.new .product-link'));
-                            basketModule.InitAddToBasket($('.product.new .fa-shopping-cart'));
-                            commonModule.setSidebarHeight();
-
-                            $('.product.new').removeClass('new');
                         }
+
                     }
-
-                }
-            });
+                });
+            }
 
 			return {
 				createProductsTableHtml : createProductsTableHtml,
