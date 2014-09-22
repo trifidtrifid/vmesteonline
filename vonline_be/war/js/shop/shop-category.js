@@ -272,7 +272,7 @@ define(
 
             productsListGlobalLen = productsListGlobal.length;
 
-            if($('.backoffice').length == 0) {
+            if($('.shop-page').length != 0 && $('.shop-page').css('display')!='none') {
                 $(window).scroll(function () {
                     var h1 = $(window).height(),
                         h2 = $('.shop-page').height(),

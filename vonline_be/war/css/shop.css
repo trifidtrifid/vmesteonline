@@ -1577,18 +1577,6 @@ height 50px
 .confirm-order .delivery-right .input-delivery #delivery-addr {
   margin-left: 0;
 }
-.confirm-order .delivery-right .input-delivery .delivery-dropdown {
-  float: right;
-  margin-top: -5px;
-  display: none;
-}
-.confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu {
-  left: -233px;
-  width: 360px;
-}
-.confirm-order .delivery-right .input-delivery .delivery-dropdown .dropdown-menu li a {
-  white-space: normal;
-}
 .confirm-order .delivery-right .input-delivery .address-input {
   margin: 10px 0;
   display: none;
@@ -1619,6 +1607,18 @@ height 50px
   font-family: Tahoma, Arial;
   font-size: 14px;
   color: #858585;
+}
+.delivery-dropdown {
+  display: none;
+}
+.delivery-dropdown .btn {
+  float: none;
+}
+.delivery-dropdown .dropdown-menu {
+  width: 360px;
+}
+.delivery-dropdown .dropdown-menu li a {
+  white-space: normal;
 }
 /* order End */
 .order-end {
