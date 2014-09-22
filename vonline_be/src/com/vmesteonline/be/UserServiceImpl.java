@@ -453,40 +453,47 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	@Override
+	
 	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-
-			Extent<VoCountry> vocs = pm.getExtent(VoCountry.class);
-			Set<Country> cl = new TreeSet<Country>();
-			for (VoCountry voc : vocs) {
-				cl.add(voc.getCountry());
-			}
-
-			Extent<VoCity> vocis = pm.getExtent(VoCity.class);
-			List<City> cil = new ArrayList<City>();
-			for (VoCity voc : vocis) {
-				cil.add(voc.getCity());
-			}
+		FullAddressCatalogue fac = getObjectFromCache("fullAddressCatalogue");
 		
-			Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
-			List<Street> sl = new ArrayList<Street>();
-			for (VoStreet voc : voss) {
-				sl.add(voc.getStreet());
+		if( null==fac ){
+			PersistenceManager pm = PMF.getPm();
+			try {
+	
+				Extent<VoCountry> vocs = pm.getExtent(VoCountry.class);
+				Set<Country> cl = new TreeSet<Country>();
+				for (VoCountry voc : vocs) {
+					cl.add(voc.getCountry());
+				}
+	
+				Extent<VoCity> vocis = pm.getExtent(VoCity.class);
+				List<City> cil = new ArrayList<City>();
+				for (VoCity voc : vocis) {
+					cil.add(voc.getCity());
+				}
+			
+				Extent<VoStreet> voss = pm.getExtent(VoStreet.class);
+				List<Street> sl = new ArrayList<Street>();
+				for (VoStreet voc : voss) {
+					sl.add(voc.getStreet());
+				}
+	
+				Extent<VoBuilding> vobs = pm.getExtent(VoBuilding.class);
+				List<Building> bl = new ArrayList<Building>();
+				for (VoBuilding voc : vobs) {
+					bl.add(voc.getBuilding());
+				}
+				fac = new FullAddressCatalogue(cl, cil, sl, bl);
+				putObjectToCache("fullAddressCatalogue", fac);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
+			} finally {
+				pm.close();
 			}
-
-			Extent<VoBuilding> vobs = pm.getExtent(VoBuilding.class);
-			List<Building> bl = new ArrayList<Building>();
-			for (VoBuilding voc : vobs) {
-				bl.add(voc.getBuilding());
-			}
-			return new FullAddressCatalogue(cl, cil, sl, bl);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
-		} finally {
-			pm.close();
 		}
+		return fac;
 	}
 
 	// TODO this method called only once in test. may be unused?
@@ -521,6 +528,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			} else {
 				logger.info("Country '" + name + "'was created.");
 				pm.makePersistent(vc);
+				removeObjectFromCache("fullAddressCatalogue");
 				return vc.getCountry();
 			}
 		} catch (Exception e) {
@@ -537,6 +545,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
+			removeObjectFromCache("fullAddressCatalogue");
 			return new VoCity(vco, name, pm).getCity();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -553,6 +562,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			// TODO check that there is no street with the same name
 			VoCity vc = pm.getObjectById(VoCity.class, cityId);
+			removeObjectFromCache("fullAddressCatalogue");
 			return new VoStreet(vc, name,pm).getStreet();
 		
 		} catch (Throwable e) {
@@ -590,6 +600,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 						throw new InvalidOperation(VoError.GeneralError, "FAiled to determine location of the building." + e.getMessage());
 					}
 				}
+				removeObjectFromCache("fullAddressCatalogue");
 				pm.makePersistent(voBuilding);
 				return voBuilding.getBuilding();
 			}
