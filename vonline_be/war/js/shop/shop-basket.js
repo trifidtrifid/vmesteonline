@@ -616,23 +616,23 @@ define(
         }
 
         function initBtnOrderClick(selector,options){
+            var isAddedAddressSave = false;
             selector.click(function(){
                 var phoneDelivery = $('#phone-delivery');
                 var alertDeliveryPhone = $('.alert-delivery-phone'),
                     orderId = options.orderId,
                     shop = options.shop,
-                    isEmptyAddressDelivery = $('.delivery-address').find('.error-info').length > 0;
+                    isEmptyAddressDelivery = $('.delivery-address').find('.error-info').length > 0,
+                    isAddressInput = false;
 
-
-                if($('.address-input').css('display')=='block'){
+                if($('.address-input').css('display')=='block' && !isAddedAddressSave){
                     $('.add-address').trigger('click');
-                };
-
-                if(!phoneDelivery.val()){
+                    if(!isAddError) isAddedAddressSave = true;
+                }else if(!phoneDelivery.val()){
                     alertDeliveryPhone.text('Пожалуйста введите номер телефона.').show();
                     $('#phone-delivery').focus();
 
-                }else if($('.street-delivery').val() && $('.building-delivery').val() && $('.flat-delivery').val()){
+                }else { //if(!isAddressInput || $('.street-delivery').val() && $('.building-delivery').val() && $('.flat-delivery').val()){
 
                     var haveError = 0;
                     try{
@@ -866,6 +866,7 @@ define(
 
         var mapWidthConst = 400;
         var mapHeightConst = 300;
+        var isAddError = false;
         function setDeliveryDropdown(orderId,userAddresses,NoAddAddressAgain){
             var addresses = (userAddresses) ? userAddresses : thriftModule.client.getUserDeliveryAddresses().elems;
 
@@ -921,7 +922,7 @@ define(
                     $('.alert-delivery-phone').css('display','none');
                     $('.alert-delivery-addr').text('Введите полный адрес доставки !').css('display','block');
 
-                    return false;
+                    isAddError = true;
                 }else{
                     var addressText =  street + " " + building;
                     var deliveryAddress = defaultAddressForCourier = thriftModule.client.createDeliveryAddress(addressText,parseInt(flat),0,0,0);
@@ -945,7 +946,7 @@ define(
                     var NoAddAddressAgain = true;
                     setDeliveryDropdown(orderId,0,NoAddAddressAgain);
 
-                    return true;
+                    isAddError = false;
                 }
 
             });
