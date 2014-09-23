@@ -373,7 +373,9 @@ define(
                 basketModule = require('shop-basket');
 
             if (addType == 'replace') {
-                orderDetails = thriftModule.client.getOrderDetails(orderId);
+                orderDetails = thriftModule.client.mergeOrder(oldOrderId, orderId);
+
+                /*orderDetails = thriftModule.client.getOrderDetails(orderId);
 
                 tabPaneActive.find('.product').each(function(){
                     thriftModule.client.removeOrderLine(oldOrderId,$(this).attr('data-productid'));
@@ -381,19 +383,19 @@ define(
 
                 $('.catalog-order').html('');
 
-                var orderLines = orderDetails.odrerLines;
+                var spinVal = orderLines[i].quantity;
+                orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderLines.length;
                 for (var i = 0; i < orderLinesLength; i++) {
                     curProd = orderLines[i].product;
-                    spinVal = orderLines[i].quantity;
                     var packs = orderLines[i].packs;
                     thriftModule.client.setOrderLine(oldOrderId, curProd.id, spinVal, "", packs);
-                }
+                }*/
             } else if (addType == 'append') {
                 orderDetails = thriftModule.client.appendOrder(oldOrderId, orderId);
             }
-            orderLines = orderDetails.odrerLines;
-            orderLinesLength = orderLines.length;
+            var orderLines = orderDetails.odrerLines;
+            var orderLinesLength = orderLines.length;
             var spinnerDisable;
             for (var i = 0; i < orderLinesLength; i++) {
                 curProd = orderLines[i].product;
@@ -419,10 +421,10 @@ define(
                 var addType;
                 if (orderData.itsAppend){
                     addType = 'append';
-                    $('.catalog-order').html('');
                 }else{
                     addType = 'replace';
                 }
+                $('.catalog-order').html('');
                 addSingleOrderToBasket(orderData.orderId,addType);
             /*}catch(e){
                 alert(e+" Функция AddOrdersToBasket");
