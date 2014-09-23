@@ -454,8 +454,10 @@ define(
                 }
             });*/
 
+            console.log('outside cancel '+activeOrder.find('.btn-cancel').length);
             activeOrder.find('.btn-cancel').on(ace.click_event, function(e,deleteOrderFromHistory) {
                 e.preventDefault();
+                console.log('inside cancel');
 
                 bootbox.confirm("Вы действительно хотите отменить заказ ?", function(result) {
                     if(result) {
