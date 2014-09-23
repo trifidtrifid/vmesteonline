@@ -60,7 +60,7 @@ define(
                         '<td class="td-spinner">';
 
                     if(noEdit){
-                        ordersProductsHtml += orderLines[j].quantity;
+                        ordersProductsHtml += orderLines[j].quantity.toFixed(1);
                     }else{
                         ordersProductsHtml += '<input type="text"';
 
@@ -274,7 +274,7 @@ define(
                             for (var i = 0; i < orderLinesLength; i++){
                                 var spinnerSelector = orderProducts.find('tbody tr:eq('+ i +') .spinner1');
                                 var spinnerStep = orderProducts.find('tbody tr:eq('+ i +') .spinner1').data('step');
-                                spinnerModule.InitSpinner(spinnerSelector,orderLines[i].quantity,0,spinnerStep);
+                                spinnerModule.InitSpinner(spinnerSelector,orderLines[i].quantity.toFixed(1),0,spinnerStep);
 
                                 if(spinnerSelector.attr('disabled') == 'disabled'){
                                     spinnerSelector.closest('.ace-spinner').spinner('disable');
@@ -330,7 +330,7 @@ define(
                         // если заказ уже создан
                         //if (!orderDetails) orderDetails = thriftModule.client.getOrderDetails(orderId)
 
-                        addOrderTo(orderId,addType,orderDetails);
+                        addOrderTo(orderId,addType);
 
                         /*if (addType == 'replace') {
                             var orderLines = orderDetails.odrerLines;
@@ -365,7 +365,7 @@ define(
             }*/
         }
 
-        function addOrderTo(orderId,addType,orderDetails){
+        function addOrderTo(orderId,addType){
             var curProd,
                 spinVal,
                 tabPaneActive = $('.tab-pane.active'),

@@ -264,14 +264,14 @@ define(
                     var order = thriftModule.client.createOrder(orderDate);
                     //var nextDateStr = new Date(order.date * 1000);
 
-                    orderDetails = thriftModule.client.getOrderDetails(order.id);
+                    //orderDetails = thriftModule.client.getOrderDetails(order.id);
 
-                    addTabToBasketHtml(order.date, order.id, orderDetails);
+                    addTabToBasketHtml(order.date, order.id);
 
                     if(addType) {
                         var ordersModule = require('shop-orders');
 
-                        ordersModule.addOrderTo(orderId, addType, orderDetails)
+                        ordersModule.addOrderTo(orderId, addType)
                     }else{
                         AddProductToBasketCommon(currentProduct,packs);
                         currentProductSelector.addClass('added');
