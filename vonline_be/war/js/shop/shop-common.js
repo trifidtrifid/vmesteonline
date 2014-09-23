@@ -148,7 +148,10 @@ define(
                 var orderid = currentOrders[i].id;
 
                 var orderDetails = thriftModule.client.getOrderDetails(orderid);
+
+                console.log('reload before addTabToBasketHtml');
                 basketModule.addTabToBasketHtml(currentOrders[i].date,orderid,orderDetails);
+                console.log('reload after addTabToBasketHtml');
                 $('.tab-pane.active').find('.weight span').text(getOrderWeight(orderid,orderDetails));
 
                 var orderLines = orderDetails.odrerLines;
