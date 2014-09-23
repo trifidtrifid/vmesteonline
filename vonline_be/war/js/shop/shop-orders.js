@@ -375,6 +375,12 @@ define(
             if (addType == 'replace') {
                 orderDetails = thriftModule.client.getOrderDetails(orderId);
 
+                tabPaneActive.find('.product').each(function(){
+                    thriftModule.client.removeOrderLine(oldOrderId,$(this).attr('data-productid'));
+                });
+
+                $('.catalog-order').html('');
+
                 var orderLines = orderDetails.odrerLines;
                 var orderLinesLength = orderLines.length;
                 for (var i = 0; i < orderLinesLength; i++) {
@@ -413,10 +419,10 @@ define(
                 var addType;
                 if (orderData.itsAppend){
                     addType = 'append';
+                    $('.catalog-order').html('');
                 }else{
                     addType = 'replace';
                 }
-                $('.catalog-order').html('');
                 addSingleOrderToBasket(orderData.orderId,addType);
             /*}catch(e){
                 alert(e+" Функция AddOrdersToBasket");
