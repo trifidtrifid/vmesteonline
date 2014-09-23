@@ -54,6 +54,7 @@ define(
                 $(this).closest('.ace-spinner').spinner('value',currentValue);
 
                 if (oldSpinnerValue != currentValue){
+
                     // чтобы не обрабатывать щелчки ниже 1
                     //oldSpinnerValue = currentValue;
                     var productSelector = $(this).closest('.product');
@@ -68,6 +69,7 @@ define(
                         productSelector.find('.td-summa').text((price*qnty).toFixed(1));
                     }
                 }
+                oldSpinnerValue = currentValue;
 
             })
         }
