@@ -142,7 +142,7 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 					pm.close();
 			}
 		} else {
-			return building.getAddressString() + " кв. " + flatNo + " [этаж " + floor + " подъезд "+ staircase + "]";
+			return building.getAddressString() + " кв. " + flatNo;
 		}
 	}
 

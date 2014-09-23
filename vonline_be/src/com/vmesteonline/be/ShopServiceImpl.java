@@ -526,9 +526,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		Map<Long, Long> orderLines = currentOrder.getOrderLines();
 		
 		List<VoOrderLine> olines = (List<VoOrderLine>) pm.newQuery(VoOrderLine.class, "orderId=="+currentOrder.getId()).execute();
-		double totalCost = 0.0D;
-		int weightGramm = 0;
-		
 		HashMap<Long, VoProduct> productsMap = getProductMapFromCacheByShopId(pm, shopId);
 		
 		if(null!=orderLines)

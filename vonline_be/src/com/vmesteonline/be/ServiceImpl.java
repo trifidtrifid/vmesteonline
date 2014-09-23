@@ -99,7 +99,7 @@ public class ServiceImpl {
 	}
 
 	public long getCurrentUserId() throws InvalidOperation {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = PMF.getPm();
 		try {
 			return getCurrentUserId(pm);
 		} finally {
