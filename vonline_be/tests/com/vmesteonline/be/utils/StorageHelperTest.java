@@ -109,7 +109,7 @@ public class StorageHelperTest extends StorageHelper {
 	public void testStoreData(){
 		for(int i=0; i<100; i++) try {
 			String origURL = "http://vomoloko.ru/img/logo.jpg";
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			String newImageUrl;
 			try {
 				newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, pm);
@@ -118,7 +118,7 @@ public class StorageHelperTest extends StorageHelper {
 			}
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StorageHelperTest.getFile(newImageUrl, baos, null);
+			StorageHelperTest.getFile(newImageUrl, baos, null, pm);
 			baos.close();
 			ByteArrayInputStream is2 = new ByteArrayInputStream(baos.toByteArray());
 			
@@ -134,7 +134,7 @@ public class StorageHelperTest extends StorageHelper {
 			newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, null);
 			
 			 baos = new ByteArrayOutputStream();
-			StorageHelperTest.getFile(newImageUrl, baos, null);
+			StorageHelperTest.getFile(newImageUrl, baos, null, pm);
 			baos.close();
 			String content = new String(baos.toByteArray());
 			Assert.assertEquals(origURL, content);

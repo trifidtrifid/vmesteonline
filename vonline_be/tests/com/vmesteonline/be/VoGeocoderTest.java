@@ -33,7 +33,7 @@ public class VoGeocoderTest {
 
 	@Test
 	public void testGetPosition() {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		Extent<VoBuilding> vbe = pm.getExtent(VoBuilding.class);
 		UserServiceImpl usi = new UserServiceImpl("123");
 		try {
@@ -45,7 +45,7 @@ public class VoGeocoderTest {
 		}
 		for (VoBuilding voBuilding : vbe) {
 			try {
-				Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
+				Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false, pm);
 				Assert.assertTrue(position != null);
 				Assert.assertTrue(Float.valueOf(position.first) > -90);
 				Assert.assertTrue(Float.valueOf(position.first) < 90);

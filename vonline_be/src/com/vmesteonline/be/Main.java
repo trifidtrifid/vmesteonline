@@ -51,7 +51,7 @@ public class Main implements javax.servlet.Filter {
 			if( host.contains( landingURL+postfix )){
 				ServiceImpl si = new ServiceImpl( request.getSession() );
 				try {
-					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0 );
+					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0, ServiceImpl.getPM() );
 				} catch (InvalidOperation e) {
 					e.printStackTrace();
 				}
@@ -68,7 +68,7 @@ public class Main implements javax.servlet.Filter {
 				if( 0!=shops.size() ){
 					VoShop voShop = shops.get(0);
 					ServiceImpl si = new ServiceImpl( request.getSession() );
-					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId(), ServiceImpl.getPM() );
 					logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 					if( shopContext !=null && null == request.getRequestURI() || 0==request.getRequestURI().length() || 
 							request.getRequestURI().equals("/")){
@@ -85,7 +85,7 @@ public class Main implements javax.servlet.Filter {
 					if( 0!=shops.size() ){
 						VoShop voShop = shops.get(0);
 						ServiceImpl si = new ServiceImpl( request.getSession());
-						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId(), ServiceImpl.getPM() );
 						logger.fine("Found shop "+voShop.getName()+" by Hostname '"+host+"' Current shop set to: "+voShop.getId());
 						if( shopContext !=null && null == request.getRequestURI() || 0==request.getRequestURI().length() || 
 								request.getRequestURI().equals("/") ){

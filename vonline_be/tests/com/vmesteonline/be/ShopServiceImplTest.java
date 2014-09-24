@@ -1145,7 +1145,7 @@ public class ShopServiceImplTest {
 			// Check merge lines of the same product
 			/* OrderLine ol1 = */si.setOrderLine(0,upProductsIdl.get(0), 1.0D, null, null);
 			/* OrderLine ol2 = */si.setOrderLine(0,upProductsIdl.get(1), 1.0D, null, null);
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			try {
 				Query q = pm.newQuery(VoOrder.class);
 				q.setFilter("id == " + si.getSessionAttribute(CurrentAttributeType.ORDER, pm));
@@ -1185,7 +1185,7 @@ public class ShopServiceImplTest {
 				pm.close();
 			}
 
-			pm = PMF.getPm();
+			pm = PMF.getNewPm();
 			try {
 				si.setOrderLine(0,upProductsIdl.get(1), 2.0D, null, null);
 
@@ -1386,7 +1386,7 @@ public class ShopServiceImplTest {
 
 	@Test
 	public void testCalculateTheDistance() {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			
 			createAddress("площадь Карла Фаберже", "6"); //650m from the shop
@@ -1427,7 +1427,7 @@ public class ShopServiceImplTest {
 
 	@Test
 	public void testDeliveryDependOnRange() throws InvalidOperation{
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 			
 		try{
 			int now = (int) (System.currentTimeMillis() / 1000L);
@@ -1477,18 +1477,18 @@ public class ShopServiceImplTest {
 
 	private PostalAddress createAddress(String streetName, String buuildingNAme) throws InvalidOperation, TException {
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			
 			VoCity city = pm.getObjectById(VoCity.class, usi.getCities(usi.getCounties().get(0).getId()).get(0).getId());
 			VoStreet voStreet = new VoStreet( city, streetName, pm );
 			VoBuilding voBuilding = new VoBuilding(voStreet, buuildingNAme, new BigDecimal("0"), new BigDecimal("0"),pm);
-			Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false);
+			Pair<String, String> position = VoGeocoder.getPosition(voBuilding, false, pm);
 			voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 			VoPostalAddress voPostalAddress = new VoPostalAddress( voBuilding, (byte)1, (byte)1, (byte)1, "");
 			pm.makePersistent(voPostalAddress);
 			
-			return voPostalAddress.getPostalAddress();
+			return voPostalAddress.getPostalAddress(pm);
 		} finally {
 			pm.close();
 		}
@@ -1502,7 +1502,7 @@ public class ShopServiceImplTest {
 
 	@Test
 	public void testDeliveryDependOnAddressMask() {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			
 		

@@ -43,7 +43,7 @@ public class AuthServiceImpTests {
 	public void setUp() throws Exception {
 		helper.setUp();
 		Defaults.initDefaultData();
-		pm = PMF.getPm();
+		pm = PMF.getNewPm();
 		asi = new AuthServiceImpl(httpSessionId);
 		usi = new UserServiceImpl(httpSessionId);
 
@@ -106,7 +106,7 @@ public class AuthServiceImpTests {
 	public void testLoginSuccess() {
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
-			AuthServiceImpl.checkIfAuthorised(httpSessionId);
+			asi.checkIfAuthorised(httpSessionId);
 		} catch (InvalidOperation e) {
 			fail("user a with pass a should be valid");
 		}
@@ -116,7 +116,8 @@ public class AuthServiceImpTests {
 	@Test
 	public void testGetSessionNotAuthorized() {
 		try {
-			AuthServiceImpl.checkIfAuthorised("ttemptySession");
+			asi.login("ssss", "dddddddd");
+			asi.checkIfAuthorised("ttemptySession");
 			fail("session should throw exception");
 		} catch (InvalidOperation e) {
 			assertEquals(VoError.NotAuthorized, e.what);
@@ -134,7 +135,7 @@ public class AuthServiceImpTests {
 			return;
 		}
 		try {
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			long ret = asi.registerNewUser("testName", "testFamily", "testPassword", "test@eml", locations.get(0));
 			VoUser user = asi.getUserByEmail("test@eml", pm);
 			assertEquals("testName", user.getName());
@@ -200,7 +201,7 @@ public class AuthServiceImpTests {
 		try {
 			long uid = asi.registerNewUser("testName", "testFamily", "testPassword", email, null);
 			asi.sendConfirmCode(email, "mailTemplates/changePasswordConfirm.html");
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			try {
 				VoUser vu = pm.getObjectById(VoUser.class, uid);
 				vu.getConfirmCode();
@@ -218,7 +219,7 @@ public class AuthServiceImpTests {
 			} finally {
 				pm.close();
 			}
-			pm = PMF.getPm();
+			pm = PMF.getNewPm();
 			try {
 				VoUser vu = pm.getObjectById(VoUser.class, uid);
 				assertEquals(vu.getPassword(), "111");

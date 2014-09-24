@@ -79,7 +79,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testGetUserShortProfile() {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
@@ -105,7 +105,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testGetUserInfo() {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
@@ -131,7 +131,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testUpdateUserInfo() {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
@@ -160,7 +160,7 @@ public class UserServiceImplTest extends UserServiceImpl {
 	@Test
 	public void testUpdateUserContacts() {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			asi.login(Defaults.user1email, Defaults.user1pass);
 
@@ -190,8 +190,8 @@ public class UserServiceImplTest extends UserServiceImpl {
 	public void testGetUserAandBVoGroups() {
 
 		try {
-			PersistenceManager pmA = PMF.getPm();
-			PersistenceManager pmB = PMF.getPm();
+			PersistenceManager pmA = PMF.getNewPm();
+			PersistenceManager pmB = PMF.getNewPm();
 
 			try {
 

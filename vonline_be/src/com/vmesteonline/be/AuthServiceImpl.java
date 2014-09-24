@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -30,7 +31,7 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public AuthServiceImpl() {
 	}
 
-	public void checkIfAuthorised(String httpSessId) throws InvalidOperation {
+	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
 		PersistenceManager pm = getPM();
 		VoSession session = getSession(httpSessId, pm);
 
@@ -182,7 +183,9 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
-		super.setCurrentAttribute(typeValueMap);
+		for (Entry<Integer, Long> e : typeValueMap.entrySet()) {
+			setCurrentAttribute(e.getKey(), e.getValue(), ServiceImpl.getPM() );
+		}
 	}
 
 	@Override

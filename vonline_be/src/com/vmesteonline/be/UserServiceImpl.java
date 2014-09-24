@@ -216,7 +216,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	public List<String> getLocationCodesForRegistration() throws InvalidOperation {
+	public static List<String> getLocationCodesForRegistration() throws InvalidOperation {
 
 		PersistenceManager pm = getPM();
 		try {

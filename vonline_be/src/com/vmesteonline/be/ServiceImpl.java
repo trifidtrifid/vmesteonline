@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import com.vmesteonline.be.access.VoUserAccessBase;
-import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoUser;
 
@@ -204,8 +203,8 @@ public class ServiceImpl {
 		pm.makePersistent(currentSession);
 	}
 
-	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager _pm) throws InvalidOperation {
-		VoSession currentSession = getCurrentSession(_pm);
+	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager pm) throws InvalidOperation {
+		VoSession currentSession = getCurrentSession(pm);
 		return currentSession.getSessionAttribute(type);
 	}
 
