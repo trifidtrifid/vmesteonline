@@ -15,10 +15,9 @@ public class ShopServiceHelper {
 	private static Logger logger = Logger.getLogger(ShopServiceHelper.class.getName());
 
 //======================================================================================================================
-	 static VoShop getCurrentShop(ServiceImpl si, PersistenceManager _pm) throws InvalidOperation {
+	 static VoShop getCurrentShop(ServiceImpl si, PersistenceManager pm) throws InvalidOperation {
 
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-
+		
 		Long shopId = si.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "SHOP ID is not set in session context.");
@@ -33,17 +32,13 @@ public class ShopServiceHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to SHOP by ID" + shopId + ". " + e);
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
 	}
 
 	 
 	// ======================================================================================================================
-	static VoOrder getCurrentOrder(ServiceImpl si, PersistenceManager _pm) throws InvalidOperation {
+	static VoOrder getCurrentOrder(ServiceImpl si, PersistenceManager pm) throws InvalidOperation {
 
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		Long orderId = si.getSessionAttribute(CurrentAttributeType.ORDER, pm);
 		if (null == orderId || 0 == orderId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "ORDER ID is not set in session context.");
@@ -58,9 +53,6 @@ public class ShopServiceHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to ORDER by ID" + orderId + ". " + e);
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
 	}
 	

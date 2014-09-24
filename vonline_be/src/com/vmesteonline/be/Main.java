@@ -62,7 +62,7 @@ public class Main implements javax.servlet.Filter {
 			if( postfix.length() > 0 && host.endsWith(postfix)) //remove local postfix if it's presented
 				host = host.substring(0, host.length() - postfix.length());
 			
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = ServiceImpl.getPM();
 			try {
 				List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "hostName=='"+host+"' && activated==true").execute();
 				if( 0!=shops.size() ){
@@ -109,21 +109,19 @@ public class Main implements javax.servlet.Filter {
 				logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
 				response.sendRedirect(landingPage);
 				return;
-			} finally {
-				pm.close();
 			}
 		} else {
 			
 			HttpServletRequest request = (HttpServletRequest) srequest;
 			HttpServletResponse response = (HttpServletResponse) sresponse;
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			try {
 				List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "").execute();
 				if( 0!=shops.size() ){
 					VoShop voShop = shops.get(0);
 					ServiceImpl si = new ServiceImpl( request.getSession());
 					try {
-						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId() );
+						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId(), pm );
 					} catch (InvalidOperation e) {
 						e.printStackTrace();
 					}
@@ -182,7 +180,7 @@ public class Main implements javax.servlet.Filter {
 						String confUrl = refUrl+"?rt=co&si="+req.getSession().getId();
 						logger.fine("Got 'co' check the session");
 
-						PersistenceManager pm = PMF.getPm();
+						PersistenceManager pm = ServiceImpl.getPM();
 						try {
 							VoSession cs = pm.getObjectById(VoSession.class,req.getSession().getId());
 							long userId = cs.getUserId();
@@ -198,9 +196,7 @@ public class Main implements javax.servlet.Filter {
 							resp.sendRedirect(ref);
 							return true; 
 							
-						} finally {
-							pm.close();
-						}		
+						} 	
 					}
 				}
 			} catch (Exception e){

@@ -98,16 +98,16 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	@Override
 	public List<Shop> getShops() throws InvalidOperation {
 		List<Shop> shops = new ArrayList<Shop>();
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<VoShop> voshops = (List<VoShop>) pm.newQuery(VoShop.class).execute();// pm.getExtent(VoShop.class);
 			for (VoShop vs : voshops)
-				shops.add(vs.getShop());
+				shops.add(vs.getShop(pm));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed toget shops." + e);
 		} finally {
-			pm.close();
+			
 		}
 		return shops;
 	}
@@ -115,27 +115,27 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		// ======================================================================================================================
 	@Override
 	public Shop getShop(long shopId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			long voShopId;
 			if( 0!=(voShopId = shopId) || 0!=(voShopId = ShopServiceHelper.getCurrentShopId(this, pm)) ) { 
 				VoShop voShop = pm.getObjectById(VoShop.class, voShopId);
 				setCurrentAttribute(CurrentAttributeType.SHOP.getValue(), voShop.getId(), pm);
-				return voShop.getShop();
+				return voShop.getShop(pm);
 			}
 			throw new InvalidOperation(VoError.GeneralError, "No shop found by ID:'"+shopId+"' and current ID not set");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getShop by shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	// ======================================================================================================================
 	@Override
 	public OrderDate getNextOrderDate(int afterDate) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
@@ -147,13 +147,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 	// ======================================================================================================================
 	@Override
 	public List<OrderDate> getOrderDates(int afterDate, int before) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
@@ -165,14 +165,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	// ======================================================================================================================
 	@Override
 	public List<Producer> getProducers() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			List<VoProducer> vpl = (List<VoProducer>) pm.newQuery(VoProducer.class, "shopId == " + shopId).execute();
@@ -186,7 +186,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProducers for shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -194,7 +194,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	@Override
 	public List<ProductCategory> getProductCategories(long currentProductCategoryId) throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			pm.getObjectById(VoShop.class, shopId);
@@ -213,7 +213,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProductCategories for shopId=" + shopId + " currentProductCategoryId="
 					+ currentProductCategoryId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -237,7 +237,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		if (offset < 0 || length < 1)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "offset must be >= 0 and length > 0 ");
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			String key = ShopServiceHelper.getProcutsOfCategoryCacheKey(categoryId, shopId);
@@ -274,7 +274,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProducts for shopId=" + shopId + " currentProductCategoryId=" + categoryId + "."
 					+ e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 	//======================================================================================================================
@@ -292,7 +292,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	@Override
 	public ProductDetails getProductDetails(long productId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
 			if (null != voProduct) {
@@ -303,7 +303,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getProductDetails Id=" + productId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -313,7 +313,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		dateFrom -= dateFrom % 86400;
 		dateTo += ( 86400 - dateTo % 86400 );
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		try {
 			Query pcq = pm.newQuery(VoOrder.class);
@@ -330,15 +330,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrders for shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 
 	// ======================================================================================================================
-	private VoOrder getCurrentOrder(PersistenceManager _pm) throws InvalidOperation {
+	private VoOrder getCurrentOrder(PersistenceManager pm) throws InvalidOperation {
 
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		Long orderId = super.getSessionAttribute(CurrentAttributeType.ORDER, pm);
 		if (null == orderId || 0 == orderId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "ORDER ID is not set in session context.");
@@ -353,9 +352,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to ORDER by ID" + orderId + ". " + e);
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
 	}
 
@@ -371,7 +367,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		String key = generateOrderDetailsKey(orderId);
 		OrderDetails od = (OrderDetails)getObjectFromCache(key);
 		if( null == od ){
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = getPM();
 			try {
 				VoOrder voOrder = pm.getObjectById(VoOrder.class, orderId);
 				if (null != voOrder) {
@@ -387,7 +383,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Order not found by ID:" + orderId);
 			} finally {
-				pm.close();
+				
 			}
 		}
 		return od;
@@ -402,7 +398,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
 		date -= date % 86400;
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			pm.retrieve(shop);
@@ -419,14 +415,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			
 			return voOrder.getOrder();
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	// ======================================================================================================================
 	@Override
 	public long cancelOrder(long orderId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(OrderStatus.CANCELED);
@@ -438,7 +434,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			removeObjectFromCache( generateOrderDetailsKey(orderId));
 			return currentOrder.getId();
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -448,7 +444,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			if( currentOrder.getStatus() == OrderStatus.CONFIRMED )
@@ -467,14 +463,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			pm.deletePersistent(currentOrder);
 			return 0;
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	// ======================================================================================================================
 	@Override
 	public long confirmOrder( long orderId, String comment ) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			
@@ -484,14 +480,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			recalculateOrder(orderId);
 			
 			sendConfirmationMessage( currentOrder, pm );
-			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0);
+			setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
 			pm.makePersistent(currentOrder);
 			
 			removeObjectFromCache( generateOrderDetailsKey(orderId));
 			
 			return currentOrder.getId();
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -591,7 +587,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return getOrderDetails(oldOrderId);
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder voOldOrder = pm.getObjectById(VoOrder.class, oldOrderId);
 			HashMap<Long, VoProduct> prdMap = getProductMapFromCacheByShopId(pm, voOldOrder.getShopId());
@@ -670,7 +666,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to appendOrder Id=" + oldOrderId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -730,7 +726,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -778,7 +774,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to appendOrder Id=" + oldOrderId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -792,7 +788,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			removeOrderLine(orderId, productId);
 			return null;
 		}
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -857,7 +853,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to addOrderLine Id=" + productId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -867,7 +863,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -892,7 +888,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to removeOrderLine Id=" + productId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -902,7 +898,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -942,7 +938,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderDeliveryType=" + deliveryType.name() + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 	// ======================================================================================================================
@@ -1133,7 +1129,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -1159,7 +1155,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderPaymentType=" + paymentType.name() + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1169,7 +1165,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		
 		removeObjectFromCache( generateOrderDetailsKey(orderId));
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
@@ -1193,7 +1189,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderDeliveryAddress to " + deliveryAddress + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1215,7 +1211,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	// ======================================================================================================================
 	
 	private List<Order> getOrdersByStatus(long userId, int dateFrom, int dateTo, OrderStatus status) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		dateFrom = dateFrom - dateFrom % 86400;
 		dateTo = dateTo - dateTo % 86400 + 86400;
@@ -1264,14 +1260,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getOrdersByStatus for shopId=" + shopId + "." + e);
 		} finally {
-			pm.close();
+			
 		}
 	} 
 
 	// ======================================================================================================================
 	@Override
 	public Order getOrder(long orderId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder;
 			if (0 == orderId) {
@@ -1285,7 +1281,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			//e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to get Order by ID " + orderId + ". " + e);
 		} finally {
-			pm.close();
+			
 		}
 	}
  
@@ -1296,7 +1292,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	@Override
 	public void updateOrder(long orderId, int date, String comment) throws InvalidOperation {
 		date -= date % 86400;
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			
@@ -1306,7 +1302,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			voOrder.setComment(comment);
 			pm.makePersistent(voOrder);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1316,7 +1312,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	}
 	// ======================================================================================================================
 	public void recalculateOrder(long orderId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder voOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			
@@ -1342,7 +1338,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			updateDeliveryCost(pm.getObjectById(VoShop.class, shopId), voOrder, null, pm);
 			pm.makePersistent(voOrder);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1396,7 +1392,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		if( null == catwithProcuts) {
 			catwithProcuts = new ArrayList<IdNameChilds>(); 
 			Map<Long,List<IdName>> cpm = new TreeMap<Long,List<IdName>>();
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = getPM();
 			try {
 				if( 0 == shopId )
 						shopId = ShopServiceHelper.getCurrentShopId( this, pm );
@@ -1424,7 +1420,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 					}
 				}
 			} finally {
-				pm.close();
+				
 			}
 			putObjectToCache( createShopProductsByCategoryKey(shopId), catwithProcuts );
 		}
@@ -1454,7 +1450,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			addrInfo.setLattitude("1");
 		}
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);  
 			VoCountry voCountry = new VoCountry( addrInfo.getCountryName(), pm );
@@ -1469,47 +1465,47 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return pa.getPostalAddress(pm);
 			
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public MatrixAsList getUserDeliveryAddresses() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<String> list = getCurrentUser(pm).getAddresses();
 			return new MatrixAsList( list.size(), list);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public PostalAddress getUserDeliveryAddress(String addressText) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
 			if(null==deliveryAddress)
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Addrress not found for user by text '"+addressText+"'");
-			return deliveryAddress.getPostalAddress();
+			return deliveryAddress.getPostalAddress(pm);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public void deleteDeliveryAddress(String addressText) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			getCurrentUser(pm).removeDeliveryAddress(addressText);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public String getDeliveryAddressViewURL(String addressText, int width, int height) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoPostalAddress deliveryAddress = getCurrentUser(pm).getDeliveryAddress(addressText);
 			if( null==deliveryAddress)
@@ -1517,7 +1513,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			VoBuilding building = deliveryAddress.getBuilding();
 			return VoGeocoder.createMapImageURL( building.getLongitude(), building.getLatitude(), width, height, addressText);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1555,7 +1551,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 
 	@Override
 	public UserShopRole getUserShopRole(long shopId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			long currentUserId = getCurrentUserId(pm);
 			if(shopId == 0) shopId = ShopServiceHelper.getCurrentShopId( this, pm );
@@ -1583,13 +1579,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return UserShopRole.UNKNOWN;
 			
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public List<ProductCategory> getAllCategories(long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<VoProductCategory> vpcl = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class, "shopId=="+shopId).execute();
 			List<ProductCategory> pcl = new ArrayList<ProductCategory>();
@@ -1598,7 +1594,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			}
 			return pcl;
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -1606,33 +1602,31 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 	public boolean canVote(long shopId) throws InvalidOperation, TException {
 		if(0==shopId) return false;
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			long uid = getCurrentUserId();
 			return pm.getObjectById(VoShop.class, shopId).canVote(uid);
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public int vote(long shopId, String value) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			long uid = getCurrentUserId();
 			return pm.getObjectById(VoShop.class, shopId).vote(uid, value);
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
-		} finally {
-			pm.close();
 		}
 	}
 
 	@Override
 	public Map<String, Integer> getVotes(long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			Map<String, Set<Long>> voteResults = pm.getObjectById(VoShop.class, shopId).getVoteResults();
 			Map<String, Integer> voteRslts = new HashMap<String, Integer>();
@@ -1643,21 +1637,17 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return voteRslts;
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
 	public boolean isActivated(long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			return pm.getObjectById(VoShop.class, shopId).isActivated();
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 }
 

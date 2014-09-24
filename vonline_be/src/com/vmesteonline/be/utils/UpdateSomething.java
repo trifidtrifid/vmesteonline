@@ -24,7 +24,7 @@ public class UpdateSomething extends HttpServlet {
 	protected void service(HttpServletRequest arg0, HttpServletResponse arg1) throws ServletException, IOException {
 		
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = PMF.getNewPm();
 		try {
 			
 			Extent<VoProductCategory> vpc = pm.getExtent(VoProductCategory.class);

@@ -30,24 +30,18 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	public AuthServiceImpl() {
 	}
 
-	public static void checkIfAuthorised(String httpSessId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+	public void checkIfAuthorised(String httpSessId) throws InvalidOperation {
+		PersistenceManager pm = getPM();
+		VoSession session = getSession(httpSessId, pm);
+
+		if (null == session || 0 == session.getUserId()) {
+			throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
+		}
 		try {
-
-			VoSession session = getSession(httpSessId, pm);
-
-			if (null == session || 0 == session.getUserId()) {
-				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
-			}
-			try {
-				pm.getObjectById(VoUser.class, session.getUserId());
-			} catch (Exception e) {
-				session.setUserId(null);
-				throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
-			}
-
-		} finally {
-			pm.close();
+			pm.getObjectById(VoUser.class, session.getUserId());
+		} catch (Exception e) {
+			session.setUserId(null);
+			throw new InvalidOperation(VoError.NotAuthorized, "can't find user session for " + httpSessId);
 		}
 	}
 
@@ -68,27 +62,23 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 	}
 
 	public boolean allowUserAccess(String email, String pwd, boolean checkPwd) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser u = getUserByEmail(email, pm);
-			if (u != null) {
-				if (u.getPassword().equals(pwd) || !checkPwd) {
+		PersistenceManager pm = getPM();
+		VoUser u = getUserByEmail(email, pm);
+		if (u != null) {
+			if (u.getPassword().equals(pwd) || !checkPwd) {
 
-					logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
-					VoSession currentSession = getCurrentSession(pm);
-					if (null == currentSession)
-						currentSession = new VoSession(sessionStorage.getId(), u);
-					else
-						currentSession.setUser(u);
-					pm.makePersistent(currentSession);
-					return true;
-				} else
-					logger.info("incorrect password " + email + " pass " + pwd);
-
+				logger.info("save session '" + sessionStorage.getId() + "' userId " + u.getId());
+				VoSession currentSession = getCurrentSession(pm);
+				if (null == currentSession)
+					currentSession = new VoSession(sessionStorage.getId(), u);
+				else
+					currentSession.setUser(u);
+				pm.makePersistent(currentSession);
+				return true;
+			} else
+				logger.info("incorrect password " + email + " pass " + pwd);
 			}
-		} finally {
-			pm.close();
-		}
+		
 		if (checkPwd)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "incorrect login or password");
 
@@ -118,74 +108,61 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		if (getUserByEmail(email) != null)
 			throw new InvalidOperation(VoError.RegistrationAlreadyExist, "registration exsist for user with email " + email);
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 
-		try {
-			VoUser user = new VoUser(firstname, lastname, email, password);
-			pm.makePersistent(user);
 
-			// find all defaults rubrics for user
-			Query q = pm.newQuery(VoRubric.class);
-			q.setFilter(" subscribedByDefault == true");
-			List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
-			if (defRubrics.isEmpty())
-				defRubrics = Defaults.defaultRubrics;
-			for (VoRubric rubric : defRubrics) {
-				user.addRubric(rubric);
-			}
+		VoUser user = new VoUser(firstname, lastname, email, password);
+		pm.makePersistent(user);
 
-			/*
-			 * UserServiceImpl usi = new UserServiceImpl(sessionStorage.getId()); usi.updateUserAvatar(Defaults.defaultAvatarUrl);
-			 */
-
-			if (null == locationId || "".equals(locationId.trim())) {
-				logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
-				user.setDefaultUserLocation(pm);
-			} else {
-				try {
-					user.setLocation(Long.parseLong(locationId), pm);
-				} catch (NumberFormatException | InvalidOperation e) {
-					throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
-				}
-
-				List<VoUserGroup> groups = user.getGroups();
-				logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
-						+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
-			}
-
-			try {
-				String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.voclub.co. Ваш логин " + email
-						+ ".<br/>Ваш пароль " + password + ". Удачных Вам покупок!";
-				EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
-			} catch (Exception e) {
-				logger.warn("can't send email to " + email + " " + e.getMessage());
-				e.printStackTrace();
-			}
-			return user.getId();
-
-		} finally {
-			pm.close();
+		// find all defaults rubrics for user
+		Query q = pm.newQuery(VoRubric.class);
+		q.setFilter(" subscribedByDefault == true");
+		List<VoRubric> defRubrics = (List<VoRubric>) q.execute();
+		if (defRubrics.isEmpty())
+			defRubrics = Defaults.defaultRubrics;
+		for (VoRubric rubric : defRubrics) {
+			user.addRubric(rubric);
 		}
 
+		/*
+		 * UserServiceImpl usi = new UserServiceImpl(sessionStorage.getId()); usi.updateUserAvatar(Defaults.defaultAvatarUrl);
+		 */
+
+		if (null == locationId || "".equals(locationId.trim())) {
+			logger.info("register " + email + " pass " + password + " id " + user.getId() + " Wihout location code and User Group");
+			user.setDefaultUserLocation(pm);
+		} else {
+			try {
+				user.setLocation(Long.parseLong(locationId), pm);
+			} catch (NumberFormatException | InvalidOperation e) {
+				throw new InvalidOperation(VoError.IncorectLocationCode, "Incorrect code." + e);
+			}
+
+			List<VoUserGroup> groups = user.getGroups();
+			logger.info("register " + email + " pass " + password + " id " + user.getId() + " location code: " + locationId + " home group: "
+					+ (0 == groups.size() ? "Undefined!" : groups.get(0).getName()));
+		}
+
+		try {
+			String body = "<h2>" + firstname + " " + lastname + "</h2><br/>Вы зарегистрировались на сайте www.voclub.co. Ваш логин " + email
+					+ ".<br/>Ваш пароль " + password + ". Удачных Вам покупок!";
+			EMailHelper.sendSimpleEMail(email, "Вы зарегестрированы на Bo! сайте", body);
+		} catch (Exception e) {
+			logger.warn("can't send email to " + email + " " + e.getMessage());
+			e.printStackTrace();
+		}
+		return user.getId();
 	}
 
 	@Override
 	public void logout() throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			pm.deletePersistent(getCurrentSession(pm));
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		pm.deletePersistent(getCurrentSession(pm));
 	}
 
 	public VoUser getUserByEmail(String email) {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			return getUserByEmail(email, pm);
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		return getUserByEmail(email, pm);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -215,17 +192,13 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 
 	@Override
 	public boolean checkEmailRegistered(String email) {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			return null != getUserByEmail(email, pm);
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		return null != getUserByEmail(email, pm);
 	}
 
 	@Override
 	public void sendConfirmCode(String to, String localfileName) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser vu = getUserByEmail(to, pm);
 			if (null == vu)
@@ -248,40 +221,27 @@ public class AuthServiceImpl extends ServiceImpl implements AuthService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to send email to '" + to + "'. " + e);
-
-		} finally {
-			pm.close();
 		}
 	}
 
 	@Override
 	public void confirmRequest(String email, String confirmCode, String newPassword) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser vu = getUserByEmail(email, pm);
-			if (null != vu && Long.parseLong(confirmCode) == vu.getConfirmCode()) {
-				vu.setEmailConfirmed(true);
-				if (null != newPassword && !"".equals(newPassword.trim()))
-					vu.setPassword(newPassword);
-				pm.makePersistent(vu);
-			} else
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!");
-
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		VoUser vu = getUserByEmail(email, pm);
+		if (null != vu && Long.parseLong(confirmCode) == vu.getConfirmCode()) {
+			vu.setEmailConfirmed(true);
+			if (null != newPassword && !"".equals(newPassword.trim()))
+				vu.setPassword(newPassword);
+			pm.makePersistent(vu);
+		} else
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No such code registered for user!");
 	}
 
 	@Override
 	public boolean checkIfEmailConfirmed(String email) throws TException {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser vu = getUserByEmail(email, pm);
-			return null != vu && vu.isEmailConfirmed();
-
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		VoUser vu = getUserByEmail(email, pm);
+		return null != vu && vu.isEmailConfirmed();
 	}
 
 	// ======================================================================================================================

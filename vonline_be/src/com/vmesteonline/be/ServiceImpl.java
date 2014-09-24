@@ -28,6 +28,8 @@ public class ServiceImpl {
 
 	private static Cache cache;
 	public static Logger logger;
+	HttpSession session = null;
+	PersistenceManager pm = null;
 
 	static {
 		logger = Logger.getLogger(ServiceImpl.class);
@@ -85,8 +87,32 @@ public class ServiceImpl {
 
 	public void setSession(HttpSession session) {
 		this.sessionStorage = new SessionIdStorage(session.getId());
+		this.session = session;
 	}
 
+	public static PersistenceManager getPM(){
+		return PersistenceInitFilter.getManager();
+		/*if( null==pm ){
+			Object arrtValue = null;
+			if( null!=session ){
+				arrtValue = session.getAttribute("GAE:PersistenceManager");
+				if( null==arrtValue || !(arrtValue instanceof PersistenceManager)){
+					arrtValue = PMF.getNewPm();
+					session.setAttribute("GAE:PersistenceManager", arrtValue);
+				}
+			} else {
+				arrtValue = PMF.getNewPm();
+			}
+			pm = (PersistenceManager) arrtValue;
+		} 
+		if( pm.isClosed()){
+			
+			pm = PMF.getNewPm();
+			session.setAttribute("GAE:PersistenceManager", pm );
+		}
+		return (PersistenceManager) pm;*/
+	}
+	
 	public ServiceImpl() {
 	}
 
@@ -99,39 +125,24 @@ public class ServiceImpl {
 	}
 
 	public long getCurrentUserId() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			return getCurrentUserId(pm);
-		} finally {
-			pm.close();
-		}
-
+		PersistenceManager pm = getPM();
+		return getCurrentUserId(pm);
 	}
 
 	protected long getCurrentUserId(PersistenceManager _pm) throws InvalidOperation {
 		if (null == sessionStorage)
 			throw new InvalidOperation(VoError.GeneralError, "Failed to process request. No session set.");
-		
-		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
-		try {
 			
-			VoSession sess = getCurrentSession(_pm);
-			if (sess != null && 0 != sess.getUserId()) {
-				return sess.getUserId();
-			}
-		} finally {
-			if(null==_pm) pm.close();
+		VoSession sess = getCurrentSession(_pm);
+		if (sess != null && 0 != sess.getUserId()) {
+			return sess.getUserId();
 		}
 		throw new InvalidOperation(VoError.NotAuthorized, "can't get current user id");
 	}
 
 	protected VoUser getCurrentUser() throws InvalidOperation {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			return getCurrentUser(pm);
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		return getCurrentUser(pm);
 	}
 
 	public VoUser getCurrentUser(PersistenceManager pm) throws InvalidOperation {
@@ -149,21 +160,13 @@ public class ServiceImpl {
 	}
 
 	protected VoSession getCurrentSession() throws InvalidOperation {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			return getCurrentSession(pm);
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		return getCurrentSession(pm);
 	}
 	
 	public Map<Integer, Long> getCurrentSessionAttributes() throws InvalidOperation{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			return getCurrentSession(pm).getSessionAttributes();
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		return getCurrentSession(pm).getSessionAttributes();
 	}
 	
 
@@ -195,51 +198,15 @@ public class ServiceImpl {
 		};
 	}
 
-	public void setCurrentAttribute(int key, long value) throws InvalidOperation {
-
-		setCurrentAttribute(key, value, null);
-	}
-
-	public void setCurrentAttribute(int key, long value, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			VoSession currentSession = getCurrentSession(pm);
-			currentSession.setSessionAttribute(key, value);
-			pm.makePersistent(currentSession);
-		} finally {
-			if(null==_pm) 
-				pm.close();
-		}
-	}
-
-	public void setCurrentAttribute(Map<Integer, Long> typeValueMap) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoSession currentSession = getCurrentSession(pm);
-			currentSession.setSessionAttributes(typeValueMap);
-			pm.makePersistent(currentSession);
-		} finally {
-			pm.close();
-		}
-	}
-
-	public Long getSessionAttribute(CurrentAttributeType type) throws InvalidOperation {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try {
-			return getSessionAttribute(null);
-		} finally {
-			pm.close();
-		}
+	public void setCurrentAttribute(int key, long value, PersistenceManager pm) throws InvalidOperation {
+		VoSession currentSession = getCurrentSession(pm);
+		currentSession.setSessionAttribute(key, value);
+		pm.makePersistent(currentSession);
 	}
 
 	public Long getSessionAttribute(CurrentAttributeType type, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			VoSession currentSession = getCurrentSession(pm);
-			return currentSession.getSessionAttribute(type);
-		} finally {
-			if(null==_pm) pm.close();
-		}
+		VoSession currentSession = getCurrentSession(_pm);
+		return currentSession.getSessionAttribute(type);
 	}
 
 	/**

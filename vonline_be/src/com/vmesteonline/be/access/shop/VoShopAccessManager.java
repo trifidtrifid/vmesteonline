@@ -1,11 +1,6 @@
 package com.vmesteonline.be.access.shop;
 
-import javax.jdo.PersistenceManager;
-
-import com.vmesteonline.be.ServiceImpl;
 import com.vmesteonline.be.access.VoAccessManager;
-import com.vmesteonline.be.data.PMF;
-import com.vmesteonline.be.shop.UserShopRole;
 
 public class VoShopAccessManager extends VoAccessManager {
 
@@ -27,13 +22,13 @@ public class VoShopAccessManager extends VoAccessManager {
 	}
 
 	private static void createAccessPermission(long shopId, long userId, long role) {
-		PersistenceManager pm = PMF.getPm();
+		/*PersistenceManager pm = PMF.getPm();
 		try {
 			VoShopAccess vsa = new VoShopAccess( shopId, userId);
 			vsa.setAccessPermission(role, true);
 			pm.makePersistent(vsa);
 		} finally {
 			pm.close();
-		}
+		}*/
 	}
 }

@@ -139,73 +139,69 @@ public class VoProduct implements Serializable {
 		return createObject(shop, fpi, _pm);
 	}
 
-	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+	public static VoProduct createObject(VoShop shop, FullProductInfo fpi, PersistenceManager pm) throws InvalidOperation {
 		VoProduct vp = new VoProduct();
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			Product product = fpi.getProduct();
-			ProductDetails details = fpi.getDetails();
-
-			vp.name = product.getName();
-			vp.shortDescr = product.shortDescr;
-			vp.weight = product.getWeight();
 		
-			if (null != product.getImageURL() && product.getImageURL().length() > 0)
-				try {
-					vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, _pm);
-				} catch (Throwable ie) {
-					ie.printStackTrace();
-					// throw new InvalidOperation(VoError.IncorrectParametrs,
-					// ie.getMessage());
-				}
-			vp.imagesURLset = new ArrayList<String>();
-			if (null != details.getImagesURLset())
-				for (String imgURL : details.getImagesURLset())
-					if (null != imgURL && imgURL.length() > 0)
-						try {
-							vp.imagesURLset.add(StorageHelper.saveImage(imgURL, shop.ownerId, true, _pm));
-						} catch (Throwable ie) {
-							//logger.warn("Failed to update image from URL: '"+imgURL+"'. "+ie.getMessage());
-							// throw new InvalidOperation(VoError.IncorrectParametrs,
-							// ie.getMessage());
-						}
+		Product product = fpi.getProduct();
+		ProductDetails details = fpi.getDetails();
 
-			vp.price = product.getPrice();
-			vp.setScore(1);
-			vp.setFullDescr(details.getFullDescr());
-
-			vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
-			vp.optionsMap = details.getOptionsMap();
-
-			vp.shopId = shop.getId();
-			vp.categories = details.getCategories();
-			for (Long cid : vp.categories) {
-				VoProductCategory pcat = pm.getObjectById(VoProductCategory.class, cid);
-				pcat.updateProductCount(1,pm);
-				pm.makePersistent(pcat);
+		vp.name = product.getName();
+		vp.shortDescr = product.shortDescr;
+		vp.weight = product.getWeight();
+	
+		if (null != product.getImageURL() && product.getImageURL().length() > 0)
+			try {
+				vp.imageURL = StorageHelper.saveImage(product.getImageURL(), shop.ownerId, true, pm);
+			} catch (Throwable ie) {
+				ie.printStackTrace();
+				// throw new InvalidOperation(VoError.IncorrectParametrs,
+				// ie.getMessage());
 			}
-			vp.topicSet = details.getTopicSet();
+		vp.imagesURLset = new ArrayList<String>();
+		if (null != details.getImagesURLset())
+			for (String imgURL : details.getImagesURLset())
+				if (null != imgURL && imgURL.length() > 0)
+					try {
+						vp.imagesURLset.add(StorageHelper.saveImage(imgURL, shop.ownerId, true, pm));
+					} catch (Throwable ie) {
+						//logger.warn("Failed to update image from URL: '"+imgURL+"'. "+ie.getMessage());
+						// throw new InvalidOperation(VoError.IncorrectParametrs,
+						// ie.getMessage());
+					}
 
-			/*VoProducer producer = */pm.getObjectById(VoProducer.class, product.getProducerId());
-			vp.producerId = product.getProducerId();
-			vp.minClientPack = product.minClientPack;
-			vp.minProducerPack = details.minProducerPack;
-			vp.prepackRequired = product.prepackRequired;
-			vp.knownNames = new HashSet<String>();
-			if (details.knownNames != null)
-				for (String name : details.knownNames) {
-					vp.knownNames.add(name);
-				}
-			vp.unitName = product.unitName;
-			vp.importId = product.id;
-			vp.socialNetworks = details.socialNetworks;
+		vp.price = product.getPrice();
+		vp.setScore(1);
+		vp.setFullDescr(details.getFullDescr());
 
-			pm.makePersistent(vp);
-			return vp;
-		} finally {
-			if (null == _pm)
-				pm.close();
+		vp.pricesMap = convertFromPriceTypeMap(details.getPricesMap(), new HashMap<Integer, Double>());
+		vp.optionsMap = details.getOptionsMap();
+
+		vp.shopId = shop.getId();
+		vp.categories = details.getCategories();
+		for (Long cid : vp.categories) {
+			VoProductCategory pcat = pm.getObjectById(VoProductCategory.class, cid);
+			pcat.updateProductCount(1,pm);
+			pm.makePersistent(pcat);
 		}
+		vp.topicSet = details.getTopicSet();
+
+		/*VoProducer producer = */pm.getObjectById(VoProducer.class, product.getProducerId());
+		vp.producerId = product.getProducerId();
+		vp.minClientPack = product.minClientPack;
+		vp.minProducerPack = details.minProducerPack;
+		vp.prepackRequired = product.prepackRequired;
+		vp.knownNames = new HashSet<String>();
+		if (details.knownNames != null)
+			for (String name : details.knownNames) {
+				vp.knownNames.add(name);
+			}
+		vp.unitName = product.unitName;
+		vp.importId = product.id;
+		vp.socialNetworks = details.socialNetworks;
+
+		pm.makePersistent(vp);
+		return vp;
+
 	}
 
 	// =====================================================================================================================
@@ -224,7 +220,7 @@ public class VoProduct implements Serializable {
 	}
 
 	// =====================================================================================================================
-	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager _pm) throws InvalidOperation {
+	public VoProduct(long shopId, FullProductInfo fpi, PersistenceManager pm) throws InvalidOperation {
 		this.setScore(1);
 		Product product = fpi.getProduct();
 		ProductDetails details = fpi.getDetails();
@@ -248,10 +244,7 @@ public class VoProduct implements Serializable {
 		this.minProducerPack = details.minProducerPack;
 		this.prepackRequired = product.prepackRequired;
 		
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-
-		try {
-
+		try{
 			VoShop shop = pm.getObjectById(VoShop.class, shopId);
 
 			try {
@@ -284,10 +277,7 @@ public class VoProduct implements Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to create Product" + e.getMessage());
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		} 
 	}
 
 	// =====================================================================================================================

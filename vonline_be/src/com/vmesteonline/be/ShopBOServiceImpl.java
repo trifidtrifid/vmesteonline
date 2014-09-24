@@ -86,13 +86,14 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public long registerShop(Shop shop) throws InvalidOperation {
-		return shop.id = new VoShop(shop).getId();
+		PersistenceManager pm = getPM();
+		return shop.id = new VoShop(shop,pm).getId();
 	}
 
 	// ======================================================================================================================
 	@Override
 	public long registerProductCategory(ProductCategory productCategory, long shopId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			if (0 == shopId)
 				shopId = ShopServiceHelper.getCurrentShopId( this, pm );
@@ -109,8 +110,6 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			return voProductCategory.getId();
 		} catch (JDOObjectNotFoundException onfe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No Vo Shop found by ID=" + shopId);
-		} finally {
-			pm.close();
 		}
 	}
 //======================================================================================================================
@@ -138,7 +137,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public List<Long> uploadProducts(List<FullProductInfo> products, long shopId, boolean cleanShopBeforeUpload) throws InvalidOperation {
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		List<Long> productIds;
 		
 		try {
@@ -181,15 +180,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to load Products. " + e);
-		} finally {
-			pm.close();
-		}
+		} 
 		return productIds;
 	}
 	
 	// ======================================================================================================================
 	private void uploadProducers(ArrayList<Producer> producers, boolean clean) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		Long userId = super.getCurrentUserId(pm);
@@ -221,9 +218,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to upload categories. " + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
@@ -233,8 +228,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 		Map<Long, VoProductCategory> categoresCacheMap = new HashMap<Long, VoProductCategory>();
 
-		PersistenceManager pm = PMF.getPm();
-
+		PersistenceManager pm = getPM();
+		
 		List<ProductCategory> categoriesCreated = new ArrayList<ProductCategory>();
 
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
@@ -311,9 +306,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to upload categories. " + e);
-		} finally {
-			pm.close();
-		}
+		} 
 		return categoriesCreated;
 	}
 
@@ -324,7 +317,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		dateFrom -= dateFrom % 86400;
 		dateTo += ( 86400 - dateTo % 86400 );
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		List<Order> ol;
 		try {
 			Query voquery = pm.newQuery(VoOrder.class);
@@ -348,9 +341,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed load orders for userID=" + userId + " shopId=" + shopId + "." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 		return ol;
 	}
 
@@ -358,7 +349,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public void updateOrderStatusesById(Map<Long, OrderStatus> orderStatusMap) throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Transaction ct = pm.currentTransaction();
 		ct.begin();
 		try {
@@ -376,14 +367,12 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			e.printStackTrace();
 			ct.rollback();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to update order statuses." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	
 	@Override
 	public void setDate(OrderDates dates) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to setDate. SHOP ID is not set in session context.");
@@ -396,15 +385,12 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
-		} finally {
-			pm.close();
 		}
-		
 	}
 	
 	@Override
 	public void removeDate(OrderDates dates) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		Long shopId = super.getSessionAttribute(CurrentAttributeType.SHOP, pm);
 		if (null == shopId || 0 == shopId) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to removeDate. SHOP ID is not set in session context.");
@@ -426,9 +412,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to getDates for shopId=" + shopId + "." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 		
 	}
 	
@@ -437,7 +421,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 	@Override
 	public void setOrderPaymentStatus(long orderId, PaymentStatus newStatus) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setPaymentStatus(newStatus);
@@ -445,15 +429,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderPaymentStatus to " + newStatus.name() + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
 	@Override
 	public void setProductPrices(Map<Long, Map<PriceType, Double>> newPricesMap) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		long shopId = ShopServiceHelper.getCurrentShopId( this, pm );
 		// Transaction ct = pm.currentTransaction(); //cross tranaction required
 		// ct.begin();
@@ -487,45 +469,39 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			e.printStackTrace();
 			// ct.rollback();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to update order prices map." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
 	@Override
 	public void setDeliveryCosts(Map<DeliveryType, Double> newDeliveryCosts) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
 			currentShop.getDeliveryCosts().putAll(VoShop.convertFromDeliveryTypeMap(newDeliveryCosts, new HashMap<Integer, Double>()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setDeliveryCosts." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
 	@Override
 	public void setPaymentTypesCosts(Map<PaymentType, Double> setPaymentTypesCosts) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
 			currentShop.getPaymentTypes().putAll(VoShop.convertFromPaymentTypeMap(setPaymentTypesCosts, new HashMap<Integer, Double>()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setDeliveryCosts." + e);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
 	@Override
 	public void setOrderStatus(long orderId, OrderStatus newStatus) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder = pm.getObjectById(VoOrder.class, orderId);
 			currentOrder.setStatus(newStatus);
@@ -533,8 +509,6 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to setOrderPaymentStatus to " + newStatus.name() + e);
-		} finally {
-			pm.close();
 		}
 	}
 
@@ -542,7 +516,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 	@Override
 	public void updateProduct(FullProductInfo newInfoWithOldId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoProduct vop = pm.getObjectById(VoProduct.class, newInfoWithOldId.getProduct().getId());
 			long cuid = getCurrentUserId(pm);
@@ -554,15 +528,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.makePersistent(vop);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update product: " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
 	@Override
 	public void updateShop(Shop newShopWithOldId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop vos = pm.getObjectById(VoShop.class, newShopWithOldId.getId());
 			long cuid = getCurrentUserId(pm);
@@ -570,9 +542,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.makePersistent(vos);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
@@ -581,8 +551,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		updateCategory(newCategoryInfo, null);
 	}
 
-	public void updateCategory(ProductCategory newCategoryInfo, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+	public void updateCategory(ProductCategory newCategoryInfo, PersistenceManager pm) throws InvalidOperation {
+		
 		try {
 			VoProductCategory vopc = pm.getObjectById(VoProductCategory.class, newCategoryInfo.getId());
 			long cuid = getCurrentUserId(pm);
@@ -593,10 +563,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update CAtegory: " + e.getMessage());
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
@@ -622,8 +589,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	// ======================================================================================================================
-	public void updateProducer(Producer newInfoWithOldId, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+	public void updateProducer(Producer newInfoWithOldId, PersistenceManager pm) throws InvalidOperation {
 		try {
 			VoProducer vopc = pm.getObjectById(VoProducer.class, newInfoWithOldId.getId());
 			long cuid = getCurrentUserId(pm);
@@ -631,10 +597,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			pm.makePersistent(vopc);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update shop: " + e.getMessage());
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		} 
 	}
 
 	@Override
@@ -652,6 +615,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public DataSet importData(DataSet data) throws InvalidOperation {
 
+		
 		for (ImportElement ie : data.getData()) {
 			switch (ie.getType()) {
 			case IMPORT_SHOP: {
@@ -660,7 +624,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					public void process(List<ShopDescription> list) throws InvalidOperation {
 						processUpdateShops(list);
 					}
-				});
+				}, pm);
 			}
 				break;
 			case IMPORT_PRODUCTS: {
@@ -670,7 +634,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 							public void process(List<ProductDescription> list) throws InvalidOperation {
 								processUpdateProducts(list);
 							}
-						});
+						}, pm);
 			}
 				break;
 			case IMPORT_PRODUCERS: {
@@ -680,7 +644,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 							public void process(List<ProducerDescription> list) throws InvalidOperation {
 								processUpdateProducers(list);
 							}
-						});
+						}, pm);
 			}
 				break;
 			case IMPORT_CATEGORIES: {
@@ -690,7 +654,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					public void process(List<CategoryDesrciption> list) throws InvalidOperation {
 						processUpdateCategories(list);
 					}
-				});
+				}, pm);
 			}
 				break;
 			default:
@@ -701,7 +665,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	// ======================================================================================================================
-	private <T> void importInformation(ImportElement ie, ExchangeFieldType idField, T descriptionObject, ImportDataProcessor<T> processor)
+	private <T> void importInformation(ImportElement ie, ExchangeFieldType idField, T descriptionObject, ImportDataProcessor<T> processor, PersistenceManager pm)
 			throws InvalidOperation {
 		Map<Integer, String> fieldsMap = FieldTranslator.Translate(idField.getValue(), ie.getFieldsMap(), descriptionObject);
 		String dataUrl = ie.getUrl();
@@ -709,7 +673,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		if (null != dataUrl) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
-				StorageHelper.getFile(dataUrl, baos, null);
+				StorageHelper.getFile(dataUrl, baos, null, pm);
 				baos.close();
 			} catch (IOException e) {
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to read data from URL:" + dataUrl + ". " + e.getLocalizedMessage());
@@ -776,30 +740,21 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	// ======================================================================================================================
 	@Override
 	public long registerProduct(FullProductInfo fpi, long shopId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			VoShop shop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId);
-			return registerProduct(fpi, shop, pm);
-		} finally {
-			pm.close();
-		}
+		PersistenceManager pm = getPM();
+		VoShop shop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId);
+		return registerProduct(fpi, shop, pm);
 	}
 
 	// ======================================================================================================================
-	public long registerProduct(FullProductInfo fpi, VoShop _shop, PersistenceManager _pm) throws InvalidOperation {
-		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
-		try {
-			VoShop shop = _shop == null ? ShopServiceHelper.getCurrentShop( this, pm ) : _shop;
-			VoProduct product = VoProduct.createObject(shop, fpi, pm);
-			
-			removeCategoryFromCache(product.getShopId(), product.getCategories(), pm);
-			ShopServiceImpl.dropProductMapFromCache(product.getShopId());
-			
-			return product.getId();
-		} finally {
-			if (_pm == null)
-				pm.close();
-		}
+	public long registerProduct(FullProductInfo fpi, VoShop _shop, PersistenceManager pm) throws InvalidOperation {
+
+		VoShop shop = _shop == null ? ShopServiceHelper.getCurrentShop( this, pm ) : _shop;
+		VoProduct product = VoProduct.createObject(shop, fpi, pm);
+		
+		removeCategoryFromCache(product.getShopId(), product.getCategories(), pm);
+		ShopServiceImpl.dropProductMapFromCache(product.getShopId());
+		
+		return product.getId();
 	}
 
 	// ======================================================================================================================
@@ -813,7 +768,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ds.id = 0;
 		ds.name = "TotalOrdersReport";
 		
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			long currentUserId = getCurrentUserId(pm);
@@ -981,9 +936,6 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e);
-
-		}finally {
-			pm.close();
 		}
 	}
 //======================================================================================================================
@@ -1077,7 +1029,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ds.id = 0;
 		ds.name = "TotalProductsReport";
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
@@ -1172,9 +1124,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e.getMessage());
 
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// ======================================================================================================================
@@ -1188,7 +1138,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ds.id = 0;
 		ds.name = "TotalProductsPackReport";
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
@@ -1273,9 +1223,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e.getMessage());
 
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	
 //=====================================================================================================================
@@ -1360,9 +1308,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	
 	public MatrixAsList parseCSVfile(String url) throws InvalidOperation, TException {
+		
+		PersistenceManager pm = getPM();
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StorageHelper.getFile(url, baos, null);
+			StorageHelper.getFile(url, baos, null, pm);
 			baos.close();
 			List<List<String>> matrix = CSVHelper.parseCSV(baos.toByteArray(), null, null, null);
 			int rowSize = 0;
@@ -1411,7 +1361,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	
 	@Override
 	public void setShopDeliveryByWeightIncrement(long shopId, Map<Integer, Integer> deliveryByWeightIncrement) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryByWeightIncrement(deliveryByWeightIncrement);
@@ -1420,15 +1370,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
 			
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	// ======================================================================================================================
 
 	@Override
 	public void setShopDeliveryCostByDistance(long shopId, Map<Integer, Double> deliveryCostByDistance) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryCostByDistance(deliveryCostByDistance);
@@ -1436,15 +1384,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	// ======================================================================================================================
 
 	@Override
 	public void setShopDeliveryTypeAddressMasks(long shopId, Map<DeliveryType, String> deliveryTypeAddressMasks) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop theShop = 0 == shopId ? ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId );
 			theShop.setDeliveryAddressMasksText(deliveryTypeAddressMasks);
@@ -1452,9 +1398,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:"+shopId);
-		} finally {
-			pm.close();
-		}	
+		} 
 	}
 //======================================================================================================================
 
@@ -1464,7 +1408,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	@Override
 	public UserInfo setUserShopRole(long shopId, String email, UserShopRole role) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<VoUser> vul = (List<VoUser>) pm.newQuery(VoUser.class,"email=='"+email+"'").execute();
 			if( vul.size() == 0 )
@@ -1504,16 +1448,14 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch (JDOObjectNotFoundException ex){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "FAiled to set role: " + ex);
-		} finally {
-			pm.close();
-		}
+		} 
 		
 	}
 //======================================================================================================================
 
 	@Override
 	public void deleteProduct(long productId, long shopId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoProduct vop = pm.getObjectById(VoProduct.class, productId);
 			List<VoOrderLine> orderLines = (List<VoOrderLine>)pm.newQuery(VoOrderLine.class,"productId=="+productId).execute();
@@ -1528,15 +1470,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No product found by ID:"+productId);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 //======================================================================================================================
 
 	@Override
 	public void deleteCategory(long categoryId, long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoProductCategory voc = pm.getObjectById(VoProductCategory.class, categoryId);
 			long parentId = voc.getParent();
@@ -1565,15 +1505,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No category found by ID:"+categoryId);
-		} finally {
-			pm.close();
-		}	
+		} 
 	}
 //======================================================================================================================
 
 	@Override
 	public void deleteProducer(long producerId, long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoProducer vopr = pm.getObjectById(VoProducer.class, producerId);
 			List<VoProduct> productsOfProducer = (List<VoProduct>)pm.newQuery(VoProduct.class,"producerId=="+producerId).execute();
@@ -1593,38 +1531,32 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No producer found by ID:"+producerId);
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	
 	@Override
 	public void activate(long shopId, boolean flag) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			pm.getObjectById(VoShop.class, shopId).setActivated(flag);
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
 	public List<OrderDates> getDates() throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			 return ShopServiceHelper.getCurrentShop( this, pm ).getDates();
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
 	public void setShopPages(ShopPages pagesInfo) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop currentShop = ShopServiceHelper.getCurrentShop( this, pm );
 			currentShop.setAboutShopPageContentURL(pagesInfo.aboutPageContentURL);
@@ -1633,15 +1565,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			currentShop.setSocialNetworks( pagesInfo.socialNetworks);
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
-		} finally {
-			pm.close();
-		}
+		} 
 		
 	}
 
 	@Override
 	public ShopPages getShopPages(long shopId) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop currentShop =  0==shopId ? 
 					ShopServiceHelper.getCurrentShop( this, pm ) : pm.getObjectById(VoShop.class, shopId);
@@ -1654,15 +1584,12 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
-		} finally {
-			pm.close();
-		}
-		
+		} 
 	}
 
 	@Override
 	public double totalShopReturn(long shopId, int fromDate, int toDate) throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoShop currentShop = pm.getObjectById(VoShop.class, shopId);
 			List<VoOrder> orders = (List<VoOrder>)pm.newQuery(VoOrder.class, "shopId=="+shopId+
@@ -1675,9 +1602,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	
 	

@@ -53,7 +53,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser user = getCurrentUser(pm);
 			user.setName(userInfo.firstName);
@@ -61,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			user.setLastName(userInfo.lastName);
 			pm.makePersistent(user);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -71,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateUserContacts(UserContacts contacts) throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser user = getCurrentUser(pm);
 			if (null != contacts.getMobilePhone())
@@ -105,7 +105,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			pm.makePersistent(user);
 		} finally {
-			pm.close();
+			
 		}
 	}
 
@@ -118,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public ShortProfile getShortProfile() throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser voUser = getCurrentUser(pm);
 			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
@@ -128,13 +128,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			return sp;
 		} finally {
-			pm.close();
+			
 		}
 	}
 
-	public static ShortUserInfo getShortUserInfo(long userId) {
+	public ShortUserInfo getShortUserInfo(long userId) {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser voUser = pm.getObjectById(VoUser.class, userId);
 			return voUser.getShortUserInfo();
@@ -142,7 +142,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			logger.warn("request short user info for absent user " + userId);
 		} finally {
-			pm.close();
+			
 		}
 		return null;
 	}
@@ -151,7 +151,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<Group> getUserGroups() throws InvalidOperation {
 		try {
 
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = getPM();
 			
 			try {
 				long userId = getCurrentUserId(pm);
@@ -179,7 +179,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 				return groups;
 			} finally {
-				pm.close();
+				
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public List<Rubric> getUserRubrics() throws InvalidOperation, TException {
 		long userId = getCurrentUserId();
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 
 			VoUser user = pm.getObjectById(VoUser.class, userId);
@@ -212,13 +212,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			return rubrics;
 		} finally {
-			pm.close();
+			
 		}
 	}
 
-	public static List<String> getLocationCodesForRegistration() throws InvalidOperation {
+	public List<String> getLocationCodesForRegistration() throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class, true);
 			if (!postalAddresses.iterator().hasNext()) {
@@ -233,14 +233,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			return locations;
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public void deleteUserAddress(PostalAddress newAddress) throws InvalidOperation, TException {
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 
 			VoPostalAddress addr = new VoPostalAddress(newAddress, pm);
@@ -258,14 +258,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to deleteUserAddress. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 
 	}
 
 	@Override
 	public List<Country> getCounties() throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			Extent<VoCountry> vocs = pm.getExtent(VoCountry.class);
 			List<Country> cl = new ArrayList<Country>();
@@ -277,39 +277,39 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCounties. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public UserContacts getUserContacts() throws InvalidOperation, TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser u = getCurrentUser(pm);
 			UserContacts uc = new UserContacts();
 			if (u.getAddress() == null) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
 			} else {
-				uc.setHomeAddress(u.getAddress().getPostalAddress());
+				uc.setHomeAddress(u.getAddress().getPostalAddress(pm));
 			}
 			uc.setEmail(u.getEmail());
 			uc.setMobilePhone(u.getMobilePhone());
 			return uc;
 		} finally {
-			pm.close();
+			
 		}
 	}
 	
 	@Override
 	public UserContacts getUserContactsExt(long userId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser u = pm.getObjectById(VoUser.class, userId);
 			UserContacts uc = new UserContacts();
 			if (u.getAddress() == null) {
 				uc.setAddressStatus(UserStatus.UNCONFIRMED);
 			} else {
-				uc.setHomeAddress(u.getAddress().getPostalAddress());
+				uc.setHomeAddress(u.getAddress().getPostalAddress(pm));
 			}
 			uc.setEmail(u.getEmail());
 			uc.setMobilePhone(u.getMobilePhone());
@@ -318,38 +318,38 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
 			
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public UserInfo getUserInfo() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser u = getCurrentUser(pm);
 			UserInfo ui = u.getUserInfo();
 			return ui;
 		} finally {
-			pm.close();
+			
 		}
 	}
 	
 	@Override
 	public UserInfo getUserInfoExt(long userId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			return pm.getObjectById(VoUser.class, userId).getUserInfo();
 		} catch( JDOObjectNotFoundException onfe){
 			throw new InvalidOperation(VoError.NotAuthorized, "No access to user Info");
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<City> getCities(long countryId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 
 			List<City> cl = new ArrayList<City>();
@@ -365,14 +365,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCities. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Street> getStreets(long cityId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<Street> cl = new ArrayList<Street>();
 			Query q = pm.newQuery(VoStreet.class);
@@ -388,14 +388,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to load STreets. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Building> getBuildings(long streetId) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			List<Building> cl = new ArrayList<Building>();
 			Query q = pm.newQuery(VoBuilding.class);
@@ -410,13 +410,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getBuildings. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public void updateUserAvatar(String url) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		VoUser voUser = getCurrentUser(pm);
 
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
@@ -447,7 +447,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "can't find image");
 		} finally {
-			pm.close();
+			
 		}
 
 	}
@@ -458,7 +458,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		FullAddressCatalogue fac = getObjectFromCache("fullAddressCatalogue");
 		
 		if( null==fac ){
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = getPM();
 			try {
 	
 				Extent<VoCountry> vocs = pm.getExtent(VoCountry.class);
@@ -490,7 +490,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
 			} finally {
-				pm.close();
+				
 			}
 		}
 		return fac;
@@ -499,7 +499,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			currentUser.setCurrentPostalAddress(new VoPostalAddress(newAddress, pm), pm);
@@ -507,7 +507,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 		return true;
 	}
@@ -515,7 +515,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Country createNewCountry(String name) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			// TODO check that there is no country with the same name
 			VoCountry vc = new VoCountry(name,pm);
@@ -535,14 +535,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCountry. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public City createNewCity(long countryId, String name) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoCountry vco = pm.getObjectById(VoCountry.class, countryId);
 			removeObjectFromCache("fullAddressCatalogue");
@@ -551,14 +551,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCity. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Street createNewStreet(long cityId, String name) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			// TODO check that there is no street with the same name
 			VoCity vc = pm.getObjectById(VoCity.class, cityId);
@@ -569,14 +569,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Building createNewBuilding(long streetId, String fullNo, String longitude, String lattitude) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			// TODO check that there is no building with the same name
 			VoStreet vs = pm.getObjectById(VoStreet.class, streetId);
@@ -593,7 +593,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				if (longitude == null || lattitude == null || longitude.isEmpty() || lattitude.isEmpty()) { // calculate
 					// location
 					try {
-						Pair<String, String> position = VoGeocoder.getPosition(voBuilding,false);
+						Pair<String, String> position = VoGeocoder.getPosition(voBuilding,false,pm);
 						voBuilding.setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -608,13 +608,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public boolean addUserAddress(PostalAddress newAddress) throws TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			pm.retrieve(currentUser);
@@ -624,32 +624,32 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 
 	}
 
 	@Override
 	public Set<PostalAddress> getUserAddresses() throws TException {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			Set<PostalAddress> pas = new HashSet<PostalAddress>();
 			for (String pa : currentUser.getAddresses()) {
-				pas.add(currentUser.getDeliveryAddress(pa).getPostalAddress());
+				pas.add(currentUser.getDeliveryAddress(pa).getPostalAddress(pm));
 			}
 			return pas;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
 		} finally {
-			pm.close();
+			
 		}
 	}
 
 	@Override
 	public PostalAddress getUserHomeAddress() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);
 			if (null == currentUser)
@@ -660,7 +660,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 			}
 			return address.getPostalAddress(pm);
 		} finally {
-			pm.close();
+			
 		}
 	}
 

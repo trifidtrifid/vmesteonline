@@ -101,7 +101,7 @@ public class Defaults {
 			clearUsers(pm);
 			initializeRubrics(pm);
 			initializeGroups(pm);
-			List<String> locCodes = initializeTestLocations();
+			List<String> locCodes = initializeTestLocations(pm);
 			initializeUsers(locCodes);
 			initializeShop();
 			
@@ -166,7 +166,7 @@ public class Defaults {
 			ShopBOServiceImpl sbsi = new ShopBOServiceImpl("123");
 			asi.login(user1email, user1pass);
 
-			PersistenceManager pm = PMF.getPm();
+			PersistenceManager pm = PMF.getNewPm();
 			PostalAddress postalAddress;
 
 			try {
@@ -394,9 +394,8 @@ public class Defaults {
 	}
 
 	// ======================================================================================================================
-	private static List<String> initializeTestLocations() throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-
+	private static List<String> initializeTestLocations(PersistenceManager pm) throws InvalidOperation {
+		
 		try {
 			List<String> locations = new ArrayList<String>();
 			VoStreet street = new VoStreet(new VoCity(new VoCountry(COUNTRY, pm), CITY, pm), "Республиканская", pm);
@@ -419,7 +418,7 @@ public class Defaults {
 
 			for (VoPostalAddress pa : addresses) {
 				try {
-					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding(),true);
+					Pair<String, String> position = VoGeocoder.getPosition(pa.getBuilding(),true, pm);
 					pa.getBuilding().setLocation(new BigDecimal(position.first), new BigDecimal(position.second));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -432,8 +431,6 @@ public class Defaults {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to initTestLocations. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 }

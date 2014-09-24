@@ -33,7 +33,7 @@ public class VoProductCategory {
 	}
 
 	public VoProductCategory(VoShop shop, long importId, long parentId, String name, String descr, List<String> logoURLset, List<Long> topicSet,
-			long ownedId,  Map<String,String>  socialNetworks, PersistenceManager _pm) {
+			long ownedId,  Map<String,String>  socialNetworks, PersistenceManager pm) {
 
 		this.name = name;
 		this.setDescr(descr);
@@ -54,7 +54,7 @@ public class VoProductCategory {
 		this.setImportId(importId);
 		this.productCount = 0;
 
-		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
+		
 		try {
 			if (0 != parentId) {
 				VoProductCategory parent = pm.getObjectById(VoProductCategory.class, parentId);
@@ -69,10 +69,7 @@ public class VoProductCategory {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		} 
 	}
 
 	public long getImportId() {

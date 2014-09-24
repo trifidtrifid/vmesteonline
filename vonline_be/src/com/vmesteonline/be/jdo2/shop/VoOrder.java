@@ -60,7 +60,7 @@ public class VoOrder {
 		this.priceType = priceType;
 	}
 
-	public VoOrder(VoUser user, VoShop shop, int date, PriceType priceType, String comment, PersistenceManager _pm) throws InvalidOperation{
+	public VoOrder(VoUser user, VoShop shop, int date, PriceType priceType, String comment, PersistenceManager pm) throws InvalidOperation{
 		this.user = user;
 		this.date = date;
 		this.shopId = shop.getId();
@@ -68,7 +68,6 @@ public class VoOrder {
 		if( date < createdAt )
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Date for order must be in the future, but provided ("+date+") in the past: "+ new Date(date*1000));
 		
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
 		this.status = OrderStatus.NEW;
 		this.delivery = DeliveryType.SELF_PICKUP;
 		this.deliveryCost = 0D;
@@ -85,13 +84,10 @@ public class VoOrder {
 		} catch (Exception ex){
 			ex.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to create order. "+ex.getMessage());
-		} finally {
-			if( _pm == null) pm.close();
-		}
+		} 
 	}
 	
-	public double addOrderLine( OrderLine orderLine ) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+	public double addOrderLine( OrderLine orderLine,  PersistenceManager pm) throws InvalidOperation {
 		try {
 			VoProduct product = pm.getObjectById(VoProduct.class, orderLine.getProduct().getId());
 			
@@ -111,8 +107,6 @@ public class VoOrder {
 			pm.makePersistent(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			pm.close();
 		}
 		return this.getTotalCost();
 	}
@@ -122,7 +116,7 @@ public class VoOrder {
 	} 
 	public OrderDetails getOrderDetails(Map<Long, VoProduct> productsMap, PersistenceManager pm){
 		OrderDetails od = new OrderDetails(createdAt, delivery, deliveryCost, 
-				null == deliveryTo ? null : deliveryTo.getPostalAddress(),
+				null == deliveryTo ? null : deliveryTo.getPostalAddress(pm),
 						paymentType, paymentStatus, new ArrayList<OrderLine>(), comment, weightGramm);
 		
 		List<VoOrderLine> oLines = (List<VoOrderLine>) pm.newQuery(VoOrderLine.class,"orderId=="+id.getId()).execute();

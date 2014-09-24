@@ -51,8 +51,7 @@ public class VoGeocoder {
  * @return location, if found
  * @throws InvalidOperation
  */
-	public static Pair<String, String> getPosition(VoBuilding building, boolean fixNames) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+	public static Pair<String, String> getPosition(VoBuilding building, boolean fixNames, PersistenceManager pm) throws InvalidOperation {
 		try {
 			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreet());
 			VoCity city = pm.getObjectById(VoCity.class, street.getCity().getId());
@@ -106,9 +105,7 @@ public class VoGeocoder {
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + ( e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
-			} finally {
-			pm.close();
-		}
+			} 
 	}
 
 	public static AddressInfo resolveAddressString(String address) throws InvalidOperation {

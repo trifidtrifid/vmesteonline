@@ -17,23 +17,20 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 
 	@Override
 	public String copyFileContent(String sourceUrl, boolean isPublic) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			
+		PersistenceManager pm = getPM();
+		try{
 			long uid = getCurrentUserId(pm);
 			return StorageHelper.saveImage( sourceUrl, uid, isPublic, pm);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to save image: "+e.getMessage());
-		} finally {
-			pm.close();
 		}
 	}
 
 	@Override
 	public String replaceFileFromURL(String oldUrl, String newSourceUrl) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			
 			long uid = getCurrentUserId(pm);
@@ -42,8 +39,6 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to replace image: "+e.getMessage());
-		} finally {
-			pm.close();
 		}
 	}
 
@@ -54,14 +49,12 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 
 	@Override
 	public void deleteFile(String url) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = getPM();
 		try {
 			StorageHelper.deleteImage(url, pm);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to delete image: "+e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 }

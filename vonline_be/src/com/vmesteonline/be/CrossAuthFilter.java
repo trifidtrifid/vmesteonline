@@ -68,7 +68,7 @@ public class CrossAuthFilter implements javax.servlet.Filter {
 						String confUrl = refUrl+"?rt=co&si="+req.getSession().getId();
 						logger.fine("Got 'co' check the session");
 
-						PersistenceManager pm = PMF.getPm();
+						PersistenceManager pm = ServiceImpl.getPM();
 						try {
 							VoSession cs = pm.getObjectById(VoSession.class,req.getSession().getId());
 							long userId = cs.getUserId();
@@ -82,10 +82,7 @@ public class CrossAuthFilter implements javax.servlet.Filter {
 						} catch( Exception e){
 							logger.warning("Failed to confirm user."+e.getMessage());
 							resp.sendRedirect(ref);
-							
-						} finally {
-							pm.close();
-						}		
+						} 		
 					}
 				}
 			} catch (Exception e){

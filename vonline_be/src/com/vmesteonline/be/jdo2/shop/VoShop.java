@@ -44,15 +44,14 @@ import com.vmesteonline.be.utils.VoHelper;
 @PersistenceCapable
 public class VoShop {
 
-	public VoShop(Shop shop) throws InvalidOperation {
+	public VoShop(Shop shop, PersistenceManager pm) throws InvalidOperation {
 		this(shop.getName(), shop.getDescr(), shop.getAddress(), shop.getLogoURL(), shop.getOwnerId(), shop.getTopicSet(), shop.getTags(), shop
-				.getDeliveryCosts(), shop.getPaymentTypes(), shop.getHostName());
+				.getDeliveryCosts(), shop.getPaymentTypes(), shop.getHostName(),pm);
 	}
 
 	public VoShop(String name, String descr, PostalAddress postalAddress, String logoURL, long ownerId, List<Long> topicSet, List<String> tags,
-			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes, String hostName) throws InvalidOperation {
+			Map<DeliveryType, Double> deliveryCosts, Map<PaymentType, Double> paymentTypes, String hostName, PersistenceManager pm) throws InvalidOperation {
 
-		PersistenceManager pm = PMF.getPm();
 		this.activated = false;
 		this.name = name;
 		this.setDescr(descr);
@@ -89,16 +88,14 @@ public class VoShop {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to create shop." + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
-	public Shop getShop() {
+	public Shop getShop(PersistenceManager pm) {
 		List<Long> topicIds = new ArrayList<Long>();
 		List<Long> topicss = getTopics();
 		if(null!=topicss) topicIds.addAll(topicss);
-		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(), logoURL, ownerId, topicIds, tags,
+		Shop shop = new Shop(id.getId(), name, descr.getValue(), null == address ? null : address.getPostalAddress(pm), logoURL, ownerId, topicIds, tags,
 				convertToDeliveryTypeMap(deliveryCosts, new HashMap<DeliveryType, Double>()), convertToPaymentTypeMap(paymentTypes,
 						new HashMap<PaymentType, Double>()),hostName);
 		shop.deliveryByWeightIncrement = deliveryByWeightIncrement;
@@ -507,7 +504,7 @@ public class VoShop {
 
 	public void update(Shop ns, long userId, boolean isPublic, PersistenceManager pm) throws InvalidOperation, IOException {
 		
-		if(  null!=ns.getAddress() && !ns.getAddress().equals(address.getPostalAddress()) )
+		if(  null!=ns.getAddress() && !ns.getAddress().equals(address.getPostalAddress(pm)) )
 			this.setAddress( new VoPostalAddress( ns.getAddress(), pm ));
 		if( ns.getOwnerId() != 0L && ns.getOwnerId() != this.ownerId )
 			this.setOwnerId(ns.getOwnerId());

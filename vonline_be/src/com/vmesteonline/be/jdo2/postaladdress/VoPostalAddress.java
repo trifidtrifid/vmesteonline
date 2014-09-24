@@ -43,43 +43,37 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager _pm) throws InvalidOperation {
+	public VoPostalAddress(PostalAddress postalAddress, PersistenceManager pm) throws InvalidOperation {
 		
 		if (null == postalAddress)
 			throw new InvalidOperation(VoError.IncorrectParametrs, "can't init VoPostalAddress object. Input parametr is null");
 
-
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		VoBuilding vob;
 		try {
-			VoBuilding vob;
-			try {
-				vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
-			} catch (JDOObjectNotFoundException jonfe) {
-				jonfe.printStackTrace();
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
-			} 
-			// check that the address exists
-			Query q = pm.newQuery(VoPostalAddress.class);
-			q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
-					+ postalAddress.getFlatNo());
-			List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
-			if (pal.size() > 0) {
-				this.id = pal.get(0).id;
-			}
-			pm.retrieve(vob);
-			
-			this.building = vob;
-			this.building.longitude = vob.getLongitude().toString();
-			this.building.latitude = vob.getLatitude().toString();
-			this.staircase = postalAddress.getStaircase();
-			this.floor = postalAddress.getFloor();
-			this.flatNo = postalAddress.getFlatNo();
-			this.comment = postalAddress.getComment();
-			pm.makePersistent(this);
-		} finally {
-			if (null == _pm)
-				pm.close();
+			vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
+		} catch (JDOObjectNotFoundException jonfe) {
+			jonfe.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
+		} 
+		// check that the address exists
+		Query q = pm.newQuery(VoPostalAddress.class);
+		q.setFilter("building == :key && staircase == " + postalAddress.getStaircase() + " && floor == " + postalAddress.getFloor() + " && flatNo == "
+				+ postalAddress.getFlatNo());
+		List<VoPostalAddress> pal = (List<VoPostalAddress>) q.execute(postalAddress.getBuilding().getId());
+		if (pal.size() > 0) {
+			this.id = pal.get(0).id;
 		}
+		pm.retrieve(vob);
+		
+		this.building = vob;
+		this.building.longitude = vob.getLongitude().toString();
+		this.building.latitude = vob.getLatitude().toString();
+		this.staircase = postalAddress.getStaircase();
+		this.floor = postalAddress.getFloor();
+		this.flatNo = postalAddress.getFlatNo();
+		this.comment = postalAddress.getComment();
+		pm.makePersistent(this);
+		
 	}
 
 	@Override
@@ -112,35 +106,21 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 		return building;
 	}
 
-	public PostalAddress getPostalAddress() {
-		return getPostalAddress(null);
-	}
-
-	public PostalAddress getPostalAddress(PersistenceManager _pm) {
+	public PostalAddress getPostalAddress(PersistenceManager pm) {
 		Key streetKey = building.getStreet();
-		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
-		try {
-			VoStreet voStreet = pm.getObjectById(VoStreet.class, streetKey);
-			return new PostalAddress(voStreet.getCity().getCountry().getCountry(), voStreet.getCity().getCity(), voStreet.getStreet(),
-					building.getBuilding(), staircase, floor, flatNo, comment);
-		} finally {
-			if (_pm == null)
-				pm.close();
-		}
+		VoStreet voStreet = pm.getObjectById(VoStreet.class, streetKey);
+		return new PostalAddress(voStreet.getCity().getCountry().getCountry(), voStreet.getCity().getCity(), voStreet.getStreet(),
+				building.getBuilding(), staircase, floor, flatNo, comment);
+	
 	}
 
-	public String getAddressText(PersistenceManager _pm) {
+	public String getAddressText(PersistenceManager pm) {
 		if( null == building.getAddressString() || building.getAddressString().trim().length() == 0 ) {
-			PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-			try {
-				PostalAddress pa = getPostalAddress(pm);
-				building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo + " [э." + floor + " п. "
-						+ staircase + "]");
-				return building.getAddressString();
-			} finally {
-				if (null == _pm)
-					pm.close();
-			}
+			PostalAddress pa = getPostalAddress(pm);
+			building.setAddressString( pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo + " [э." + floor + " п. "
+					+ staircase + "]");
+			return building.getAddressString();
+		
 		} else {
 			return building.getAddressString() + " кв. " + flatNo;
 		}

@@ -18,7 +18,7 @@ public final class PMF {
 		return pmfInstance;
 	}
 
-	public static PersistenceManager getPm() {
+	public static PersistenceManager getNewPm() {
 		return pmfInstance.getPersistenceManager();
 	}
 

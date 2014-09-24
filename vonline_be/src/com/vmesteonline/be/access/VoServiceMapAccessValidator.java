@@ -36,7 +36,10 @@ public class VoServiceMapAccessValidator extends VoTAccessValidator {
 
 
 	private boolean checkAccessForUser(long currentUserId, long categoryId, String method) {
-		PersistenceManager pm = PMF.getPm();
+		
+		return true;
+		
+		/*PersistenceManager pm = PMF.getPm();
 		try {
 			List<VoUserAccessBase> vuabl = (List<VoUserAccessBase>) pm.newQuery( VoUserAccessBase.class, "userId == "+currentUserId+" &&"
 					+ " categoryId == " + categoryId + " && methodName == '" + method +"'" ).execute();
@@ -47,7 +50,7 @@ public class VoServiceMapAccessValidator extends VoTAccessValidator {
 		} finally {
 			pm.close();
 		}
-		return false;
+		return false;*/
 	}
 
 }

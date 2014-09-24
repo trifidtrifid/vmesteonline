@@ -36,7 +36,7 @@ public class VoProducer {
 		this(shopId, userId, producer, null);
 	}
 
-	public VoProducer(long shopId, long userId, Producer producer, PersistenceManager _pm)throws InvalidOperation {
+	public VoProducer(long shopId, long userId, Producer producer, PersistenceManager pm)throws InvalidOperation {
 			
 		this.name = producer.getName();
 		this.setDescr( producer.getDescr());
@@ -44,33 +44,28 @@ public class VoProducer {
 		this.importId = producer.id;
 		this.socialNetworks = producer.socialNetworks;
 		
-		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-
 		try {
 			String logoURL2 = producer.getLogoURL();
-			this.logoURL = logoURL2 == null || logoURL2.trim().isEmpty() ? null : StorageHelper.saveImage(logoURL2, userId, true, _pm);
+			this.logoURL = logoURL2 == null || logoURL2.trim().isEmpty() ? null : StorageHelper.saveImage(logoURL2, userId, true, pm);
 		} catch (IOException e) {
 			//e.printStackTrace();
 			
 			//throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to load Image: "+e);
 		}
 		
+		
 		try {
-
-			try {
-				pm.getObjectById(VoShop.class, shopId);
-				
-			} catch (JDOObjectNotFoundException e) {
-				e.printStackTrace();
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
-			}
+			pm.getObjectById(VoShop.class, shopId);
 			
-			this.shopId = shopId;
-			pm.makePersistent(this);
-
-		} finally {
-			if( _pm == null ) pm.close();
+		} catch (JDOObjectNotFoundException e) {
+			e.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID=" + shopId + ". " + e);
 		}
+		
+		this.shopId = shopId;
+		pm.makePersistent(this);
+
+		
 	}
 
 	public Producer createProducer() {

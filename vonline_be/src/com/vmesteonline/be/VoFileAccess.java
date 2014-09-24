@@ -51,7 +51,7 @@ public class VoFileAccess extends HttpServlet {
 
 		// TODO check user rights
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = serviceImpl.getPM();
 		try {
 			long fileId = StorageHelper.getFileId(req.getRequestURI());
 			VoFileAccessRecord far = pm.getObjectById(VoFileAccessRecord.class, fileId);
@@ -68,7 +68,7 @@ public class VoFileAccess extends HttpServlet {
 				resp.setHeader("Cache-control", "cache");
 				resp.setHeader("Pragma", "cache");
 				resp.setHeader("Expires", "1000000");
-				StorageHelper.sendFileResponse(req, resp);
+				StorageHelper.sendFileResponse(req, resp, pm);
 
 			} else {
 				resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
@@ -82,9 +82,7 @@ public class VoFileAccess extends HttpServlet {
 			logger.warn("Failed to process request:" + e.getMessage() + " ");
 			e.printStackTrace();
 			
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	/*
@@ -97,7 +95,7 @@ public class VoFileAccess extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		serviceImpl.setSession(req.getSession());
 
-		PersistenceManager pm = PMF.getPm();
+		PersistenceManager pm = serviceImpl.getPM();
 		try {
 			long currentUserId = serviceImpl.getCurrentUserId(pm);
 			boolean isPublic = false;
@@ -162,9 +160,7 @@ public class VoFileAccess extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warn("Failed to save file:" + e.getMessage() + " ");
 			e.printStackTrace();
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	private static Logger logger = Logger.getLogger(VoFileAccess.class);
