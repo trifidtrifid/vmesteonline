@@ -23,10 +23,11 @@ public class PersistenceInitFilter implements Filter {
 	private static ThreadLocal<PersistenceManager> currentManager = new ThreadLocal<PersistenceManager>();
 
 	public static PersistenceManager getManager() {
-		if (currentManager.get() == null || currentManager.get().isClosed()) {
+		PersistenceManager pm = currentManager.get();
+		if (pm == null) {
 			currentManager.set(factory().getPersistenceManager());
-		}
-		return currentManager.get();
+		} 
+		return pm;
 	}
 
 	@Override
