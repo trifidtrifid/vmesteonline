@@ -246,7 +246,8 @@ define(
                                                     '<li class="pull-left short2">'+
                                                         '<label>Цена</label>'+
                                                         '<span class="edit-product-item product-price">'+
-                                                            '<input type="text" value="'+tableLine.find('.product-price input').val()+'"/>'+
+                                                            //'<input type="text" value="'+tableLine.find('.product-price input').val()+'"/>'+
+                                                            '<input type="text" value=""/>'+
                                                         '</span>'+
                                                     '</li>'+
                                                     '<li class="pull-left short2">'+
@@ -311,7 +312,6 @@ define(
                                                             }
                                                                 html += '</td>'+
                                                                         '<td class="product-weight">'+tableLine.find('.product-weight input').val()+'</td>'+
-                                                                        '<td class="product-price">'+tableLine.find('.product-price input').val()+'</td>'+
                                                                         '<td class="product-unitName">'+tableLine.find('.product-unitName input').val()+'</td>'+
                                                                         '<td class="product-pack">'+tableLine.find('.product-pack input').val()+'</td>'+
                                                                         '<td class="product-prepack">';
@@ -356,9 +356,11 @@ define(
                         productInfo.product.weight = parseFloat(tableLine.find('.product-weight input').val()) :
                         productInfo.product.weight = 0;
 
+                    // '1' - priceType INET
+                    productInfo.details.pricesMap = [];
                     tableLine.find('.product-price input').val() ?
-                        productInfo.product.price = parseFloat(tableLine.find('.product-price input').val()):
-                        productInfo.product.price = 0;
+                        productInfo.details.pricesMap['1'] = parseFloat(tableLine.find('.product-price input').val()):
+                        productInfo.details.pricesMap['1'] = 0;
 
                     productInfo.product.unitName = tableLine.find('.product-unitName input').val();
 
@@ -532,6 +534,12 @@ define(
                         });
 
                         $(this).find('.product-fullDescr textarea').val(productDetails.fullDescr);
+
+                        for(var p in productDetails.pricesMap){
+                            if(p == '1'){
+                                $(this).find('.product-price input').val(productDetails.pricesMap[p]);
+                            }
+                        }
 
                         $(this).find('.product-imagesSet').html(imagesURLSetHtml);
 
