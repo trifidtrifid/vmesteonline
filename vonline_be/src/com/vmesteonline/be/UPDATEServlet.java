@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoTopic;
+import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
 
 
@@ -30,7 +31,13 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 			pm.setIgnoreCache(true);
 			try {
 				
-				Extent<VoUserGroup> userGroupE = pm.getExtent(VoUserGroup.class);
+				Extent<VoUser> users = pm.getExtent(VoUser.class);
+				for (VoUser voUser : users) {
+					voUser.setLastNotified(0);
+				}
+				pm.makePersistent(users);
+						
+				/*Extent<VoUserGroup> userGroupE = pm.getExtent(VoUserGroup.class);
 				for (VoUserGroup voUserGroup : userGroupE) {
 					voUserGroup.setVisibleGroups(null);
 					List<Long> visibleGroups = voUserGroup.getVisibleGroups(pm);
@@ -41,7 +48,7 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 					}
 					pm.makePersistentAll(topics);
 					pm.makePersistent(voUserGroup);
-				}
+				}*/
 				
 				
 			} catch( Exception e){
