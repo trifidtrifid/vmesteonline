@@ -1,6 +1,7 @@
 package com.vmesteonline.be.notifications;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,34 +32,44 @@ public class NewNeigboursNotification extends Notification {
 	public void makeNotification( Set<VoUser> users ) {
 		int now = (int)(System.currentTimeMillis()/1000L);
 
+		//Map<Long, VoUserGroup> ugm = new HashMap<Long,VoUserGroup>(); //local cache
+		
 		PersistenceManager pm = PMF.getPm();
 		try {
 			Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 			// create message for each user
-			String body = "<b><p>Новые соседи</p></b>";
 			
 			for (VoUser u : users) {
+				boolean somethingToSend = false;
 				Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
-				
+				neghbors.add(u);
+				String body = "<p><b>Новые соседи</b></p>";
 				for (Long ug : u.getGroups()) {
-					Set<VoUser> ggoupNeighbors = groupUsersMap.get(ug);
-					ggoupNeighbors.removeAll(neghbors);
-					if (ggoupNeighbors.size() != 0) {
-						body += createNeighborsContent(pm, ug, ggoupNeighbors);
+					Set<VoUser> usersOfGroup = groupUsersMap.get(ug);
+					if( null!=usersOfGroup && usersOfGroup.size()>0){
+						Set<VoUser> ggoupNeighbors = new TreeSet<VoUser>(vuComp);
+						ggoupNeighbors.addAll(usersOfGroup);
+						ggoupNeighbors.removeAll(neghbors);
+						if (ggoupNeighbors.size() != 0) {
+							body += createNeighborsContent(pm, ug, ggoupNeighbors);
+							somethingToSend = true;
+						}
+						neghbors.addAll(ggoupNeighbors);
 					}
-					neghbors.addAll(ggoupNeighbors);
 				}
-				NotificationMessage mn = new NotificationMessage();
-				mn.message = body;
-				mn.subject = "Новые соседи";
-				mn.to = u.getEmail();
-				try {
-					sendMessage(mn, u);
-					u.setLastNotified(now);
-				} catch (IOException e) {
-					
-					e.printStackTrace();
+				if(somethingToSend){
+					NotificationMessage mn = new NotificationMessage();
+					mn.message = body;
+					mn.subject = "Новые соседи";
+					mn.to = u.getEmail();
+					try {
+						sendMessage(mn, u);
+						u.setLastNotified(now);
+					} catch (IOException e) {
+						
+						e.printStackTrace();
+					}
 				}
 			}
 		} finally {
@@ -112,6 +123,6 @@ public class NewNeigboursNotification extends Notification {
 		List<VoUser> newUsers = (List<VoUser>)pm.newQuery(VoUser.class, "registered>="+weekAgo).execute();
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll(newUsers);
-		return arrangeUsersInGroups(userSet);
+		return arrangeUsersInGroups(userSet,pm);
 	}
 }

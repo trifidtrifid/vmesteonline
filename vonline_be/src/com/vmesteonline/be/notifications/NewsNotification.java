@@ -38,7 +38,7 @@ public class NewsNotification extends Notification {
 					for( NotificationMessage nm : un.getValue())
 						body += nm.message + "<br/><br/>";
 					
-					body += "Подробности на <a href=\"https://"+host+"\">сайте вместеонлайн.ру</a>";
+					body += "Подробности на сайте<a href=\"https://"+host+"\"> ВместеОнлайн.ру</a>";
 					logger.fine("Got +"+messagesToSend.size()+" to send new News");	
 					decorateAndSendMessage(user, " новости рядом с вами", body);
 					logger.fine("News sent to:" + user);
