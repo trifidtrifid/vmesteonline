@@ -3,6 +3,7 @@ package com.vmesteonline.be.notifications;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -44,18 +45,20 @@ public class NewTopicsNotification extends Notification {
 			Map<Long, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
 
 			// create message for each user
-			String body = "Близкие события<br/><br/>";
+			String body = "<p><b>Близкие события</b></p>";
 			
 			for (VoUser u : users) {
 				Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
 				
 				for (Long ug : u.getGroups()) {
 					Set<VoTopic> topics = groupTopicMap.get(ug);
-					topics.removeAll(userTopics);
-					if (topics.size() != 0) {
-						body += createGroupContent(pm, ug, topics);
+					if( null!=topics ) {
+						topics.removeAll(userTopics);
+						if (topics.size() != 0) {
+							body += createGroupContent(pm, ug, topics);
+						}
+						userTopics.addAll(topics);
 					}
-					userTopics.addAll(topics);
 				}
 				NotificationMessage mn = new NotificationMessage();
 				mn.message = body;
@@ -85,7 +88,7 @@ public class NewTopicsNotification extends Notification {
 		
 		Set<VoTopic> topics = new TreeSet<VoTopic>(topicIdComp);
 		topics.addAll(MessageServiceImpl.getTopics( 
-				groups, MessageType.BASE, 0, 10, false, pm));
+				groups, MessageType.WALL, 0, 10, false, pm));
 	
 		for( VoTopic topic: topics)
 			groupTopicMap.put(topic.getUserGroupId(), topics);
@@ -96,8 +99,10 @@ public class NewTopicsNotification extends Notification {
 	private String createGroupContent(PersistenceManager pm, Long ugId, Set<VoTopic> topics) {
 		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
 		
-		String groupContent = "Пишут в группе '" + ug.getName() + "<br/>";
-		Set<VoTopic> orderedTopics = new TreeSet<VoTopic>( topicCreatedDateComp );
+		String groupContent = "<p>Пишут в группе '" + ug.getName()+"'";
+		List<VoTopic> orderedTopics = new ArrayList<VoTopic>( topics );
+		Collections.sort(orderedTopics, topicCreatedDateComp);
+		
 		for (VoTopic tpc : orderedTopics) {
 			String topicTxt = createTopicContent(pm, ug, tpc);
 			groupContent += topicTxt;
@@ -106,11 +111,11 @@ public class NewTopicsNotification extends Notification {
 	}
 
 	private String createTopicContent(PersistenceManager pm, VoUserGroup ug, VoTopic tpc) {
-		String topicTxt = new Date(((long) tpc.getCreatedAt()) * 1000L) + " " + pm.getObjectById(VoUser.class, tpc.getAuthorId()).getName();
-		topicTxt += (ug.getImportantScore() <= tpc.getImportantScore() ? "Важно!" : "") + "<br/>";
+		String topicTxt = "<p>"+new Date(((long) tpc.getCreatedAt()) * 1000L) + " " + pm.getObjectById(VoUser.class, tpc.getAuthorId()).getName();
+		topicTxt += "<br/>"+(ug.getImportantScore() <= tpc.getImportantScore() ? "<b>Важно!</b><br/>" : "");
 		topicTxt += StringEscapeUtils.escapeHtml4(tpc.getContent().substring( 0, Math.min(255, tpc.getContent().length())));
 		if( tpc.getContent().length() > 255 ) topicTxt += "<a href=\"https://"+host+"/wall-single-"+tpc.getId()+"\">...</a>";
-		topicTxt += "<br/>--------------------------------------------------------<br/><br/>";
+		topicTxt += "</p>--";
 		return topicTxt;
 	}
 

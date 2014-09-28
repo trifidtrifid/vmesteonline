@@ -64,8 +64,17 @@ public abstract class Notification {
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		int twoDaysAgo = (int) now - 86400 * 2;
 		int weekAgo = (int) now - 86400 * 2;
+		
+		
 		List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
+		logger.fine("Total sessions with lastActivityTs < "+twoDaysAgo+" : " + vsl.size());
+
+	
 		for (VoSession vs : vsl) {
+			if( 0==vs.getUserId()){
+				pm.deletePersistent(vs);
+				continue;
+			}
 			VoUser vu;
 			try {
 				vu = pm.getObjectById(VoUser.class, vs.getUserId());
@@ -100,7 +109,7 @@ public abstract class Notification {
 						logger.fine("User:" + vu + " would be notified with news");
 						userList.add(vu);
 					} else {
-						logger.fine("USer:" + vu + " was notified " + timeAgo + " days ago and he perefers to be notified " + nf.name()
+						logger.fine("USer:" + vu + " was notified " + timeAgo + " seconds ago and he perefers to be notified " + nf.name()
 								+ " so he would not been notified this time");
 					}
 
@@ -114,6 +123,7 @@ public abstract class Notification {
 		}
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll(userList);
+		logger.fine("Total users count to be notified are: "+userSet.size());
 		return userSet;
 	}
 
@@ -225,7 +235,7 @@ public abstract class Notification {
 	}
 
 	static void decorateAndSendMessage(VoUser user, String subject, String body) {
-		body += "<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"https://" + host + "/blog\">блоге</a></p>";
+		body = "<HTML><BODY>"+body+"<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"https://" + host + "/blog\">блоге</a></p>"+"</BODY></HTML>";
 		try {
 			EMailHelper.sendSimpleEMail(user,"ВместеОнлайн.ру: " + subject, body);
 		} catch (IOException e) {

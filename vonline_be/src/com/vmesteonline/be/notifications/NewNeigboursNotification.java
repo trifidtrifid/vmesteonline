@@ -11,6 +11,7 @@ import javax.jdo.PersistenceManager;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -35,7 +36,7 @@ public class NewNeigboursNotification extends Notification {
 			Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 			// create message for each user
-			String body = "Новые соседи<br/><br/>";
+			String body = "<b><p>Новые соседи</p></b>";
 			
 			for (VoUser u : users) {
 				Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
@@ -46,7 +47,7 @@ public class NewNeigboursNotification extends Notification {
 					if (ggoupNeighbors.size() != 0) {
 						body += createNeighborsContent(pm, ug, ggoupNeighbors);
 					}
-					ggoupNeighbors.addAll(ggoupNeighbors);
+					neghbors.addAll(ggoupNeighbors);
 				}
 				NotificationMessage mn = new NotificationMessage();
 				mn.message = body;
@@ -67,11 +68,12 @@ public class NewNeigboursNotification extends Notification {
 	
 	private String createNeighborsContent(PersistenceManager pm, Long ugId, Set<VoUser> neghbors) {
 		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
-		String groupContent = "В группе '" + ug.getName() + "' подкрепление <br/>";
+		String groupContent = "<p>В группе '" + ug.getName() + "'<br/>";
 		for (VoUser vuc : neghbors) {
 			String contactTxt = createUserContactContent(pm, ug, vuc);
 			groupContent += contactTxt;
 		}
+		groupContent += "</p>";
 		return groupContent;
 	}
 
@@ -80,17 +82,21 @@ public class NewNeigboursNotification extends Notification {
 		VoPostalAddress address = pm.getObjectById(VoPostalAddress.class,vuc.getAddress());
 		String contactTxt = "<a href=\"https://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
 		
-		if( ug.getRadius() == 0 ) 
-			contactTxt += " живет в квартире " + address.getFlatNo();
-		else {
+		if( ug.getGroupType() <= GroupType.BUILDING.getValue() && 0!=address.getStaircase()) 
+				contactTxt += " живет в подъезде " + address.getStaircase();
+		
+		if(  ug.getGroupType() <= GroupType.STAIRCASE.getValue() && 0!=address.getFlatNo()) 
+				contactTxt += " в квартире " + address.getFlatNo() + ( 0!=address.getFloor() ? " на "+address.getFloor()+" этаже":"");
+		
+		if( ug.getGroupType() == GroupType.NEIGHBORS.getValue() ){
+			
 			VoBuilding vb = pm.getObjectById(VoBuilding.class, address.getBuilding());
 			VoStreet vs = pm.getObjectById(VoStreet.class, vb.getStreet());
-			
-			if( ug.getRadius() < 50 )
-				contactTxt += " из дома " + vb.getFullNo() +" по " + vs.getName();
-			else {
+			contactTxt += " из дома " + vb.getFullNo() +" по " + vs.getName();
+		} 
+		
+		if( ug.getGroupType() == GroupType.BLOCK.getValue())  {
 				contactTxt += " из вашего района"; 
-			}
 		}
 	
 		contactTxt += "<br/>";

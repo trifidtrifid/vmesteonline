@@ -14,11 +14,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
+import com.vmesteonline.be.authservice.AuthService.getCurrentAttributes_args;
+import com.vmesteonline.be.authservice.LoginResult;
+import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.VoSession;
+import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
@@ -29,6 +37,7 @@ import com.vmesteonline.be.messageservice.TopicListPart;
 import com.vmesteonline.be.messageservice.UserMessage;
 import com.vmesteonline.be.messageservice.UserTopic;
 import com.vmesteonline.be.messageservice.WallItem;
+import com.vmesteonline.be.notifications.NewsNotification;
 import com.vmesteonline.be.utils.Defaults;
 
 public class MessageServiceTests extends TestWorkAround {
@@ -695,6 +704,58 @@ public class MessageServiceTests extends TestWorkAround {
 			TopicListPart tlp = msi.getBlog(0, 5);
 			Assert.assertEquals(1, tlp.totalSize);
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Exception thrown." + e.getMessage());
+		}
+	}
+	
+	@Test
+	// Расслыкла обновлений
+	public void testNewsDistribution() {
+		
+		int now = (int) (System.currentTimeMillis()/1000L);
+		try {
+			Topic tpc1 =  createTopic(getUserGroupId(Defaults.user1email, GroupType.NEIGHBORS));
+			Topic tpc2 =  createTopic(getUserGroupId(Defaults.user2email, GroupType.BUILDING));
+			Topic tpc3 =  createTopic(getUserGroupId(Defaults.user3email, GroupType.STAIRCASE));
+			
+			PersistenceManager pm = PMF.getPm();
+			try {
+				pm.getObjectById( VoTopic.class, tpc1.getId()).setCreatedAt(now - 86400);
+				pm.getObjectById( VoTopic.class, tpc2.getId()).setCreatedAt(now - 86400);
+				pm.getObjectById( VoTopic.class, tpc3.getId()).setCreatedAt(now - 86400);
+				
+				VoUser u1 = pm.getObjectById(VoUser.class, Defaults.user1id);
+				VoUser u2 = pm.getObjectById(VoUser.class, Defaults.user2id);
+				VoUser u3 = pm.getObjectById(VoUser.class, Defaults.user3id);
+				
+				u1.setNotificationsFreq( NotificationFreq.TWICEAWEEK.getValue());
+				u2.setNotificationsFreq( NotificationFreq.DAYLY.getValue());
+				u3.setNotificationsFreq( NotificationFreq.WEEKLY.getValue());
+				
+				VoSession vs1 = new VoSession( "1", u1);
+				vs1.setLastActivityTs( now - 86400 * 2);
+				u1.setLastNotified(now - 86400 * 2);
+				VoSession vs2 = new VoSession( "2", u2);
+				vs1.setLastActivityTs( now - 86400 * 7);
+				u2.setLastNotified(now - 86400 * 2);
+				VoSession vs3 = new VoSession( "3", u3);
+				vs3.setLastActivityTs( now - 86400 * 4);
+				u3.setLastNotified(now - 86400 * 4);
+				pm.makePersistent(vs1);
+				pm.makePersistent(vs2);
+				pm.makePersistent(vs3);
+				
+			} finally {
+				pm.close();
+			}
+			NewsNotification nn = new NewsNotification();
+			nn.sendNotifications();
+			
+			LoginResult lr = asi.login(Defaults.user4email, Defaults.user4pass);
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
