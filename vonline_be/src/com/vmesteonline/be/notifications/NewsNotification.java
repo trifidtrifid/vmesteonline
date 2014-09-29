@@ -13,7 +13,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 
 public class NewsNotification extends Notification {
-	Logger logger = Logger.getLogger(NewsNotification.class.getSimpleName());
+	private static Logger logger = Logger.getLogger(NewsNotification.class.getSimpleName());
 
 	@Override
 	public void makeNotification(Set<VoUser> users) {}
@@ -38,7 +38,7 @@ public class NewsNotification extends Notification {
 					for( NotificationMessage nm : un.getValue())
 						body += nm.message + "<br/><br/>";
 					
-					body += "Подробности на <a href=\"https://"+host+"\"></a>";
+					body += "Подробности на сайте<a href=\"https://"+host+"\"> ВместеОнлайн.ру</a>";
 					logger.fine("Got +"+messagesToSend.size()+" to send new News");	
 					decorateAndSendMessage(user, " новости рядом с вами", body);
 					logger.fine("News sent to:" + user);

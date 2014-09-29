@@ -469,7 +469,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("country == " + countryId);
+			q.setFilter("countryId == " + countryId);
 			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());
@@ -491,7 +491,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			List<Street> cl = new ArrayList<Street>();
 			Query q = pm.newQuery(VoStreet.class);
-			q.setFilter("city == :key");
+			q.setFilter("cityId == :key");
 			List<VoStreet> cs = (List<VoStreet>) q.execute(cityId);
 			for (VoStreet c : cs) {
 				pm.retrieve(c);
@@ -585,7 +585,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		}
 	}
 
-	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
