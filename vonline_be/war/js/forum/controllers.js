@@ -935,6 +935,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
 
         base.newPrivateMessagesCount = 0;
+        base.biggestCountDialogId = 0;
 
         var timeStamp = 0;
         base.checkUpdates = function(){
@@ -945,10 +946,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             if(timeStamp == 0){
                 updateMap = messageClient.getDialogUpdates();
-                base.newPrivateMessagesCount = 0;
+                var temp = 0;
 
                 for(var p in updateMap){
-                    base.newPrivateMessagesCount += updateMap[p];
+                    temp += updateMap[p];
 
                     if(updateMap[p] > old){
                         base.biggestCountDialogId = p;
@@ -956,6 +957,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                     old = updateMap[p];
                 }
+
+                base.newPrivateMessagesCount = temp;
+                $rootScope.$digest();
+                //alert(base.newPrivateMessagesCount);
+
             }
         };
 
