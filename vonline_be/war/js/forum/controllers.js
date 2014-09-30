@@ -946,16 +946,24 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             if(timeStamp == 0){
                 updateMap = messageClient.getDialogUpdates();
-                var temp = 0;
+                var temp = 0,
+                    currentDialogId = $rootScope.base.currentDialogId;
 
-                for(var p in updateMap){
-                    temp += updateMap[p];
+                //alert(currentDialogId+" "+$rootScope.currentPage);
 
-                    if(updateMap[p] > old){
-                        base.biggestCountDialogId = p;
+                for(var dialogId in updateMap){
+                    if(dialogId != currentDialogId || $rootScope.currentPage != 'dialog-single') {
+
+                        temp += updateMap[dialogId];
+
+                        if (updateMap[dialogId] > old) {
+                            base.biggestCountDialogId = dialogId;
+                        }
+
+                        old = updateMap[dialogId];
+                    }else{
+
                     }
-
-                    old = updateMap[p];
                 }
 
                 base.newPrivateMessagesCount = temp;
@@ -2679,6 +2687,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.isFooterBottom = false;
         $rootScope.base.lastLoadedId = 0;
+        $rootScope.currentPage = 'dialog-single';
+        $rootScope.base.currentDialogId = $stateParams.dialogId;
 
         var dialog = this,
             lastLoadedId = 0,
