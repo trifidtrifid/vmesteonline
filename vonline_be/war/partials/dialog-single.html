@@ -15,12 +15,12 @@
                 </div>
             </div>
 
-            <div ng-show="!dialog.privateMessages || dialog.privateMessages.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
+            <div ng-show="!base.privateMessages || base.privateMessages.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
 
-            <div class="private-message-single text-container"  ng-repeat="message in dialog.privateMessages">
+            <div class="private-message-single text-container"  ng-repeat="message in base.privateMessages">
                 <div class="pull-right">
                     <div class="message-tools clearfix" ng-show="message.author == base.me.id">
-                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,dialog.privateMessages,false,false,true)">&times;</a>
+                        <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(message,base.privateMessages,false,false,true)">&times;</a>
                         <a href="#" title="Редактировать" ng-click="base.setEdit($event,message)" class="fa fa-pencil pull-right"></a>
                     </div>
                     {{message.created*1000 | date:'HH:mm dd.MM.yy'}}

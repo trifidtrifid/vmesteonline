@@ -854,7 +854,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     newDialogMessage.isDialog = true;
                     newDialogMessage.attachId = ctrl.dialogId+"-"+newDialogMessage.id;
 
-                    ctrl.privateMessages.unshift(newDialogMessage);
+                    //ctrl.privateMessages.unshift(newDialogMessage);
+                    $rootScope.base.privateMessages.unshift(newDialogMessage);
                     $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
 
                     if(ctrl.privateMessages.length == 1){
@@ -934,6 +935,24 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             ctrl.isFullText ? ctrl.isFullText = false : ctrl.isFullText = true;
         };
 
+        base.setPrivateMessages = function (dialogId,loadedLength){
+            try {
+                $rootScope.base.privateMessages = dialogClient.getDialogMessages(dialogId, 0, loadedLength, 0);
+            } catch (e) {
+                $state.go('dialogs');
+            }
+            var privateMessagesLength = $rootScope.base.privateMessages.length;
+
+            if (privateMessagesLength != 0) $rootScope.base.lastLoadedId = $rootScope.base.privateMessages[privateMessagesLength - 1].id;
+
+            for (var i = 0; i < privateMessagesLength; i++) {
+                $rootScope.base.privateMessages[i].authorProfile = userClient.getUserProfile($rootScope.base.privateMessages[i].author);
+                $rootScope.base.privateMessages[i].isDialog = true;
+                $rootScope.base.privateMessages[i].attachId = dialogId + "-" + $rootScope.base.privateMessages[i].id;
+                $rootScope.base.initStartParamsForCreateMessage($rootScope.base.privateMessages[i]);
+            }
+        };
+
         base.newPrivateMessagesCount = 0;
         base.biggestCountDialogId = 0;
 
@@ -962,13 +981,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                         old = updateMap[dialogId];
                     }else{
-
+                        base.setPrivateMessages(currentDialogId,20);
                     }
                 }
 
                 base.newPrivateMessagesCount = temp;
-                $rootScope.$digest();
-                //alert(base.newPrivateMessagesCount);
+                try {
+                    $rootScope.$digest();
+                }catch(e){
+                    console.log('err');
+                }
 
             }
         };
@@ -994,6 +1016,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         }
 
         $rootScope.base = base;
+        base.checkUpdates();
+
         $rootScope.currentPage = 'lenta';
 
         $rootScope.leftbar = {};
@@ -2713,23 +2737,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
 
             if ($stateParams.dialogId) {
-                //console.log('dialog ' + $stateParams.dialogId + " " + loadedLength + " " + lastLoadedId);
-                try {
-                    dialog.privateMessages = dialogClient.getDialogMessages($stateParams.dialogId, 0, loadedLength, 0);
-                } catch (e) {
-                    $state.go('dialogs');
-                }
-                console.log('dialog after');
-                var privateMessagesLength = dialog.privateMessages.length;
+                $rootScope.base.setPrivateMessages(dialog.dialogId,loadedLength);
 
-                if (privateMessagesLength != 0) $rootScope.base.lastLoadedId = dialog.privateMessages[privateMessagesLength - 1].id;
-
-                for (var i = 0; i < privateMessagesLength; i++) {
-                    dialog.privateMessages[i].authorProfile = userClient.getUserProfile(dialog.privateMessages[i].author);
-                    dialog.privateMessages[i].isDialog = true;
-                    dialog.privateMessages[i].attachId = dialog.dialogId + "-" + dialog.privateMessages[i].id;
-                    $rootScope.base.initStartParamsForCreateMessage(dialog.privateMessages[i]);
-                }
+                dialog.privateMessages = $rootScope.base.privateMessages;
             }
 
             //dialog.messageText = TEXT_DEFAULT_1;
@@ -2753,7 +2763,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                         for (var i = 0; i < buffLength; i++) {
                             buff[i].authorProfile = userClient.getUserProfile(buff[i].author);
                         }
-                        dialog.privateMessages = dialog.privateMessages.concat(buff);
+                        dialog.privateMessages =
+                            $rootScope.base.privateMessages = $rootScope.base.privateMessages.concat(buff);
                     }
 
                     lastLoadedIdFF = $rootScope.base.lastLoadedId;
