@@ -64,7 +64,7 @@ public class NewTopicsNotification extends Notification {
 							}
 							if( topicsByOtherUSers.size() > 0){
 								body += createGroupContent(pm, ug, topics);
-								somethingToSend = true;
+								somethingToSend = somethingToSend || body.length() > 0;
 							}
 						}
 						userTopics.addAll(topics);
@@ -126,11 +126,18 @@ public class NewTopicsNotification extends Notification {
 		VoUserGroup ug;
 		try {
 			ug = pm.getObjectById(VoUserGroup.class, ugId);
-			String groupContent = "<p><b>Пишут в группе '" + ug.getName()+"'</b>";
 			List<VoTopic> orderedTopics = new ArrayList<VoTopic>( topics );
 			Collections.sort(orderedTopics, topicCreatedDateComp);
 			
+			int weekAgo = (int) (System.currentTimeMillis()/1000L) - 7 * 86400;
+			if( orderedTopics.get(0).getCreatedAt() < weekAgo )
+				return "";
+			
+			String groupContent = "<p><b>Пишут в группе '" + ug.getName() + "'</b>";
+				
 			for (VoTopic tpc : orderedTopics) {
+				if( tpc.getCreatedAt() < weekAgo )
+					break;
 				String topicTxt = createTopicContent(pm, ug, tpc);
 				groupContent += topicTxt;
 			}
