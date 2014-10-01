@@ -2,38 +2,23 @@ package com.vmesteonline.be;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.http.HttpResponse;
-
-import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
-import com.google.appengine.api.taskqueue.TaskHandle;
-import com.google.appengine.api.utils.SystemProperty;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
-import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
-import com.vmesteonline.be.jdo2.postaladdress.VoCity;
-import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
-import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.EMailHelper;
-import com.vmesteonline.be.utils.VoHelper;
 
 public class UPDATEServlet extends QueuedServletWithKeyHelper {
 
@@ -90,7 +75,7 @@ public class UPDATEServlet extends QueuedServletWithKeyHelper {
 					Extent<VoTopic> topics = pm.getExtent( VoTopic.class );
 					for (VoTopic voTopic : topics) {
 						try {
-							voTopic.setVisibleGroups( pm.getObjectById(VoUserGroup.class, voTopic.getUserGroupId()).getUpperLevelGroups(pm) );
+							voTopic.setVisibleGroups( new ArrayList<Long>(pm.getObjectById(VoUserGroup.class, voTopic.getUserGroupId()).getUpperLevelGroups(pm)) );
 						} catch (Exception e) {
 							resultText += " </br>\r\nvoTopic.setVisibleGroups ERROR: "+(e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
 							e.printStackTrace();
