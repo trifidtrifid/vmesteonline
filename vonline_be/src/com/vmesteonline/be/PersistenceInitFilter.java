@@ -25,7 +25,7 @@ public class PersistenceInitFilter implements Filter {
 	public static PersistenceManager getManager() {
 		PersistenceManager pm = currentManager.get();
 		if (pm == null) {
-			currentManager.set(factory().getPersistenceManager());
+			currentManager.set(pm=factory().getPersistenceManager());
 		} 
 		return pm;
 	}
@@ -40,6 +40,7 @@ public class PersistenceInitFilter implements Filter {
 			if (manager != null) {
 				manager.flush();
 				manager.close();
+				currentManager.set(null);
 			}
 		}
 	}

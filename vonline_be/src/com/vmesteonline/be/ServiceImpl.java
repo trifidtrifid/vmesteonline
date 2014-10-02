@@ -27,9 +27,7 @@ public class ServiceImpl {
 
 	private static Cache cache;
 	public static Logger logger;
-	HttpSession session = null;
-	PersistenceManager pm = null;
-
+	
 	static {
 		logger = Logger.getLogger(ServiceImpl.class);
 		try {
@@ -86,7 +84,6 @@ public class ServiceImpl {
 
 	public void setSession(HttpSession session) {
 		this.sessionStorage = new SessionIdStorage(session.getId());
-		this.session = session;
 	}
 
 	public static PersistenceManager getPM(){

@@ -42,7 +42,7 @@ public class VoProductCategory {
 			this.logoURLset = new ArrayList<String>();
 			for (String bb : logoURLset) {
 				try {
-					this.logoURLset.add(StorageHelper.saveImage(bb, ownedId, true, null));
+					this.logoURLset.add(StorageHelper.saveImage(bb, ownedId, true, pm));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -615,6 +615,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public DataSet importData(DataSet data) throws InvalidOperation {
 
+		PersistenceManager pm = ServiceImpl.getPM();
 		
 		for (ImportElement ie : data.getData()) {
 			switch (ie.getType()) {
@@ -697,7 +698,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			}
 			CSVHelper.writeCSVData(baos, fieldsMap, infoRows, null);
 			baos.close();
-			String newURL = StorageHelper.replaceImage(baos.toString(), dataUrl, 0, null, null);
+			String newURL = StorageHelper.replaceImage(baos.toString(), dataUrl, 0, null, pm);
 			ie.setUrl(newURL);
 
 		} catch (IOException e) {

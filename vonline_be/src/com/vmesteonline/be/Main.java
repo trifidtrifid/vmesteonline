@@ -113,22 +113,19 @@ public class Main implements javax.servlet.Filter {
 		} else {
 			
 			HttpServletRequest request = (HttpServletRequest) srequest;
-			HttpServletResponse response = (HttpServletResponse) sresponse;
-			PersistenceManager pm = PMF.getNewPm();
-			try {
-				List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "").execute();
-				if( 0!=shops.size() ){
-					VoShop voShop = shops.get(0);
-					ServiceImpl si = new ServiceImpl( request.getSession());
-					try {
-						si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId(), pm );
-					} catch (InvalidOperation e) {
-						e.printStackTrace();
-					}
+		
+			PersistenceManager pm = ServiceImpl.getPM(); 
+			List<VoShop> shops = (List<VoShop>) pm.newQuery(VoShop.class, "").execute();
+			if( 0!=shops.size() ){
+				VoShop voShop = shops.get(0);
+				ServiceImpl si = new ServiceImpl( request.getSession());
+				try {
+					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue() , voShop.getId(), pm );
+				} catch (InvalidOperation e) {
+					e.printStackTrace();
 				}
-			} finally {
-				pm.close();
 			}
+		
 		}
 		chain.doFilter( srequest, sresponse );
 	}

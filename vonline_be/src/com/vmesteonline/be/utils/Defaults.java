@@ -291,9 +291,14 @@ public class Defaults {
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_PREPACK_REQ);
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_KNOWN_NAMES);
 			productFieldsOrder.add(ExchangeFieldType.PRODUCT_UNIT_NAME);
+			PersistenceManager pm = PMF.getNewPm();
+			try {
 
 			importData = new ImportElement(ImExType.IMPORT_PRODUCTS, pFile, VoHelper.listToMap(productFieldsOrder));
-			importData.setUrl(StorageHelper.saveImage(shopDataStorage + pFile, userId, false, null));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage + pFile, userId, false, pm));
+		} finally {
+			pm.close();
+		}
 
 			ds.addToData(importData);
 		}
@@ -312,10 +317,18 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_LOGOURLS);
 		fieldsOrder.add(ExchangeFieldType.CATEGORY_TOPICS);
 
-		ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "product_categories.csv", userId, false, null));
+		PersistenceManager pm = PMF.getNewPm();
+		try {
+		
+			ImportElement importData = new ImportElement(ImExType.IMPORT_CATEGORIES, "categories.csv", VoHelper.listToMap(fieldsOrder));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage + "product_categories.csv", userId, false, pm));
+			ds.addToData(importData);
+			
+		} finally {
+			pm.close();
+		}
 
-		ds.addToData(importData);
+		
 	}
 
 	// ======================================================================================================================
@@ -331,9 +344,13 @@ public class Defaults {
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_LOGOURL);
 		fieldsOrder.add(ExchangeFieldType.PRODUCER_HOMEURL);
 
-		importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
-		importData.setUrl(StorageHelper.saveImage(shopDataStorage + "producers.csv ", userId, false, null));
-
+		PersistenceManager pm = PMF.getNewPm();
+		try {
+			importData = new ImportElement(ImExType.IMPORT_PRODUCERS, "producers.csv", VoHelper.listToMap(fieldsOrder));
+			importData.setUrl(StorageHelper.saveImage(shopDataStorage + "producers.csv ", userId, false, pm));
+		} finally {
+			pm.close();
+		}
 		ds.addToData(importData);
 	}
 

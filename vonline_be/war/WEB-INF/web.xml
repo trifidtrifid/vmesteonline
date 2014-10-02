@@ -134,8 +134,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<error-code>500</error-code>
 		<location>/errors/servererror.jsp</location>
 	</error-page>
-
-	PersistenceInitFilter
 	
 	<filter>
 		<filter-name>persistenceMananagerInit</filter-name>
