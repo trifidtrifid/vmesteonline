@@ -20,12 +20,14 @@ public class PersistenceInitFilter implements Filter {
 		return persistenceManagerFactory;
 	}
 
-	private static ThreadLocal<PersistenceManager> currentManager = new ThreadLocal<PersistenceManager>();
+	private static ThreadLocal<PersistenceManager> currentManager = new ThreadLocal<PersistenceManager>(){
+		
+	};
 
 	public static PersistenceManager getManager() {
 		PersistenceManager pm = currentManager.get();
-		if (pm == null) {
-			currentManager.set(pm=factory().getPersistenceManager());
+		if (pm == null || pm.isClosed() ) {
+			currentManager.set( pm = factory().getPersistenceManager() );
 		} 
 		return pm;
 	}
@@ -40,7 +42,6 @@ public class PersistenceInitFilter implements Filter {
 			if (manager != null) {
 				manager.flush();
 				manager.close();
-				currentManager.set(null);
 			}
 		}
 	}
