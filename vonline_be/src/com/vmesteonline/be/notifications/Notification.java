@@ -141,7 +141,7 @@ public abstract class Notification {
 		NotificationFreq nf = vu.getNotificationFreq().freq;
 		if (NotificationFreq.DAYLY == nf && timeAgo >= 86400 || NotificationFreq.TWICEAWEEK == nf && timeAgo >= 3 * 86400
 				|| NotificationFreq.WEEKLY == nf && timeAgo >= 7 * 86400) {
-			logger.fine("User:" + vu + " would be notified with news");
+			logger.fine("User:" + vu + " would be notified with news, notified "+timeAgo / 86400+" and "+nf.name()+" notification is set.");
 			userList.add(vu);
 		} else {
 			logger.fine("USer:" + vu + " was notified " + timeAgo + " seconds ago and he perefers to be notified " + nf.name()

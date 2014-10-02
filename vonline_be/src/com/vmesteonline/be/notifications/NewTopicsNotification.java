@@ -57,14 +57,17 @@ public class NewTopicsNotification extends Notification {
 						topics.addAll(tpcs);
 						topics.removeAll(userTopics);
 						if (topics.size() != 0) {
-							Set<VoTopic>topicsByOtherUSers = new HashSet<VoTopic>( );
+							/*Set<VoTopic>topicsByOtherUSers = new HashSet<VoTopic>( );
 							for (VoTopic voTopic : topics) {
 								if(voTopic.getAuthorId().getId() != u.getId())
 									topicsByOtherUSers.add(voTopic);
 							}
-							if( topicsByOtherUSers.size() > 0){
-								body += createGroupContent(pm, ug, topics);
-								somethingToSend = somethingToSend || body.length() > 0;
+							if( topicsByOtherUSers.size() > 0)*/{
+								String tc = createGroupContent(pm, ug, topics);
+								if( tc != null ){
+									somethingToSend = true;
+									body += tc;
+								}
 							}
 						}
 						userTopics.addAll(topics);
@@ -131,7 +134,7 @@ public class NewTopicsNotification extends Notification {
 			
 			int weekAgo = (int) (System.currentTimeMillis()/1000L) - 7 * 86400;
 			if( orderedTopics.get(0).getCreatedAt() < weekAgo )
-				return "";
+				return null;
 			
 			String groupContent = "<p><b>Пишут в группе '" + ug.getName() + "'</b>";
 				
@@ -145,7 +148,7 @@ public class NewTopicsNotification extends Notification {
 		} catch (Exception e) {
 			logger.severe("Failed to create news for group "+e.getMessage());
 			e.printStackTrace();
-			return "";
+			return null;
 		}
 	}
 
