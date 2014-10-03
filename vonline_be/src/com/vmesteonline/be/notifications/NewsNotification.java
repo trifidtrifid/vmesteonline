@@ -50,8 +50,6 @@ public class NewsNotification extends Notification {
 			e.printStackTrace();
 			logger.fine("Got exception:" + (e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()) );
 			throw new InvalidOperation(VoError.GeneralError, e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage());
-		} finally { 
-			pm.close();
 		}
 	}
 }

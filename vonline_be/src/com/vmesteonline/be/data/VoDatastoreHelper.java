@@ -9,12 +9,7 @@ import com.vmesteonline.be.jdo2.VoUserObject;
 public class VoDatastoreHelper {
 
 	public static void exist(Class<?> className, long id) throws InvalidOperation {
-		PersistenceManager pm = PMF.getPm();
-		try {
-			exist(className, id, pm);
-		} finally {
-			pm.close();
-		}
+		exist(className, id, PMF.getPm());
 	}
 
 	public static void exist(Class<?> className, long id, PersistenceManager pm) throws InvalidOperation {

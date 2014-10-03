@@ -395,23 +395,19 @@ public class VoHelper {
 	
 	public static boolean checkInitKey( String key ){
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoInitKey vik = VoInitKey.getVoInitKey(pm);
-			boolean result = vik.getCode().equals(key);
-			vik.resetCode();
-			pm.makePersistent(vik);
-			if(!result){
-				try {
-					EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "initialization code", vik.getCode());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+
+		VoInitKey vik = VoInitKey.getVoInitKey(pm);
+		boolean result = vik.getCode().equals(key);
+		vik.resetCode();
+		pm.makePersistent(vik);
+		if(!result){
+			try {
+				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "initialization code", vik.getCode());
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			return result;
-			
-		} finally {
-			pm.close();
 		}
+		return result;
 	}
 
 	public static final String passwordCharSet = "ABCDEFJHIJKLMNPQRSTUVWXYZabcdefjhijkmnpqrstuvwxyz23456789"; // characters to choose from

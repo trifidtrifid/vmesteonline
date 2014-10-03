@@ -130,28 +130,25 @@ public class StorageHelper {
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
 		String contentType = "image/jpeg";
 		String fname = "img.jpeg";
-		try {
-			if( null != oldURL ){
-			long oldFileId = getFileId(oldURL);
-			
-				try {
-					VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-					contentType = oldFile.getContentType();
-					fname = oldFile.getFileName();
-					
-					if (0 == userId)
-						userId = oldFile.getUserId();
-					if (null == isPublic)
-						isPublic = oldFile.isPublic();
-					deleteImage(oldFile.getGSFileName());
-				} catch (JDOObjectNotFoundException onfe) {
-				}
+
+		if( null != oldURL ){
+		long oldFileId = getFileId(oldURL);
+		
+			try {
+				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				contentType = oldFile.getContentType();
+				fname = oldFile.getFileName();
+				
+				if (0 == userId)
+					userId = oldFile.getUserId();
+				if (null == isPublic)
+					isPublic = oldFile.isPublic();
+				deleteImage(oldFile.getGSFileName());
+			} catch (JDOObjectNotFoundException onfe) {
 			}
-			return saveImage(urlOrContent.getBytes(), contentType, userId, isPublic, pm, fname);
-		} finally {
-			if (null == _pm)
-				pm.close();
 		}
+		return saveImage(urlOrContent.getBytes(), contentType, userId, isPublic, pm, fname);
+
 	}
 
 	// ===================================================================================================================
@@ -178,17 +175,14 @@ public class StorageHelper {
 	public static boolean getFile(String url, OutputStream os, Map<String, String[]> params) throws IOException {
 		long oldFileId = getFileId(url);
 		PersistenceManager pm = PMF.getPm();
+
 		try {
-			try {
-				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				VoFileAccessRecord version = vfar.getVersion( params, pm );
-				getFile( (version == null ? vfar : version).getGSFileName(), os);
-				return true;
-			} catch (JDOObjectNotFoundException onfe) {
-				return false;
-			}
-		} finally {
-			pm.close();
+			VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+			VoFileAccessRecord version = vfar.getVersion( params, pm );
+			getFile( (version == null ? vfar : version).getGSFileName(), os);
+			return true;
+		} catch (JDOObjectNotFoundException onfe) {
+			return false;
 		}
 	}
 
@@ -219,30 +213,27 @@ public class StorageHelper {
 		} else {
 			long oldFileId = getFileId(req.getRequestURI());
 			PersistenceManager pm = PMF.getPm();
+
 			try {
-				try {
-					VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-					resp.setStatus(HttpServletResponse.SC_OK);
-					String fileName = URLEncoder.encode( vfar.getFileName(),"UTF-8");
-					resp.setContentType(vfar.getContentType()+"; filename="+fileName);
-					resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
-					VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
-					
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					getFile( theVersion.getGSFileName(), baos);
-					baos.close();
-					fileData = baos.toByteArray();
-					if( null != queryString)
-						ServiceImpl.putObjectToCache(queryString, new FileObject(fileData, fileName, vfar.getContentType()+"; filename="+fileName));
-					
-				} catch (JDOObjectNotFoundException onfe) {
-					resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
-					return;
-				}
+				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+				resp.setStatus(HttpServletResponse.SC_OK);
+				String fileName = URLEncoder.encode( vfar.getFileName(),"UTF-8");
+				resp.setContentType(vfar.getContentType()+"; filename="+fileName);
+				resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
+				VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
 				
-			} finally {
-				pm.close();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				getFile( theVersion.getGSFileName(), baos);
+				baos.close();
+				fileData = baos.toByteArray();
+				if( null != queryString)
+					ServiceImpl.putObjectToCache(queryString, new FileObject(fileData, fileName, vfar.getContentType()+"; filename="+fileName));
+				
+			} catch (JDOObjectNotFoundException onfe) {
+				resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found");
+				return;
 			}
+
 		}
 		resp.getOutputStream().write(fileData);
 	}
@@ -269,12 +260,8 @@ public class StorageHelper {
 			throws IOException {
 		VoFileAccessRecord vfar = createFileAccessRecord(userId, isPublic, fileName, contentType);
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			vfar = pm.makePersistent(vfar);
-		} finally {
-			if (null == _pm)
-				pm.close();
-		}
+		vfar = pm.makePersistent(vfar);
+
 		try {
 			saveFileData(is, vfar);
 			
@@ -319,17 +306,13 @@ public class StorageHelper {
 	public static boolean deleteImage(String url, PersistenceManager _pm) throws IOException {
 		long oldFileId = getFileId(url);
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+
 		try {
-			try {
-				VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				deleteImage(oldFile.getGSFileName());
-				return true;
-			} catch (JDOObjectNotFoundException onfe) {
-				return false;
-			}
-		} finally {
-			if (null == _pm)
-				pm.close();
+			VoFileAccessRecord oldFile = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
+			deleteImage(oldFile.getGSFileName());
+			return true;
+		} catch (JDOObjectNotFoundException onfe) {
+			return false;
 		}
 	}
 

@@ -54,10 +54,7 @@ public class VoUser /* extends GeoLocation */{
 			
 		} catch (InvalidOperation e) {
 			e.printStackTrace();
-		} finally {
-			pm.close();
-		}
-
+		} 
 	}
 
 	public VoUserGroup getGroup(GroupType gt, PersistenceManager pm) {

@@ -72,32 +72,28 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 		//749282;188689;Российская Федерация;Ленинградская Обл. п. Кудрово;улица Ленинградская;7;0;1;2;2
 		
 		PersistenceManager pm = PMF.getPm();
+
+		VoBuilding vb;
+		VoStreet cs;
+		VoCity vcty;
+		VoCountry vc;
 		try {
-			VoBuilding vb;
-			VoStreet cs;
-			VoCity vcty;
-			VoCountry vc;
-			try {
-				List<String> firstLine = csvData.get(1);
-				vc = VoCountry.createVoCountry( firstLine.get(2), pm);
-				vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
-				cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
-				vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, firstLine.get(5), null, null, pm);
-				
-				initPostalAddresses( csvData, pm, vb); 
-				
-				baos = new ByteArrayOutputStream();
-				CSVHelper.writeCSV(baos, csvData, null, "\n", null);
-				baos.close();
-				String url = StorageHelper.saveImage(baos.toByteArray(), "text/csv", 0, true, pm, "addresses.csv");
-				EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "csv", url);
-				
-			} catch (InvalidOperation e) {
-				return "Failed to fill: "+e.why;
-			}
+			List<String> firstLine = csvData.get(1);
+			vc = VoCountry.createVoCountry( firstLine.get(2), pm);
+			vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
+			cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
+			vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, firstLine.get(5), null, null, pm);
 			
-		} finally {
-			pm.close();
+			initPostalAddresses( csvData, pm, vb); 
+			
+			baos = new ByteArrayOutputStream();
+			CSVHelper.writeCSV(baos, csvData, null, "\n", null);
+			baos.close();
+			String url = StorageHelper.saveImage(baos.toByteArray(), "text/csv", 0, true, pm, "addresses.csv");
+			EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "csv", url);
+			
+		} catch (InvalidOperation e) {
+			return "Failed to fill: "+e.why;
 		}
 		return null;
 	}

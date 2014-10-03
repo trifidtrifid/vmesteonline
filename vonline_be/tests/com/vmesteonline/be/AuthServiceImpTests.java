@@ -91,8 +91,7 @@ public class AuthServiceImpTests {
 			Assert.assertEquals("Парадная 1", ug0Id.getName());
 		} finally {
 			pm.close();
-		}
-		
+		}	
 	}
 
 	@Test

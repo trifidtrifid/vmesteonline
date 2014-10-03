@@ -35,9 +35,7 @@ public class ConfirmEmailServlet extends HttpServlet {
 					}
 				} catch (Exception e) {					
 					e.printStackTrace();
-				} finally {
-					pm.close();
-				}
+				} 
 			}
 		}
 		resp.sendRedirect("/main");
