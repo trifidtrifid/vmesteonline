@@ -1178,9 +1178,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
             wallItemsLength = 0;
 
-        /*for(var i = 0 ; i < wallItemsLength; i++){
-        }*/
-
         if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
 
         initWallItem(lenta.wallItems);
@@ -2946,6 +2943,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
              maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
         };
         $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
+    })
+    .controller('SetInfoController',function($rootScope) {
+
+        var save = function(){
+
+        };
+
     });
     /*.controller('BlogController',function($state,$rootScope) {
         var blog = this;
