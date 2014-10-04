@@ -208,7 +208,10 @@ public class StorageHelper {
 				fileData = fo.data;
 				resp.setContentType(fo.contentType);
 				resp.addHeader( "Content-Disposition", "attachment; filename="+fo.fileName);
-			} 
+			} else {
+				logger.warning("Cahce stotores Object:"+response +" of class "+response.getClass()+" would be removed.");
+				ServiceImpl.removeObjectFromCache(queryString);
+			}
 			
 		} else {
 			long oldFileId = getFileId(req.getRequestURI());
@@ -220,7 +223,11 @@ public class StorageHelper {
 				String fileName = URLEncoder.encode( vfar.getFileName(),"UTF-8");
 				resp.setContentType(vfar.getContentType()+"; filename="+fileName);
 				resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
-				VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
+				VoFileAccessRecord theVersion = vfar.getVersion( queryString );
+				if( null == theVersion ){
+					theVersion = vfar.getVersion( req.getParameterMap(), pm );
+					vfar.setVersion(queryString, theVersion);
+				}
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				getFile( theVersion.getGSFileName(), baos);
