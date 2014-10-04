@@ -1490,6 +1490,16 @@ h1 {
   width: 100%;
   display: block;
 }
+.set-info label input {
+  width: 150px;
+  display: inline-block;
+}
+.set-info label span {
+  display: inline-block;
+}
+.set-info .set-info-save {
+  color: #fff;
+}
 .loading {
   width: 150px;
   height: 150px;

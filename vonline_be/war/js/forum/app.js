@@ -79,6 +79,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "partials/maps.html",
             controller: 'MapsController as maps'
         })
+        .state('set-info', {
+            url: "/set-info",
+            templateUrl: "partials/set-info.html",
+            controller: 'SetInfoController as setInfo'
+        })
         /*.state('blog', {
             url: "/blog",
             templateUrl: "partials/blog.html",
