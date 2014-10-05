@@ -39,11 +39,13 @@ public class NewsNotification extends Notification {
 						body += nm.message + "<br/><br/>";
 					
 					body += "Подробности на сайте<a href=\"https://"+host+"\"> ВместеОнлайн.ру</a>";
-					body += "<br/><i>Вы можете изменить рассылку новостей в</i><a href=\"https://"+host+"/settings\"/>настройках профиля</a>";
+					body += "<br/><i>Вы можете изменить рассылку новостей в </i>"
+							+ "<a href=\"https://"+host+"/settings\">настройках профиля</a>";
 					logger.fine("Got +"+messagesToSend.size()+" to send new News");	
 					decorateAndSendMessage(user, " новости рядом с вами", body);
 					logger.fine("News sent to:" + user);
 					user.setLastNotified(now);
+					pm.makePersistent(user);
 					
 				}
 			}	

@@ -227,6 +227,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				up.setNotifications(currentUser.getNotificationFreq());
 				return up;
 			}
 
@@ -785,7 +786,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		try {
 			VoUser currentUser = getCurrentUser();
 			currentUser.setNotifications(notifications);
-
+			pm.makePersistent(currentUser);
 		} finally {
 			pm.close();
 		}
