@@ -2963,12 +2963,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
     .controller('SetInfoController',function($rootScope) {
         var setInfo = this;
 
-        var save = function(){
-            if(!setInfo.staircase) setInfo.staircase = 0;
-            if(!setInfo.floor) setInfo.floor = 0;
-            if(!setInfo.flat) setInfo.flat = 0;
+        setInfo.save = function(){
+            var staircase, floor,flat;
 
-            userService.updateUserAddress(setInfo.staircase,setInfo.floor,setInfo.flat);
+            (!setInfo.staircase) ? staircase = 0 : staircase = setInfo.staircase;
+            (!setInfo.floor) ? floor = 0 : floor = setInfo.floor;
+            (!setInfo.flat) ? flat = 0 : flat = setInfo.flat;
+
+            userClient.updateUserAddress(staircase,floor,flat);
         };
 
     });
