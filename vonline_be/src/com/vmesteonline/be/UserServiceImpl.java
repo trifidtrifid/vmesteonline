@@ -207,6 +207,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				up.setNotifications(currentUser.getNotificationFreq());
 				return up;
 			}
 
@@ -418,7 +419,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("countryId==" + countryId);
+			q.setFilter("countryId == " + countryId);
 			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());
@@ -518,7 +519,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} 
 	}
 
-	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -718,8 +718,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateNotifications(Notifications notifications) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		VoUser currentUser = getCurrentUser();
-		currentUser.setNotifications(notifications);
+		try {
+			VoUser currentUser = getCurrentUser();
+			currentUser.setNotifications(notifications);
+			pm.makePersistent(currentUser);
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
