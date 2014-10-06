@@ -104,6 +104,10 @@ public class VoUser /* extends GeoLocation */{
 	public UserFamily getUserFamily() {
 		return userFamily;
 	}
+	
+	public int getRegistered() {
+		return registered;
+	}
 
 	public UserContacts getContacts() {
 		return new UserContacts(getId(), UserStatus.CONFIRMED, null, mobilePhone, email);
