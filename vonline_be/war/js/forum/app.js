@@ -83,7 +83,7 @@ main.config(function($stateProvider, $urlRouterProvider) {
             url: "/set-info",
             templateUrl: "partials/set-info.html",
             controller: 'SetInfoController as setInfo'
-        })
+        });
         /*.state('blog', {
             url: "/blog",
             templateUrl: "partials/blog.html",
