@@ -40,38 +40,33 @@ public class NewTopicsNotification extends Notification {
 		int now = (int)(System.currentTimeMillis()/1000L);
 
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Map<Long, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
+		Map<Long, Set<VoTopic>> groupTopicMap = collectTopicsByGroups(users, pm);
 
-			// create message for each user
-			String body = "Близкие события<br/><br/>";
+		// create message for each user
+		String body = "Близкие события<br/><br/>";
+		
+		for (VoUser u : users) {
+			Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
 			
-			for (VoUser u : users) {
-				Set<VoTopic> userTopics = new TreeSet<VoTopic>( topicIdComp );
-				
-				for (Long ug : u.getGroups()) {
-					Set<VoTopic> topics = groupTopicMap.get(ug);
-					topics.removeAll(userTopics);
-					if (topics.size() != 0) {
-						body += createGroupContent(pm, ug, topics);
-					}
-					userTopics.addAll(topics);
+			for (Long ug : u.getGroups()) {
+				Set<VoTopic> topics = groupTopicMap.get(ug);
+				topics.removeAll(userTopics);
+				if (topics.size() != 0) {
+					body += createGroupContent(pm, ug, topics);
 				}
-				NotificationMessage mn = new NotificationMessage();
-				mn.message = body;
-				mn.subject = "Близкие события";
-				mn.to = u.getEmail();
-				try {
-					sendMessage(mn, u);
-					u.setLastNotified(now);
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
+				userTopics.addAll(topics);
 			}
-
-		} finally {
-			pm.close();
+			NotificationMessage mn = new NotificationMessage();
+			mn.message = body;
+			mn.subject = "Близкие события";
+			mn.to = u.getEmail();
+			try {
+				sendMessage(mn, u);
+				u.setLastNotified(now);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
 		}
 	}
 

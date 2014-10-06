@@ -55,18 +55,14 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public void updateUserInfo(UserInfo userInfo) throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser user = getCurrentUser(pm);
-			user.setName(userInfo.firstName);
-			user.setLastName(userInfo.lastName);
-			user.setGender(userInfo.gender);
-			user.setBirthday(userInfo.birthday);
-			// userInfo.avatar
-			// VoHelper.replaceURL(user, "avatar", userInfo.avatar, 0, true, pm);
-			pm.makePersistent(user);
-		} finally {
-			pm.close();
-		}
+		VoUser user = getCurrentUser(pm);
+		user.setName(userInfo.firstName);
+		user.setLastName(userInfo.lastName);
+		user.setGender(userInfo.gender);
+		user.setBirthday(userInfo.birthday);
+		// userInfo.avatar
+		// VoHelper.replaceURL(user, "avatar", userInfo.avatar, 0, true, pm);
+		pm.makePersistent(user);
 	}
 
 	public static String emailreg = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
@@ -77,31 +73,24 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			return getShortUserInfo( null, getCurrentUserId(), pm);
-		} finally {
-			pm.close();
-		}
-		
+		return getShortUserInfo( null, getCurrentUserId(), pm);
+
 	}
 
 	@Override
 	public ShortProfile getShortProfile() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser voUser = getCurrentUser(pm);
-			ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
-			
-			if (voUser.getAddress() != 0) {
-				VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class,voUser.getAddress());
+		VoUser voUser = getCurrentUser(pm);
+		ShortProfile sp = new ShortProfile(voUser.getId(), voUser.getName(), voUser.getLastName(), 0, voUser.getAvatarMessage(), "", "");
+		
+		if (voUser.getAddress() != 0) {
+			VoPostalAddress pa = pm.getObjectById(VoPostalAddress.class,voUser.getAddress());
 
-				VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
-				sp.setAddress(building.getAddressString());
-			}
-			return sp;
-		} finally {
-			pm.close();
+			VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding());
+			sp.setAddress(building.getAddressString());
 		}
+		return sp;
+
 	}
 
 	public static ShortUserInfo getShortUserInfo( VoUser cuser, long userId, PersistenceManager pm) {
@@ -124,43 +113,39 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			PersistenceManager pm = PMF.getPm();
 
+			long userId = getCurrentUserId(pm);
+
+			VoUser user;
 			try {
-				long userId = getCurrentUserId(pm);
-
-				VoUser user;
-				try {
-					user = pm.getObjectById(VoUser.class, userId);
-				} catch (JDOObjectNotFoundException e) {
-					logger.info("Current user doues not exists. Not found by Id.");
-					getCurrentSession(pm).setUserId(null);
-					throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
-				}
-
-				logger.info("find user email " + user.getEmail() + " name " + user.getName());
-
-				List<Long> uGroups = user.getGroups();
-				if (uGroups == null) {
-					logger.warning("user with id " + Long.toString(userId) + " has no any groups");
-					throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
-				}
-				List<Group> groups = new ArrayList<Group>();
-				for (Long group : uGroups) {
-					VoUserGroup ug = pm.getObjectById(VoUserGroup.class, group);
-					logger.info("return group " + ug.getName());
-					groups.add( ug.createGroup());
-				}
-				Collections.sort(groups, new Comparator<Group>(){
-
-					@Override
-					public int compare(Group o1, Group o2) {
-						return Integer.compare(o1.type.getValue(),  o2.type.getValue());
-					}
-					
-				});
-				return groups;
-			} finally {
-				pm.close();
+				user = pm.getObjectById(VoUser.class, userId);
+			} catch (JDOObjectNotFoundException e) {
+				logger.info("Current user doues not exists. Not found by Id.");
+				getCurrentSession(pm).setUserId(null);
+				throw new InvalidOperation(VoError.NotAuthorized, "can't find user by id");
 			}
+
+			logger.info("find user email " + user.getEmail() + " name " + user.getName());
+
+			List<Long> uGroups = user.getGroups();
+			if (uGroups == null) {
+				logger.warning("user with id " + Long.toString(userId) + " has no any groups");
+				throw new InvalidOperation(VoError.GeneralError, "can't find user bu id");
+			}
+			List<Group> groups = new ArrayList<Group>();
+			for (Long group : uGroups) {
+				VoUserGroup ug = pm.getObjectById(VoUserGroup.class, group);
+				logger.info("return group " + ug.getName());
+				groups.add( ug.createGroup());
+			}
+			Collections.sort(groups, new Comparator<Group>(){
+
+				@Override
+				public int compare(Group o1, Group o2) {
+					return Integer.compare(o1.type.getValue(),  o2.type.getValue());
+				}
+				
+			});
+			return groups;
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, e.getMessage());
@@ -171,24 +156,20 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public static List<String> getLocationCodesForRegistration() throws InvalidOperation {
 
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class, true);
-			if (!postalAddresses.iterator().hasNext()) {
-				throw new InvalidOperation(VoError.GeneralError, "can't find any location codes");
-			}
-
-			List<String> locations = new ArrayList<String>();
-			for (VoPostalAddress pa : postalAddresses) {
-				pm.retrieve(pa);
-				String code = "" + pa.getAddressCode();
-				pm.makePersistent(new VoInviteCode(code, pa.getId()));
-				;
-				locations.add(code);
-			}
-			return locations;
-		} finally {
-			pm.close();
+		Extent<VoPostalAddress> postalAddresses = pm.getExtent(VoPostalAddress.class, true);
+		if (!postalAddresses.iterator().hasNext()) {
+			throw new InvalidOperation(VoError.GeneralError, "can't find any location codes");
 		}
+
+		List<String> locations = new ArrayList<String>();
+		for (VoPostalAddress pa : postalAddresses) {
+			pm.retrieve(pa);
+			String code = "" + pa.getAddressCode();
+			pm.makePersistent(new VoInviteCode(code, pa.getId()));
+			;
+			locations.add(code);
+		}
+		return locations;
 	}
 
 	@Override
@@ -209,9 +190,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCounties. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
@@ -272,9 +251,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "unknow user id: " + Long.toString(userId));
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	private GroupType determineProvacyByAddresses(VoUser currentUser, VoUser user, PersistenceManager pm) throws InvalidOperation {
@@ -327,117 +304,90 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public UserContacts getUserContacts() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser u = getCurrentUser(pm);
-			UserContacts uc = new UserContacts();
-			if (u.getAddress() == 0) {
-				uc.setAddressStatus(UserStatus.UNCONFIRMED);
-			} else {
-				uc.setHomeAddress(pm.getObjectById(VoPostalAddress.class, u.getAddress()).getPostalAddress());
-			}
-			uc.setEmail(u.getEmail());
-			uc.setMobilePhone(u.getMobilePhone());
-			return uc;
-		} finally {
-			pm.close();
+		VoUser u = getCurrentUser(pm);
+		UserContacts uc = new UserContacts();
+		if (u.getAddress() == 0) {
+			uc.setAddressStatus(UserStatus.UNCONFIRMED);
+		} else {
+			uc.setHomeAddress(pm.getObjectById(VoPostalAddress.class, u.getAddress()).getPostalAddress());
 		}
+		uc.setEmail(u.getEmail());
+		uc.setMobilePhone(u.getMobilePhone());
+		return uc;
 	}
 
 	@Override
 	public void changePassword(String oldPwd, String newPwd) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser cu = getCurrentUser(pm);
-			if (!cu.getPassword().equals(oldPwd))
-				throw new InvalidOperation(VoError.IncorrectParametrs, "Old password dont match.");
-			if (null == newPwd || newPwd.length() < 3) {
-				throw new InvalidOperation(VoError.IncorrectPassword, "New password too short.");
-			}
-			cu.setPassword(newPwd);
-			pm.makePersistent(cu);
-		} finally {
-			pm.close();
+		VoUser cu = getCurrentUser(pm);
+		if (!cu.getPassword().equals(oldPwd))
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Old password dont match.");
+		if (null == newPwd || newPwd.length() < 3) {
+			throw new InvalidOperation(VoError.IncorrectPassword, "New password too short.");
 		}
-
+		cu.setPassword(newPwd);
+		pm.makePersistent(cu);
 	}
 
 	@Override
 	public void updatePrivacy(UserPrivacy privacy) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser cu = getCurrentUser(pm);
-			cu.setPrivacy(privacy);
-			pm.makePersistent(cu);
-		} finally {
-			pm.close();
-		}
+		VoUser cu = getCurrentUser(pm);
+		cu.setPrivacy(privacy);
+		pm.makePersistent(cu);
 	}
 
 	@Override
 	public void updateContacts(UserContacts contacts) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser user = getCurrentUser(pm);
-			if (null != contacts.getMobilePhone())
-				if (contacts.getMobilePhone().matches(phonereg))
-					user.setMobilePhone(contacts.getMobilePhone());
-				else
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
-							+ "'. Should have format like 79219876543, +7(821)1234567, etc");
+		VoUser user = getCurrentUser(pm);
+		if (null != contacts.getMobilePhone())
+			if (contacts.getMobilePhone().matches(phonereg))
+				user.setMobilePhone(contacts.getMobilePhone());
+			else
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Phone format '" + contacts.getMobilePhone()
+						+ "'. Should have format like 79219876543, +7(821)1234567, etc");
 
-			if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
-				if (contacts.getEmail().matches(emailreg)) {
-					user.setEmail(contacts.getEmail());
-					user.setEmailConfirmed(false);
-				} else
-					throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
-			}
-			if (null != contacts.getHomeAddress()) {
-				VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(contacts.getHomeAddress(), pm);
+		if (null != contacts.getEmail() && !contacts.getEmail().trim().equalsIgnoreCase(user.getEmail())) {
+			if (contacts.getEmail().matches(emailreg)) {
+				user.setEmail(contacts.getEmail());
+				user.setEmailConfirmed(false);
+			} else
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Invalid Email format '" + contacts.getEmail() + "'. ");
+		}
+		if (null != contacts.getHomeAddress()) {
+			VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(contacts.getHomeAddress(), pm);
 
-				if (user.getAddress() == 0 || pa.getId() != user.getAddress()) {
-					try {
-						user.setLocation(pa.getAddressCode(), pm);
-					} catch (InvalidOperation e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
-					}
+			if (user.getAddress() == 0 || pa.getId() != user.getAddress()) {
+				try {
+					user.setLocation(pa.getAddressCode(), pm);
+				} catch (InvalidOperation e) {
+					e.printStackTrace();
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.why);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new InvalidOperation(VoError.IncorrectParametrs, "Address is incorrect." + e.getMessage());
 				}
 			}
-			pm.makePersistent(user);
-		} finally {
-			pm.close();
 		}
-
+		pm.makePersistent(user);
 	}
 
 	@Override
 	public void updateFamily(UserFamily family) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser cu = getCurrentUser(pm);
-			cu.setUserFamily(family);
-			pm.makePersistent(cu);
-		} finally {
-			pm.close();
-		}
+		VoUser cu = getCurrentUser(pm);
+		cu.setUserFamily(family);
+		pm.makePersistent(cu);
 	}
 
 	@Override
 	public void updateInterests(UserInterests interests) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser cu = getCurrentUser(pm);
-			cu.setInterests(interests.userInterests);
-			cu.setJob(interests.job);
-			pm.makePersistent(cu);
-		} finally {
-			pm.close();
-		}
-
+		VoUser cu = getCurrentUser(pm);
+		cu.setInterests(interests.userInterests);
+		cu.setJob(interests.job);
+		pm.makePersistent(cu);
 	}
 
 	@Override
@@ -457,9 +407,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (JDOObjectNotFoundException ioe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Access denied");
 
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -480,9 +428,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getCities. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -502,9 +448,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to load STreets. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -523,27 +467,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getBuildings. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
 	public void updateUserAvatar(String url) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
+		VoUser voUser = getCurrentUser(pm);
 
-		try {
-			VoUser voUser = getCurrentUser(pm);
-
-			voUser.setAvatarTopic(url);
-			voUser.setAvatarMessage(url);
-			voUser.setAvatarProfileShort(url);
-			voUser.setAvatarProfile(url);
-			pm.makePersistent(voUser);
-
-		} finally {
-			pm.close();
-		}
+		voUser.setAvatarTopic(url);
+		voUser.setAvatarMessage(url);
+		voUser.setAvatarProfileShort(url);
+		voUser.setAvatarProfile(url);
+		pm.makePersistent(voUser);
 
 	}
 
@@ -579,9 +515,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	// TODO this method called only once in test. may be unused?
@@ -594,9 +528,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to getAddressCatalogue. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 		return true;
 	}
 
@@ -621,9 +553,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCountry. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -636,9 +566,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewCity. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@SuppressWarnings("unchecked")
@@ -653,8 +581,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
-		} finally {
-			pm.close();
 		}
 	}
 
@@ -690,9 +616,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "FAiled to createNewStreet. " + e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
@@ -709,17 +633,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public PostalAddress getUserHomeAddress() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser currentUser = getCurrentUser(pm);
-			if (null == currentUser)
-				throw new InvalidOperation(VoError.NotAuthorized, "No currnet user is set.");
-			if (0 == currentUser.getAddress()) {
-				return null;
-			}
-			return pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getPostalAddress(pm);
-		} finally {
-			pm.close();
+		VoUser currentUser = getCurrentUser(pm);
+		if (null == currentUser)
+			throw new InvalidOperation(VoError.NotAuthorized, "No currnet user is set.");
+		if (0 == currentUser.getAddress()) {
+			return null;
 		}
+		return pm.getObjectById( VoPostalAddress.class, currentUser.getAddress()).getPostalAddress(pm);
 	}
 
 	private static Logger logger = Logger.getLogger("com.vmesteonline.be.AuthServiceImpl");
@@ -747,14 +667,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public List<ShortUserInfo> getNeighbours() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser currentUser = getCurrentUser();
-			
-			List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING, pm), pm);
-			return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
-		} finally {
-			pm.close();
-		}
+		VoUser currentUser = getCurrentUser();
+		
+		List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING, pm), pm);
+		return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
 	}
 	
 	public static CachableObject< ArrayList<ShortUserInfo> > usersByGroup = new CachableObject();
@@ -766,21 +682,17 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public ArrayList<ShortUserInfo> getNeighborsByGroupDo(Long groupId) throws InvalidOperation {
 		ArrayList<ShortUserInfo> sug = new ArrayList<ShortUserInfo>();
 		PersistenceManager pm = PMF.getPm();
-		try {
-			List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
-			for (VoUser voUser : users) {
-				sug.add( voUser.getShortUserInfo(pm));
-			}
-			Collections.sort( sug, new Comparator<ShortUserInfo>(){
-				@Override
-				public int compare(ShortUserInfo o1, ShortUserInfo o2) {
-					return (o1.lastName + o1.firstName).compareTo(o2.lastName+o2.firstName);
-				}
-			} );
-			return sug;
-		} finally {
-			pm.close();
+		List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
+		for (VoUser voUser : users) {
+			sug.add( voUser.getShortUserInfo(pm));
 		}
+		Collections.sort( sug, new Comparator<ShortUserInfo>(){
+			@Override
+			public int compare(ShortUserInfo o1, ShortUserInfo o2) {
+				return (o1.lastName + o1.firstName).compareTo(o2.lastName+o2.firstName);
+			}
+		} );
+		return sug;
 	}
 
 	private static Comparator<VoUser> uIdCOmp = new Comparator<VoUser>(){
@@ -806,14 +718,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateNotifications(Notifications notifications) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			VoUser currentUser = getCurrentUser();
-			currentUser.setNotifications(notifications);
-
-		} finally {
-			pm.close();
-		}
-
+		VoUser currentUser = getCurrentUser();
+		currentUser.setNotifications(notifications);
 	}
 
 	@Override
@@ -831,51 +737,46 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				ServiceImpl.removeObjectFromCache(mapKey);
 			}
 		PersistenceManager pm = PMF.getPm();
-
-		try {
-			int width = 450, height = 450;
+		int width = 450, height = 450;
+		
+			VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+			String los = userGroup.getLongitude().toPlainString();
+			String las = userGroup.getLatitude().toPlainString();
+			int radius;
+			if(0!= (radius = userGroup.getRadius())){
+				
+				double lad = userGroup.getLatitude().doubleValue();
+				double lod = userGroup.getLongitude().doubleValue();
+	
+				double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
+				double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
+				double ws,hs;
 			
-				VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
-				String los = userGroup.getLongitude().toPlainString();
-				String las = userGroup.getLatitude().toPlainString();
-				int radius;
-				if(0!= (radius = userGroup.getRadius())){
-					
-					double lad = userGroup.getLatitude().doubleValue();
-					double lod = userGroup.getLongitude().doubleValue();
-		
-					double laDelta = VoHelper.getLatitudeMax(userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lad;
-					double loDelta = VoHelper.getLongitudeMax(userGroup.getLongitude(), userGroup.getLatitude(), userGroup.getRadius()).doubleValue() - lod;
-					double ws,hs;
-				
-					if(radius < 100){
-						double k = 0.0000002*radius;
-						ws = VoHelper.roundDouble(k*width, 5);
-						hs = VoHelper.roundDouble(k*height, 5);
-					} else {
-						ws = VoHelper.roundDouble(laDelta, 5);
-						hs = VoHelper.roundDouble(loDelta, 5);
-					}
-					
-						url = "https://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
-								+"&size="+width+","+height+"&spn="+ws+","+hs +
-									"&pl=c:" + color + ",f:" + color + ",w:1";	
-		
-		
-					for ( double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
-						url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
-					}
-				
-					ServiceImpl.putObjectToCache(mapKey, (String) url);
-					
+				if(radius < 100){
+					double k = 0.0000002*radius;
+					ws = VoHelper.roundDouble(k*width, 5);
+					hs = VoHelper.roundDouble(k*height, 5);
 				} else {
-					
-					url = VoGeocoder.createMapImageURL(  userGroup.getLongitude(), userGroup.getLatitude(), 450, 450 );
+					ws = VoHelper.roundDouble(laDelta, 5);
+					hs = VoHelper.roundDouble(loDelta, 5);
 				}
+				
+					url = "https://static-maps.yandex.ru/1.x/?l=map&pt=" + los + "," + las + ",pm2am" 
+							+"&size="+width+","+height+"&spn="+ws+","+hs +
+								"&pl=c:" + color + ",f:" + color + ",w:1";	
+	
+	
+				for ( double i = 0.0D; i < 2 * Math.PI; i += Math.PI / 30) {
+					url += "," + (lod + Math.sin(i) * loDelta) + "," + (lad + Math.cos(i) * laDelta);
+				}
+			
+				ServiceImpl.putObjectToCache(mapKey, (String) url);
+				
+			} else {
+				
+				url = VoGeocoder.createMapImageURL(  userGroup.getLongitude(), userGroup.getLatitude(), 450, 450 );
+			}
 
-		} finally {
-			pm.close();
-		}
 		return (String) url;
 	}
 

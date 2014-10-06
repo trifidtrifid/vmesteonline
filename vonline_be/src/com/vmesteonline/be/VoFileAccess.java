@@ -72,8 +72,6 @@ public class VoFileAccess extends HttpServlet {
 			logger.warning("Failed to process request:" + e.getMessage() + " ");
 			e.printStackTrace();
 			
-		} finally {
-			pm.close();
 		}
 	}
 
@@ -150,9 +148,7 @@ public class VoFileAccess extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.why);
 			logger.warning("Failed to save file:" + e.getMessage() + " ");
 			e.printStackTrace();
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	private static Logger logger = Logger.getLogger(VoFileAccess.class.getName());

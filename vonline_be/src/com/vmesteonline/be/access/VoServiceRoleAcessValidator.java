@@ -44,15 +44,11 @@ public class VoServiceRoleAcessValidator extends VoTAccessValidator {
 
 	private boolean checkAccessForUser(long currentUserId, long categoryId, String method) {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			List<VoUserAccessBase> acessList = (List<VoUserAccessBase>)pm.newQuery(si.getAuthRecordClass(), "categoryId == "+categoryId+" && userId == "+currentUserId).execute();
-			for (VoUserAccessBase voUserAccessBase : acessList) {
-				if( si.accessAllowed( voUserAccessBase, currentUserId, categoryId, method, pm ) )
-					return true;
-			}
-			return false;
-		} finally {
-			pm.close();
-		}	
+		List<VoUserAccessBase> acessList = (List<VoUserAccessBase>)pm.newQuery(si.getAuthRecordClass(), "categoryId == "+categoryId+" && userId == "+currentUserId).execute();
+		for (VoUserAccessBase voUserAccessBase : acessList) {
+			if( si.accessAllowed( voUserAccessBase, currentUserId, categoryId, method, pm ) )
+				return true;
+		}
+		return false;
 	}
 }

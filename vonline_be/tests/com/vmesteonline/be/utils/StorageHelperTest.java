@@ -111,11 +111,7 @@ public class StorageHelperTest extends StorageHelper {
 			String origURL = "http://vomoloko.ru/img/logo.jpg";
 			PersistenceManager pm = PMF.getPm();
 			String newImageUrl;
-			try {
-				newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, pm);
-			} finally {
-				pm.close();
-			}
+			newImageUrl = StorageHelper.saveImage(origURL, asi.getCurrentUserId(), true, pm);
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			StorageHelperTest.getFile(newImageUrl, baos, null);

@@ -139,9 +139,7 @@ public class UserServiceImplTest extends TestWorkAround {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Test
@@ -163,9 +161,7 @@ public class UserServiceImplTest extends TestWorkAround {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	/*
@@ -207,9 +203,7 @@ public class UserServiceImplTest extends TestWorkAround {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Test

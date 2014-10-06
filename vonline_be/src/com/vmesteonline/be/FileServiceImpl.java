@@ -29,9 +29,7 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to save image: "+e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
@@ -45,9 +43,7 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to replace image: "+e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 
 	@Override
@@ -63,9 +59,7 @@ public class FileServiceImpl extends ServiceImpl implements FileService.Iface {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to delete image: "+e.getMessage());
-		} finally {
-			pm.close();
-		}
+		} 
 	}
 	public boolean isPublicMethod(String method) {
 		return true;

@@ -144,50 +144,41 @@ public abstract class Notification {
 	public static void messageBecomeImportantNotification(VoTopic it, VoUserGroup group) {
 
 		PersistenceManager pm = PMF.getPm();
-		try {
-			List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
-			String subject = "важное сообщение";
-			String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")<br/><br/>";
+		List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
 
-			body += "<i>" + StringEscapeUtils.escapeHtml4(it.getContent()) + "</i>";
+		String subject = "важное сообщение";
+		String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")<br/><br/>";
 
-			body += "<br/><br/><a href=\"https://" + host + "/wall-single-" + it.getId() + "\">Обсудить, ответить ...</a>";
-			for (VoUser rcpt : usersForMessage) {
-				decorateAndSendMessage(rcpt, subject, body);
-			}
+		body += "<i>" + StringEscapeUtils.escapeHtml4(it.getContent()) + "</i>";
 
-		} finally {
-			pm.close();
+		body += "<br/><br/><a href=\"https://" + host + "/wall-single-" + it.getId() + "\">Обсудить, ответить ...</a>";
+		for (VoUser rcpt : usersForMessage) {
+			decorateAndSendMessage(rcpt, subject, body);
 		}
 	}
 
 	public static void dialogMessageNotification(VoDialog dlg, VoUser author, VoUser rcpt) {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, 0, pm);
-			VoDialogMessage lastMsg;
-			Iterator<VoDialogMessage> mi = messages.iterator();
-			if (messages.size() > 0) {
-				lastMsg = mi.next();
+		Collection<VoDialogMessage> messages = dlg.getMessages(0, 2, 0, pm);
+		VoDialogMessage lastMsg;
+		Iterator<VoDialogMessage> mi = messages.iterator();
+		if (messages.size() > 0) {
+			lastMsg = mi.next();
 
-				if (messages.size() == 1 || // else check that the last message has different author
-						lastMsg.getAuthorId() != mi.next().getAuthorId()) {
+			if (messages.size() == 1 || // else check that the last message has different author
+					lastMsg.getAuthorId() != mi.next().getAuthorId()) {
 
-					try {
-						String body = author.getName() + " " + author.getLastName() + " написал вам: <br/><br/><i>" + lastMsg.getContent()
-								+ "</i><br/><br/><a href=\"https://" + host + "/dialog-single-" + dlg.getId() + "\">Ответить...</a>";
+				try {
+					String body = author.getName() + " " + author.getLastName() + " написал вам: <br/><br/><i>" + lastMsg.getContent()
+							+ "</i><br/><br/><a href=\"https://" + host + "/dialog-single-" + dlg.getId() + "\">Ответить...</a>";
 
-						decorateAndSendMessage(rcpt, "сообщение от " + author.getName(), body);
+					decorateAndSendMessage(rcpt, "сообщение от " + author.getName(), body);
 
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-
-		} finally {
-			pm.close();
 		}
 	}
 

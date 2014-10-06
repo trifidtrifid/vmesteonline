@@ -88,16 +88,12 @@ public class Defaults {
 	
 	static {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			initializeGroups(pm);
-		} finally {
-			pm.close();
-		}
+		initializeGroups(pm);
 	}
 
 	public static boolean initDefaultData(boolean loadInviteCodes) {
 
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = PMF.getPm();
 		pm.setMultithreaded(false);
 		defaultRubrics = new ArrayList<VoRubric>();
 		try {
@@ -115,9 +111,7 @@ public class Defaults {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			pm.close();
-		}
+		} 
 		return true;
 
 	}

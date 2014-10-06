@@ -44,7 +44,7 @@ public class TestWorkAround {
 			if (!Defaults.initDefaultData(false))
 				return false;
 
-			pm = PMF.get().getPersistenceManager();
+			pm = PMF.getPm();
 			asi = new AuthServiceImpl(sessionId);
 			if (LoginResult.SUCCESS != asi.login(Defaults.user1email, Defaults.user1pass))
 				return false;
@@ -60,8 +60,6 @@ public class TestWorkAround {
 	}
 
 	void close() {
-		if (pm != null)
-			pm.close();
 		helper.tearDown();
 	}
 

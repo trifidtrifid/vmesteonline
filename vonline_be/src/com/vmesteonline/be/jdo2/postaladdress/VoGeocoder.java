@@ -108,8 +108,7 @@ public class VoGeocoder {
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location: " + ( e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()));
-			} finally {
-			pm.close();
+			
 		}
 	}
 

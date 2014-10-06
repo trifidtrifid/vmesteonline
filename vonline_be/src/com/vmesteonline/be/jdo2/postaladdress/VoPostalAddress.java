@@ -73,22 +73,15 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "can't init VoPostalAddress object. Input parametr is null");
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
+		VoBuilding vob;
 		try {
-			VoBuilding vob;
-			try {
-				vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
-			} catch (JDOObjectNotFoundException jonfe) {
-				jonfe.printStackTrace();
-				throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
-			}
-				 
-			return createVoPostalAddress(vob, postalAddress.getStaircase(), postalAddress.getFloor(), postalAddress.getFlatNo(), 
-					postalAddress.getComment(), pm);
-			
-		} finally {
-			if (null == _pm)
-				pm.close();
+			vob = pm.getObjectById(VoBuilding.class, postalAddress.getBuilding().getId());
+		} catch (JDOObjectNotFoundException jonfe) {
+			jonfe.printStackTrace();
+			throw new InvalidOperation(VoError.IncorrectParametrs, "No building found by ID=" + postalAddress.getBuilding().getId());
 		}
+		return createVoPostalAddress(vob, postalAddress.getStaircase(), postalAddress.getFloor(), postalAddress.getFlatNo(), 
+				postalAddress.getComment(), pm);
 	}
 
 	public static VoPostalAddress createVoPostalAddress(VoBuilding voBuilding, byte staircase, byte floor, int flatNo, String comment, PersistenceManager pm) throws InvalidOperation {
@@ -118,35 +111,25 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	public PostalAddress getPostalAddress(PersistenceManager _pm) {
 
 		PersistenceManager pm = _pm == null ? PMF.getPm() : _pm;
-		try {
-			VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
-			VoStreet street = pm.getObjectById(VoStreet.class, building.getStreetId());
-			VoCity city = pm.getObjectById(VoCity.class, street.getCity());
-			VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
+		VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+		VoStreet street = pm.getObjectById(VoStreet.class, building.getStreetId());
+		VoCity city = pm.getObjectById(VoCity.class, street.getCity());
+		VoCountry country = pm.getObjectById(VoCountry.class, city.getCountry());
 
-			return new PostalAddress(country.getCountry(), city.getCity(), street.getStreet(), building.getBuilding(), staircase, floor, flatNo, comment);
-		} finally {
-			if (_pm == null)
-				pm.close();
-		}
+		return new PostalAddress(country.getCountry(), city.getCity(), street.getStreet(), building.getBuilding(), staircase, floor, flatNo, comment);
 	}
 
 	public String getAddressText(PersistenceManager _pm) {
 
 		PersistenceManager pm = null == _pm ? PMF.getPm() : _pm;
-		try {
-			VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
-			if (null == building.getAddressString() || building.getAddressString().trim().length() == 0) {
+		VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+		if (null == building.getAddressString() || building.getAddressString().trim().length() == 0) {
 
-				PostalAddress pa = getPostalAddress(pm);
-				building.setAddressString(pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo);
-				return building.getAddressString();
-			} else {
-				return building.getAddressString() + " кв. " + flatNo/* + " [этаж " + floor + " подъезд "+ staircase + "]" */;
-			}
-		} finally {
-			if (null == _pm)
-				pm.close();
+			PostalAddress pa = getPostalAddress(pm);
+			building.setAddressString(pa.getCity().getName() + " " + pa.getStreet().getName() + " д." + building.getFullNo() + " кв. " + flatNo);
+			return building.getAddressString();
+		} else {
+			return building.getAddressString() + " кв. " + flatNo/* + " [этаж " + floor + " подъезд "+ staircase + "]" */;
 		}
 	}
 
@@ -173,15 +156,11 @@ public class VoPostalAddress implements Comparable<VoPostalAddress> {
 	public Double getDistance(VoPostalAddress that) {
 		PersistenceManager pm = PMF.getPm();
 		try {
-			try {
-				VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
-				VoBuilding thatBuilding = pm.getObjectById(VoBuilding.class, that.getBuilding());
-				return building.getDistance(thatBuilding);
-			} catch (Exception e) {
-				return null;
-			}
-		} finally {
-			pm.close();
+			VoBuilding building = pm.getObjectById(VoBuilding.class, buildingId);
+			VoBuilding thatBuilding = pm.getObjectById(VoBuilding.class, that.getBuilding());
+			return building.getDistance(thatBuilding);
+		} catch (Exception e) {
+			return null;
 		}
 	}
 

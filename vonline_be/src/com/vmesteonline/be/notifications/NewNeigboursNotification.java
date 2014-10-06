@@ -31,37 +31,34 @@ public class NewNeigboursNotification extends Notification {
 		int now = (int)(System.currentTimeMillis()/1000L);
 
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
-			// create message for each user
-			String body = "Новые соседи<br/><br/>";
+		Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
+
+		// create message for each user
+		String body = "Новые соседи<br/><br/>";
+		
+		for (VoUser u : users) {
+			Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
 			
-			for (VoUser u : users) {
-				Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
-				
-				for (Long ug : u.getGroups()) {
-					Set<VoUser> ggoupNeighbors = groupUsersMap.get(ug);
-					ggoupNeighbors.removeAll(neghbors);
-					if (ggoupNeighbors.size() != 0) {
-						body += createNeighborsContent(pm, ug, ggoupNeighbors);
-					}
-					ggoupNeighbors.addAll(ggoupNeighbors);
+			for (Long ug : u.getGroups()) {
+				Set<VoUser> ggoupNeighbors = groupUsersMap.get(ug);
+				ggoupNeighbors.removeAll(neghbors);
+				if (ggoupNeighbors.size() != 0) {
+					body += createNeighborsContent(pm, ug, ggoupNeighbors);
 				}
-				NotificationMessage mn = new NotificationMessage();
-				mn.message = body;
-				mn.subject = "Новые соседи";
-				mn.to = u.getEmail();
-				try {
-					sendMessage(mn, u);
-					u.setLastNotified(now);
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
+				ggoupNeighbors.addAll(ggoupNeighbors);
 			}
-		} finally {
-			pm.close();
+			NotificationMessage mn = new NotificationMessage();
+			mn.message = body;
+			mn.subject = "Новые соседи";
+			mn.to = u.getEmail();
+			try {
+				sendMessage(mn, u);
+				u.setLastNotified(now);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
 		}
 	}
 	

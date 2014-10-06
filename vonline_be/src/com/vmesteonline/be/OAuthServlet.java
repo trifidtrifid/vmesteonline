@@ -98,31 +98,25 @@ public class OAuthServlet extends HttpServlet {
 				}
 
 				PersistenceManager pm = PMF.getPm();
-				try {
-					VoUser user = authServiceImpl.getCurrentUser(pm);
-					if (user != null) {
-						resp.getWriter().println("<br>find user " + user.getEmail() + " avatar " + o.getString("photo_medium"));
-						String avatarUrl = StorageHelper.saveImage(o.getString("photo_medium").getBytes(), user.getId(), true, pm);
-						user.setAvatarTopic(avatarUrl);
-						user.setAvatarMessage(avatarUrl);
-						user.setAvatarProfileShort(avatarUrl);
-						user.setAvatarProfile(avatarUrl);
-						user.setGender(o.getInt("sex"));
-						SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-						Date date = formatter.parse(o.getString("bdate"));
-						long ts = date.getTime() / 1000L;
-						user.setBirthday((int) ts);
-						pm.makePersistent(user);
-						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
+				VoUser user = authServiceImpl.getCurrentUser(pm);
+				if (user != null) {
+					resp.getWriter().println("<br>find user " + user.getEmail() + " avatar " + o.getString("photo_medium"));
+					String avatarUrl = StorageHelper.saveImage(o.getString("photo_medium").getBytes(), user.getId(), true, pm);
+					user.setAvatarTopic(avatarUrl);
+					user.setAvatarMessage(avatarUrl);
+					user.setAvatarProfileShort(avatarUrl);
+					user.setAvatarProfile(avatarUrl);
+					user.setGender(o.getInt("sex"));
+					SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+					Date date = formatter.parse(o.getString("bdate"));
+					long ts = date.getTime() / 1000L;
+					user.setBirthday((int) ts);
+					pm.makePersistent(user);
+					// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Из Вконтакте успешно импортированы: Аватар, дата рождения, пол");
 
-					} else {
-						// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
-					}
-
-				} finally {
-					pm.close();
+				} else {
+					// getServletContext().setAttribute("MESSAGE_TO_SHOW", "Не удалось найти пользователя с email " + email);
 				}
-
 				if (inviteCode.startsWith("import")) {
 					// resp.getWriter().println("<br><br>go to " + domain + "settings");
 

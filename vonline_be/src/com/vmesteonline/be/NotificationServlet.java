@@ -40,11 +40,8 @@ public class NotificationServlet extends HttpServlet {
 			
 			} else if( "news".equals(reqType)){
 				PersistenceManager pm = PMF.getPm();
-				try {
-					new NewsNotification().sendNotifications();
-				} finally {
-					pm.close();
-				}	
+				new NewsNotification().sendNotifications();
+		
 			} else if( "pwdrem".equals(reqType)){
 				sendRemindPasswordMsg(req);
 			
@@ -64,53 +61,33 @@ public class NotificationServlet extends HttpServlet {
 	
 	private void sendRemindPasswordMsg(HttpServletRequest req) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Notification.sendRemindCodeMessage( 
-							(VoUser)getVoObjectByParam( req, "user", VoUser.class.getName(), pm));
-			
-		} finally {
-			pm.close();
-		}
-		
+		Notification.sendRemindCodeMessage( 
+						(VoUser)getVoObjectByParam( req, "user", VoUser.class.getName(), pm));
 	}
 
 	private void sendNewImportantMsg(HttpServletRequest req) throws InvalidOperation {
 		
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Notification.messageBecomeImportantNotification( 
-							(VoTopic)getVoObjectByParam( req, "it", VoTopic.class.getName(), pm),
-							(VoUserGroup)getVoObjectByParam( req, "ug", VoUserGroup.class.getName(), pm));
-			
-		} finally {
-			pm.close();
-		}
+		Notification.messageBecomeImportantNotification( 
+						(VoTopic)getVoObjectByParam( req, "it", VoTopic.class.getName(), pm),
+						(VoUserGroup)getVoObjectByParam( req, "ug", VoUserGroup.class.getName(), pm));
 	}
 	
 private void sendNewDialogMsg(HttpServletRequest req) throws InvalidOperation {
 		
 		PersistenceManager pm = PMF.getPm();
-		try {
-			Notification.dialogMessageNotification(
-							(VoDialog)getVoObjectByParam( req, "dg", VoDialog.class.getName(), pm),
-							(VoUser)getVoObjectByParam( req, "ar", VoUser.class.getName(), pm),
-							(VoUser)getVoObjectByParam( req, "rcpt", VoUser.class.getName(), pm));
-			
-		} finally {
-			pm.close();
-		}
+		Notification.dialogMessageNotification(
+						(VoDialog)getVoObjectByParam( req, "dg", VoDialog.class.getName(), pm),
+						(VoUser)getVoObjectByParam( req, "ar", VoUser.class.getName(), pm),
+						(VoUser)getVoObjectByParam( req, "rcpt", VoUser.class.getName(), pm));
+
 	}
 
 	private void sendWelcomeMsg(HttpServletRequest req) {
 		String uid = req.getParameter("uid");
 		if( null!=uid ){
 			PersistenceManager pm = PMF.getPm();
-			try {
-				Notification.welcomeMessageNotification(pm.getObjectById(VoUser.class, Long.parseLong(uid)), pm);
-				
-			} finally {
-				pm.close();
-			}
+			Notification.welcomeMessageNotification(pm.getObjectById(VoUser.class, Long.parseLong(uid)), pm);
 		}
 	}
 	

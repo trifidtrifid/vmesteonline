@@ -44,8 +44,6 @@ public class VoServiceMapAccessValidator extends VoTAccessValidator {
 			return vuabl.size() >= 0;
 		} catch( Exception e) {
 			e.printStackTrace();
-		} finally {
-			pm.close();
 		}
 		return false;
 	}
