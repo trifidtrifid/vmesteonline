@@ -1097,38 +1097,44 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
 
         $rootScope.selectGroup = function(group){
-            var groupId;
+            //var groupId = group.id;
 
-            for(var i = 0; i < groupsLength; i++){
-                groups[i].selected = false;
-            }
+            if(group.id == 0){
+
+                $state.go('set-info');
+
+            }else {
+
+                for (var i = 0; i < groupsLength; i++) {
+                    groups[i].selected = false;
+                }
 
                 group.selected = true;
-                groupId = group.id;
 
-            $rootScope.currentGroup = group;
-            $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(group.id);
 
-            $rootScope.importantTopics = messageClient.getImportantTopics(group.id);
+                $rootScope.currentGroup = group;
+                $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(group.id);
 
-            if($rootScope.currentPage == 'lenta'){
-                $rootScope.wallChangeGroup(group.id);
-                $rootScope.selectGroupInDropdown_lenta(group.id);
-            }else if($rootScope.currentPage == 'talks'){
-                $rootScope.talksChangeGroup(group.id);
-                $rootScope.selectGroupInDropdown_talks(group.id);
-            }else if($rootScope.currentPage == 'adverts'){
-                $rootScope.advertsChangeGroup(group.id);
-                $rootScope.selectGroupInDropdown_adverts(group.id);
-            }else if($rootScope.currentPage == 'neighbours'){
-                $rootScope.neighboursChangeGroup(group.id);
-            }else if($rootScope.currentPage == 'maps'){
-                $rootScope.mapsChangeGroup(group.id);
+                $rootScope.importantTopics = messageClient.getImportantTopics(group.id);
+
+                if ($rootScope.currentPage == 'lenta') {
+                    $rootScope.wallChangeGroup(group.id);
+                    $rootScope.selectGroupInDropdown_lenta(group.id);
+                } else if ($rootScope.currentPage == 'talks') {
+                    $rootScope.talksChangeGroup(group.id);
+                    $rootScope.selectGroupInDropdown_talks(group.id);
+                } else if ($rootScope.currentPage == 'adverts') {
+                    $rootScope.advertsChangeGroup(group.id);
+                    $rootScope.selectGroupInDropdown_adverts(group.id);
+                } else if ($rootScope.currentPage == 'neighbours') {
+                    $rootScope.neighboursChangeGroup(group.id);
+                } else if ($rootScope.currentPage == 'maps') {
+                    $rootScope.mapsChangeGroup(group.id);
+                }
+
+                localStorage.setItem('groupId', group.id);
+                //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
             }
-
-            localStorage.setItem('groupId',group.id);
-            //$rootScope.currentGroup = $rootScope.base.selectGroupInDropdown(group.id);
-
         };
 
         topCtrl.showCreateTopic = function(event){
@@ -2838,33 +2844,43 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     }).on('change', function () {
                         var imageForCrop = $('#image-for-crop');
 
-                        $('.loadAvatar-area').addClass('hidden');
+                        $('.loadAvatar-area,.load-avatar-error').addClass('hidden');
                         $('.crop-area').removeClass('hidden');
 
                         setTimeout(saveNewAva, 1000);
 
                         function saveNewAva() {
+                            var avaImg = $('.load-avatar').find('.file-label img');
+                            if(parseInt(avaImg.css('width')) < 200 || parseInt(avaImg.css('height')) < 200){
 
-                            var bg = $('.load-avatar').find('.file-label img').css('background-image'),
-                                src = $('.load-avatar').find('.file-label img').attr('src');
+                                $('.loading,.btn-save-avatar').addClass('hidden');
 
-                            newSrc = fileClient.saveFileContent(bg, true);
+                                $('.load-avatar-error')
+                                    .text('Изображение должно быть не менее 200px в ширину и высоту. Попробуйте загрузить другое изображение.').removeClass('hidden');
 
-                            $('#preview').attr('src', newSrc);
+                            }else {
+                                $('.loading').addClass('hidden');
 
-                            imageForCrop.attr('src', newSrc);
-                            imageForCrop.css({'max-width': '500px', 'max-height': '500px'});
+                                var bg = avaImg.css('background-image'),
+                                    src = avaImg.attr('src');
 
-                            imageForCrop.Jcrop({
-                                aspectRatio: 1,
-                                setSelect: [ 200, 200, 50, 50 ],
-                                onChange: updateCoords,
-                                onSelect: updateCoords
-                            }).removeClass('hidden');
+                                newSrc = fileClient.saveFileContent(bg, true);
 
-                            $('.preview-container').removeClass('hidden');
-                            $('.loading').addClass('hidden');
+                                $('#preview').attr('src', newSrc);
 
+                                imageForCrop.attr('src', newSrc);
+                                imageForCrop.css({'max-width': '500px', 'max-height': '500px'});
+
+                                imageForCrop.Jcrop({
+                                    aspectRatio: 1,
+                                    setSelect: [ 200, 200, 50, 50 ],
+                                    onChange: updateCoords,
+                                    onSelect: updateCoords
+                                }).removeClass('hidden');
+
+                                $('.preview-container,.btn-save-avatar').removeClass('hidden');
+
+                            }
                         }
 
                         function updateCoords(c) {
@@ -2945,9 +2961,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
     })
     .controller('SetInfoController',function($rootScope) {
+        var setInfo = this;
 
         var save = function(){
+            if(!setInfo.staircase) setInfo.staircase = 0;
+            if(!setInfo.floor) setInfo.floor = 0;
+            if(!setInfo.flat) setInfo.flat = 0;
 
+            userService.updateUserAddress(setInfo.staircase,setInfo.floor,setInfo.flat);
         };
 
     });

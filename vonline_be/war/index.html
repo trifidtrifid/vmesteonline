@@ -54,31 +54,27 @@
 		<a href="/login" class="btn btn-success btn-lg go-to-login">Войти</a>
 	</div>
 
-	<!--<c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
-        <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/></span></div>
-    </c:if>
-    <% pageContext.removeAttribute("MESSAGE_TO_SHOW"); %>-->
-
 	<main id="top" class="masthead" role="main">
 
 	<div class="container">
 		<div class="logo">
-			<a href="/"><img src="i/landing/vmesteonline.logo.500.png" alt="startup-logo"></a>
+			<a href="/"><img src="i/logo.png" alt="startup-logo"></a>
+            <span>Соседи.Вместе.Онлайн.</span>
 		</div>
-		<h1>
-			Сайт Вашего дома.<br>
-		</h1>
+		<h3 class="clear">
+			Зарегистрируйтесь, используя код приглашения.
+		</h3>
 
 		<div class="row">
 			<div class="col-md-6 col-sm-12 col-md-offset-3 subscribe">
 				<form class="form-horizontal" role="form" action="subscribe.php" id="subscribeForm" method="POST">
 					<div class="form-group">
 						<div class="col-md-7 col-sm-6 col-sm-offset-1 col-md-offset-0">
-							<input class="form-control input-lg" name="email" type="email" id="address" placeholder="Укажите Ваш email" data-validate="validate(required, email)" required="required"> <input
-								class="form-control input-lg active" name="code" type="text" id="code" placeholder="Укажите Ваш код" required="required"> <a href="/request.html" class="no-code-link">Нет кода?</a>
+							<input class="form-control input-lg" name="email" type="email" id="address" placeholder="Введите email" data-validate="validate(required, email)" required="required"> <input
+								class="form-control input-lg active" name="code" type="text" id="code" placeholder="Введите код приглашения" required="required"> <a href="/request.html" class="no-code-link">Нет кода?</a>
 						</div>
 						<div class="col-md-5 col-sm-4">
-							<button type="submit" class="btn btn-success btn-lg">ПОДКЛЮЧИТЬСЯ</button>
+							<button type="submit" class="btn btn-success btn-lg">Зарегистрироваться</button>
 						</div>
 					</div>
 				</form>

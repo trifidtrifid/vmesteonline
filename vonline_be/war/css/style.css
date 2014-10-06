@@ -1448,15 +1448,15 @@ h1 {
   max-width: 500px;
   max-height: 500px;
 }
-.btn-save-avatar {
+.btn-back {
   margin: 10px 0;
 }
 .ui-dialog-content {
   text-align: center;
 }
 #image-for-crop {
-  min-width: 300px;
-  min-height: 300px;
+  min-width: 200px;
+  min-height: 200px;
 }
 .preview-container {
   overflow: hidden;
@@ -1468,6 +1468,9 @@ h1 {
   background: transparent !important;
   overflow: hidden;
   margin: 0 auto;
+}
+.load-avatar-error {
+  padding: 0 10px;
 /* coming soon */
 }
 .coming-soon {
@@ -1488,6 +1491,9 @@ h1 {
 }
 .maps img {
   width: 100%;
+  display: block;
+}
+.set-info label {
   display: block;
 }
 .set-info label input {
