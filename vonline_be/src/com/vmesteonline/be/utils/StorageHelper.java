@@ -184,7 +184,12 @@ public class StorageHelper {
 				resp.setStatus(HttpServletResponse.SC_OK);
 				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
 				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
-				VoFileAccessRecord theVersion = vfar.getVersion( req.getParameterMap(), pm );
+				
+				VoFileAccessRecord theVersion = null == queryString ? vfar : vfar.getVersion(queryString);
+				if( null == theVersion ){
+					theVersion = vfar.getVersion( req.getParameterMap(), pm );
+					vfar.setVersion(queryString, theVersion);
+				}
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				getFile( theVersion.getGSFileName(), baos);

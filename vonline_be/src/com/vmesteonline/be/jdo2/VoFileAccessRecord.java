@@ -14,6 +14,7 @@ import javax.mail.internet.ContentType;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.datanucleus.annotations.Unindexed;
+import com.google.appengine.datanucleus.annotations.Unowned;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.vmesteonline.be.utils.StorageHelper;
 
@@ -90,6 +91,7 @@ public class VoFileAccessRecord {
 	
 	@Unindexed
 	@Persistent
+	@Unowned
 	Map<String,VoFileAccessRecord> versions;
 
 	public VoFileAccessRecord getVersion(Map<String, String[]> params, PersistenceManager p) {
