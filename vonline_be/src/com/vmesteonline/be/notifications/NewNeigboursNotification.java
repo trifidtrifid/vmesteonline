@@ -37,6 +37,7 @@ public class NewNeigboursNotification extends Notification {
 		Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 		// create message for each user
+		
 		for (VoUser u : users) {
 			boolean somethingToSend = false;
 			Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
@@ -49,8 +50,11 @@ public class NewNeigboursNotification extends Notification {
 					ggoupNeighbors.addAll(usersOfGroup);
 					ggoupNeighbors.removeAll(neghbors);
 					if (ggoupNeighbors.size() != 0) {
-						body += createNeighborsContent(pm, ug, ggoupNeighbors);
-						somethingToSend = true;
+						String ucont = createNeighborsContent(pm, u, ug, ggoupNeighbors);
+						if(null!=ucont){
+							body += ucont;
+							somethingToSend = true;
+						}
 					}
 					neghbors.addAll(ggoupNeighbors);
 				}
@@ -70,15 +74,20 @@ public class NewNeigboursNotification extends Notification {
 		}
 	}
 	
-	private String createNeighborsContent(PersistenceManager pm, Long ugId, Set<VoUser> neghbors) {
+	private String createNeighborsContent(PersistenceManager pm, VoUser user, Long ugId, Set<VoUser> neghbors) {
 		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
 		String groupContent = "<p>В группе '" + ug.getName() + "'<br/>";
+		boolean newUsers = false;
+		int lastNotified = user.getLastNotified();
 		for (VoUser vuc : neghbors) {
-			String contactTxt = createUserContactContent(pm, ug, vuc);
-			groupContent += contactTxt;
+			if(vuc.getRegistered() > lastNotified){
+				String contactTxt = createUserContactContent(pm, ug, vuc);
+				groupContent += contactTxt;
+				newUsers = true;
+			}
 		}
 		groupContent += "</p>";
-		return groupContent;
+		return newUsers ? groupContent : null;
 	}
 
 	private String createUserContactContent(PersistenceManager pm, VoUserGroup ug, VoUser vuc) {
