@@ -9,6 +9,13 @@ struct FullAddressCatalogue {
 	3:list<bedata.Street> streets,
 	4:list<bedata.Building> buildings
 }
+
+struct GroupLocation {
+	1:string longitude,
+	2:string latitude,
+	3:i32 radius,
+	4:bedata.GroupType type,
+}
 service UserService {
 
 //получение групп пользователя
@@ -65,4 +72,5 @@ service UserService {
 	
 	//возвращает ссылку на карту в зависмотси от выбраной группы
 	string getGroupMap(1:i64 groupId, 2:string color) throws (1:error.InvalidOperation exc),
+	GroupLocation getGroupView(1:i64 groupId) throws (1:error.InvalidOperation exc),
 }

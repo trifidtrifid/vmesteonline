@@ -1,13 +1,11 @@
 package com.vmesteonline.be;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.thrift.TException;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
@@ -34,6 +31,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.userservice.FullAddressCatalogue;
+import com.vmesteonline.be.userservice.GroupLocation;
 import com.vmesteonline.be.userservice.UserService;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.VoHelper;
@@ -799,5 +797,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		nq.setOrdering( "groupType");
 		List<VoUserGroup> gtl = (List<VoUserGroup>) nq.execute();
 		return gtl.size() > 0  ? GroupType.findByValue( gtl.get(0).getGroupType()) : GroupType.NEIGHBORS;  //it should not be called elsewhere
+	}
+
+	@Override
+	public GroupLocation getGroupView(long groupId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+		return new GroupLocation(userGroup.getLongitude().toPlainString(), userGroup.getLatitude().toPlainString(), 
+				userGroup.getRadius(), GroupType.findByValue(userGroup.getGroupType()));
 	}
 }
