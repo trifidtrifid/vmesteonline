@@ -666,10 +666,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<ShortUserInfo> getNeighbours() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		VoUser currentUser = getCurrentUser();
-		
 		List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING, pm), pm);
-		return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+		return shortInfoForGroup( GroupType.BUILDING, users, pm);
 	}
+	
+	private ArrayList<ShortUserInfo> shortInfoForGroup(GroupType gt, List<VoUser> users, PersistenceManager pm){
+		ArrayList<ShortUserInfo> ul = new ArrayList<ShortUserInfo>();
+		for( VoUser user: users ){
+			ShortUserInfo shortUserInfo = user.getShortUserInfo(null);
+			shortUserInfo.setAddress( user.getAddressString( gt, pm));
+			ul.add( shortUserInfo );
+		}
+		return ul;
+	} 
 	
 	public static CachableObject< ArrayList<ShortUserInfo> > usersByGroup = new CachableObject();
 	@Override
@@ -678,12 +687,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	public ArrayList<ShortUserInfo> getNeighborsByGroupDo(Long groupId) throws InvalidOperation {
-		ArrayList<ShortUserInfo> sug = new ArrayList<ShortUserInfo>();
 		PersistenceManager pm = PMF.getPm();
-		List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
-		for (VoUser voUser : users) {
-			sug.add( voUser.getShortUserInfo(pm));
-		}
+		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
+		List<VoUser> users = getUsersByLocation( ug, pm);
+		ArrayList<ShortUserInfo> sug = shortInfoForGroup( GroupType.findByValue(ug.getGroupType()), users, pm);
 		Collections.sort( sug, new Comparator<ShortUserInfo>(){
 			@Override
 			public int compare(ShortUserInfo o1, ShortUserInfo o2) {
