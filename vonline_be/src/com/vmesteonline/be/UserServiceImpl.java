@@ -847,14 +847,5 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} else {
 			logger.warning("Address of user does not changed.");
 		}
-			
-	}
-
-	private void updateGroup(VoUser currentUser, VoUserGroup ug, int pos, VoPostalAddress newAddr, PersistenceManager pm) {
-		VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
-				newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
-		currentUser.getGroups()
-		
-	}
-	
+	}	
 }
