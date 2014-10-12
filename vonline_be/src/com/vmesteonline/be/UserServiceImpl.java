@@ -806,4 +806,55 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		return new GroupLocation(userGroup.getLongitude().toPlainString(), userGroup.getLatitude().toPlainString(), 
 				userGroup.getRadius(), GroupType.findByValue(userGroup.getGroupType()));
 	}
+
+	@Override
+	public void updateUserAddress(int staircase, int floor, int flatNo) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		VoUser currentUser = getCurrentUser(pm);
+		VoPostalAddress oldAddress = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+		long oldBuilding = oldAddress.getBuilding();
+		boolean stairChanged, floorChanged, flatChanged;
+		String query = "buildingId=="+oldBuilding;
+		query += " && staircase==" + (( stairChanged = (0 != staircase && staircase!=oldAddress.getStaircase())) ?  staircase : oldAddress.getStaircase()) ;
+		query += " && floor==" + ( (floorChanged = 0 != floor && floor!=oldAddress.getFloor()) ? floor : oldAddress.getFloor());
+		query += " && flatNo==" + ( (flatChanged = 0 != flatNo && floor!=oldAddress.getFlatNo()) ? flatNo : oldAddress.getFlatNo());
+		
+		if( stairChanged || floorChanged || flatChanged ){
+			List<VoPostalAddress> newAddresses = (List<VoPostalAddress>) pm.newQuery( VoPostalAddress.class, query).execute();
+			if( newAddresses.size() == 0 ){
+				logger.warning("No address found by query '"+query+"'");
+			} else {
+				VoPostalAddress newAddr = newAddresses.get(0);
+				currentUser.setAddress(newAddr.getId());
+				if( stairChanged || floorChanged){
+					int pos=0;
+					for( Long ugId : currentUser.getGroups()){
+						VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
+						if( stairChanged && GroupType.STAIRCASE.getValue() == ug.getGroupType() || 
+								floorChanged && GroupType.FLOOR.getValue() == ug.getGroupType() ){
+							
+							VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
+									newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
+							currentUser.getGroups().set(pos, newGroup.getId());
+						}
+						pos++;
+					}
+					currentUser.resetRootGroup();
+				}
+				pm.makePersistent(currentUser);
+			}
+				
+		} else {
+			logger.warning("Address of user does not changed.");
+		}
+			
+	}
+
+	private void updateGroup(VoUser currentUser, VoUserGroup ug, int pos, VoPostalAddress newAddr, PersistenceManager pm) {
+		VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
+				newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
+		currentUser.getGroups()
+		
+	}
+	
 }

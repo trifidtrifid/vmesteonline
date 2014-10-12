@@ -73,4 +73,5 @@ service UserService {
 	//возвращает ссылку на карту в зависмотси от выбраной группы
 	string getGroupMap(1:i64 groupId, 2:string color) throws (1:error.InvalidOperation exc),
 	GroupLocation getGroupView(1:i64 groupId) throws (1:error.InvalidOperation exc),
+	void updateUserAddress( 1:i32 staircase, 2:i32 floor, 3:i32 flatNo) throws (1:error.InvalidOperation exc),
 }

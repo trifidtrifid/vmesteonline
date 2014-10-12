@@ -204,6 +204,10 @@ public class VoUser /* extends GeoLocation */{
 	public long getAddress() {
 		return address;
 	}
+	
+	public void setAddress( long addr) {
+		address = addr;
+	}
 
 	public long getConfirmCode() {
 		return 0 == confirmCode ? confirmCode = System.currentTimeMillis() % 98765 : confirmCode;
@@ -268,7 +272,7 @@ public class VoUser /* extends GeoLocation */{
 			UserServiceImpl.usersByGroup.forget( new Object[]{ ug.getId() });
 			groups.add(ug.getId());
 		}
-		if( groups.size() > 0 ) rootGroup = groups.get(0);
+		resetRootGroup();
 
 		pm.makePersistent(this);
 	}
@@ -301,6 +305,11 @@ public class VoUser /* extends GeoLocation */{
 	
 	public long getRootGroup() {
 		return rootGroup;
+	}
+	
+	public void resetRootGroup() {
+		if( 0<groups.size() )
+			rootGroup = groups.get(0);
 	}
 
 	@PrimaryKey
