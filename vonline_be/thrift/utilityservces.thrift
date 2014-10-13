@@ -1,7 +1,7 @@
 namespace * com.vmesteonline.be.userservice
 include "error.thrift"
 
-enum CounterType { HOT_WATER=0, COLD_WATER=1, ELECTRICITY_NIGHT=2, ELECTRICITY_DAY=3, GAS=4, OTHER=5}
+enum CounterType { HOT_WATER=0, COLD_WATER=1, ELECTRICITY=2, ELECTRICITY_NIGHT=3, ELECTRICITY_DAY=4, GAS=5, OTHER=6}
 
 struct Counter {
 	1:i64 id,
