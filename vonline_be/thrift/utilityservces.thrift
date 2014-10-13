@@ -16,6 +16,6 @@ service UserService {
 	
 	list<Counter> getCounters() throws (1:error.InvalidOperation exc), //возвращает счетчики текущего пользователя
 	map< Counter, double> getCounterValues() throws (1:error.InvalidOperation exc), //возвращает счетчики b b[ gjcktlybt gjrfpfybz
-	map< i32, double> getCounterHistory(1:i32 counterId) throws (1:error.InvalidOperation exc), //возвращает историю показаний счетчика
+	map< i32, double> getCounterHistory(1:i32 counterId, 2:i32 fromDate) throws (1:error.InvalidOperation exc), //возвращает историю показаний счетчика
 	void setCurrentCounterValue(1:i64 counterId, 2:double counterValue, 3:i32 date) throws (1:error.InvalidOperation exc), //сохраняет показания счетчика
 }
