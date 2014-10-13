@@ -145,11 +145,13 @@
         </div>
 
     </div>
+
     <div class="container">
-        <c:if test="${MESSAGE_TO_SHOW != null && MESSAGE_TO_SHOW != '' }">
-            <div class="message-to-show"><span><c:out value="${MESSAGE_TO_SHOW}"/><a href="#" onclick="$(this).parent().hide().detach()">&times;</a></span></div>
-        </c:if>
-        <% pageContext.removeAttribute("MESSAGE_TO_SHOW"); %>
+        <div class="message-to-show">
+            <span>
+                <a href="#">&times;</a>
+            </span>
+        </div>
     </div>
     <%--<div class="container">
 
@@ -165,7 +167,7 @@
 	<div class="container">
 
 		<div class="main-container" id="main-container">
-			<div class="main-container-inner"> <!--  ng-class="{'heightAuto' : base.isFooterBottom }" -->
+			<div class="main-container-inner">
 				<aside class="sidebar" id="sidebar" ng-controller="leftBarController as leftbar">
 					<script type="text/javascript">
 						try {
@@ -218,6 +220,7 @@
                     </div>
 
                 </aside>
+
 				<div class="main-content dynamic ng-cloak">
 
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
