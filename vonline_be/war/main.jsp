@@ -2,11 +2,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ page import="com.vmesteonline.be.AuthServiceImpl"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="java.util.List"%>
 <%@ page import="com.vmesteonline.be.UserServiceImpl"%>
 <%@ page import="com.vmesteonline.be.MessageServiceImpl"%>
 <%@ page import="com.vmesteonline.be.InvalidOperation"%>
-<%@ page import="java.util.ArrayList"%>
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
@@ -47,6 +45,9 @@
 <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
 
 <%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
+    <script type="text/javascript" src="//api-maps.yandex.ru/2.1/?load=package.full&lang=ru_RU&coordorder=longlat"></script>
+
+
     <script src="js/lib/jquery-2.0.3.js"></script>
     <script src="js/forum/angular/angular.js"></script>
 <!--[if lt IE 9]>
@@ -132,21 +133,12 @@
 
     </div>
 
-    <div class="container">
+    <%--<div class="container">
         <div class="message-to-show">
             <span>
                 <a href="#">&times;</a>
             </span>
         </div>
-    </div>
-    <%--<div class="container">
-
-        <form method="post" action="#" class="form-group has-info form-search" ng-show="isTopSearchShow">
-            <span class="block input-icon input-icon-right">
-                <input id="search" type="text" class="form-control width-100" value="Поиск" onblur="if(this.value=='') this.value='Поиск';" onfocus="if(this.value=='Поиск') this.value='';"/>
-                <a href="#" class="icon-search icon-on-right bigger-110"></a>
-            </span>
-        </form>
     </div>--%>
 </div>
 
@@ -251,6 +243,21 @@
 	</div>
 
 	<!-- общие библиотеки -->
+
+<script>
+    /*ymaps.ready(init);
+    var myMap;
+
+    setTimeout(init,5000);
+    function init(){
+        alert('1');
+        myMap = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 7
+        });
+    }*/
+</script>
+
 	<script src="js/lib/bootstrap.min.js"></script>
     <script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
     <script src="js/lib/jquery.ui.datepicker-ru.js"></script>
@@ -297,9 +304,9 @@
 <script src="js/forum/angular/sanitize.js"></script>
 <script src="js/forum/angular/linky-custom.js"></script>
 
-
 	<script src="js/forum/app.js"></script>
 
+<script src="js/forum/angular/ya-map-2.1.min.js" type="text/javascript"></script>
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {

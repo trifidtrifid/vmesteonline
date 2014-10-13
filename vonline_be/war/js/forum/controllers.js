@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize','yaMap'])
     .controller('baseController',function($rootScope,$state,$filter) {
 
         $rootScope.isTopSearchShow = true;
@@ -634,7 +634,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             wallItem.groupId = $rootScope.base.bufferSelectedGroup.id;
 
             var isWall = true,
-                message = postMessage(wallItem, isWall,false,$filter);
+                message = postMessageMy(wallItem, isWall,false,$filter);
 
             if(message == 0){
                 wallItem.isCreateCommentError = true;
@@ -670,7 +670,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             var isWall = false,
                 isFirstLevel = true,
-                newMessage = postMessage(talk,isWall,isFirstLevel,$filter);
+                newMessage = postMessageMy(talk,isWall,isFirstLevel,$filter);
 
             if(newMessage == 0){
                 talk.isCreateFirstMessageError = true;
@@ -760,7 +760,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             talk.parentId = parentId;
             talk.commentText = answer;
 
-            newMessage = postMessage(talk,isWall,isFirstLevel,$filter);
+            newMessage = postMessageMy(talk,isWall,isFirstLevel,$filter);
 
             if(newMessage == 0){
                 if(!message){
@@ -2223,7 +2223,34 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         }else{
             userId = 0;
             profile.isMayEdit = true;
-            profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
+
+            /* Yandex Map */
+            /*var _map;
+            profile.afterMapInit = function(map){
+                _map = map;
+            };*/
+
+            var location = userClient.getGroupView($rootScope.groups[0].id);
+
+            profile.map = {};
+            profile.map.zoom = 17;
+            profile.map.center = [location.longitude,location.latitude];
+
+            profile.map.baloon = {
+                    // Геометрия = тип объекта + географические координаты объекта
+                    geometry: {
+                        // Тип геометрии - точка
+                        type: 'Point',
+                        // Координаты точки.
+                        coordinates: profile.map.center
+                    },
+                    // Свойства
+                    properties: {
+                        hintContent: "Я здесь"
+                    }
+                };
+
+            //profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
             //profile.userContacts = userClient.getUserContacts();
         }
 
@@ -3583,10 +3610,9 @@ function postTopic(obj,isWall,isAdverts,$filter){
 
 }
 
-function postMessage(obj,isWall,isFirstLevel,$filter){
+function postMessageMy(obj,isWall,isFirstLevel,$filter){
     if((obj.id && obj.isEdit) || (obj.message && obj.message.isEdit)){
         // значит редактирование
-
         var message;
         if(obj.message && obj.message.isEdit){
             message = obj.message;
@@ -3665,9 +3691,9 @@ function postMessage(obj,isWall,isFirstLevel,$filter){
         message.images = getAttachedImages($('#attach-area-' + attachId));
 
         message.documents = getAttachedDocs($('#attach-doc-area-' + attachId));
-        /*for(var p in message.documents[0]){
+        for(var p in message.documents[0]){
          alert(p+" "+message.documents[0][p]);
-         }*/
+         }
         cleanAttached($('#attach-area-' + attachId));
         cleanAttached($('#attach-doc-area-' + attachId));
         //message.images = obj.attachedImages;
