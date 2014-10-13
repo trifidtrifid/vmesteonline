@@ -83,5 +83,5 @@ public class EMailHelper {
 	public static void sendSimpleEMail( String to, String subject, String body) throws IOException {
 		sendSimpleEMail( fromAddress, to, subject, body );
 	}
-		
+	
 }

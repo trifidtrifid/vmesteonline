@@ -1,6 +1,7 @@
 package com.vmesteonline.be.notifications;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import javax.jdo.PersistenceManager;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
+import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.VoUserGroup;
@@ -29,47 +31,63 @@ public class NewNeigboursNotification extends Notification {
 	@Override
 	public void makeNotification( Set<VoUser> users ) {
 		int now = (int)(System.currentTimeMillis()/1000L);
-
+		
 		PersistenceManager pm = PMF.getPm();
 
 		Map< Long, Set<VoUser>> groupUsersMap = getNewNeighbors(pm);
 
 		// create message for each user
-		String body = "Новые соседи<br/><br/>";
 		
 		for (VoUser u : users) {
+			boolean somethingToSend = false;
 			Set<VoUser> neghbors = new TreeSet<VoUser>( vuComp );
-			
+			neghbors.add(u);
+			String body = "<p><b>Новые соседи</b></p>";
 			for (Long ug : u.getGroups()) {
-				Set<VoUser> ggoupNeighbors = groupUsersMap.get(ug);
-				ggoupNeighbors.removeAll(neghbors);
-				if (ggoupNeighbors.size() != 0) {
-					body += createNeighborsContent(pm, ug, ggoupNeighbors);
+				Set<VoUser> usersOfGroup = groupUsersMap.get(ug);
+				if( null!=usersOfGroup && usersOfGroup.size()>0){
+					Set<VoUser> ggoupNeighbors = new TreeSet<VoUser>(vuComp);
+					ggoupNeighbors.addAll(usersOfGroup);
+					ggoupNeighbors.removeAll(neghbors);
+					if (ggoupNeighbors.size() != 0) {
+						String ucont = createNeighborsContent(pm, u, ug, ggoupNeighbors);
+						if(null!=ucont){
+							body += ucont;
+							somethingToSend = true;
+						}
+					}
+					neghbors.addAll(ggoupNeighbors);
 				}
-				ggoupNeighbors.addAll(ggoupNeighbors);
 			}
-			NotificationMessage mn = new NotificationMessage();
-			mn.message = body;
-			mn.subject = "Новые соседи";
-			mn.to = u.getEmail();
-			try {
-				sendMessage(mn, u);
-				u.setLastNotified(now);
-			} catch (IOException e) {
-				
-				e.printStackTrace();
+			if(somethingToSend){
+				NotificationMessage mn = new NotificationMessage();
+				mn.message = body;
+				mn.subject = "Новые соседи";
+				mn.to = u.getEmail();
+				try {
+					sendMessage(mn, u);
+					u.setLastNotified(now);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
-	private String createNeighborsContent(PersistenceManager pm, Long ugId, Set<VoUser> neghbors) {
+	private String createNeighborsContent(PersistenceManager pm, VoUser user, Long ugId, Set<VoUser> neghbors) {
 		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
-		String groupContent = "В группе '" + ug.getName() + "' подкрепление <br/>";
+		String groupContent = "<p>В группе '" + ug.getName() + "'<br/>";
+		boolean newUsers = false;
+		int lastNotified = user.getLastNotified();
 		for (VoUser vuc : neghbors) {
-			String contactTxt = createUserContactContent(pm, ug, vuc);
-			groupContent += contactTxt;
+			if(vuc.getRegistered() > lastNotified){
+				String contactTxt = createUserContactContent(pm, ug, vuc);
+				groupContent += contactTxt;
+				newUsers = true;
+			}
 		}
-		return groupContent;
+		groupContent += "</p>";
+		return newUsers ? groupContent : null;
 	}
 
 	private String createUserContactContent(PersistenceManager pm, VoUserGroup ug, VoUser vuc) {
@@ -77,17 +95,21 @@ public class NewNeigboursNotification extends Notification {
 		VoPostalAddress address = pm.getObjectById(VoPostalAddress.class,vuc.getAddress());
 		String contactTxt = "<a href=\"https://"+host+"/profile-"+vuc.getId()+"\">"+StringEscapeUtils.escapeHtml4(vuc.getName() + " " + vuc.getLastName())+"</a>";
 		
-		if( ug.getRadius() == 0 ) 
-			contactTxt += " живет в квартире " + address.getFlatNo();
-		else {
+		if( ug.getGroupType() <= GroupType.BUILDING.getValue() && 0!=address.getStaircase()) 
+				contactTxt += " живет в подъезде " + address.getStaircase();
+		
+		if(  ug.getGroupType() <= GroupType.STAIRCASE.getValue() && 0!=address.getFlatNo()) 
+				contactTxt += " в квартире " + address.getFlatNo() + ( 0!=address.getFloor() ? " на "+address.getFloor()+" этаже":"");
+		
+		if( ug.getGroupType() == GroupType.NEIGHBORS.getValue() ){
+			
 			VoBuilding vb = pm.getObjectById(VoBuilding.class, address.getBuilding());
 			VoStreet vs = pm.getObjectById(VoStreet.class, vb.getStreet());
-			
-			if( ug.getRadius() < 50 )
-				contactTxt += " из дома " + vb.getFullNo() +" по " + vs.getName();
-			else {
+			contactTxt += " из дома " + vb.getFullNo() +" по " + vs.getName();
+		} 
+		
+		if( ug.getGroupType() == GroupType.BLOCK.getValue())  {
 				contactTxt += " из вашего района"; 
-			}
 		}
 	
 		contactTxt += "<br/>";
@@ -103,6 +125,6 @@ public class NewNeigboursNotification extends Notification {
 		List<VoUser> newUsers = (List<VoUser>)pm.newQuery(VoUser.class, "registered>="+weekAgo).execute();
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll(newUsers);
-		return arrangeUsersInGroups(userSet);
+		return arrangeUsersInGroups(userSet,pm);
 	}
 }

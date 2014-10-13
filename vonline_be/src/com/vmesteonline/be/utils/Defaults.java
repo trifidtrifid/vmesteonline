@@ -41,6 +41,12 @@ public class Defaults {
 	public static List<VoGroup> defaultGroups;
 	public static List<VoRubric> defaultRubrics;
 
+	public static Long user1id = null;
+	public static Long user2id = null;
+	public static Long user3id = null;
+	public static Long user4id = null;
+	public static Long user5id = null;
+	
 	public static String user1lastName = "Afamily";
 	public static String user1name = "Aname";
 	public static String user1email = "a";
@@ -225,7 +231,11 @@ public class Defaults {
 
 		if (uids.size() == 0)
 			throw new RuntimeException("NO USERS are CREATED> Initialization totally fucked down");
-
+		user1id = uids.get(0);
+		user2id = uids.get(1);
+		user3id = uids.get(2);
+		user4id = uids.get(3);
+		user5id = uids.get(4);
 	}
 
 	// ======================================================================================================================

@@ -3,8 +3,10 @@ package com.vmesteonline.be.jdo2;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
@@ -37,6 +39,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -104,6 +107,10 @@ public class VoUser /* extends GeoLocation */{
 
 	public UserFamily getUserFamily() {
 		return userFamily;
+	}
+	
+	public int getRegistered() {
+		return registered;
 	}
 
 	public UserContacts getContacts() {
@@ -200,6 +207,10 @@ public class VoUser /* extends GeoLocation */{
 	public long getAddress() {
 		return address;
 	}
+	
+	public void setAddress( long addr) {
+		address = addr;
+	}
 
 	public long getConfirmCode() {
 		return 0 == confirmCode ? confirmCode = System.currentTimeMillis() % 98765 : confirmCode;
@@ -264,7 +275,7 @@ public class VoUser /* extends GeoLocation */{
 			UserServiceImpl.usersByGroup.forget( new Object[]{ ug.getId() });
 			groups.add(ug.getId());
 		}
-		if( groups.size() > 0 ) rootGroup = groups.get(0);
+		resetRootGroup();
 
 		pm.makePersistent(this);
 	}
@@ -297,6 +308,46 @@ public class VoUser /* extends GeoLocation */{
 	
 	public long getRootGroup() {
 		return rootGroup;
+	}
+	
+	public void resetRootGroup() {
+		if( 0<groups.size() )
+			rootGroup = groups.get(0);
+	}
+	
+	public String getAddressString( GroupType gt, PersistenceManager pm){
+		boolean needUpdate = false;
+		if( null == addressStringsByGroupType){
+			addressStringsByGroupType = new HashMap<Integer,String>();
+		}
+		int gtValue = gt.getValue();
+		String as = addressStringsByGroupType.get(gtValue);
+		if( needUpdate = null==as ){
+			VoPostalAddress userAddress = pm.getObjectById( VoPostalAddress.class, getAddress());
+			switch( gt ){
+			case NEIGHBORS:
+			{
+				VoBuilding b = pm.getObjectById(VoBuilding.class,userAddress.getBuilding());
+				VoStreet s = pm.getObjectById(VoStreet.class, b.getStreetId());
+				as = s.getName() + " " + b.getFullNo();
+				break;
+			}
+			case BUILDING:
+				as = userAddress.getStaircase() == 0 ? "" : (userAddress.getStaircase() + " подъезд");
+				break;
+			case STAIRCASE:
+				as = userAddress.getFloor() == 0 ? "" : (userAddress.getFloor() + " этаж");
+				break;
+			case FLOOR:
+				as = userAddress.getFlatNo() == 0 ? "" : (userAddress.getFlatNo() + " квартира");
+				break;
+			}
+			if( null!=as )
+				addressStringsByGroupType.put(gtValue, as);
+		}
+		if( needUpdate && null!=as )
+			pm.makePersistent(this);
+		return as;
 	}
 
 	@PrimaryKey
@@ -421,7 +472,8 @@ public class VoUser /* extends GeoLocation */{
 	@Unindexed
 	private long rootGroup;
 	
-	
+	@Persistent
+	private Map<Integer, String> addressStringsByGroupType;
 
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, GroupType.BUILDING, GroupType.STAIRCASE) : privacy;

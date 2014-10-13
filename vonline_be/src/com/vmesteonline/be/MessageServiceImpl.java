@@ -346,13 +346,10 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				tpc.setMessageNum(voTopic.getMessageNum());
 				mlp.addToTopics(tpc);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
-
 		}
 		return mlp;
-
 	}
 
 	@Override

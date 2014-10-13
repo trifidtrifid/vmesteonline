@@ -229,7 +229,11 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 	}
 
 	public Group createGroup() {
-		return new Group(getId(), name, name, description, radius, GroupType.findByValue(groupType));
+		GroupType gt = GroupType.findByValue(groupType);
+		boolean isAStub = gt.equals( GroupType.STAIRCASE ) && 0 == staircase || gt.equals( GroupType.FLOOR ) && 0 == floor;
+		return new Group(
+				isAStub ? 0L : getId(),
+				name, name, description, radius, GroupType.findByValue(groupType));
 	}
 
 	public String getName() {

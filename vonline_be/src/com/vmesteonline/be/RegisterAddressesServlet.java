@@ -55,54 +55,66 @@ public class RegisterAddressesServlet extends QueuedServletWithKeyHelper {
 			}
 	}
 
-	private String processReq(HttpServletRequest req, HttpServletResponse resp) throws IOException, MalformedURLException {
+	private String processReq(HttpServletRequest req, HttpServletResponse resp) {
 		String fileLink = req.getParameter("file");
 		if( null==fileLink){
 			return "Error: Parameter 'file' must be set";
 		}
-		ByteArrayInputStream content = (ByteArrayInputStream) new URL(fileLink).getContent();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		int read;
-		while( -1!=(read = content.read(buf)))
-			baos.write(buf,0, read);
-		baos.close();
-		List<List<String>> csvData = CSVHelper.parseCSV( baos.toByteArray(), null, null, null);
-		//Code;ZIP Code;Country;City;Street;Building;Korpus;staircase;Appt;floor
-		//749282;188689;Российская Федерация;Ленинградская Обл. п. Кудрово;улица Ленинградская;7;0;1;2;2
-		
-		PersistenceManager pm = PMF.getPm();
-
-		VoBuilding vb;
-		VoStreet cs;
-		VoCity vcty;
-		VoCountry vc;
 		try {
-			List<String> firstLine = csvData.get(1);
-			vc = VoCountry.createVoCountry( firstLine.get(2), pm);
-			vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
-			cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
-			vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, firstLine.get(5), null, null, pm);
-			
-			initPostalAddresses( csvData, pm, vb); 
-			
-			baos = new ByteArrayOutputStream();
-			CSVHelper.writeCSV(baos, csvData, null, "\n", null);
+			ByteArrayInputStream content = (ByteArrayInputStream) new URL(fileLink).getContent();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			byte[] buf = new byte[1024];
+			int read;
+			while( -1!=(read = content.read(buf)))
+				baos.write(buf,0, read);
 			baos.close();
-			String url = StorageHelper.saveImage(baos.toByteArray(), "text/csv", 0, true, pm, "addresses.csv");
-			EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "csv", url);
-			
-		} catch (InvalidOperation e) {
-			return "Failed to fill: "+e.why;
+			List<List<String>> csvData = CSVHelper.parseCSV( baos.toByteArray(), null, null, null);
+			//Code;ZIP Code;Country;City;Street;Building;Korpus;staircase;Appt;floor
+			//749282;188689;Российская Федерация;Ленинградская Обл. п. Кудрово;улица Ленинградская;7;0;1;2;2
+			if( csvData.size() <2 ) return "Empty file. Two lines the must"; 
+			csvData.remove(0);
+			PersistenceManager pm = PMF.getPm();
+			try {
+				VoBuilding vb;
+				VoStreet cs;
+				VoCity vcty;
+				VoCountry vc;
+				try {
+					List<String> firstLine = csvData.get(0);
+					
+					vc = VoCountry.createVoCountry( firstLine.get(2), pm);
+					vcty = VoCity.createVoCity(vc, firstLine.get(3), pm);
+					cs = VoStreet.createVoStreet(vcty, firstLine.get(4), pm);
+					String korp = firstLine.get(6);
+					String fullNo = null==korp || 0 == korp.trim().length() || korp.trim().equals("0") ?  firstLine.get(5)  : 
+						firstLine.get(5) + (korp.matches("[1-9]+") ? "к" + korp : korp);
+					vb = VoBuilding.createVoBuilding(firstLine.get(1), cs, fullNo , null, null, pm);
+					
+					initPostalAddresses( csvData, pm, vb); 
+					
+					baos = new ByteArrayOutputStream();
+					CSVHelper.writeCSV(baos, csvData, null, "\n", null);
+					baos.close();
+					String url = StorageHelper.saveImage(baos.toByteArray(), "text/csv", 0, true, pm, "addresses.csv");
+					EMailHelper.sendSimpleEMail("info@vmesteonline.ru", "csv", url);
+					
+				} catch (InvalidOperation e) {
+					return "Failed to fill: "+e.why;
+				}
+				
+			} finally {
+				pm.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Failed to fill: "+e.getLocalizedMessage();
 		}
 		return null;
 	}
 	private void initPostalAddresses(List<List<String>> rows, PersistenceManager pm, VoBuilding vb) throws InvalidOperation {
 		
 		Set codeSet = new HashSet<String>();
-		
-		for (int idx = 1; idx< rows.size(); idx ++) {
-			List<String> items = rows.get(idx);
+		for (List<String> items : rows) {
 			VoPostalAddress pa = VoPostalAddress.createVoPostalAddress(vb, Byte.parseByte(items.get(7)), (byte) Integer.parseInt(items.get(9)), Integer.parseInt(items.get(8)), null,pm);
 			pm.makePersistent(pa);
 			

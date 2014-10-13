@@ -51,6 +51,7 @@ struct ShortUserInfo{
 	5: string avatar,
 	6: GroupType groupType,
 	7: optional set<i64> moderationGroups,
+	8: optional string address,
 }
 
 struct ShortProfile{

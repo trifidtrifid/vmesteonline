@@ -64,5 +64,4 @@ public class VoInviteCode {
 	public String toString() {
 		return "VoInviteCode [id=" + id + ", code=" + code + ", postalAddressId=" + postalAddressId + ", registeredByCode=" + registeredByCode + "]";
 	}
-
 }

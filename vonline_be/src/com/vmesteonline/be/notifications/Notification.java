@@ -18,6 +18,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.jdo.Extent;
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 
@@ -63,58 +64,89 @@ public abstract class Notification {
 
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		int twoDaysAgo = (int) now - 86400 * 2;
-		int weekAgo = (int) now - 86400 * 7;
-		List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
+		int weekAgo = (int) now - 86400 * 2;
+		
+		//-TODO See TODO below. Method that don't check last activity of sessions
+		Extent<VoUser> users = pm.getExtent(VoUser.class);
+		for (VoUser voUser : users) {
+			if( voUser.isEmailConfirmed() ){
+				
+				VoSession lastSession = getTheLastSessionAndCeanOldOnes(voUser, weekAgo, pm);
+				if( lastSession == null || lastSession.getLastActivityTs() < twoDaysAgo )
+					addUserToNotificationIst(userList, now, voUser);
+			}
+		}
+		// TODO Remove simple method above and uncomment method below to take activity into account it could be important for big amount of active users
+		
+		/*List<VoSession> vsl = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs < " + twoDaysAgo).execute();
+		logger.fine("Total sessions with lastActivityTs < "+twoDaysAgo+" : " + vsl.size());
+	
 		for (VoSession vs : vsl) {
+			if( 0==vs.getUserId()){
+				pm.deletePersistent(vs);
+				continue;
+			}
 			VoUser vu;
 			try {
 				vu = pm.getObjectById(VoUser.class, vs.getUserId());
 			} catch (JDOObjectNotFoundException onfe) {
-				logger.warning("No user of session found by ID:" + vs.getUserId() + " discard the session " + vs);
+				logger.warning("No user of session found by ID:" + vs.getUserId() + " this ID is stored in session: " + vs.getId());
 				pm.deletePersistent(vs);
 				continue;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.warning("FAiled to get user by ID: " + vs.getUserId() + " discard the session " + vs);
 				continue;
 			}
 
 			if (vu.isEmailConfirmed()) {
 				// найдем самую псоледнюю сессию ползователя
-				List<VoSession> uSessions = (List<VoSession>) pm.newQuery(VoSession.class, "userId==" + vu.getId()).execute();
-				Collections.sort(uSessions, lastActivityComparator);
-				int lastActivityTs = uSessions.get(uSessions.size() - 1).getLastActivityTs();
-				boolean activityWasMoreThenTwoDaysAgo = lastActivityTs < twoDaysAgo;
-				for (VoSession ns : uSessions) {
-					if (ns.getLastActivityTs() < weekAgo) // пора удалять неактивную сессию
-						pm.deletePersistent(ns);
-					else
-						break;
-				}
+				VoSession lastSession = getTheLastSessionAndCeanOldOnes(vu, weekAgo, pm);
 
-				if (activityWasMoreThenTwoDaysAgo) {
+				if (lastSession.getLastActivityTs() < twoDaysAgo) {
 
-					int timeAgo = (int) now - vu.getLastNotified();
-					NotificationFreq nf = vu.getNotificationFreq().freq;
-					if (NotificationFreq.DAYLY == nf && timeAgo >= 86400 || NotificationFreq.TWICEAWEEK == nf && timeAgo >= 3 * 86400
-							|| NotificationFreq.WEEKLY == nf && timeAgo >= 7 * 86400) {
-						logger.fine("User:" + vu + " would be notified with news");
-						userList.add(vu);
-					} else {
-						logger.fine("USer:" + vu + " was notified " + timeAgo + " days ago and he perefers to be notified " + nf.name()
-								+ " so he would not been notified this time");
-					}
+					addUserToNotificationIst(userList, now, vu);
 
 				} else {
-					logger.fine("USer:" + vu + " visited the site at " + new Date(((long) lastActivityTs) * 1000L)
+					logger.fine("USer:" + vu + " visited the site at " + new Date(((long) lastSession.getLastActivityTs() ) * 1000L)
 							+ " less the two days ago so he/she would not been notified with news");
 				}
 			} else {
 				logger.fine("USer:" + vu + " not confirmed email, so new would not been sent.");
 			}
-		}
+		}*/
+		
 		Set<VoUser> userSet = new TreeSet<VoUser>(vuComp);
 		userSet.addAll(userList);
+		logger.fine("Total users count to be notified are: "+userSet.size());
 		return userSet;
+	}
+
+	private VoSession getTheLastSessionAndCeanOldOnes(VoUser vu, int sessionDeadLine, PersistenceManager pm) {
+		List<VoSession> uSessions = (List<VoSession>) pm.newQuery(VoSession.class, "userId==" + vu.getId()).execute();
+		if( null==uSessions || 0==uSessions.size())
+			return null;
+		Collections.sort(uSessions, lastActivityComparator);
+		VoSession lastSession = uSessions.get(uSessions.size() - 1);
+		for (VoSession ns : uSessions) {
+			if (lastSession != ns && ns.getLastActivityTs() < sessionDeadLine) // пора удалять неактивную сессию
+				pm.deletePersistent(ns);
+			else
+				break;
+		}
+		return lastSession;
+	}
+
+	private void addUserToNotificationIst(List<VoUser> userList, int now, VoUser vu) {
+		int timeAgo = (int) now - vu.getLastNotified();
+		NotificationFreq nf = vu.getNotificationFreq().freq;
+		if (NotificationFreq.DAYLY == nf && timeAgo >= 86400 || NotificationFreq.TWICEAWEEK == nf && timeAgo >= 3 * 86400
+				|| NotificationFreq.WEEKLY == nf && timeAgo >= 7 * 86400) {
+			logger.fine("User:" + vu + " would be notified with news, notified "+timeAgo / 86400+" and "+nf.name()+" notification is set.");
+			userList.add(vu);
+		} else {
+			logger.fine("USer:" + vu + " was notified " + timeAgo + " seconds ago and he perefers to be notified " + nf.name()
+					+ " so he would not been notified this time");
+		}
 	}
 
 	protected void sendMessage(NotificationMessage mn, VoUser u) throws IOException {
@@ -125,8 +157,9 @@ public abstract class Notification {
 		messagesToSend.put(u, uns);
 	}
 
-	protected static Map<Long, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users) {
+	protected static Map<Long, Set<VoUser>> arrangeUsersInGroups(Set<VoUser> users, PersistenceManager pm) {
 		// group users by groups and group types
+		
 		Map<Long, Set<VoUser>> groupUserMap = new TreeMap<Long, Set<VoUser>>();
 		for (VoUser u : users) {
 			for (Long ug : u.getGroups()) {
@@ -216,7 +249,7 @@ public abstract class Notification {
 	}
 
 	static void decorateAndSendMessage(VoUser user, String subject, String body) {
-		body += "<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"https://" + host + "/blog\">блоге</a></p>";
+		body = "<HTML><BODY>"+body+"<p>Спасибо что вы с нами!<br/>Новости проекта в нашем <a href=\"https://" + host + "/blog\">блоге</a></p>"+"</BODY></HTML>";
 		try {
 			EMailHelper.sendSimpleEMail(user,"ВместеОнлайн.ру: " + subject, body);
 		} catch (IOException e) {

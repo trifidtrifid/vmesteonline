@@ -1,13 +1,11 @@
 package com.vmesteonline.be;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.thrift.TException;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.labs.repackaged.com.google.common.base.Pair;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoInviteCode;
@@ -34,6 +31,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.userservice.FullAddressCatalogue;
+import com.vmesteonline.be.userservice.GroupLocation;
 import com.vmesteonline.be.userservice.UserService;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.VoHelper;
@@ -207,6 +205,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				up.setNotifications(currentUser.getNotificationFreq());
 				return up;
 			}
 
@@ -418,7 +417,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 			List<City> cl = new ArrayList<City>();
 			Query q = pm.newQuery(VoCity.class);
-			q.setFilter("countryId==" + countryId);
+			q.setFilter("countryId == " + countryId);
 			List<VoCity> cs = (List<VoCity>) q.execute();
 			for (VoCity c : cs) {
 				cl.add(c.getCity());
@@ -518,7 +517,6 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} 
 	}
 
-	// TODO this method called only once in test. may be unused?
 	@Override
 	public boolean setUserAddress(PostalAddress newAddress) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
@@ -668,10 +666,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	public List<ShortUserInfo> getNeighbours() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		VoUser currentUser = getCurrentUser();
-		
 		List<VoUser> users = getUsersByLocation(currentUser.getGroup(GroupType.BUILDING, pm), pm);
-		return VoHelper.convertMutableSet(users, new ArrayList<ShortUserInfo>(), new ShortUserInfo());
+		return shortInfoForGroup( GroupType.BUILDING, users, pm);
 	}
+	
+	private ArrayList<ShortUserInfo> shortInfoForGroup(GroupType gt, List<VoUser> users, PersistenceManager pm){
+		ArrayList<ShortUserInfo> ul = new ArrayList<ShortUserInfo>();
+		for( VoUser user: users ){
+			ShortUserInfo shortUserInfo = user.getShortUserInfo(null);
+			shortUserInfo.setAddress( user.getAddressString( gt, pm));
+			ul.add( shortUserInfo );
+		}
+		return ul;
+	} 
 	
 	public static CachableObject< ArrayList<ShortUserInfo> > usersByGroup = new CachableObject();
 	@Override
@@ -680,12 +687,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	}
 
 	public ArrayList<ShortUserInfo> getNeighborsByGroupDo(Long groupId) throws InvalidOperation {
-		ArrayList<ShortUserInfo> sug = new ArrayList<ShortUserInfo>();
 		PersistenceManager pm = PMF.getPm();
-		List<VoUser> users = getUsersByLocation( pm.getObjectById(VoUserGroup.class,groupId), pm);
-		for (VoUser voUser : users) {
-			sug.add( voUser.getShortUserInfo(pm));
-		}
+		VoUserGroup ug = pm.getObjectById(VoUserGroup.class, groupId);
+		List<VoUser> users = getUsersByLocation( ug, pm);
+		ArrayList<ShortUserInfo> sug = shortInfoForGroup( GroupType.findByValue(ug.getGroupType()), users, pm);
 		Collections.sort( sug, new Comparator<ShortUserInfo>(){
 			@Override
 			public int compare(ShortUserInfo o1, ShortUserInfo o2) {
@@ -718,8 +723,13 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public void updateNotifications(Notifications notifications) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		VoUser currentUser = getCurrentUser();
-		currentUser.setNotifications(notifications);
+		try {
+			VoUser currentUser = getCurrentUser();
+			currentUser.setNotifications(notifications);
+			pm.makePersistent(currentUser);
+		} finally {
+			pm.close();
+		}
 	}
 
 	@Override
@@ -795,4 +805,54 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		List<VoUserGroup> gtl = (List<VoUserGroup>) nq.execute();
 		return gtl.size() > 0  ? GroupType.findByValue( gtl.get(0).getGroupType()) : GroupType.NEIGHBORS;  //it should not be called elsewhere
 	}
+
+	@Override
+	public GroupLocation getGroupView(long groupId) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
+		return new GroupLocation(userGroup.getLongitude().toPlainString(), userGroup.getLatitude().toPlainString(), 
+				userGroup.getRadius(), GroupType.findByValue(userGroup.getGroupType()));
+	}
+
+	@Override
+	public void updateUserAddress(int staircase, int floor, int flatNo) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		VoUser currentUser = getCurrentUser(pm);
+		VoPostalAddress oldAddress = pm.getObjectById(VoPostalAddress.class,currentUser.getAddress());
+		long oldBuilding = oldAddress.getBuilding();
+		boolean stairChanged, floorChanged, flatChanged;
+		String query = "buildingId=="+oldBuilding;
+		query += " && staircase==" + (( stairChanged = (0 != staircase && staircase!=oldAddress.getStaircase())) ?  staircase : oldAddress.getStaircase()) ;
+		query += " && floor==" + ( (floorChanged = 0 != floor && floor!=oldAddress.getFloor()) ? floor : oldAddress.getFloor());
+		query += " && flatNo==" + ( (flatChanged = 0 != flatNo && floor!=oldAddress.getFlatNo()) ? flatNo : oldAddress.getFlatNo());
+		
+		if( stairChanged || floorChanged || flatChanged ){
+			List<VoPostalAddress> newAddresses = (List<VoPostalAddress>) pm.newQuery( VoPostalAddress.class, query).execute();
+			if( newAddresses.size() == 0 ){
+				logger.warning("No address found by query '"+query+"'");
+			} else {
+				VoPostalAddress newAddr = newAddresses.get(0);
+				currentUser.setAddress(newAddr.getId());
+				if( stairChanged || floorChanged){
+					int pos=0;
+					for( Long ugId : currentUser.getGroups()){
+						VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
+						if( stairChanged && GroupType.STAIRCASE.getValue() == ug.getGroupType() || 
+								floorChanged && GroupType.FLOOR.getValue() == ug.getGroupType() ){
+							
+							VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
+									newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
+							currentUser.getGroups().set(pos, newGroup.getId());
+						}
+						pos++;
+					}
+					currentUser.resetRootGroup();
+				}
+				pm.makePersistent(currentUser);
+			}
+				
+		} else {
+			logger.warning("Address of user does not changed.");
+		}
+	}	
 }
