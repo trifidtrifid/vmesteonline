@@ -10,7 +10,7 @@ struct Counter {
 	4:string number, //номер счетчика
 }
 
-service UserService {
+service UtilityService {
 
 	i64 registerCounter( 1:Counter newCounter )throws (1:error.InvalidOperation exc), //создание счетчика в квартире текущего пользователя
 	
