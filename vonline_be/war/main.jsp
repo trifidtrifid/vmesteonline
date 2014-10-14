@@ -59,13 +59,6 @@
         document.createElement('nav');
     </script>
     <![endif]-->
-   <%-- <script type="text/javascript">
-        globalUserAuth = false;
-        <c:if test="${auth}">
-        globalUserAuth = true;
-        </c:if>
-    </script>--%>
-
 
     <script src="js/lib/jquery.Jcrop.min.js"></script>
     <script src="js/forum/bower_components/select2/select2.min.js"></script>
@@ -133,19 +126,13 @@
 
     </div>
 
-    <%--<div class="container">
-        <div class="message-to-show">
-            <span>
-                <a href="#">&times;</a>
-            </span>
-        </div>
-    </div>--%>
 </div>
 
 	<div class="container">
 
 		<div class="main-container" id="main-container">
 			<div class="main-container-inner">
+
 				<aside class="sidebar" id="sidebar" ng-controller="leftBarController as leftbar">
 					<script type="text/javascript">
 						try {
@@ -201,6 +188,13 @@
 
 				<div class="main-content dynamic ng-cloak">
 
+                    <div class="user-notification" ng-init="notificationIsShow = true" ng-show="base.me.userNotification && notificationIsShow">
+                        <a href="#" class="pull-right" ng-click="notificationIsShow = false">&times;</a>
+                        <span>
+                            {{ base.me.userNotification }}
+                        </span>
+                    </div>
+
                     <div class="main-content-top" ng-hide="base.mainContentTopIsHide" ng-controller="mainContentTopController as mainContentTop"
                          ng-class="{'top-overflow-auto' : base.pageTitle.length}" ng-cloak>
 
@@ -244,20 +238,6 @@
 
 	<!-- общие библиотеки -->
 
-<script>
-    /*ymaps.ready(init);
-    var myMap;
-
-    setTimeout(init,5000);
-    function init(){
-        alert('1');
-        myMap = new ymaps.Map("map", {
-            center: [55.76, 37.64],
-            zoom: 7
-        });
-    }*/
-</script>
-
 	<script src="js/lib/bootstrap.min.js"></script>
     <script src="js/lib/jquery-ui-1.10.3.full.min.js"></script>
     <script src="js/lib/jquery.ui.datepicker-ru.js"></script>
@@ -294,7 +274,6 @@
     <script src="gen-js/FileService.js" type="text/javascript"></script>
 	<!-- -->
 
-
 	<!-- собственные скрипты  -->
 	<%--<script src="js/common.js"></script>--%>
 	<%--<script src="js/forum/main.js"></script>--%>
@@ -307,6 +286,7 @@
 	<script src="js/forum/app.js"></script>
 
 <script src="js/forum/angular/ya-map-2.1.min.js" type="text/javascript"></script>
+
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function (d, w, c) {
