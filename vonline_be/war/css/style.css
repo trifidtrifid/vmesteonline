@@ -1287,6 +1287,12 @@ h1 {
 }
 .nextdoors .nextdoors-amount {
   margin: 15px 0 0 0;
+}
+.nextdoors .nextdoor-address {
+  clear: left;
+  float: left;
+  margin-left: 58px;
+  margin-top: -20px;
 /* profle */
 }
 .user-body .user-body-left .logo-container {
@@ -1644,26 +1650,26 @@ h1 {
 .contacts textarea.content {
   overflow: hidden;
 }
-.message-to-show {
+.user-notification {
   width: 100%;
-  text-align: center;
-  margin-top: 8px;
+  background: #ffc89a;
 }
-.message-to-show span {
+.user-notification span {
   color: #fff;
-  background: #f00;
   padding: 4px 10px;
-  display: inline-block;
+  display: block;
+  margin-right: 20px;
 }
-.message-to-show span a {
+.user-notification a {
   color: #fff;
   display: inline-block;
-  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 4px;
 }
-.message-to-show span a:hover {
+.user-notification a:hover {
   text-decoration: none;
 }
-.login-layout .message-to-show {
+.login-layout .user-notification {
   position: absolute;
   top: -60px;
 }

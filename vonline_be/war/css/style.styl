@@ -1113,8 +1113,14 @@ transform()
           width 70px
       .nextdoor-name
           margin-left 58px
+
   .nextdoors-amount
     margin 15px 0 0 0
+  .nextdoor-address
+    clear left
+    float left
+    margin-left 58px
+    margin-top -20px
 
     /* profle */
 .user-body
@@ -1421,23 +1427,23 @@ transform()
   textarea.content
     overflow hidden
 
-.message-to-show
+.user-notification
   width 100%
-  text-align center
-  margin-top 8px
+  background #ffc89a
   span
     color #fff
-    background #ff0000
     padding 4px 10px
+    display block
+    margin-right 20px
+  a
+    color #fff
     display inline-block
-    a
-      color #fff
-      display inline-block
-      margin-left 10px
-      &:hover
-        text-decoration none
+    margin-right 10px
+    margin-top 4px
+    &:hover
+      text-decoration none
 
-.login-layout .message-to-show
+.login-layout .user-notification
   position absolute
   top -60px
 
