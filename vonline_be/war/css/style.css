@@ -1287,6 +1287,12 @@ h1 {
 }
 .nextdoors .nextdoors-amount {
   margin: 15px 0 0 0;
+}
+.nextdoors .nextdoor-address {
+  clear: left;
+  float: left;
+  margin-left: 58px;
+  margin-top: -20px;
 /* profle */
 }
 .user-body .user-body-left .logo-container {
