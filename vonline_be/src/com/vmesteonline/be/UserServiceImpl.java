@@ -808,6 +808,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 
 	@Override
 	public GroupLocation getGroupView(long groupId) throws InvalidOperation, TException {
+		if( 0==groupId) return null;
 		PersistenceManager pm = PMF.getPm();
 		VoUserGroup userGroup = pm.getObjectById(VoUserGroup.class, groupId);
 		return new GroupLocation(userGroup.getLongitude().toPlainString(), userGroup.getLatitude().toPlainString(), 
