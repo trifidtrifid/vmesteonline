@@ -14,6 +14,9 @@ struct Counter {
 service UtilityService {
 
 	i64 registerCounter( 1:Counter newCounter )throws (1:error.InvalidOperation exc), //создание счетчика в квартире текущего пользователя
+	void updateCounter( 1:Counter updatedCounter )throws (1:error.InvalidOperation exc), //обнолвение параметров с сохранением данных по ID
+	void removeCounter( 1:i32 counterId )throws (1:error.InvalidOperation exc), //удаление счетчика и данных
+	
 	
 	list<Counter> getCounters() throws (1:error.InvalidOperation exc), //возвращает счетчики на адресе текущего пользователя
 	map< i32, double> getCounterHistory(1:i32 counterId, 2:i32 fromDate, 3:i32 toDate) throws (1:error.InvalidOperation exc), //возвращает историю показаний счетчика

@@ -263,9 +263,17 @@ public class Defaults {
 					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 2, (byte) 1, 50, "", pm),
 					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 2, (byte) 1, 51, "", pm),
 					VoPostalAddress.createVoPostalAddress(respublikanskaya35, (byte) 1, (byte) 11, 35, "", pm),
-					VoPostalAddress.createVoPostalAddress(resp6, (byte) 1, (byte) 2, 25, "", pm) };
+					VoPostalAddress.createVoPostalAddress(resp6, (byte) 1, (byte) 2, 25, "", pm), 
 
-			String invCodes[] = { "1", "2", "3", "4", "5" };
+					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 0, (byte) 0, 0, "", pm),
+					VoPostalAddress.createVoPostalAddress(respublikanskaya35, (byte) 0, (byte) 0, 0, "", pm),
+					VoPostalAddress.createVoPostalAddress(resp6, (byte) 0, (byte) 0, 0, "", pm),
+					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 2, (byte) 0, 0, "", pm),
+					VoPostalAddress.createVoPostalAddress(respublikanskaya35, (byte) 1, (byte) 0, 0, "", pm),
+					VoPostalAddress.createVoPostalAddress(resp6, (byte) 2, (byte) 0, 0, "", pm) };
+
+			
+			String invCodes[] = { "1", "2", "3", "4", "5", "11", "12", "13", "14", "15", "16" };
 
 			for (int i = 0; i < addresses.length; i++) {
 
