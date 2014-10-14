@@ -2224,12 +2224,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             userId = 0;
             profile.isMayEdit = true;
 
-            /* Yandex Map */
-            /*var _map;
-            profile.afterMapInit = function(map){
-                _map = map;
-            };*/
-
             var location = userClient.getGroupView($rootScope.groups[0].id);
 
             profile.map = {};
@@ -2980,10 +2974,59 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         $rootScope.base.isFooterBottom = true;
 
-        maps.url = userClient.getGroupMap($rootScope.currentGroup.id,MAP_COLOR);
+        var yaMap;
+        maps.afterMapInit=function(nMap){
+            yaMap = nMap;
+        };
+
+        maps.color = MAP_COLOR;
+
+        //maps.url = userClient.getGroupMap($rootScope.currentGroup.id,MAP_COLOR);
+
+        var location = userClient.getGroupView($rootScope.currentGroup.id);
+
+        var setMap = function(location){
+
+            maps.center = [location.longitude,location.latitude];
+
+            if (yaMap) {
+                ($rootScope.currentGroup.type == 4) ? yaMap.setZoom(17) : yaMap.setZoom(16); ;
+            }else{
+                ($rootScope.currentGroup.type == 4) ? maps.zoom = 17 : maps.zoom = 16 ;
+            }
+
+            maps.baloon = {
+                // Геометрия = тип объекта + географические координаты объекта
+                geometry: {
+                    // Тип геометрии - точка
+                    type: 'Point',
+                    // Координаты точки.
+                    coordinates: maps.center
+                },
+                // Свойства
+                properties: {
+                    hintContent: "Я здесь"
+                }
+            };
+
+            maps.radius = {
+                geometry: {
+                    type: 'Circle',
+                    coordinates: maps.center,
+                    radius: location.radius
+                },
+                properties: {
+                }
+            };
+
+        };
+
+        setMap(location);
 
         $rootScope.mapsChangeGroup = function(groupId){
-             maps.url = userClient.getGroupMap(groupId,MAP_COLOR);
+            var location = userClient.getGroupView(groupId);
+
+            setMap(location);
         };
         $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
     })
