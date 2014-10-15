@@ -124,6 +124,8 @@ struct DialogMessage {
 	7: list<Attach> documents,  
 }
 
+enum NotificationType { DIALOG=0, IMPORTANT_MSG=1, SERVICE_MSG=2}
+
 service DialogService {
 	//DIALOGUE implementation methods
 	//method returns dilaog ID that just created or thorw an exception if a parameter is incorrect

@@ -40,6 +40,7 @@ import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.messageservice.NotificationType;
 import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.VoHelper;
 
@@ -474,7 +475,12 @@ public class VoUser /* extends GeoLocation */{
 	
 	@Persistent
 	private Map<Integer, String> addressStringsByGroupType;
+	
+	//map that stores last event date that was shown to user by category
 
+	@Persistent
+	private Map<NotificationType, Integer> categoryLastTimeView;
+	
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, GroupType.BUILDING, GroupType.STAIRCASE) : privacy;
 	}
