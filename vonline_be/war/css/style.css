@@ -1499,6 +1499,9 @@ h1 {
   width: 100%;
   display: block;
 }
+.set-info {
+  clear: right;
+}
 .set-info label {
   display: block;
 }

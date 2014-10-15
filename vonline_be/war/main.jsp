@@ -204,7 +204,7 @@
 
                         <nav class="submenu pull-right clearfix">
                             <button class="btn btn-sm btn-info no-border pull-right" ng-repeat="group in groups"
-                            id="{{group.id}}" ng-class="{active : currentGroup.id == group.id}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button> <!-- {active : group.selected} -->
+                            id="{{group.id}}" ng-class="{active : currentGroup.id == group.id && group.id != 0}" ng-click="selectGroup(group)" ng-show="group.isShow">{{group.visibleName}}</button> <!-- {active : group.selected} -->
                         </nav>
 
                         <div class="create-topic-btn pull-right ng-cloak" ng-show="base.talksIsActive || base.advertsIsActive">
