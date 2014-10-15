@@ -281,12 +281,13 @@ public class Defaults {
 
 				pm.makePersistent(addresses[i]);
 				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId());
-				pm.makePersistent( new VoCounter(CounterType.COLD_WATER, "Ванная", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				/*pm.makePersistent( new VoCounter(CounterType.COLD_WATER, "Ванная", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
 				pm.makePersistent( new VoCounter(CounterType.HOT_WATER, "Ванная", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
 				pm.makePersistent( new VoCounter(CounterType.COLD_WATER, "Кухня", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
 				pm.makePersistent( new VoCounter(CounterType.HOT_WATER, "Кухня", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
 				pm.makePersistent( new VoCounter(CounterType.ELECTRICITY_DAY, "", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
 				pm.makePersistent( new VoCounter(CounterType.ELECTRICITY_NIGHT, "", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+			*/	
 				pm.makePersistent(icode);
 				pm.flush();
 			}
