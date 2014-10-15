@@ -829,28 +829,31 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		
 		if( stairChanged || floorChanged || flatChanged ){
 			List<VoPostalAddress> newAddresses = (List<VoPostalAddress>) pm.newQuery( VoPostalAddress.class, query).execute();
+			VoPostalAddress newAddr;
 			if( newAddresses.size() == 0 ){
-				logger.warning("No address found by query '"+query+"'");
+				newAddr = VoPostalAddress.createVoPostalAddress(
+						pm.getObjectById(VoBuilding.class, oldBuilding), (byte)staircase, (byte)floor, flatNo, "", pm );
+				logger.warning("No address found by query '"+query+"' new one created");
 			} else {
-				VoPostalAddress newAddr = newAddresses.get(0);
-				currentUser.setAddress(newAddr.getId());
-				if( stairChanged || floorChanged){
-					int pos=0;
-					for( Long ugId : currentUser.getGroups()){
-						VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
-						if( stairChanged && GroupType.STAIRCASE.getValue() == ug.getGroupType() || 
-								floorChanged && GroupType.FLOOR.getValue() == ug.getGroupType() ){
-							
-							VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
-									newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
-							currentUser.getGroups().set(pos, newGroup.getId());
-						}
-						pos++;
-					}
-					currentUser.resetRootGroup();
-				}
-				pm.makePersistent(currentUser);
+				newAddr = newAddresses.get(0);
 			}
+			currentUser.setAddress(newAddr.getId());
+			if( stairChanged || floorChanged){
+				int pos=0;
+				for( Long ugId : currentUser.getGroups()){
+					VoUserGroup ug = pm.getObjectById(VoUserGroup.class, ugId);
+					if( stairChanged && GroupType.STAIRCASE.getValue() == ug.getGroupType() || 
+							floorChanged && GroupType.FLOOR.getValue() == ug.getGroupType() ){
+						
+						VoUserGroup newGroup = VoUserGroup.createVoUserGroup(ug.getLongitude(), ug.getLatitude(), ug.getRadius(), 
+								newAddr.getStaircase(), newAddr.getFloor(), ug.getName(), ug.getImportantScore(), ug.getGroupType(), pm);
+						currentUser.getGroups().set(pos, newGroup.getId());
+					}
+					pos++;
+				}
+				currentUser.resetRootGroup();
+			}
+			pm.makePersistent(currentUser);
 				
 		} else {
 			logger.warning("Address of user does not changed.");

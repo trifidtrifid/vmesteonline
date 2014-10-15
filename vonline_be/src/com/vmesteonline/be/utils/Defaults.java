@@ -32,6 +32,8 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
+import com.vmesteonline.be.jdo2.utility.VoCounter;
+import com.vmesteonline.be.userservice.CounterType;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
@@ -279,6 +281,13 @@ public class Defaults {
 
 				pm.makePersistent(addresses[i]);
 				VoInviteCode icode = new VoInviteCode(invCodes[i], addresses[i].getId());
+				/*pm.makePersistent( new VoCounter(CounterType.COLD_WATER, "Ванная", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				pm.makePersistent( new VoCounter(CounterType.HOT_WATER, "Ванная", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				pm.makePersistent( new VoCounter(CounterType.COLD_WATER, "Кухня", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				pm.makePersistent( new VoCounter(CounterType.HOT_WATER, "Кухня", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				pm.makePersistent( new VoCounter(CounterType.ELECTRICITY_DAY, "", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+				pm.makePersistent( new VoCounter(CounterType.ELECTRICITY_NIGHT, "", ""+(long)(Math.random()*9876543212348L), addresses[i].getId()));
+			*/	
 				pm.makePersistent(icode);
 				pm.flush();
 			}
