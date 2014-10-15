@@ -2,8 +2,8 @@
 <section class="counters page" ng-class="base.mapsLoadStatus">
 
     <ul class="counters-menu">
-        <li><a href="#"></a></li>
-        <li><a href="#"></a></li>
+        <li><a href="#">История</a></li>
+        <li><a href="#">Настройки</a></li>
     </ul>
 
     <table class="counters-table">
@@ -16,16 +16,16 @@
             <td>Расход</td>
         </tr>
         </thead>
-        <tr ng-repeat="counter in counters.counters">
-            <td>{{ counter.typeString }}</td>
+        <tr ng-repeat="counter in counters.counters" > <!-- ng-repeat="counter in counters.counters" -->
+            <td>Горячая вода</td> <!-- {{ counter.typeString }} -->
             <td>{{ counter.location }}</td>
-            <td>{{ counter.lastValue }}</td>
+            <td>{{ counter.prevValue }}</td>
             <td><input type="text"/></td>
-            <td></td>
+            <td>6</td>
         </tr>
     </table>
 
-    <button class="btn btn-sm btn-primary no-border" ng-click="counters.save()">Сохранить</button>
+    <button class="btn btn-sm btn-primary no-border pull-right" ng-click="counters.save()">Сохранить</button>
 
 </section>
 
