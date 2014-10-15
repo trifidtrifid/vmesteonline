@@ -3032,7 +3032,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
         $rootScope.selectGroup(getBuildingGroup($rootScope.currentGroup));
     })
-    .controller('SetInfoController',function($rootScope) {
+    .controller('SetInfoController',function() {
         var setInfo = this;
 
         setInfo.save = function(){
@@ -3044,6 +3044,17 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             userClient.updateUserAddress(staircase,floor,flat);
         };
+
+    })
+    .controller('CountersController',function($rootScope) {
+        var counters = this;
+
+        counters.counters = utilityClient.getCounters();
+
+        counters.save = function(){
+
+            utilityClient.setCurrentCounterValue(counterId,value,date);
+        }
 
     });
     /*.controller('BlogController',function($state,$rootScope) {
@@ -3082,6 +3093,10 @@ var shortUserInfo = userClient.getShortUserInfo();
 transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
 var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
+
+transport = new Thrift.Transport("/thrift/UtilityService");
+protocol = new Thrift.Protocol(transport);
+var utilityClient = new com.vmesteonline.be.fileservice.UtilityServiceClient(protocol);
 
 transport = new Thrift.Transport("/thrift/fs");
 protocol = new Thrift.Protocol(transport);

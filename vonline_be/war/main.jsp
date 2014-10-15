@@ -270,6 +270,8 @@
 	<script src="gen-js/UserService.js" type="text/javascript"></script>
 	<script src="gen-js/authservice_types.js" type="text/javascript"></script>
 	<script src="gen-js/AuthService.js" type="text/javascript"></script>
+    <script src="gen-js/utilityservces_types.js" type="text/javascript"></script>
+    <script src="gen-js/UtilityService.js" type="text/javascript"></script>
     <script src="gen-js/fileutils_types.js" type="text/javascript"></script>
     <script src="gen-js/FileService.js" type="text/javascript"></script>
 	<!-- -->
