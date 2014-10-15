@@ -1,0 +1,31 @@
+
+<section class="counters page" ng-class="base.mapsLoadStatus">
+
+    <ul class="counters-menu">
+        <li><a href="#">История</a></li>
+        <li><a href="#">Настройки</a></li>
+    </ul>
+
+    <table class="counters-table">
+        <thead>
+        <tr>
+            <td>Тип</td>
+            <td>Место установки</td>
+            <td>Предыдущее показание</td>
+            <td>Показание</td>
+            <td>Расход</td>
+        </tr>
+        </thead>
+        <tr ng-repeat="counter in counters.counters" > <!-- ng-repeat="counter in counters.counters" -->
+            <td>Горячая вода</td> <!-- {{ counter.typeString }} -->
+            <td>{{ counter.location }}</td>
+            <td>{{ counter.prevValue }}</td>
+            <td><input type="text"/></td>
+            <td>6</td>
+        </tr>
+    </table>
+
+    <button class="btn btn-sm btn-primary no-border pull-right" ng-click="counters.save()">Сохранить</button>
+
+</section>
+
