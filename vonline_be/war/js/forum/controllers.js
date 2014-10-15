@@ -1080,7 +1080,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         return $rootScope.leftbar.tab === number;
     };
   })
-    .controller('mainContentTopController',function($rootScope) {
+    .controller('mainContentTopController',function($rootScope, $state) {
         var topCtrl = this;
 
         topCtrl.groups = userClientGroups;// ? userClientGroups.reverse() : userClient.getUserGroups().reverse();
@@ -2224,13 +2224,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             userId = 0;
             profile.isMayEdit = true;
 
-            var location = userClient.getGroupView($rootScope.groups[0].id);
+            try {
+                var location = userClient.getGroupView($rootScope.groups[0].id);
 
-            profile.map = {};
-            profile.map.zoom = 17;
-            profile.map.center = [location.longitude,location.latitude];
+                profile.map = {};
+                profile.map.zoom = 17;
+                profile.map.center = [location.longitude, location.latitude];
 
-            profile.map.baloon = {
+                profile.map.baloon = {
                     // Геометрия = тип объекта + географические координаты объекта
                     geometry: {
                         // Тип геометрии - точка
@@ -2243,7 +2244,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                         hintContent: "Я здесь"
                     }
                 };
-
+            }catch(err){
+            }
             //profile.map = userClient.getGroupMap($rootScope.groups[0].id, MAP_COLOR);
             //profile.userContacts = userClient.getUserContacts();
         }

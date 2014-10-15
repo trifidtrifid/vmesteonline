@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                        <div class="home-map" ng-show="profile.isMayEdit">
+                        <div class="home-map" ng-show="profile.isMayEdit && profile.map.center">
                             <!--<img ng-src="{{ profile.map }}" alt="карта"/>-->
                             <!--<div id="map" style="width: 400px;height: 300px"></div>-->
                             <ya-map ya-zoom="{{profile.map.zoom}}" ya-center="{{ profile.map.center }}" ya-controls="smallMapDefaultSet" style="width: 100%; height: 400px; display: block;">
