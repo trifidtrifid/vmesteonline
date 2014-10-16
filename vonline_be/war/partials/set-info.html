@@ -21,6 +21,7 @@
     <p>Указывайте правильные данные, иначе Вы не сможете увидеть то, что пишут Ваши соседи, а Ваши соседи не увидят то, что пишите Вы.</p>
 
     <button class="btn btn-sm no-border btn-primary set-info-save" ng-click="setInfo.save()">Сохранить</button>
+    <span ng-class="{'info-good': !setInfo.isError, 'error-info': setInfo.isError}" ng-show="setInfo.isSaveResult">{{ setInfo.info}}</span>
 
 </div>
 
