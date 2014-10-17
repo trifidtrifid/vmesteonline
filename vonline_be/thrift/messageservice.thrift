@@ -124,8 +124,6 @@ struct DialogMessage {
 	7: list<Attach> documents,  
 }
 
-enum NotificationType { DIALOG=0, IMPORTANT_MSG=1, SERVICE_MSG=2}
-
 service DialogService {
 	//DIALOGUE implementation methods
 	//method returns dilaog ID that just created or thorw an exception if a parameter is incorrect
@@ -188,4 +186,13 @@ service MessageService {
 	//для текущего пользователя сообщение становится важным вне зависимости от его суммарного рейтинга
 	i32 markMessageImportant(1:i64 messageId, 2:bool isImportant ) throws (1:error.InvalidOperation exc),
 	i32 markMessageLike(1:i64 messageId ) throws (1:error.InvalidOperation exc),
+	
+	string getNextMulticastMessage( ) throws (1:error.InvalidOperation exc), //получение ползователем следующего не прочитанного сообщения
+	string getMulticastMessage( ) throws (1:error.InvalidOperation exc), //получение ползователем текущего не прочитанного сообщения 
+	
+	//Отправка сообщений в группы или по набору адресов Если списки не заданы, то сообщение рассылается всем пользователям, 
+	//В адресе должен быть определен как минимум id дома, если подъезд не определен = 0, то на весь подъезо  
+	void sendGroupMulticastMessage( 1:list<i64> visibleGroups, 2:string message, 3:i32 startDate, 4:i32 expireDate) throws (1:error.InvalidOperation exc),
+	void sendAddressMulticastMessage( 1:list<bedata.PostalAddress> addresses, 2:string message, 3:i32 startDate, 4:i32 expireDate) throws (1:error.InvalidOperation exc),
+		
 }

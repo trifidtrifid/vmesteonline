@@ -179,7 +179,8 @@ public abstract class Notification {
 		PersistenceManager pm = PMF.getPm();
 
 		List<VoUser> usersForMessage = UserServiceImpl.getUsersByLocation( group, pm);
-
+		int weekAgo = (int) (System.currentTimeMillis()/1000L - 86400 * 7);
+				
 		String subject = "важное сообщение";
 		String body = "Ваши соседи считают это сообщение достойным внимания (важность: " + it.getImportantScore() + ")<br/><br/>";
 
@@ -188,6 +189,10 @@ public abstract class Notification {
 		body += "<br/><br/><a href=\"https://" + host + "/wall-single-" + it.getId() + "\">Обсудить, ответить ...</a>";
 		for (VoUser rcpt : usersForMessage) {
 			decorateAndSendMessage(rcpt, subject, body);
+			List<VoSession> sessions = (List<VoSession>) pm.newQuery(VoSession.class, "userId=="+rcpt.getId()+" && lastActivityTs>"+weekAgo ).execute();
+			for( VoSession ns : sessions)
+				ns.setNewImportantMessages( ns.getNewImportantMessages() + 1);
+			pm.makePersistentAll(sessions);
 		}
 	}
 
