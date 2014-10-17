@@ -4,6 +4,7 @@ import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -943,15 +944,22 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 //=========================================================================================================================
 	private void sendFlorGroupMulticastMessage(Set<Long> vgs, String message, int startDate, int expireDate, PersistenceManager pm) {
+		Collection<VoSession> sessionsToNotify;
+		int weekAgo = (int) (System.currentTimeMillis()/1000L - 86400 * 7);
 		
-		Set<VoUser> usersToUpdate = getAllOfSet(vgs, VoUser.class, "rootGroup", pm);
-		Set<Long> vuis = new HashSet<>();
-		for (VoUser voUser : usersToUpdate) {
-			vuis.add(voUser.getId());
+		if( null==vgs ){
+			Set<VoUser> usersToUpdate = getAllOfSet(vgs, VoUser.class, "rootGroup", pm);
+			Set<Long> vuis = new HashSet<>();
+			for (VoUser voUser : usersToUpdate) {
+				vuis.add(voUser.getId());
+			}
+			VoMulticastMessage vmcm = new VoMulticastMessage(Arrays.asList((Long[])vgs.toArray()), startDate, expireDate, message);
+			pm.makePersistent(vmcm);
+			sessionsToNotify = getAllOfSet(vuis, VoSession.class, "lastActivityTs > "+weekAgo+" && userId", pm);
+		} else {
+			sessionsToNotify = (List<VoSession>) pm.newQuery( VoSession.class , "lastActivityTs > "+weekAgo).execute();
 		}
-		VoMulticastMessage vmcm = new VoMulticastMessage(Arrays.asList((Long[])vgs.toArray()), startDate, expireDate, message);
-		pm.makePersistent(vmcm);
-		Set<VoSession> sessionsToNotify = getAllOfSet(vuis, VoSession.class, "userId", pm);
+		
 		for (VoSession voSession : sessionsToNotify) {
 			voSession.setNewBroadcastMessage( true );
 		}
@@ -962,16 +970,20 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 private <T> Set<T> getAllOfSet(Set<Long> vgs, Class<T> clazz, String idName, PersistenceManager pm) {
 	Set<T> vus = new HashSet<T>();
-	String glist = "";
-	int i = 0;
-	for (Long gid : vgs) {
-		if( i > 0 && 0 == i%20 ){
-			vus.addAll((List<T>) pm.newQuery( clazz , idName + " IN ("+glist.substring(1)+")").execute());
-			glist = "";
-		} else  {
-			glist += ","+gid;
+	
+	if( null!=vgs){
+		String glist = "";
+		int i = 0;
+		for (Long gid : vgs) {
+			if( i > 0 && 0 == i%20 ){
+				vus.addAll((List<T>) pm.newQuery( clazz , idName + " IN ("+glist.substring(1)+")").execute());
+				glist = "";
+			} else  {
+				glist += ","+gid;
+			}
 		}
-	}
+	} 
+	
 	return vus;
 }
 //=========================================================================================================================
