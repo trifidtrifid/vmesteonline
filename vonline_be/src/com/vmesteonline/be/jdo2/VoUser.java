@@ -2,7 +2,6 @@ package com.vmesteonline.be.jdo2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
@@ -42,7 +40,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.messageservice.NotificationType;
 import com.vmesteonline.be.utils.Defaults;
-import com.vmesteonline.be.utils.VoHelper;
 
 @PersistenceCapable
 public class VoUser /* extends GeoLocation */{
@@ -479,8 +476,27 @@ public class VoUser /* extends GeoLocation */{
 	//map that stores last event date that was shown to user by category
 
 	@Persistent
-	private Map<NotificationType, Integer> categoryLastTimeView;
+	private int lastMulticastShown;
 	
+	@Persistent
+	private int lastImportantShown;
+	
+	public int getLastMulticastShown() {
+		return lastMulticastShown;
+	}
+
+	public void setLastMulticastShown(int lastMulticastShown) {
+		this.lastMulticastShown = lastMulticastShown;
+	}
+
+	public int getLastImportantShown() {
+		return lastImportantShown;
+	}
+
+	public void setLastImportantShown(int lastImportantShown) {
+		this.lastImportantShown = lastImportantShown;
+	}
+
 	public UserPrivacy getPrivacy() {
 		return null == privacy ? new UserPrivacy(0L, GroupType.BUILDING, GroupType.STAIRCASE) : privacy;
 	}

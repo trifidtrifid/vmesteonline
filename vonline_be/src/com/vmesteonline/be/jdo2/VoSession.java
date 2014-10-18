@@ -85,7 +85,16 @@ public class VoSession {
 	@Persistent
 	@Unindexed
 	private Map<Integer, Long> curAttrMap;
+	
+	@Persistent
+	@Unindexed
+	private boolean newBroadcastMessage;
 
+	@Persistent
+	@Unindexed
+	private int newImportantMessages;
+
+	
 	/**
 	 * Map that contains quantity of mew messages in dialogs that are not opened by user recently
 	 */
@@ -94,6 +103,22 @@ public class VoSession {
 	private Map<Long, Integer> newDialogMessages;
 	
 	
+	public int getNewImportantMessages() {
+		return newImportantMessages;
+	}
+
+	public void setNewImportantMessages(int newImportantMessages) {
+		this.newImportantMessages = newImportantMessages;
+	}
+
+	public boolean isNewBroadcastMessage() {
+		return newBroadcastMessage;
+	}
+
+	public void setNewBroadcastMessage(boolean newBroadcastMessage) {
+		this.newBroadcastMessage = newBroadcastMessage;
+	}
+
 	public int getLastUpdateTs() {
 		return lastUpdateTs;
 	}
@@ -165,6 +190,7 @@ public class VoSession {
 		return null==newDialogMessages ?
 				newDialogMessages = new HashMap<Long, Integer>():newDialogMessages;
 	}
+	
 	
 }
 
