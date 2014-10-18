@@ -87,12 +87,12 @@
                 <li ng-class="navbar.mapsBtnStatus"><a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="maps">Карты</a></li>
 
-                <li ng-class="navbar.privateMessagesBtnStatus">
+                <%--<li ng-class="navbar.privateMessagesBtnStatus">
                     <a class="btn btn-info no-border private-messages-link"
                                                                   ui-sref="dialogs">Личные сообщения</a>
 
                     <a ui-sref="dialog-single({dialogId: {{ base.biggestCountDialogId }} })" class="new-private-message-count" ng-if="base.newPrivateMessagesCount">{{base.newPrivateMessagesCount}}</a>
-                </li>
+                </li>--%>
 
                 <li ng-class="navbar.neighboursBtnStatus"><a class="btn btn-info no-border nextdoors-link"
                                                             ui-sref="neighbours">Соседи</a></li>
@@ -110,6 +110,9 @@
                     <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                         <li><a ui-sref="profile({ userId : 0})"> <i class="icon-user"></i>
                             Профиль
+                        </a></li>
+                        <li><a ui-sref="counters"> <i class="icon-fa fa fa-tachometer"></i>
+                            Счетчики
                         </a></li>
 
                         <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
@@ -141,9 +144,21 @@
 						}
 					</script>
 					<ul class="nav nav-list">
-                        <li ng-class="{active:isSet(1)}"><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li>
-                        <li ng-class="{active:isSet(2)}"><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
-                        <li ng-class="{active:isSet(3)}"><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
+                        <li>
+                            <a ui-sref="important"> <span class="menu-text">Важные сообщения</span> </a>
+                        </li>
+                        <li ng-class="{active:base.newPrivateMessagesCount}">
+                            <a ui-sref="dialogs">
+                                <span class="menu-text">
+                                    Личные сообщения
+                                    <span class="new-private-message-count bold" ng-if="base.newPrivateMessagesCount">+{{base.newPrivateMessagesCount}}</span>
+                                </span>
+                            </a>
+                            <%--<a ui-sref="dialog-single({dialogId: {{ base.biggestCountDialogId }} })" class="new-private-message-count" ng-if="base.newPrivateMessagesCount">{{base.newPrivateMessagesCount}}</a>--%>
+                        </li>
+                        <li><a ui-sref="main"> <span class="menu-text">Новости</span> </a></li>
+                        <li><a ui-sref="talks"> <span class="menu-text">Обсуждения</span> </a></li> <!-- ng-click="setTab($event,2)" -->
+                        <li><a ui-sref="profit"> <span class="menu-text">Услуги и объявления</span> </a></li>
 
 					</ul>
                     <div class="footer footer-left" ng-hide="base.isFooterBottom">
@@ -156,7 +171,7 @@
                         </ul>
                     </div>
 				</aside>
-                <aside class="sidebar-right ng-cloak" ng-controller="rightBarController as rightbar">
+                <%--<aside class="sidebar-right ng-cloak" ng-controller="rightBarController as rightbar">
                     <div class="importantly-top">
                         Важно
                     </div>
@@ -184,12 +199,12 @@
                         Больше важных сообщений нет
                     </div>
 
-                </aside>
+                </aside>--%>
 
 				<div class="main-content dynamic ng-cloak">
 
-                    <div class="user-notification" ng-init="notificationIsShow = true" ng-show="base.me.userNotification && notificationIsShow">
-                        <a href="#" class="pull-right" ng-click="notificationIsShow = false">&times;</a>
+                    <div class="user-notification" ng-show="base.me.userNotification && base.me.notificationIsShow">
+                        <a href="#" class="pull-right" ng-click="base.me.notificationIsShow = false">&times;</a>
                         <span>
                             {{ base.me.userNotification }}
                         </span>

@@ -1,10 +1,9 @@
 
-<section class="counters page" ng-class="base.mapsLoadStatus">
+<section class="counters page">
 
-    <ul class="counters-menu">
+    <!--<ul class="counters-menu">
         <li><a href="#">История</a></li>
-        <li><a href="#">Настройки</a></li>
-    </ul>
+    </ul>-->
 
     <table class="counters-table">
         <thead>
@@ -17,11 +16,22 @@
         </tr>
         </thead>
         <tr ng-repeat="counter in counters.counters" > <!-- ng-repeat="counter in counters.counters" -->
-            <td>Горячая вода</td> <!-- {{ counter.typeString }} -->
-            <td>{{ counter.location }}</td>
-            <td>{{ counter.prevValue }}</td>
-            <td><input type="text"/></td>
-            <td>{{ counter.id }}</td>
+            <td ng-switch="counter.type">
+                <span ng-switch-when="0">Горячая вода</span>
+                <span ng-switch-when="1">Холодная вода</span>
+                <span ng-switch-when="2">Электричество</span>
+                <span ng-switch-when="3">Электричество(ночь)</span>
+                <span ng-switch-when="4">Электричество(день)</span>
+                <span ng-switch-when="5">Газ</span>
+            </td>
+            <td class="align-center">{{ counter.location }}</td>
+            <!--<td class="align-center" ng-if="counter.lastValue == 0">-</td>-->
+            <td class="align-center">
+                {{counter.lastValue}}
+                <div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>
+            </td>
+            <td><input type="text" ng-model="counter.currentValue"/></td>
+            <td>{{counter.currentValue - counter.lastValue}}</td>
         </tr>
     </table>
 
