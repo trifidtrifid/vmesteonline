@@ -1,0 +1,22 @@
+
+<section class="counters page">
+
+    <h2>История счетчика</h2>
+
+    <table class="counters-table">
+        <thead>
+        <tr>
+            <td>Дата</td>
+            <td>Значение</td>
+        </tr>
+        </thead>
+        <tr ng-repeat="item in history" >
+            <td>{{ item.date }}</td>
+            <td>{{ item.val }}</td>
+        </tr>
+    </table>
+
+    <a ui-sref="counters" class="btn btn-sm btn-primary no-border">Назад</a>
+
+</section>
+

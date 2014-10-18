@@ -111,6 +111,9 @@
                         <li><a ui-sref="profile({ userId : 0})"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
+                        <li><a ui-sref="counters"> <i class="icon-fa fa fa-tachometer"></i>
+                            Счетчики
+                        </a></li>
 
                         <li><a ui-sref="settings"> <i class="icon-cog"></i> <!--   -->
                             Настройки

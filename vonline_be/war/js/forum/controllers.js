@@ -3065,8 +3065,36 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         counters.save = function(){
 
-            utilityClient.setCurrentCounterValue(counterId,value,date);
+            var countersLen = counters.counters.length,
+                currentValue,
+                date = Date.parse(new Date())/1000;
+
+            for(var i = 0; i < countersLen; i++){
+
+                currentValue = counters.counters[i].currentValue;
+
+                if(!currentValue) currentValue = 0;
+                utilityClient.setCurrentCounterValue(counters.counters[i].id,currentValue,date);
+            }
+
         }
+
+    })
+    .controller('CountersHistoryController',function($scope,$stateParams) {
+
+        var now = Date.parse(new Date())/1000,
+            history = utilityClient.getCounterHistory($stateParams.counterId,0,now),
+            counter = 0;
+
+        $scope.history = [];
+        $scope.counterName = $stateParams.counterName;
+
+        for(var p in history){
+            $scope.history[counter].date = p;
+            $scope.history[counter].val = $scope.history[p];
+            counter++;
+        }
+
 
     });
     /*.controller('BlogController',function($state,$rootScope) {

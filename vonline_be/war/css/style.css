@@ -1691,3 +1691,6 @@ h1 {
 .counters .counters-table td {
   padding: 5px 0 5px 10px;
 }
+.counters thead {
+  font-weight: bold;
+}
