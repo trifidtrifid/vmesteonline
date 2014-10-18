@@ -992,6 +992,18 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     console.log('err');
                 }
 
+            }else if(timeStamp == 1){
+                // notification
+                base.me.notificationIsShow = true;
+                base.me.userNotification = messageClient.getMulticastMessage();
+
+                // messageClient.getMulticastMessage();
+
+            }else if(timeStamp >= 2 && timeStamp < 10000){
+                // important messages
+
+                $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+
             }
         };
 

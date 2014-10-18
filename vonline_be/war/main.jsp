@@ -191,8 +191,8 @@
 
 				<div class="main-content dynamic ng-cloak">
 
-                    <div class="user-notification" ng-init="notificationIsShow = true" ng-show="base.me.userNotification && notificationIsShow">
-                        <a href="#" class="pull-right" ng-click="notificationIsShow = false">&times;</a>
+                    <div class="user-notification" ng-show="base.me.userNotification && base.me.notificationIsShow">
+                        <a href="#" class="pull-right" ng-click="base.me.notificationIsShow = false">&times;</a>
                         <span>
                             {{ base.me.userNotification }}
                         </span>
