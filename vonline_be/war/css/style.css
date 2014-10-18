@@ -22,6 +22,9 @@ h1 {
   margin-top: 0;
   font-size: 24px;
 }
+.bold {
+  font-weight: bold;
+}
 .btn-primary,
 .header-color-blue2 {
   background-color: #438eb9 !important;
@@ -32,7 +35,7 @@ h1 {
 }
 .container {
   padding: 0;
-  max-width: 1240px;
+  max-width: 1050px;
   min-width: 753px;
   height: 100%;
 }
@@ -58,24 +61,23 @@ h1 {
 .navbar .form-search .icon-search:hover {
   text-decoration: none;
 }
-.ace-nav>li a.new-private-message-count {
-  width: 16px;
-  height: 16px;
-  min-width: 0;
-  display: inline-block;
-  color: #fff;
-  font-size: 11px;
-  background: #f00;
-  border: 0;
-  text-align: center;
-  padding: 3px;
-  padding-top: 0;
-  border-radius: 8px;
-  position: absolute;
-  top: 5px;
-  right: 4px;
-  z-index: 2;
-}
+/*.new-private-message-count
+  width 16px
+  height 16px
+  min-width 0
+  display inline-block
+  color #fff
+  font-size 11px
+  background #ff0000
+  border 0
+  text-align center
+  padding 3px
+  padding-top 0
+  border-radius 8px
+  position absolute
+  top 5px
+  right 4px
+  z-index 2*/
 .ace-nav>li a {
   padding: 11px 12px 0 12px;
   line-height: 1.428571429;
@@ -131,7 +133,11 @@ h1 {
 .nav-list > li > a span {
   display: inline-block;
   vertical-align: middle;
-  width: 134px;
+  width: 166px;
+}
+.nav-list > li > a span.new-private-message-count {
+  width: auto;
+  font-size: 14px;
 }
 .nav-list > li > a b {
   display: inline-block;
@@ -333,7 +339,6 @@ h1 {
   border-right: 1px solid #ccc;
   border-left: 1px solid #ccc;
   min-height: 100%;
-  margin-right: 190px;
 }
 .widget-main {
   overflow: auto;

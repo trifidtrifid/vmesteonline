@@ -28,6 +28,9 @@ h1
   margin-top 0
   font-size 24px
 
+.bold
+  font-weight bold
+
 transform()
   -moz-transform rotate(arguments); /* Для Firefox */
   -ms-transform rotate(arguments); /* Для IE */
@@ -45,7 +48,7 @@ transform()
 
 .container
   padding 0
-  max-width 1240px
+  max-width 1050px
   min-width 753px
   height 100%
 
@@ -70,7 +73,7 @@ transform()
     &:hover
       text-decoration none
 
-.ace-nav>li a.new-private-message-count
+/*.new-private-message-count
   width 16px
   height 16px
   min-width 0
@@ -86,7 +89,7 @@ transform()
   position absolute
   top 5px
   right 4px
-  z-index 2
+  z-index 2*/
 
 .ace-nav>li
   a
@@ -143,7 +146,10 @@ transform()
   span
     display inline-block
     vertical-align middle
-    width 134px
+    width 166px
+    &.new-private-message-count
+      width auto
+      font-size 14px
   b
     display inline-block
     vertical-align middle
@@ -313,7 +319,7 @@ transform()
   border-right 1px solid #ccc;
   border-left 1px solid #ccc;
   min-height 100%
-  margin-right 190px
+  //margin-right 190px
 
 .widget-main
   overflow auto

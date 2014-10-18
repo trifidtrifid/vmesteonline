@@ -93,6 +93,11 @@ main.config(function($stateProvider, $urlRouterProvider) {
             url: "/counters-history-:counterId",
             templateUrl: "partials/counters-history.html",
             controller: 'CountersHistoryController as countersHistory'
+        })
+        .state('important', {
+            url: "/important",
+            templateUrl: "partials/important.html",
+            controller: 'importantController as important'
         });
         /*.state('blog', {
             url: "/blog",
