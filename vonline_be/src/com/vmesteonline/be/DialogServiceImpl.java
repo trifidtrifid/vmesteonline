@@ -85,14 +85,15 @@ public class DialogServiceImpl extends ServiceImpl implements Iface {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "User not involved in this dialog.");
 
 		Collection<VoDialogMessage> msgs = vdlg.getMessages(afterDate, tailSize, lastLoadedId, pm);
-		Integer dmsgs = sess.getDialogUpdates().get(dialogID);
+		/*Integer dmsgs = sess.getDialogUpdates().get(dialogID);
 		if(null!=dmsgs ) {
 			if( dmsgs > msgs.size())
 				sess.getDialogUpdates().put(dialogID,dmsgs-msgs.size());
 			else
 				sess.getDialogUpdates().remove(dialogID);
-		}
-			
+		}*/
+		sess.getDialogUpdates().remove(dialogID);
+		pm.makePersistent(sess);	
 		return VoHelper.convertMutableSet(msgs, new ArrayList<DialogMessage>(), new DialogMessage(), pm);
 	}
 

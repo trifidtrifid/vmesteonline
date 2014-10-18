@@ -17,14 +17,11 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 
-import org.apache.thrift.TException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
-import com.vmesteonline.be.authservice.AuthService.getCurrentAttributes_args;
 import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
