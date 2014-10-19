@@ -1240,9 +1240,9 @@ h1 {
 .private-messages .private-message-single .private-message-author a:hover {
   text-decoration: none;
 }
-.dialog .private-message-single .private-message-right,
-.private-messages .private-message-single .private-message-right {
-  margin-left: 320px;
+.private-message-right {
+  margin-top: 24px;
+  color: #2b7dbc;
 }
 .private-messages .private-message-single .private-message-left,
 .private-messages .dialog-item .private-message-left {

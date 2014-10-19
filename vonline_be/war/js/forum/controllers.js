@@ -955,6 +955,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         base.newPrivateMessagesCount = 0;
         base.biggestCountDialogId = 0;
+        $rootScope.newMessages = [];
 
         var timeStamp = 0;
         base.checkUpdates = function(){
@@ -966,11 +967,20 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             if(timeStamp == 0){
                 updateMap = messageClient.getDialogUpdates();
                 var temp = 0,
-                    currentDialogId = $rootScope.base.currentDialogId;
+                    currentDialogId = $rootScope.base.currentDialogId,
+                    counter = 0;
 
+                $rootScope.newMessages = [];
+
+                console.log('checkUpdate-1');
                 //alert(currentDialogId+" "+$rootScope.currentPage);
 
                 for(var dialogId in updateMap){
+                    console.log('checkUpdate-cicle');
+                    $rootScope.newMessages[counter++] = {
+                        dialogId : dialogId,
+                        count : updateMap[dialogId]
+                    }
                     if(dialogId != currentDialogId || $rootScope.currentPage != 'dialog-single') {
 
                         temp += updateMap[dialogId];
@@ -994,6 +1004,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             }else if(timeStamp == 1){
                 // notification
+                $rootScope.newMessages = [];
                 base.me.notificationIsShow = true;
                 base.me.userNotification = messageClient.getMulticastMessage();
 
@@ -1001,10 +1012,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             }else if(timeStamp >= 2 && timeStamp < 10000){
                 // important messages
+                $rootScope.newMessages = [];
 
                 $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
 
+            }else{
+                console.log('checkUpdate-2');
+                $rootScope.newMessages = [];
             }
+
+            console.log($rootScope.newMessages.length);
         };
 
         setInterval(base.checkUpdates,5000);
@@ -2719,6 +2736,17 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             (dialogs.dialogsList[i].users[0].id != $rootScope.base.me.id) ?
                 dialogs.dialogsList[i].anotherUser = dialogs.dialogsList[i].users[0] :
                 dialogs.dialogsList[i].anotherUser = dialogs.dialogsList[i].users[1];
+
+            dialogs.dialogsList[i].newMessagesCount = 0;
+            console.log("dialog "+$rootScope.newMessages.length);
+            if($rootScope.newMessages.length > 0) {
+                var newMessagesLength = $rootScope.newMessages.length;
+                for(var j = 0; j < newMessagesLength; j++) {
+                    if (dialogs.dialogsList[i].id == $rootScope.newMessages[j].dialogId) {
+                        dialogs.dialogsList[i].newMessagesCount = $rootScope.newMessages[j].count;
+                    }
+                }
+            }
         }
 
         dialogs.goToSingleDialog = function(dialogId){
