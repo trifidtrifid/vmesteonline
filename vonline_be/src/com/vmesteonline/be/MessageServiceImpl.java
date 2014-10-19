@@ -10,7 +10,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -189,6 +191,62 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		return createMlp(voMsgs, userId, pm, length);
 	}
+	
+	public List<MessageListPart> getMessagesAsList(final List<Topic> topicIds, MessageType messageType, long lastLoadedId, boolean archived, int length)
+			throws InvalidOperation {
+		long userId = 0;
+		if (messageType != MessageType.BLOG)
+			userId = getCurrentUserId();
+
+		String query = "";
+		for (Topic tid : topicIds) {
+			query += "|| topicId == "+tid.getId();
+		}
+		PersistenceManager pm = PMF.getPm();
+
+		Query q = pm.newQuery(VoMessage.class);
+		q.setFilter( query.substring(2) );
+		List<VoMessage> voMsgs = new ArrayList<VoMessage>((List<VoMessage>) q.execute());
+		
+		//use the comparator to restore the order of topics
+		Comparator<Long> comparator = new Comparator<Long>() {
+			@Override
+			public int compare(Long o1, Long o2) {
+				if( o1 == o2 ) return 0;
+				for (Topic tid : topicIds) {
+					if( o1.equals(tid) ) return -1;
+					if( o2.equals(tid) ) return 1;
+				}
+				return 1;
+			}
+		};
+		Map<Long,List<VoMessage>> msgsm = new TreeMap<Long, List<VoMessage>>( comparator);
+		for (VoMessage voMessage : voMsgs) {
+			List<VoMessage> ml;
+			if( null == (ml = msgsm.get(voMessage.getTopicId() )))
+				msgsm.put(voMessage.getTopicId(), ml = new ArrayList<VoMessage>());
+			ml.add(voMessage);
+		}
+		List<MessageListPart> rslt = new ArrayList<MessageListPart>();
+		for (Entry<Long, List<VoMessage>> ml: msgsm.entrySet()) {
+			
+			List<VoMessage> vomsgl = ml.getValue();
+			Collections.sort(vomsgl, new VoMessage.ComparatorByCreateDate());
+			
+			if (lastLoadedId != 0) {
+				List<VoMessage> subLst = null;
+				for (int i = 0; i < vomsgl.size() - 1; i++) {
+					if (vomsgl.get(i).getId() == lastLoadedId)
+						subLst = vomsgl.subList(i + 1, vomsgl.size());
+				}
+				vomsgl = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
+			}
+			rslt.add( createMlp(vomsgl, userId, pm, length));
+		}
+		return rslt;
+	}
+	
+		
 
 	@Override
 	public MessageListPart getFirstLevelMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length)
@@ -325,6 +383,21 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		return getTopics(groupId, rubricId, commmunityId, 0, 1000, MessageType.WALL, true);
 	}
 
+	@Override
+	public List<WallItem> getImportantNews(long groupId, long rubricId, int commmunityId, int length) throws InvalidOperation {
+		TopicListPart topics = getTopics(groupId, rubricId, commmunityId, 0, 1000, MessageType.WALL, true);
+		List<WallItem> wallItems = new ArrayList<>();
+		
+		List<MessageListPart> mlpl = getMessagesAsList( topics.getTopics(), MessageType.WALL, 0, false, 10000);
+		int i = 0;
+		for( Topic tpc : topics.getTopics()){
+			MessageListPart mlp = mlpl.get(i++);
+			WallItem wi = new WallItem(mlp.messages, tpc);
+			wallItems.add(wi);
+		}
+		return wallItems;
+	}
+	
 	@Override
 	public TopicListPart getAdverts(long groupId, long lastLoadedTopicId, int length) throws InvalidOperation {
 		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT, false);
