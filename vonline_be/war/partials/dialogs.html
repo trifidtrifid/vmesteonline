@@ -20,8 +20,8 @@
                         <div>{{dialog.createDate*1000 | date:'dd.MM.yy'}}</div>
                     </div>
                 </div>
-                <div class="private-message-right">
-                    <!--<p>{{dialogs.content}}</p>-->
+                <div class="private-message-right pull-right bold" ng-if="dialog.newMessagesCount > 0">
+                    +{{dialog.newMessagesCount}}
                 </div>
             </div>
         </div>
