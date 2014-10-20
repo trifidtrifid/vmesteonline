@@ -1,6 +1,8 @@
 package com.vmesteonline.be;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.utility.VoCounter;
 import com.vmesteonline.be.userservice.Counter;
+import com.vmesteonline.be.userservice.CounterType;
 import com.vmesteonline.be.userservice.UtilityService.Iface;
 
 public class UtilityServiceImpl extends ServiceImpl implements Iface {
@@ -24,8 +27,10 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 	public long registerCounter(Counter newCounter) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		VoUser currentUser = getCurrentUser(pm);
-		VoCounter cntr = new VoCounter(newCounter.getType(), newCounter.getLocation(), 
-				newCounter.getNumber(), currentUser.getAddress());
+		VoCounter cntr = new VoCounter(
+				null == newCounter.getType() ? CounterType.COLD_WATER : newCounter.getType(),
+						null == newCounter.getLocation() ? "" : newCounter.getLocation(),
+								null == newCounter.getNumber() ? "" : newCounter.getNumber(), currentUser.getAddress());
 		pm.makePersistent(cntr);
 		return cntr.getId();
 	}
@@ -42,10 +47,12 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 				cntr.setType( updatedCounter.getType());
 				cntr.setLocation(updatedCounter.getLocation());
 				pm.makePersistent(cntr);
+				return;
 			} catch (Exception e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update counter: "+updatedCounter.getId() + ":"+e.getMessage());
 			}
 		}
-		throw new InvalidOperation(VoError.IncorrectParametrs, "No counter found by id: "+updatedCounter.getId());
+		throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to update counter, got 0 as ID");
 	}
 
 
@@ -53,11 +60,14 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public void removeCounter(int counterId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		try {
-			pm.deletePersistent( pm.getObjectById(VoCounter.class, counterId));
-		} catch (Exception e) {
-			throw new InvalidOperation(VoError.IncorrectParametrs, "No counter found by id: "+counterId);
-		}
+		if( 0 != counterId) 
+			try{
+				pm.deletePersistent( pm.getObjectById(VoCounter.class, counterId));
+			} catch (Exception e) {
+				throw new InvalidOperation(VoError.IncorrectParametrs, "No counter found by id: "+counterId);
+			}
+		else 
+			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to delete counter by ID=0");
 	}
 
 
@@ -70,6 +80,15 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 		for (VoCounter voCounter : counters) {
 			outList.add( voCounter.getCounter());
 		}
+		Collections.sort(outList, new Comparator<Counter>() {
+			@Override
+			public int compare(Counter o1, Counter o2) {
+				if( null == o1.getType()) return -1;
+				if( null == o2.getType()) return 1;
+				int res = o1.getType().compareTo( o2.getType() );
+				return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
+			}
+		});
 		return outList;
 	}
 
@@ -93,12 +112,13 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 		try {
 			VoCounter cntr = pm.getObjectById(VoCounter.class, counterId);
 			Map<Integer, Double> values = cntr.getValues();
-			double delta = 0.0;
-			
-			Integer last = new TreeSet<Integer>( values.keySet() ).last();
-			
-			if( values.size() > 0 && last < date )
-				delta = counterValue - values.get(last);
+			double delta = counterValue;
+			if( null!=values && values.size()>0 ){
+				Integer last = new TreeSet<Integer>( values.keySet() ).last();
+				
+				if( values.size() > 0 && last < date )
+					delta = counterValue - values.get(last);
+			}
 			
 			values.put(date, counterValue);
 			cntr.setValues(values);

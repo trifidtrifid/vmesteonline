@@ -97,6 +97,9 @@ public class VoCounter {
 	private Map<Integer,Double> values;
 
 	public Counter getCounter() {
+		if( null==values )
+			return new Counter(id, location, type, number,  0.0);
+		
 		SortedMap<Integer,Double> vm = new TreeMap<Integer,Double>(values);
 		return new Counter(id, location, type, number, 
 				0 == vm.size() ? 0.0 : vm.get(vm.lastKey()));
