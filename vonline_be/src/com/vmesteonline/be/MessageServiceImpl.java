@@ -199,8 +199,13 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			userId = getCurrentUserId();
 
 		String query = "";
+		List<List<VoMessage>> msgsm = new ArrayList<List<VoMessage>>();
+		Map<Long, Integer> idPos = new TreeMap<Long, Integer>(); 
 		for (Topic tid : topicIds) {
 			query += "|| topicId == "+tid.getId();
+			idPos.put(tid.getId(), msgsm.size());
+			msgsm.add( new ArrayList<VoMessage>());
+			
 		}
 		PersistenceManager pm = PMF.getPm();
 
@@ -208,40 +213,26 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		q.setFilter( query.substring(2) );
 		List<VoMessage> voMsgs = new ArrayList<VoMessage>((List<VoMessage>) q.execute());
 		
-		//use the comparator to restore the order of topics
-		Comparator<Long> comparator = new Comparator<Long>() {
-			@Override
-			public int compare(Long o1, Long o2) {
-				if( o1 == o2 ) return 0;
-				for (Topic tid : topicIds) {
-					if( o1.equals(tid) ) return -1;
-					if( o2.equals(tid) ) return 1;
-				}
-				return 1;
-			}
-		};
-		Map<Long,List<VoMessage>> msgsm = new TreeMap<Long, List<VoMessage>>( comparator);
+		
 		for (VoMessage voMessage : voMsgs) {
 			List<VoMessage> ml;
-			if( null == (ml = msgsm.get(voMessage.getTopicId() )))
-				msgsm.put(voMessage.getTopicId(), ml = new ArrayList<VoMessage>());
+			ml = msgsm.get(idPos.get( voMessage.getTopicId()));
 			ml.add(voMessage);
 		}
 		List<MessageListPart> rslt = new ArrayList<MessageListPart>();
-		for (Entry<Long, List<VoMessage>> ml: msgsm.entrySet()) {
+		for ( List<VoMessage> ml: msgsm) {
 			
-			List<VoMessage> vomsgl = ml.getValue();
-			Collections.sort(vomsgl, new VoMessage.ComparatorByCreateDate());
+			Collections.sort(ml, new VoMessage.ComparatorByCreateDate());
 			
 			if (lastLoadedId != 0) {
 				List<VoMessage> subLst = null;
-				for (int i = 0; i < vomsgl.size() - 1; i++) {
-					if (vomsgl.get(i).getId() == lastLoadedId)
-						subLst = vomsgl.subList(i + 1, vomsgl.size());
+				for (int i = 0; i < ml.size() - 1; i++) {
+					if (ml.get(i).getId() == lastLoadedId)
+						subLst = ml.subList(i + 1, ml.size());
 				}
-				vomsgl = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
+				ml = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
 			}
-			rslt.add( createMlp(vomsgl, userId, pm, length));
+			rslt.add( createMlp(ml, userId, pm, length));
 		}
 		return rslt;
 	}
@@ -386,14 +377,17 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public List<WallItem> getImportantNews(long groupId, long rubricId, int commmunityId, int length) throws InvalidOperation {
 		TopicListPart topics = getTopics(groupId, rubricId, commmunityId, 0, 1000, MessageType.WALL, true);
-		List<WallItem> wallItems = new ArrayList<>();
 		
-		List<MessageListPart> mlpl = getMessagesAsList( topics.getTopics(), MessageType.WALL, 0, false, 10000);
-		int i = 0;
-		for( Topic tpc : topics.getTopics()){
-			MessageListPart mlp = mlpl.get(i++);
-			WallItem wi = new WallItem(mlp.messages, tpc);
-			wallItems.add(wi);
+		List<WallItem> wallItems = new ArrayList<>();
+		List<Topic> ttop = topics.getTopics();
+		if( null!=topics  && null!=(ttop = topics.getTopics()) &&  ttop.size() > 0 ){
+			List<MessageListPart> mlpl = getMessagesAsList( ttop, MessageType.WALL, 0, false, 10000);
+			int i = 0;
+			for( Topic tpc : ttop){
+				MessageListPart mlp = mlpl.get(i++);
+				WallItem wi = new WallItem(mlp.messages, tpc);
+				wallItems.add(wi);
+			}
 		}
 		return wallItems;
 	}
@@ -410,23 +404,24 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoSession cs = getCurrentSession(pm);
-			VoUser user = pm.getObjectById(VoUser.class, cs.getUserId());
-			if (0 < cs.getNewImportantMessages()) {
-				cs.setNewImportantMessages(0);
-				pm.makePersistent(cs);
-			}
-			;
-
-			List<Long> groupsToSearch = new ArrayList<Long>();
-			groupsToSearch.add(groupId);
-
-			List<VoTopic> topics = getTopics(groupsToSearch, type, lastLoadedTopicId, length, importantOnly, pm);
-			mlp.totalSize += topics.size();
-			for (VoTopic voTopic : topics) {
-				Topic tpc = voTopic.getTopic(user.getId(), pm);
-				tpc.userInfo = UserServiceImpl.getShortUserInfo(null/* user */, voTopic.getAuthorId().getId(), pm);
-				tpc.setMessageNum(voTopic.getMessageNum());
-				mlp.addToTopics(tpc);
+			if( 0!=cs.getUserId() ){
+				VoUser user = pm.getObjectById(VoUser.class, cs.getUserId());
+				if (0 < cs.getNewImportantMessages()) {
+					cs.setNewImportantMessages(0);
+					pm.makePersistent(cs);
+				}
+	
+				List<Long> groupsToSearch = new ArrayList<Long>();
+				groupsToSearch.add(groupId);
+	
+				List<VoTopic> topics = getTopics(groupsToSearch, type, lastLoadedTopicId, length, importantOnly, pm);
+				mlp.totalSize += topics.size();
+				for (VoTopic voTopic : topics) {
+					Topic tpc = voTopic.getTopic(user.getId(), pm);
+					tpc.userInfo = UserServiceImpl.getShortUserInfo(null/* user */, voTopic.getAuthorId().getId(), pm);
+					tpc.setMessageNum(voTopic.getMessageNum());
+					mlp.addToTopics(tpc);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
