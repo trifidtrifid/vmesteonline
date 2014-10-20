@@ -972,15 +972,11 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                 $rootScope.newMessages = [];
 
-                console.log('checkUpdate-1');
-                //alert(currentDialogId+" "+$rootScope.currentPage);
-
                 for(var dialogId in updateMap){
-                    console.log('checkUpdate-cicle');
                     $rootScope.newMessages[counter++] = {
                         dialogId : dialogId,
                         count : updateMap[dialogId]
-                    }
+                    };
                     if(dialogId != currentDialogId || $rootScope.currentPage != 'dialog-single') {
 
                         temp += updateMap[dialogId];
@@ -1021,7 +1017,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 $rootScope.newMessages = [];
             }
 
-            console.log($rootScope.newMessages.length);
         };
 
         setInterval(base.checkUpdates,5000);
@@ -1098,6 +1093,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 $rootScope.base.advertsIsActive = true;
                 $rootScope.currentPage = 'adverts';
                 $rootScope.base.pageTitle = "Объявления";
+                break;
+            case 4:
+                $rootScope.base.mainContentTopIsHide = false;
+                $rootScope.base.importantIsActive = true;
+                $rootScope.currentPage = 'important';
+                $rootScope.base.pageTitle = "Важные сообщения";
                 break;
             default :
                 break;
@@ -3139,48 +3140,50 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
     })
     .controller('importantController',function($rootScope) {
 
-        $rootScope.setTab(1);
+        $rootScope.setTab(4);
         $rootScope.base.showAllGroups();
         $rootScope.base.isFooterBottom = false;
 
-        var lenta = this,
+        var important = this,
             lastLoadedId = 0,
             loadedLength = 10;
 
         $rootScope.COMMENTS_DEFAULT_COUNT = 4;
-        lenta.selectedGroupInTop = $rootScope.currentGroup;
+        important.selectedGroupInTop = $rootScope.currentGroup;
 
-        if(!$rootScope.importantIsLoadedFromTop)
+        /*if(!$rootScope.importantIsLoadedFromTop)
             $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = false;
+        $rootScope.importantIsLoadedFromTop = false;*/
 
-        lenta.attachId = "0";
-        $rootScope.base.initStartParamsForCreateTopic(lenta);
+        important.topics = messageClient.getImportantTopics($rootScope.currentGroup.id);
 
-        lenta.message = {};
+        important.attachId = "0";
+        $rootScope.base.initStartParamsForCreateTopic(important);
 
-        lenta.message.content = lenta.message.default = TEXT_DEFAULT_1;
+        important.message = {};
 
-        lenta.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,0,loadedLength);
+        important.message.content = important.message.default = TEXT_DEFAULT_1;
+
+        important.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,0,loadedLength);
 
         var wallItemsLength;
-        lenta.wallItems ? wallItemsLength = lenta.wallItems.length :
+        important.wallItems ? wallItemsLength = important.wallItems.length :
             wallItemsLength = 0;
 
-        if(wallItemsLength != 0) lastLoadedId = lenta.wallItems[wallItemsLength-1].topic.id;
+        if(wallItemsLength != 0) lastLoadedId = important.wallItems[wallItemsLength-1].topic.id;
 
-        initWallItem(lenta.wallItems);
+        initWallItem(important.wallItems);
 
-        $rootScope.selectGroupInDropdown_lenta = function(groupId){
-            lenta.selectedGroup = $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(groupId);
+        $rootScope.selectGroupInDropdown_important = function(groupId){
+            important.selectedGroup = $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(groupId);
         };
 
-        lenta.goToAnswerInput = function(event){
+        important.goToAnswerInput = function(event){
             event.preventDefault();
         };
 
         var initFlagsArray = [];
-        lenta.showAnswerInput = function(event,wallItem,wallMessage){
+        important.showAnswerInput = function(event,wallItem,wallMessage){
             event.preventDefault();
 
             /*wallItem.answerShow ?
@@ -3207,12 +3210,12 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         $rootScope.wallChangeGroup = function(groupId){
 
-            lenta.wallItems = messageClient.getWallItems(groupId, 0, loadedLength);
+            important.wallItems = messageClient.getWallItems(groupId, 0, loadedLength);
 
-            if(lenta.wallItems.length) {
-                initWallItem(lenta.wallItems);
+            if(important.wallItems.length) {
+                initWallItem(important.wallItems);
 
-                lastLoadedId = lenta.wallItems[lenta.wallItems.length-1].topic.id;
+                lastLoadedId = important.wallItems[important.wallItems.length-1].topic.id;
             }
 
         };
@@ -3277,7 +3280,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         }
 
-        lenta.toggleComments = function(event,wallItem){
+        important.toggleComments = function(event,wallItem){
             event.preventDefault();
 
             var mesLen = wallItem.messages.length;
@@ -3289,35 +3292,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     wallItem.bufferMessages = wallItem.messages.slice(mesLen-$rootScope.COMMENTS_DEFAULT_COUNT):
                     wallItem.bufferMessages = wallItem.messages;
 
-                //wallItem.bufferMessages = wallItem.messages.slice(mesLen-lenta.COMMENTS_DEFAULT_COUNT);
+                //wallItem.bufferMessages = wallItem.messages.slice(mesLen-important.COMMENTS_DEFAULT_COUNT);
             }else{
                 wallItem.isOpen = true;
                 wallItem.bufferMessages = wallItem.messages;
-            }
-        };
-
-        var lastLoadedIdFF;
-        lenta.addMoreItems = function(){
-            //lastLoadedIdFF = lastLoadedId;
-            if(wallItemsLength == 10) {
-                var buff = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id, lastLoadedId, loadedLength);
-                if (buff) {
-
-                    var buffLength = buff.length;
-
-                    if (buffLength != 0) {
-
-                        lastLoadedId = buff[buffLength - 1].topic.id;
-
-                        if(lastLoadedIdFF != lastLoadedId) {
-                            initWallItem(buff);
-                            lenta.wallItems = lenta.wallItems.concat(buff);
-                        }
-
-                        lastLoadedIdFF = lastLoadedId;
-
-                    }
-                }
             }
         };
 
