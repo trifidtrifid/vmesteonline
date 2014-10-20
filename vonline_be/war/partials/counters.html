@@ -8,34 +8,62 @@
     <table class="counters-table">
         <thead>
         <tr>
+            <td>Номер</td>
             <td>Тип</td>
             <td>Место установки</td>
-            <td>Предыдущее показание</td>
+            <!--<td>Предыдущее показание</td>-->
             <td>Показание</td>
             <td>Расход</td>
+            <td></td>
+            <td></td>
         </tr>
         </thead>
         <tr ng-repeat="counter in counters.counters" > <!-- ng-repeat="counter in counters.counters" -->
-            <td ng-switch="counter.type">
-                <span ng-switch-when="0">Горячая вода</span>
-                <span ng-switch-when="1">Холодная вода</span>
-                <span ng-switch-when="2">Электричество</span>
-                <span ng-switch-when="3">Электричество(ночь)</span>
-                <span ng-switch-when="4">Электричество(день)</span>
-                <span ng-switch-when="5">Газ</span>
+            <td width="20%">
+                <span ng-hide="counter.isEdit">{{counter.number}}</span>
+                <input ng-show="counter.isEdit" type="text" ng-model="counter.number"/>
             </td>
-            <td class="align-center">{{ counter.location }}</td>
-            <!--<td class="align-center" ng-if="counter.lastValue == 0">-</td>-->
+            <td width="20%">
+                <div ng-hide="counter.isEdit">
+                    {{counter.typeString}}
+                    <!--<span ng-switch-when="0">Горячая вода</span>
+                    <span ng-switch-when="1">Холодная вода</span>
+                    <span ng-switch-when="2">Электричество</span>
+                    <span ng-switch-when="3">Электричество(ночь)</span>
+                    <span ng-switch-when="4">Электричество(день)</span>
+                    <span ng-switch-when="5">Газ</span>-->
+                </div>
+                <select ng-show="counter.isEdit" ng-model="counter.type">
+                    <option ng-repeat="item in counters.typesArray" value="item.type" ng-selected="counter.type == item.type">{{item.typeString}}</option>
+                </select>
+            </td>
             <td class="align-center">
+                <span ng-hide="counter.isEdit">{{ counter.location }}</span>
+                <select ng-model="counter.location" ng-show="counter.isEdit">
+                    <option value="Кухня" ng-selected="counter.location=='Кухня'">Кухня</option>
+                    <option value="Ванная" ng-selected="counter.location=='Ванная'">Ванная</option>
+                    <option value="Другое" ng-selected="counter.location=='Другое'">Другое</option>
+                </select>
+            </td>
+            <!--<td class="align-center">
                 {{counter.lastValue}}
                 <div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>
+            </td>-->
+            <td>
+                <input type="text" ng-model="counter.currentValue"/>
+                <div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>
             </td>
-            <td><input type="text" ng-model="counter.currentValue"/></td>
-            <td>{{counter.currentValue - counter.lastValue}}</td>
+            <td class="align-center">{{counter.currentValue - counter.lastValue}}</td>
+            <td>
+                <a href="#" title="редактировать" ng-click="counters.editCounter(counter)" ng-hide="counter.isEdit"><i class="icon fa fa-pencil"></i></a>
+                <a href="#" title="сохранить" ng-click="counters.saveEditedCounter(counter)" ng-show="counter.isEdit"><i class="icon fa fa-save"></i></a>
+            </td>
+            <td><a href="#" title="удалить" class="remove-counter" ng-click="counters.removeCounter(counter)">&times;</a></td>
         </tr>
     </table>
 
-    <button class="btn btn-sm btn-primary no-border pull-right" ng-click="counters.save()">Сохранить</button>
+    <a href="#" class="pull-right add-counter" ng-click="counters.addCounter()">Добавить счетчик</a>
+    <button class="btn btn-sm btn-primary no-border pull-left" ng-click="counters.save()">Сохранить</button>
 
 </section>
 

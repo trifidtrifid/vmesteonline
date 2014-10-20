@@ -1679,6 +1679,17 @@ h1 {
 .counters .counters-table td {
   padding: 5px 0 5px 10px;
 }
+.counters .counters-table td input,
+.counters .counters-table td select {
+  width: 100%;
+}
 .counters thead {
   font-weight: bold;
+}
+.counters .remove-counter {
+  color: #f00;
+  font-size: 18px;
+}
+.counters .remove-counter:hover {
+  text-decoration: none;
 }

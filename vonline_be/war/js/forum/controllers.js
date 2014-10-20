@@ -3108,6 +3108,57 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         var counters = this;
 
         counters.counters = utilityClient.getCounters();
+        //counters.typesEnum = com.vmesteonline.be.userservice.CounterType;
+        counters.typesArray = [];
+        var typesEnumLength = 6;
+        /*for(var p in counters.typesEnum){
+            alert(counters.typesEnum[p]+" "+p);
+        }*/
+
+
+        for(var i = 0; i < typesEnumLength; i++){
+            counters.typesArray[i] = {};
+            counters.typesArray[i].type = i;
+            counters.typesArray[i].typeString = getTypeString(i);
+        }
+
+        function getTypeString(type){
+            var typeString;
+
+            switch (type){
+                case 0:
+                    typeString = "Горячая вода";
+                    break;
+                case 1:
+                    typeString = "Холодная вода";
+                    break;
+                case 2:
+                    typeString = "Электричество(общий)";
+                    break;
+                case 3:
+                    typeString = "Электричество(ночь)";
+                    break;
+                case 4:
+                    typeString = "Электричество(день)";
+                    break;
+                case 5:
+                    typeString = "Газ";
+                    break;
+                case 6:
+                    typeString = "Другое";
+                    break;
+            }
+
+            return typeString;
+        }
+
+
+        var countersLength = counters.counters.length;
+        for(var i = 0; i < countersLength; i++){
+            counters.counters[i].currentValue = counters.counters[i].lastValue;
+            counters.counters[i].isEdit = false;
+            counters.counters[i].typeString = getTypeString(counters.counters[i].type);
+        }
 
         counters.save = function(){
 
@@ -3123,7 +3174,38 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 utilityClient.setCurrentCounterValue(counters.counters[i].id,currentValue,date);
             }
 
-        }
+        };
+
+        counters.addCounter = function(){
+            var counter = new com.vmesteonline.be.userservice.Counter();
+            counter.id = utilityClient.registerCounter(counter);
+            counters.counters.push(counter);
+        };
+        counters.editCounter = function(counter){
+            counter.isEdit = true;
+        };
+        counters.saveEditedCounter = function(counter){
+            //alert(counter.id+" "+counter.number+" "+counter.type+" "+counter.location);
+           /* for(var p in counter){
+                alert(counter[p]+" "+p);
+            }*/
+
+            var correctCounter = new com.vmesteonline.be.userservice.Counter();
+            correctCounter.id = counter.id;
+            correctCounter.location = counter.location;
+            correctCounter.type = counter.type;
+            correctCounter.number = counter.number;
+            correctCounter.lastValue = counter.lastValue;
+
+            utilityClient.updateCounter(correctCounter);
+            counter.isEdit = false;
+        };
+        counters.removeCounter = function(counter){
+
+            utilityClient.removeCounter(counter.id);
+            counters.counters = utilityClient.getCounters();
+
+        };
 
     })
     .controller('CountersHistoryController',function($scope,$stateParams) {
@@ -3161,7 +3243,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.importantIsLoadedFromTop = false;*/
 
         //important.topics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        important.wallItems = messageClient.getImportantNews($rootScope.currentGroup.id);
+        important.wallItems = messageClient.getImportantNews($rootScope.currentGroup.id,0,0,0);
 
         important.attachId = "0";
         //$rootScope.base.initStartParamsForCreateTopic(important);
