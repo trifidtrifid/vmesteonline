@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jdo.PersistenceManager;
 
@@ -78,7 +80,8 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 			VoCounter cntr = pm.getObjectById(VoCounter.class, counterId);
 			if( fromDate > toDate && toDate != 0 )
 				return new HashMap<Integer, Double>();
-			return cntr.getValues().subMap(fromDate, 0==toDate ? Integer.MAX_VALUE : toDate);
+			
+			return new TreeMap<Integer,Double>(cntr.getValues()).subMap(fromDate, 0==toDate ? Integer.MAX_VALUE : toDate);
 		} catch (Exception e) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No counter found by id: "+counterId);
 		}
@@ -89,13 +92,16 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoCounter cntr = pm.getObjectById(VoCounter.class, counterId);
-			SortedMap<Integer, Double> values = cntr.getValues();
+			Map<Integer, Double> values = cntr.getValues();
 			double delta = 0.0;
 			
-			if( null!=values && values.size() > 0 && values.lastKey() < date )
-				delta = counterValue - values.get(values.lastKey());
+			Integer last = new TreeSet<Integer>( values.keySet() ).last();
+			
+			if( values.size() > 0 && last < date )
+				delta = counterValue - values.get(last);
 			
 			values.put(date, counterValue);
+			cntr.setValues(values);
 			pm.makePersistent(cntr);
 			return delta;
 		} catch (Exception e) {

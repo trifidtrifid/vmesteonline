@@ -1,7 +1,10 @@
 package com.vmesteonline.be.jdo2.utility;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -22,6 +25,12 @@ public class VoCounter {
 		this.location = location;
 		this.number = number;
 		this.postalAddressId = postalAddressId;
+		this.values = new HashMap<Integer, Double>();
+	}
+
+	
+	public void setValues(Map<Integer, Double> values) {
+		this.values = values;
 	}
 
 	public CounterType getType() {
@@ -49,7 +58,10 @@ public class VoCounter {
 	}
 	
 	
-	public SortedMap<Integer, Double> getValues() {
+	public Map<Integer, Double> getValues() {
+		if (null == values){
+			setValues(new TreeMap<Integer,Double>());
+		} 
 		return values;
 	}
 
@@ -82,10 +94,11 @@ public class VoCounter {
 	
 	@Persistent
 	@Unindexed
-	private SortedMap<Integer,Double> values;
+	private Map<Integer,Double> values;
 
 	public Counter getCounter() {
+		SortedMap<Integer,Double> vm = new TreeMap<Integer,Double>(values);
 		return new Counter(id, location, type, number, 
-				null == values || 0 == values.size() ? 0.0 : values.get(values.lastKey()));
+				0 == vm.size() ? 0.0 : vm.get(vm.lastKey()));
 	}
 }

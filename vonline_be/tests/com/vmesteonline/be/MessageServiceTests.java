@@ -11,6 +11,7 @@ package com.vmesteonline.be;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,13 +22,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
-import com.vmesteonline.be.authservice.AuthService.getCurrentAttributes_args;
 import com.vmesteonline.be.authservice.LoginResult;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoSession;
 import com.vmesteonline.be.jdo2.VoTopic;
 import com.vmesteonline.be.jdo2.VoUser;
+import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.messageservice.Message;
 import com.vmesteonline.be.messageservice.MessageListPart;
 import com.vmesteonline.be.messageservice.MessageType;
@@ -759,6 +759,43 @@ public class MessageServiceTests extends TestWorkAround {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail("Exception thrown." + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSendAddressMulticastMessage() {
+		
+		try {
+			PersistenceManager pm = PMF.getPm();
+			Assert.assertNotNull(Defaults.addresses);
+			Assert.assertTrue(Defaults.addresses.length > 2);
+			
+			PostalAddress[] paa = new PostalAddress[Defaults.addresses.length];
+			int i = 0;
+			for (VoPostalAddress pa : Defaults.addresses) {
+				paa[i++] = pa.getPostalAddress(pm);
+			}
+			
+			Assert.assertNotNull(paa[0]);
+			Assert.assertNotNull(paa[1]);
+		
+			asi.login(Defaults.user1email, Defaults.user1pass);
+			asi.login(Defaults.user2email, Defaults.user2pass);
+			
+			msi.sendAddressMulticastMessage( Arrays.asList( paa ).subList(0, 2), "testMulticast", 0, 0);
+			int now = (int) (System.currentTimeMillis()/1000L);
+			int upv = msi.checkUpdates(now);
+			Assert.assertEquals(upv, 1);
+			String mm = msi.getMulticastMessage();
+			Assert.assertEquals(mm, "testMulticast");
+			mm = msi.getNextMulticastMessage();
+			Assert.assertEquals(mm, "testMulticast");
+			mm = msi.getNextMulticastMessage();
+			Assert.assertEquals(mm, null);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

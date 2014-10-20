@@ -38,7 +38,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.messageservice.NotificationType;
 import com.vmesteonline.be.utils.Defaults;
 
 @PersistenceCapable

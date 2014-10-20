@@ -10,7 +10,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -111,7 +113,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 
 				Topic tpc = voTopic.getTopic(user.getId(), pm);
 
-				tpc.userInfo = UserServiceImpl.getShortUserInfo(null/*user*/, voTopic.getAuthorId().getId(), pm);
+				tpc.userInfo = UserServiceImpl.getShortUserInfo(null/* user */, voTopic.getAuthorId().getId(), pm);
 
 				MessageListPart mlp = getMessagesAsList(tpc.id, MessageType.BASE, 0, false, 10000);
 				if (mlp.totalSize > 0)
@@ -189,6 +191,62 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		}
 		return createMlp(voMsgs, userId, pm, length);
 	}
+	
+	public List<MessageListPart> getMessagesAsList(final List<Topic> topicIds, MessageType messageType, long lastLoadedId, boolean archived, int length)
+			throws InvalidOperation {
+		long userId = 0;
+		if (messageType != MessageType.BLOG)
+			userId = getCurrentUserId();
+
+		String query = "";
+		for (Topic tid : topicIds) {
+			query += "|| topicId == "+tid.getId();
+		}
+		PersistenceManager pm = PMF.getPm();
+
+		Query q = pm.newQuery(VoMessage.class);
+		q.setFilter( query.substring(2) );
+		List<VoMessage> voMsgs = new ArrayList<VoMessage>((List<VoMessage>) q.execute());
+		
+		//use the comparator to restore the order of topics
+		Comparator<Long> comparator = new Comparator<Long>() {
+			@Override
+			public int compare(Long o1, Long o2) {
+				if( o1 == o2 ) return 0;
+				for (Topic tid : topicIds) {
+					if( o1.equals(tid) ) return -1;
+					if( o2.equals(tid) ) return 1;
+				}
+				return 1;
+			}
+		};
+		Map<Long,List<VoMessage>> msgsm = new TreeMap<Long, List<VoMessage>>( comparator);
+		for (VoMessage voMessage : voMsgs) {
+			List<VoMessage> ml;
+			if( null == (ml = msgsm.get(voMessage.getTopicId() )))
+				msgsm.put(voMessage.getTopicId(), ml = new ArrayList<VoMessage>());
+			ml.add(voMessage);
+		}
+		List<MessageListPart> rslt = new ArrayList<MessageListPart>();
+		for (Entry<Long, List<VoMessage>> ml: msgsm.entrySet()) {
+			
+			List<VoMessage> vomsgl = ml.getValue();
+			Collections.sort(vomsgl, new VoMessage.ComparatorByCreateDate());
+			
+			if (lastLoadedId != 0) {
+				List<VoMessage> subLst = null;
+				for (int i = 0; i < vomsgl.size() - 1; i++) {
+					if (vomsgl.get(i).getId() == lastLoadedId)
+						subLst = vomsgl.subList(i + 1, vomsgl.size());
+				}
+				vomsgl = (subLst == null) ? new ArrayList<VoMessage>() : subLst;
+			}
+			rslt.add( createMlp(vomsgl, userId, pm, length));
+		}
+		return rslt;
+	}
+	
+		
 
 	@Override
 	public MessageListPart getFirstLevelMessages(long topicId, long groupId, MessageType messageType, long lastLoadedId, boolean archived, int length)
@@ -326,6 +384,21 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
+	public List<WallItem> getImportantNews(long groupId, long rubricId, int commmunityId, int length) throws InvalidOperation {
+		TopicListPart topics = getTopics(groupId, rubricId, commmunityId, 0, 1000, MessageType.WALL, true);
+		List<WallItem> wallItems = new ArrayList<>();
+		
+		List<MessageListPart> mlpl = getMessagesAsList( topics.getTopics(), MessageType.WALL, 0, false, 10000);
+		int i = 0;
+		for( Topic tpc : topics.getTopics()){
+			MessageListPart mlp = mlpl.get(i++);
+			WallItem wi = new WallItem(mlp.messages, tpc);
+			wallItems.add(wi);
+		}
+		return wallItems;
+	}
+	
+	@Override
 	public TopicListPart getAdverts(long groupId, long lastLoadedTopicId, int length) throws InvalidOperation {
 		return getTopics(groupId, 0, 0, lastLoadedTopicId, length, MessageType.ADVERT, false);
 	}
@@ -337,11 +410,12 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoSession cs = getCurrentSession(pm);
-			VoUser user = pm.getObjectById(VoUser.class,cs.getUserId());
-			if( 0 < cs.getNewImportantMessages() ){
+			VoUser user = pm.getObjectById(VoUser.class, cs.getUserId());
+			if (0 < cs.getNewImportantMessages()) {
 				cs.setNewImportantMessages(0);
 				pm.makePersistent(cs);
-			};
+			}
+			;
 
 			List<Long> groupsToSearch = new ArrayList<Long>();
 			groupsToSearch.add(groupId);
@@ -419,9 +493,11 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			sess.setLastActivityTs(now);
 			pm.makePersistent(sess);
 		}
-		int news = sess.getNewImportantMessages() * 2 + (sess.isNewBroadcastMessage() ? 1 : 0 );
-		return news > 0 ? news : //return 1 if there are new BroadCasetMessage arrived, double count of importatnt message and next timestamp otherwise
-			(sess.getLastUpdateTs() > lastRequest ? 0 : now);
+		int news = sess.getNewImportantMessages() * 2 + (sess.isNewBroadcastMessage() ? 1 : 0);
+		return news > 0 ? news : // return 1 if there are new BroadCasetMessage
+															// arrived, double count of importatnt message and
+															// next timestamp otherwise
+				(sess.getLastUpdateTs() > lastRequest ? 0 : now);
 	}
 
 	@Override
@@ -884,136 +960,152 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public String getNextMulticastMessage() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
-		VoUser cu = getCurrentUser(pm);
-		int now = (int) (System.currentTimeMillis()/1000L);
-		VoMulticastMessage message = getCurrentMessage(now, pm, cu);
-		if( null==message) {
-			cu.setLastMulticastShown( now );
+		VoSession currentSession = getCurrentSession();
+		VoUser cu = pm.getObjectById(VoUser.class, currentSession.getUserId());
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		VoMulticastMessage message = getCurrentMessage(pm, cu);
+		if (currentSession.isNewBroadcastMessage() && (message == null || !message.hasNext)) {
+			currentSession.setNewBroadcastMessage(false);
+			pm.makePersistent(currentSession);
 		}
+		cu.setLastMulticastShown(null == message ? now : message.getStartAfter() + 1);
 		pm.makePersistent(cu);
 		return message == null ? null : message.getMessage();
 	}
-	
+
 	@Override
 	public String getMulticastMessage() throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		VoSession currentSession = getCurrentSession();
 		VoUser cu = pm.getObjectById(VoUser.class, currentSession.getUserId());
-		VoMulticastMessage message = getCurrentMessage(cu.getLastMulticastShown(), pm, cu);
-		if(currentSession.isNewBroadcastMessage()){
-			currentSession.setNewBroadcastMessage(false);
-			pm.makePersistent(currentSession);
-		}
+		VoMulticastMessage message = getCurrentMessage(pm, cu);
+		/*
+		 * if(currentSession.isNewBroadcastMessage() && (message == null ||
+		 * !message.hasNext )){ currentSession.setNewBroadcastMessage(false);
+		 * pm.makePersistent(currentSession); }
+		 */
 		return message == null ? null : message.getMessage();
 	}
 
-	private VoMulticastMessage getCurrentMessage(int lastTime, PersistenceManager pm, VoUser cu) {
+	private VoMulticastMessage getCurrentMessage(PersistenceManager pm, VoUser cu) {
 		int lastShownTimestamp = cu.getLastMulticastShown();
-		Query q = pm.newQuery(VoMulticastMessage.class, "visibleGroups=="+cu.getRootGroup()+" && startAfter<"+lastTime 
-				+" && startAfter>="+lastShownTimestamp);
+		int now = (int) (System.currentTimeMillis() / 1000L);
+		Query q = pm.newQuery(VoMulticastMessage.class, "visibleGroups==" + cu.getRootGroup() + " && startAfter>=" + lastShownTimestamp);
 		q.setOrdering("startAfter");
 		List<VoMulticastMessage> newML = (List<VoMulticastMessage>) q.execute();
-		if( newML.size() != 0){
+		VoMulticastMessage curMessage = null;
+		if (newML.size() != 0) {
 			for (VoMulticastMessage voMulticastMessage : newML) {
-				if( 0==voMulticastMessage.getEndBefore() || voMulticastMessage.getEndBefore()<lastTime){
-					return voMulticastMessage;
-				} 
+				if (0 == voMulticastMessage.getEndBefore() || voMulticastMessage.getEndBefore() < now) {
+					if (null == curMessage) {
+						curMessage = voMulticastMessage;
+						curMessage.hasNext = false;
+					} else {
+						curMessage.hasNext = true;
+					}
+				} else {
+					cu.setLastMulticastShown(voMulticastMessage.getStartAfter() + 1);
+				}
 			}
 		}
-		return null;
+		return curMessage;
 	}
-//=========================================================================================================================
+
+	// =========================================================================================================================
 	@Override
 	public void sendGroupMulticastMessage(List<Long> visibleGroups, String message, int startDate, int expireDate) throws InvalidOperation, TException {
-		if( null!=visibleGroups){
-			PersistenceManager pm = PMF.getPm();
-			Set<Long> vgs = new HashSet<Long>();
-			for (int i=0; i*20<visibleGroups.size();i++) {
-				String glist = ""; 
-				for(int j=0; j<20 && i*20 + j < visibleGroups.size(); j++)
-					glist += ","+visibleGroups.get(i*20 + j);
-				
-				List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery(VoUserGroup.class, "groupType=="+GroupType.FLOOR.getValue()+" && visibleGroups IN ("+glist.substring(1)+")").execute();
+		// get floor's group as a root of all other groups
+		PersistenceManager pm = PMF.getPm();
+		Set<Long> vgs = null;
+		if (null != visibleGroups) {
+			vgs = new HashSet<Long>();
+			for (int i = 0; i * 20 < visibleGroups.size(); i++) {
+				String glist = "";
+				for (int j = 0; j < 20 && i * 20 + j < visibleGroups.size(); j++)
+					glist += "," + visibleGroups.get(i * 20 + j);
+
+				List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery(VoUserGroup.class,
+						"groupType==" + GroupType.FLOOR.getValue() + " && visibleGroups IN (" + glist.substring(1) + ")").execute();
 				for (VoUserGroup voUserGroup : groups) {
 					vgs.add(voUserGroup.getId());
 				}
 			}
-			sendFlorGroupMulticastMessage(vgs, message, startDate, expireDate,pm);
 		}
-		sendFlorGroupMulticastMessage(null, message, startDate, expireDate, PMF.getPm());
+		sendFloorGroupMulticastMessage(vgs, message, startDate, expireDate, pm);
 	}
-//=========================================================================================================================
-	private void sendFlorGroupMulticastMessage(Set<Long> vgs, String message, int startDate, int expireDate, PersistenceManager pm) {
+
+	// =========================================================================================================================
+	private void sendFloorGroupMulticastMessage(Set<Long> vgs, String message, int startDate, int expireDate, PersistenceManager pm) {
 		Collection<VoSession> sessionsToNotify;
-		int weekAgo = (int) (System.currentTimeMillis()/1000L - 86400 * 7);
-		
-		if( null==vgs ){
-			Set<VoUser> usersToUpdate = getAllOfSet(vgs, VoUser.class, "rootGroup", pm);
-			Set<Long> vuis = new HashSet<>();
-			for (VoUser voUser : usersToUpdate) {
-				vuis.add(voUser.getId());
+		int weekAgo = (int) (System.currentTimeMillis() / 1000L - 86400 * 7);
+
+		if (null != vgs) {
+			Set<VoUser> usersToUpdate = getAllOfSet(vgs, VoUser.class, null, "groups", pm);
+			if (null != usersToUpdate && usersToUpdate.size() > 0) {
+				Set<Long> vuis = new HashSet<>();
+				for (VoUser voUser : usersToUpdate) {
+					vuis.add(voUser.getId());
+				}
+				List<Long> vgsList = new ArrayList<>(vgs);
+				VoMulticastMessage vmcm = new VoMulticastMessage(vgsList, startDate, expireDate, message);
+				pm.makePersistent(vmcm);
+				sessionsToNotify = getAllOfSet(vuis, VoSession.class, "lastActivityTs > " + weekAgo, "userId", pm);
+			} else {
+				sessionsToNotify = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs > " + weekAgo).execute();
 			}
-			VoMulticastMessage vmcm = new VoMulticastMessage(Arrays.asList((Long[])vgs.toArray()), startDate, expireDate, message);
-			pm.makePersistent(vmcm);
-			sessionsToNotify = getAllOfSet(vuis, VoSession.class, "lastActivityTs > "+weekAgo+" && userId", pm);
-		} else {
-			sessionsToNotify = (List<VoSession>) pm.newQuery( VoSession.class , "lastActivityTs > "+weekAgo).execute();
+
+			for (VoSession voSession : sessionsToNotify) {
+				voSession.setNewBroadcastMessage(true);
+			}
+			pm.makePersistentAll(sessionsToNotify);
 		}
-		
-		for (VoSession voSession : sessionsToNotify) {
-			voSession.setNewBroadcastMessage( true );
-		}
-		pm.makePersistentAll(sessionsToNotify);
 	}
 
-//=========================================================================================================================
+	// =========================================================================================================================
 
-private <T> Set<T> getAllOfSet(Set<Long> vgs, Class<T> clazz, String idName, PersistenceManager pm) {
-	Set<T> vus = new HashSet<T>();
-	
-	if( null!=vgs){
-		String glist = "";
-		int i = 0;
-		for (Long gid : vgs) {
-			if( i > 0 && 0 == i%20 ){
-				vus.addAll((List<T>) pm.newQuery( clazz , idName + " IN ("+glist.substring(1)+")").execute());
-				glist = "";
-			} else  {
-				glist += ","+gid;
+	private <T> Set<T> getAllOfSet(Set<Long> vgs, Class<T> clazz, String condition, String idName, PersistenceManager pm) {
+		Set<T> vus = new HashSet<T>();
+		boolean condSet = null != condition && condition.trim().length() > 0;
+		if (null != vgs) {
+			String glist = "";
+			int i = 0;
+			for (Long gid : vgs) {
+				glist += "|| " + idName + "==" + gid;
+				i++;
+				if (i == vgs.size() || i > 0 && 0 == i % 20) {
+					vus.addAll((List<T>) pm.newQuery(clazz, condSet ? condition + " && (" + glist.substring(2) + ")" : glist.substring(2)).execute());
+					glist = "";
+				}
 			}
+		} else {
+			vus.addAll((List<T>) pm.newQuery(clazz).execute());
 		}
-	} 
-	
-	return vus;
-}
-//=========================================================================================================================
+
+		return vus;
+	}
+
+	// =========================================================================================================================
 	@Override
 	public void sendAddressMulticastMessage(List<PostalAddress> addresses, String message, int startDate, int expireDate) throws InvalidOperation,
 			TException {
 		PersistenceManager pm = PMF.getPm();
-		if( addresses != null && addresses.size() > 0){
-			String fullQuery = "";
+		Set<Long> vgs = null;
+
+		if (addresses != null && addresses.size() > 0) {
 			for (PostalAddress pa : addresses) {
-				if( null !=pa.getBuilding() && 0!=pa.getBuilding().getId()){
+				if (null != pa.getBuilding() && 0 != pa.getBuilding().getId()) {
 					VoBuilding building = pm.getObjectById(VoBuilding.class, pa.getBuilding().getId());
-					String query = "(longitude=="+building.getLongitude()+" && latitude=="+building.getLatitude()
-							+ ( 0!=pa.staircase ? "":" && staircase=="+pa.getStaircase())
-							+ ( 0!=pa.floor ? "":" && floor=="+pa.getFloor()) + ")";
-					fullQuery += (fullQuery.length() > 0 ? "||" : "") + query;
+					String query = "groupType==" + GroupType.FLOOR.getValue() + " && longitude=='" + building.getLongitude().toPlainString()
+							+ "' && latitude=='" + building.getLatitude().toPlainString() + "'" + (0 == pa.staircase ? "" : " && staircase==" + pa.getStaircase())
+							+ (0 == pa.floor ? "" : " && floor==" + pa.getFloor());
+					List<VoUserGroup> groups = (List<VoUserGroup>) pm.newQuery(VoUserGroup.class, query).execute();
+					vgs = new HashSet<Long>();
+					for (VoUserGroup voUserGroup : groups) {
+						vgs.add(voUserGroup.getId());
+					}
 				}
 			}
-			fullQuery = "groupType=="+GroupType.FLOOR.getValue()+ ( fullQuery.length() > 0 ? (" && ("+fullQuery+")") : "");
-			
-			List<VoUserGroup> groups = (List<VoUserGroup>)pm.newQuery(VoUserGroup.class, fullQuery).execute();
-			Set<Long> vgs = new HashSet<Long>();
-			for (VoUserGroup voUserGroup : groups) {
-				vgs.add(voUserGroup.getId());
-			}
-			sendFlorGroupMulticastMessage(vgs, message, startDate, expireDate,pm);
-			return;
 		}
-		sendGroupMulticastMessage( null, message, startDate, expireDate);	
+		sendFloorGroupMulticastMessage(vgs, message, startDate, expireDate, pm);
 	}
-	
-	
 }

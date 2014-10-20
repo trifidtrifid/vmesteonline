@@ -32,8 +32,6 @@ import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
-import com.vmesteonline.be.jdo2.utility.VoCounter;
-import com.vmesteonline.be.userservice.CounterType;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
@@ -85,6 +83,8 @@ public class Defaults {
 	public static int radiusBuilding = 50;
 	public static int radiusNeighbors = 350;
 	public static int radiusBlock = 500;
+	
+	public static VoPostalAddress[] addresses;
 	
 	/*
 	 * public static int radiusMedium = 1500; public static int radiusLarge = 5000;
@@ -255,7 +255,6 @@ public class Defaults {
 			VoStreet streetZ = VoStreet.createVoStreet(city, "Заневский", pm);
 			VoStreet streetR = VoStreet.createVoStreet(city, "Республиканская", pm);
 
-			VoPostalAddress[] addresses;
 			VoBuilding zanevsky32k3 = VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm);
 			VoBuilding respublikanskaya35 = VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm);
 			VoBuilding resp6 = VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm);
