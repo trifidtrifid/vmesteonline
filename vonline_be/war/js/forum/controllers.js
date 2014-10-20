@@ -956,6 +956,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         base.newPrivateMessagesCount = 0;
         base.biggestCountDialogId = 0;
         $rootScope.newMessages = [];
+        $rootScope.newImportantCount = 0;
 
         var timeStamp = 0;
         base.checkUpdates = function(){
@@ -963,6 +964,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             var updateMap,
                 old = 0;
+
 
             if(timeStamp == 0){
                 updateMap = messageClient.getDialogUpdates();
@@ -1009,12 +1011,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }else if(timeStamp >= 2 && timeStamp < 10000){
                 // important messages
                 $rootScope.newMessages = [];
+                $rootScope.newImportantCount = timeStamp;
 
-                $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+                //$rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
 
             }else{
-                console.log('checkUpdate-2');
                 $rootScope.newMessages = [];
+                $rootScope.newImportantCount = 0;
             }
 
         };
@@ -1145,7 +1148,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 $rootScope.currentGroup = group;
                 $rootScope.base.bufferSelectedGroup = selectGroupInDropdown(group.id);
 
-                $rootScope.importantTopics = messageClient.getImportantTopics(group.id);
+                //$rootScope.importantTopics = messageClient.getImportantNews(group.id);
 
                 if ($rootScope.currentPage == 'lenta') {
                     $rootScope.wallChangeGroup(group.id);
@@ -1160,6 +1163,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                     $rootScope.neighboursChangeGroup(group.id);
                 } else if ($rootScope.currentPage == 'maps') {
                     $rootScope.mapsChangeGroup(group.id);
+                } else if ($rootScope.currentPage == 'important') {
+                    $rootScope.importantChangeGroup(group.id);
                 }
 
                 localStorage.setItem('groupId', group.id);
@@ -1176,14 +1181,14 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         $('.ng-cloak').removeClass('ng-cloak');
     })
-    .controller('rightBarController',function($rootScope) {
+    /*.controller('rightBarController',function($rootScope) {
 
-        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
         $rootScope.importantIsLoadedFromTop = true;
 
         $('.ng-cloak').removeClass('ng-cloak');
 
-    })
+    })*/
     .controller('LentaController',function($rootScope) {
 
         $rootScope.setTab(1);
@@ -1197,9 +1202,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.COMMENTS_DEFAULT_COUNT = 4;
         lenta.selectedGroupInTop = $rootScope.currentGroup;
 
-        if(!$rootScope.importantIsLoadedFromTop)
-        $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = false;
+        /*if(!$rootScope.importantIsLoadedFromTop)
+        $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;*/
 
         lenta.attachId = "0";
         $rootScope.base.initStartParamsForCreateTopic(lenta);
@@ -1537,9 +1542,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             $rootScope.base.bufferSelectedGroup = talk.selectedGroup = $rootScope.currentGroup;
 
-            if(!$rootScope.importantIsLoadedFromTop)
-            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-            $rootScope.importantIsLoadedFromTop = false;
+            /*if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
+            $rootScope.importantIsLoadedFromTop = false;*/
 
             talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
 
@@ -1596,9 +1601,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         talk.attachId = "00";
         talk.selectedGroup = $rootScope.currentGroup;
 
-        if(!$rootScope.importantIsLoadedFromTop)
-            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = false;
+        /*if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;*/
 
         talk.topics = messageClient.getTopics(talk.selectedGroup.id, 0, 0, 0, 1000).topics;
         talk.fullTalkTopic = {};
@@ -1856,9 +1861,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.base.isFooterBottom = false;
         showGroupOverBuilding($rootScope.groups);
 
-        if(!$rootScope.importantIsLoadedFromTop)
-            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = false;
+        /*if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;*/
 
         /*initAttachImage($('#attachImage-00000'), $('#attach-area-00000')); // для обсуждений
         initAttachDoc($('#attachDoc-00000'), $('#attach-doc-area-00000')); // для обсуждений*/
@@ -1928,9 +1933,9 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.base.isEarliestMessages = false;
         $rootScope.base.endOfLoaded = false;
 
-        if(!$rootScope.importantIsLoadedFromTop)
-            $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = false;
+        /*if(!$rootScope.importantIsLoadedFromTop)
+            $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
+        $rootScope.importantIsLoadedFromTop = false;*/
 
         advert.attachId = "00000";
         advert.selectedGroup = $rootScope.currentGroup;
@@ -3155,16 +3160,27 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             $rootScope.importantTopics = messageClient.getImportantTopics($rootScope.currentGroup.id);
         $rootScope.importantIsLoadedFromTop = false;*/
 
-        important.topics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        //important.topics = messageClient.getImportantTopics($rootScope.currentGroup.id);
+        important.wallItems = messageClient.getImportantNews($rootScope.currentGroup.id);
 
         important.attachId = "0";
-        $rootScope.base.initStartParamsForCreateTopic(important);
+        //$rootScope.base.initStartParamsForCreateTopic(important);
 
         important.message = {};
 
         important.message.content = important.message.default = TEXT_DEFAULT_1;
 
-        important.wallItems = messageClient.getWallItems($rootScope.base.bufferSelectedGroup.id,0,loadedLength);
+        $rootScope.importantChangeGroup = function(groupId){
+
+            important.wallItems = messageClient.getImportantNews(groupId, 0, loadedLength);
+
+            if(important.wallItems.length) {
+                initWallItem(important.wallItems);
+
+                //lastLoadedId = lenta.wallItems[important.wallItems.length-1].topic.id;
+            }
+
+        };
 
         var wallItemsLength;
         important.wallItems ? wallItemsLength = important.wallItems.length :

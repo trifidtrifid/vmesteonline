@@ -145,13 +145,18 @@
 					</script>
 					<ul class="nav nav-list">
                         <li>
-                            <a ui-sref="important"> <span class="menu-text">Важные сообщения</span> </a>
+                            <a ui-sref="important">
+                                <span class="menu-text">
+                                    Важные сообщения
+                                    <span class="new-message-count bold" ng-if="newImportantCount">+{{newImportantCount}}</span>
+                                </span>
+                            </a>
                         </li>
                         <li ng-class="{active:base.newPrivateMessagesCount}">
                             <a ui-sref="dialogs">
                                 <span class="menu-text">
                                     Личные сообщения
-                                    <span class="new-private-message-count bold" ng-if="base.newPrivateMessagesCount">+{{base.newPrivateMessagesCount}}</span>
+                                    <span class="new-message-count bold" ng-if="base.newPrivateMessagesCount">+{{base.newPrivateMessagesCount}}</span>
                                 </span>
                             </a>
                             <%--<a ui-sref="dialog-single({dialogId: {{ base.biggestCountDialogId }} })" class="new-private-message-count" ng-if="base.newPrivateMessagesCount">{{base.newPrivateMessagesCount}}</a>--%>

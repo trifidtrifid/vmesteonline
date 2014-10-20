@@ -3,80 +3,80 @@
 
             <div class="lenta">
                 <div ng-if="important.topics.length == 0" class="empty-messages">{{base.emptyMessage}}</div>
-                <div class="lenta-item" ng-repeat="topic in important.topics"
-                        ng-switch on="topic.message.type">
+                <div class="lenta-item" ng-repeat="wallItem in important.wallItems"
+                        ng-switch on="wallItem.topic.message.type">
 
                     <div class="wallitem-message" ng-switch-when="5">
 
                         <div class="first-message clearfix" >
-                            <a ui-sref="profile({userId: {{ topic.userInfo.id }} })" class="user">
-                                <div class="avatar" style="background-image: url({{topic.userInfo.avatar}})"></div>
-                                <div ng-if="topic.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(topic.userInfo.groupType)"></div>
+                            <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })" class="user">
+                                <div class="avatar" style="background-image: url({{wallItem.topic.userInfo.avatar}})"></div>
+                                <div ng-if="wallItem.topic.userInfo.groupType" class="user-ribbon" ng-class="base.getUserColor(wallItem.topic.userInfo.groupType)"></div>
                             </a>
 
                             <div class="body text-container">
 
-                                <div class="message-tools pull-right" ng-show="topic.userInfo.id == base.me.id">
-                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(topic,important.topics,true,true)">&times;</a>
-                                    <a href="#" title="Редактировать" ng-click="base.setEdit($event,topic,false)" class="fa fa-pencil pull-right"></a>
+                                <div class="message-tools pull-right" ng-show="wallItem.topic.userInfo.id == base.me.id">
+                                    <a href="#" title="Удалить" class="message-delete-link pull-right" ng-click="base.deleteMessage(wallItem.topic,important.wallItems,true,true)">&times;</a>
+                                    <a href="#" title="Редактировать" ng-click="base.setEdit($event,wallItem.topic,false)" class="fa fa-pencil pull-right"></a>
                                 </div>
 
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                         ng-class="wallItem.tagColor">{{wallItem.label}}</span>
                                 <div class="name">
-                                    <a ui-sref="profile({userId: {{ topic.userInfo.id }} })">{{topic.authorName}}</a>
+                                    <a ui-sref="profile({userId: {{ wallItem.topic.userInfo.id }} })">{{wallItem.topic.authorName}}</a>
                                 </div>
 
-                                <div ng-hide="topic.isEdit">
+                                <div ng-hide="wallItem.topic.isEdit">
 
-                                    <div ng-if="topic.message.content.length < base.contentLength">
+                                    <div ng-if="wallItem.topic.message.content.length < base.contentLength">
 
-                                        <div class="text" ng-bind-html="topic.message.content"></div>
+                                        <div class="text" ng-bind-html="wallItem.topic.message.content"></div>
                                     </div>
-                                    <div ng-if="topic.message.content.length >= base.contentLength">
-                                        <div class="text" ng-hide="topic.isFullText">
-                                            <div ng-bind-html="topic.message.content.slice(0,base.contentLength-1)"></div>
-                                            <div><a href="#" ng-click="base.toggleFullText(topic)">читать далее...</a></div>
+                                    <div ng-if="wallItem.topic.message.content.length >= base.contentLength">
+                                        <div class="text" ng-hide="wallItem.topic.isFullText">
+                                            <div ng-bind-html="wallItem.topic.message.content.slice(0,base.contentLength-1)"></div>
+                                            <div><a href="#" ng-click="base.toggleFullText(wallItem.topic)">читать далее...</a></div>
                                         </div>
-                                        <div class="text" ng-show="topic.isFullText">
-                                            <div ng-bind-html="topic.message.content"></div>
+                                        <div class="text" ng-show="wallItem.topic.isFullText">
+                                            <div ng-bind-html="wallItem.topic.message.content"></div>
 
-                                            <div><a href="#" ng-click="base.toggleFullText(topic)">свернуть</a></div>
+                                            <div><a href="#" ng-click="base.toggleFullText(wallItem.topic)">свернуть</a></div>
                                         </div>
                                     </div>
 
-                                    <div class="attached" ng-show="topic.message.images.length || topic.message.documents.length">
-                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{topic.id}}" ng-repeat="image in topic.message.images">
+                                    <div class="attached" ng-show="wallItem.topic.message.images.length || wallItem.topic.message.documents.length">
+                                        <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id}}" ng-repeat="image in wallItem.topic.message.images">
                                             <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                         </a>
                                         <div class="docs">
-                                            <div ng-repeat="document in topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
+                                            <div ng-repeat="document in wallItem.topic.message.documents"><a ng-href="{{document.URL}}" target="_blank" class="doc-item">{{document.fileName}}</a></div>
                                         </div>
                                     </div>
 
-                                    <div class="poll" ng-if="topic.metaType == 'poll'" ng-switch on="topic.poll.alreadyPoll" >
+                                    <div class="poll" ng-if="wallItem.topic.metaType == 'poll'" ng-switch on="wallItem.topic.poll.alreadyPoll" >
 
-                                        <h5>{{topic.poll.subject}}</h5>
+                                        <h5>{{wallItem.topic.poll.subject}}</h5>
 
                                         <!-- -->
 
                                         <div class="poll-do" ng-switch-when="false">
 
-                                            <div class="radio" ng-repeat="variant in topic.poll.editNames">
+                                            <div class="radio" ng-repeat="variant in wallItem.topic.poll.editNames">
                                                 <label>
-                                                    <input name="poll-variant-{{topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
+                                                    <input name="poll-variant-{{wallItem.topic.id}}" ng-model="variant.value" value="1" type="radio" class="ace">
                                                     <span class="lbl">{{variant.name}}</span>
                                                 </label>
                                             </div>
 
-                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,topic.poll)">Голосовать</button>
+                                            <button class="btn btn-sm btn-primary no-border" ng-click="base.doPoll($event,wallItem.topic.poll)">Голосовать</button>
 
                                         </div>
                                         <!-- -->
 
                                         <div class="poll-results" ng-switch-when="true">
 
-                                            <div class="poll-result-item"  ng-repeat="variant in topic.poll.editNames">
+                                            <div class="poll-result-item"  ng-repeat="variant in wallItem.topic.poll.editNames">
                                                 <div class="poll-result-variant">{{variant.name}}</div>
                                                 <div class="poll-row">
                                                     <div class="poll-row-line">
@@ -87,25 +87,25 @@
                                                 </div>
                                             </div>
 
-                                            <div class="poll-result-amount">Проголосовало <span>{{topic.poll.amount}}</span> человек</div>
+                                            <div class="poll-result-amount">Проголосовало <span>{{wallItem.topic.poll.amount}}</span> человек</div>
 
                                         </div>
 
                                     </div>
                                 </div>
 
-                                <div class="edit-message" ng-show="topic.isEdit">
+                                <div class="edit-message" ng-show="wallItem.topic.isEdit">
 
-                                    <div ng-include="'templates/createTopic.html'" onload="ctrl=topic; initCreateTopic(topic);"></div>
+                                    <div ng-include="'templates/createTopic.html'" onload="ctrl=wallItem.topic; initCreateTopic(wallItem.topic);"></div>
 
                                 </div>
 
                                 <div class="lenta-item-bottom">
-                                    <a class="pull-right important-status" ng-class="{'important' : topic.message.important == 1}" title='{{ topic.message.importantText }}' href="#" ng-click="base.markImportant($event,topic.message)"><i class="fa fa-star"></i> Важно</a>
-                                    <a class="pull-right like-status" ng-class="{'isLike' : topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,topic.message)"><i class="fa fa-heart"></i> Нравится</a>
-                                    <div class="like-help" id="like-help-{{topic.message.id}}">сообщение уже отмечено</div>
+                                    <a class="pull-right important-status" ng-class="{'important' : wallItem.topic.message.important == 1}" title='{{ wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"><i class="fa fa-star"></i> Важно</a>
+                                    <a class="pull-right like-status" ng-class="{'isLike' : wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallItem.topic.message)"><i class="fa fa-heart"></i> Нравится</a>
+                                    <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
-                                    <span >{{topic.message.createdEdit}}</span>
+                                    <span >{{wallItem.topic.message.createdEdit}}</span>
                                     <a href="#" ng-click="important.showAnswerInput($event,wallItem)">Комментировать</a>
                                 </div>
 
@@ -155,7 +155,7 @@
                                         </div>
 
                                         <div class="attached" ng-show="wallMessage.images.length || wallMessage.documents.length">
-                                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
+                                            <a href="{{image.URL}}" class="fancybox" rel="attached-group-{{wallItem.topic.id+'-'+wallMessage.id}}" ng-repeat="image in wallMessage.images">
                                                 <img ng-src="{{image.URL}}?w=150&h=150" alt="картинка"/>
                                             </a>
                                             <div class="docs">
@@ -177,7 +177,7 @@
                             </div>
                         </div>
 
-                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallItem; ctrlId = topic.id;initCreateMessage(ctrlId);"></div>
+                        <div ng-include="'templates/createMessage.html'" onload="ctrlMessage=wallItem; ctrlId = wallItem.topic.id;initCreateMessage(ctrlId);"></div>
 
                     </div>
 
@@ -187,27 +187,27 @@
                                 <span class="label label-lg arrowed lenta-item-hashtag pull-right"
                                       ng-class="wallItem.tagColor">{{wallItem.label}}</span>
 
-                                <a class="pull-right important-status" ng-class="{'important' : topic.message.important == 1}" title='{{ topic.message.importantText }}' href="#" ng-click="base.markImportant($event,topic.message)"><i class="fa fa-star"></i></a>
-                                <a class="pull-right like-status" ng-class="{'isLike' : topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,topic.message)"><i class="fa fa-heart"></i></a>
-                                <div class="like-help" id="like-help-{{topic.message.id}}">сообщение уже отмечено</div>
+                                <a class="pull-right important-status" ng-class="{'important' : wallItem.topic.message.important == 1}" title='{{ wallItem.topic.message.importantText }}' href="#" ng-click="base.markImportant($event,wallItem.topic.message)"><i class="fa fa-star"></i></a>
+                                <a class="pull-right like-status" ng-class="{'isLike' : wallItem.topic.message.like == 1}" title='Нравится' href="#" ng-click="base.markLike($event,wallItem.topic.message)"><i class="fa fa-heart"></i></a>
+                                <div class="like-help" id="like-help-{{wallItem.topic.message.id}}">сообщение уже отмечено</div>
 
                                 <div class="clearfix"></div>
                             </div>
 
                             <div class="talks-title-left load-talk">
-                                <a ui-sref="talks-single({ talkId : {{topic.id}} })">{{topic.subject}}</a>
-                                <div>{{topic.messageNum}} сообщений</div>
+                                <a ui-sref="talks-single({ talkId : {{wallItem.topic.id}} })">{{wallItem.topic.subject}}</a>
+                                <div>{{wallItem.topic.messageNum}} сообщений</div>
                             </div>
 
                             <div class="last-update pull-right">
-                                <div>Последнее обновление: {{topic.lastUpdateEdit}}</div>
+                                <div>Последнее обновление: {{wallItem.topic.lastUpdateEdit}}</div>
                             </div>
                         </div>
                     </div>
 
                 </div>
 
-            <div class="bottom-border-line" ng-if="important.topics.length > 0"></div>
+            <div class="bottom-border-line" ng-if="important.wallItems.length > 0"></div>
 
             </div>
 

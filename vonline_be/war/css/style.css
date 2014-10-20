@@ -61,23 +61,6 @@ h1 {
 .navbar .form-search .icon-search:hover {
   text-decoration: none;
 }
-/*.new-private-message-count
-  width 16px
-  height 16px
-  min-width 0
-  display inline-block
-  color #fff
-  font-size 11px
-  background #ff0000
-  border 0
-  text-align center
-  padding 3px
-  padding-top 0
-  border-radius 8px
-  position absolute
-  top 5px
-  right 4px
-  z-index 2*/
 .ace-nav>li a {
   padding: 11px 12px 0 12px;
   line-height: 1.428571429;
@@ -135,7 +118,7 @@ h1 {
   vertical-align: middle;
   width: 166px;
 }
-.nav-list > li > a span.new-private-message-count {
+.nav-list > li > a span.new-message-count {
   width: auto;
   font-size: 14px;
 }
