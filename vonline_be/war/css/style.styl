@@ -1439,6 +1439,11 @@ transform()
   top -60px
 
 .counters
+  padding 10px 20px
+  min-height 300px
+  h3
+    margin-top 0
+    padding-top 10px
   .counters-menu
     padding-left 0
     margin 0
@@ -1451,6 +1456,7 @@ transform()
     td
      // border 1px solid #000
       padding 5px 0 5px 10px
+      vertical-align top
       input
       select
         width 100%
@@ -1461,5 +1467,17 @@ transform()
       font-size 18px
       &:hover
         text-decoration none
+  .counter-input
+    width 70px !important
+    display inline-block
+  .fa-clock-o
+    font-size 18px
+    margin-left 10px
 
-
+.empty
+  text-align left
+  color #000
+  font-size 14px
+  h2
+    text-align center
+    margin-top 0
