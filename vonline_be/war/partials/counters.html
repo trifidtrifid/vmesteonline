@@ -1,5 +1,6 @@
 
 <section class="counters page">
+    <h3>{{base.pageTitle}}</h3>
 
     <!--<ul class="counters-menu">
         <li><a href="#">История</a></li>
@@ -10,15 +11,15 @@
         <tr>
             <td>Номер</td>
             <td>Тип</td>
-            <td>Место установки</td>
+            <td class="align-center">Место установки</td>
             <!--<td>Предыдущее показание</td>-->
             <td>Показание</td>
-            <td>Расход</td>
+            <td class="align-center">Расход</td>
             <td></td>
             <td></td>
         </tr>
         </thead>
-        <tr ng-repeat="counter in counters.counters" > <!-- ng-repeat="counter in counters.counters" -->
+        <tr ng-repeat="counter in counters.counters" id="{{counter.id}}"> <!-- ng-repeat="counter in counters.counters" -->
             <td width="20%">
                 <span ng-hide="counter.isEdit">{{counter.number}}</span>
                 <input ng-show="counter.isEdit" type="text" ng-model="counter.number"/>
@@ -34,7 +35,7 @@
                     <span ng-switch-when="5">Газ</span>-->
                 </div>
                 <select ng-show="counter.isEdit" ng-model="counter.type">
-                    <option ng-repeat="item in counters.typesArray" value="item.type" ng-selected="counter.type == item.type">{{item.typeString}}</option>
+                    <option ng-repeat="item in counters.typesArray" value="{{item.type}}" ng-selected="counter.type == item.type">{{item.typeString}}</option>
                 </select>
             </td>
             <td class="align-center">
@@ -50,8 +51,9 @@
                 <div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>
             </td>-->
             <td>
-                <input type="text" ng-model="counter.currentValue"/>
-                <div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>
+                <input type="text" ng-change="counter.wasEdit = true" class="counter-input" ng-model="counter.currentValue"/>
+                <a ui-sref="counters-history({ counterId : counter.id })" title="история показаний"><i class="fa fa-clock-o"></i></a>
+                <!--<div><a ui-sref="counters-history({ counterId : counter.id })">история показаний</a></div>-->
             </td>
             <td class="align-center">{{counter.currentValue - counter.lastValue}}</td>
             <td>
@@ -62,8 +64,10 @@
         </tr>
     </table>
 
-    <a href="#" class="pull-right add-counter" ng-click="counters.addCounter()">Добавить счетчик</a>
-    <button class="btn btn-sm btn-primary no-border pull-left" ng-click="counters.save()">Сохранить</button>
+    <div class="clearfix">
+        <a href="#" class="pull-right add-counter" ng-click="counters.addCounter()">Добавить счетчик</a>
+        <button class="btn btn-sm btn-primary no-border pull-left" ng-click="counters.save()">Сохранить</button>
+    </div>
 
 </section>
 

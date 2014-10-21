@@ -3107,6 +3107,10 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
     .controller('CountersController',function($rootScope) {
         var counters = this;
 
+        $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.base.pageTitle = "Счетчики";
+        $rootScope.base.isFooterBottom = true;
+
         counters.counters = utilityClient.getCounters();
         //counters.typesEnum = com.vmesteonline.be.userservice.CounterType;
         counters.typesArray = [];
@@ -3125,7 +3129,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         function getTypeString(type){
             var typeString;
 
-            switch (type){
+            switch (parseInt(type)){
                 case 0:
                     typeString = "Горячая вода";
                     break;
@@ -3157,6 +3161,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         for(var i = 0; i < countersLength; i++){
             counters.counters[i].currentValue = counters.counters[i].lastValue;
             counters.counters[i].isEdit = false;
+            counters.counters[i].wasEdit = false;
             counters.counters[i].typeString = getTypeString(counters.counters[i].type);
         }
 
@@ -3164,14 +3169,16 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             var countersLen = counters.counters.length,
                 currentValue,
-                date = Date.parse(new Date())/1000;
+                date;
 
             for(var i = 0; i < countersLen; i++){
+                if(counters.counters[i].wasEdit) {
+                    date = Date.parse(new Date())/1000;
+                    currentValue = counters.counters[i].currentValue;
 
-                currentValue = counters.counters[i].currentValue;
-
-                if(!currentValue) currentValue = 0;
-                utilityClient.setCurrentCounterValue(counters.counters[i].id,currentValue,date);
+                    if (!currentValue) currentValue = 0;
+                    utilityClient.setCurrentCounterValue(counters.counters[i].id, currentValue, date);
+                }
             }
 
         };
@@ -3179,6 +3186,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         counters.addCounter = function(){
             var counter = new com.vmesteonline.be.userservice.Counter();
             counter.id = utilityClient.registerCounter(counter);
+            counter.isEdit = true;
             counters.counters.push(counter);
         };
         counters.editCounter = function(counter){
@@ -3186,7 +3194,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
         counters.saveEditedCounter = function(counter){
             //alert(counter.id+" "+counter.number+" "+counter.type+" "+counter.location);
-           /* for(var p in counter){
+            /*for(var p in counter){
                 alert(counter[p]+" "+p);
             }*/
 
@@ -3199,6 +3207,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             utilityClient.updateCounter(correctCounter);
             counter.isEdit = false;
+            counter.typeString = getTypeString(counter.type);
         };
         counters.removeCounter = function(counter){
 
