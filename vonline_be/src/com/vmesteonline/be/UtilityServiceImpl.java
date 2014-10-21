@@ -58,7 +58,7 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 
 
 	@Override
-	public void removeCounter(int counterId) throws InvalidOperation, TException {
+	public void removeCounter(long counterId) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		if( 0 != counterId) 
 			try{
@@ -93,7 +93,7 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 	}
 
 	@Override
-	public Map<Integer, Double> getCounterHistory(int counterId, int fromDate, int toDate) throws InvalidOperation, TException {
+	public Map<Integer, Double> getCounterHistory(long counterId, int fromDate, int toDate) throws InvalidOperation, TException {
 		PersistenceManager pm = PMF.getPm();
 		try {
 			VoCounter cntr = pm.getObjectById(VoCounter.class, counterId);
