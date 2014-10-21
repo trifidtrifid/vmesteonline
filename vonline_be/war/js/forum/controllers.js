@@ -3159,7 +3159,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         var countersLength = counters.counters.length;
         for(var i = 0; i < countersLength; i++){
-            counters.counters[i].currentValue = counters.counters[i].lastValue;
+            counters.counters[i].currentValue = "";
             counters.counters[i].isEdit = false;
             counters.counters[i].wasEdit = false;
             counters.counters[i].typeString = getTypeString(counters.counters[i].type);
@@ -3178,6 +3178,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
                     if (!currentValue) currentValue = 0;
                     utilityClient.setCurrentCounterValue(counters.counters[i].id, currentValue, date);
+                    counters.counters[i].lastValue = currentValue;
+                    counters.counters[i].currentValue = "";
                 }
             }
 
