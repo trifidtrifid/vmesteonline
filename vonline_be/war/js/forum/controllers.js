@@ -2722,6 +2722,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.leftbar.tab = 0;
         $rootScope.base.isFooterBottom = false;
+        $rootScope.currentPage = "dialogs";
 
         resetPages($rootScope.base);
         $rootScope.base.privateMessagesIsActive = true;
