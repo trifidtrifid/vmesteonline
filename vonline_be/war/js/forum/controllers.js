@@ -3279,6 +3279,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         important.wallItems ? wallItemsLength = important.wallItems.length :
             wallItemsLength = 0;
 
+        if(wallItemsLength == 0) $rootScope.base.mainContentTopIsHide = true;
+
         if(wallItemsLength != 0) lastLoadedId = important.wallItems[wallItemsLength-1].topic.id;
 
         initWallItem(important.wallItems);
