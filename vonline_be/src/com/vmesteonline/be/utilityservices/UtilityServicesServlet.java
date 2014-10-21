@@ -1,9 +1,11 @@
-package com.vmesteonline.be;
+package com.vmesteonline.be.utilityservices;
 
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.VoServlet;
 import com.vmesteonline.be.access.VoServiceMapAccessValidator;
 import com.vmesteonline.be.userservice.UtilityService;
 

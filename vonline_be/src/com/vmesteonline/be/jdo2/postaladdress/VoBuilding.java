@@ -30,6 +30,7 @@ public class VoBuilding  {
 		this.zipCode = zip;
 		this.longitude = null == longitude ? null : longitude.toPlainString();
 		this.latitude = null == latitude ? null : latitude.toPlainString();
+		this.countersEnabled = false;
 
 	}
 
@@ -57,6 +58,10 @@ public class VoBuilding  {
 	private String fullNo; // no with letter or other extension if any
 
 	@Persistent
+	private boolean countersEnabled; // no with letter or other extension if any
+
+
+	@Persistent
 	@Unindexed
 	private String zipCode; 
 	
@@ -67,6 +72,14 @@ public class VoBuilding  {
 		return streetId;
 	}
 
+	public boolean isCountersEnabled() {
+		return countersEnabled;
+	}
+
+	public void setCountersEnabled(boolean countersEnabled) {
+		this.countersEnabled = countersEnabled;
+	}
+	
 	public long getId() {
 		return id;
 	}
@@ -80,7 +93,8 @@ public class VoBuilding  {
 	}
 
 	public Building getBuilding() {
-		return new Building(id, zipCode, streetId, fullNo);
+		Building building = new Building(id, zipCode, streetId, fullNo);
+		return building;
 	}
 
 	@Override
@@ -116,6 +130,7 @@ public class VoBuilding  {
 		}
 		
 		VoBuilding vb = new VoBuilding(zip, vs, fullNo, longitude, latitude);
+		vb.setCountersEnabled(false);
 		
 		if( null == longitude || longitude.toPlainString().trim().length() == 0 || 
 				null == latitude || latitude.toPlainString().trim().length() == 0) {
@@ -130,6 +145,7 @@ public class VoBuilding  {
 			vb.addressString = country.getName() + "," + city.getName() + "," + street.getName() + ","
 					+ vb.getFullNo();
 		}
+		
 		pm.makePersistent(vb);
 		pm.flush();
 		return vb;

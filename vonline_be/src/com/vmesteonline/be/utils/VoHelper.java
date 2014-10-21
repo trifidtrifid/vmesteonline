@@ -8,11 +8,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jdo.Extent;
@@ -435,5 +437,26 @@ public class VoHelper {
 			passValue = passValue * passwordCharSet.length() + passwordCharSet.indexOf(passCode.charAt(cp));
 		}
 		return passValue;
+	}
+
+	public static <T> Set<T> getAllOfSet(Set<Long> vgs, Class<T> clazz, String condition, String idName, PersistenceManager pm) {
+		Set<T> vus = new HashSet<T>();
+		boolean condSet = null != condition && condition.trim().length() > 0;
+		if (null != vgs) {
+			String glist = "";
+			int i = 0;
+			for (Long gid : vgs) {
+				glist += "|| " + idName + "==" + gid;
+				i++;
+				if (i == vgs.size() || i > 0 && 0 == i % 20) {
+					vus.addAll((List<T>) pm.newQuery(clazz, condSet ? condition + " && (" + glist.substring(2) + ")" : glist.substring(2)).execute());
+					glist = "";
+				}
+			}
+		} else {
+			vus.addAll((List<T>) pm.newQuery(clazz).execute());
+		}
+	
+		return vus;
 	}
 }

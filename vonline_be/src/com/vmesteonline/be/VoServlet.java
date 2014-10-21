@@ -33,7 +33,7 @@ public class VoServlet extends HttpServlet {
 
 	private final TProtocolFactory inProtocolFactory;
 	private final TProtocolFactory outProtocolFactory;
-	ServiceImpl serviceImpl;
+	protected ServiceImpl serviceImpl;
 	private final Collection<Map.Entry<String, String>> customHeaders;
 
 	public void setProcessor(TProcessor processor) {

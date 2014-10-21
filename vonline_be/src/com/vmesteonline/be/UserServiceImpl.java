@@ -71,8 +71,10 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	public ShortUserInfo getShortUserInfo() throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
-		return getShortUserInfo( null, getCurrentUserId(), pm);
-
+		VoUser voUser = getCurrentUser();
+		ShortUserInfo sui = voUser.getShortUserInfo( null, pm);
+		sui.setCountersEnabled( null!=voUser.getServices() && voUser.getServices().contains("counters"));
+		return sui;
 	}
 
 	@Override

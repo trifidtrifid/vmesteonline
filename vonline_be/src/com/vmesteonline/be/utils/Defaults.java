@@ -2,8 +2,10 @@ package com.vmesteonline.be.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
@@ -211,12 +213,16 @@ public class Defaults {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		
+		Set<String> services = new HashSet<String>();
+		services.add("counters");
 			for (String uname : unames) {
 				try {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);
 					VoUser user = pm.getObjectById(VoUser.class, uid);
 					user.setEmailConfirmed(true);
+					if( counter < 2 ) {
+						user.setServices( services );
+					}
 
 					if (counter == 1)
 						for (Long ug : user.getGroups())

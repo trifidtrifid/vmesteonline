@@ -1035,7 +1035,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 		int weekAgo = (int) (System.currentTimeMillis() / 1000L - 86400 * 7);
 
 		if (null != vgs) {
-			Set<VoUser> usersToUpdate = getAllOfSet(vgs, VoUser.class, null, "groups", pm);
+			Set<VoUser> usersToUpdate = VoHelper.getAllOfSet(vgs, VoUser.class, null, "groups", pm);
 			if (null != usersToUpdate && usersToUpdate.size() > 0) {
 				Set<Long> vuis = new HashSet<>();
 				for (VoUser voUser : usersToUpdate) {
@@ -1044,7 +1044,7 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 				List<Long> vgsList = new ArrayList<>(vgs);
 				VoMulticastMessage vmcm = new VoMulticastMessage(vgsList, startDate, expireDate, message);
 				pm.makePersistent(vmcm);
-				sessionsToNotify = getAllOfSet(vuis, VoSession.class, "lastActivityTs > " + weekAgo, "userId", pm);
+				sessionsToNotify = VoHelper.getAllOfSet(vuis, VoSession.class, "lastActivityTs > " + weekAgo, "userId", pm);
 			} else {
 				sessionsToNotify = (List<VoSession>) pm.newQuery(VoSession.class, "lastActivityTs > " + weekAgo).execute();
 			}
@@ -1054,29 +1054,6 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 			}
 			pm.makePersistentAll(sessionsToNotify);
 		}
-	}
-
-	// =========================================================================================================================
-
-	private <T> Set<T> getAllOfSet(Set<Long> vgs, Class<T> clazz, String condition, String idName, PersistenceManager pm) {
-		Set<T> vus = new HashSet<T>();
-		boolean condSet = null != condition && condition.trim().length() > 0;
-		if (null != vgs) {
-			String glist = "";
-			int i = 0;
-			for (Long gid : vgs) {
-				glist += "|| " + idName + "==" + gid;
-				i++;
-				if (i == vgs.size() || i > 0 && 0 == i % 20) {
-					vus.addAll((List<T>) pm.newQuery(clazz, condSet ? condition + " && (" + glist.substring(2) + ")" : glist.substring(2)).execute());
-					glist = "";
-				}
-			}
-		} else {
-			vus.addAll((List<T>) pm.newQuery(clazz).execute());
-		}
-
-		return vus;
 	}
 
 	// =========================================================================================================================

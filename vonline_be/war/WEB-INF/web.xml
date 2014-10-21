@@ -33,7 +33,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	
 	<servlet>
 		<servlet-name>UtilityServiceServlet</servlet-name>
-		<servlet-class>com.vmesteonline.be.UtilityServicesServlet</servlet-class>
+		<servlet-class>com.vmesteonline.be.utilityservices.UtilityServicesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>UtilityServiceServlet</servlet-name>

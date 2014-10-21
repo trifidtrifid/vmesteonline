@@ -1,4 +1,4 @@
-package com.vmesteonline.be;
+package com.vmesteonline.be.utilityservices;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +14,9 @@ import javax.jdo.PersistenceManager;
 
 import org.apache.thrift.TException;
 
+import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.ServiceImpl;
+import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoUser;
 import com.vmesteonline.be.jdo2.utility.VoCounter;
@@ -70,7 +73,24 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "Failed to delete counter by ID=0");
 	}
 
-
+	public static Comparator<Counter> countersComparator = new Comparator<Counter>() {
+		@Override
+		public int compare(Counter o1, Counter o2) {
+			if( null == o1.getType()) return -1;
+			if( null == o2.getType()) return 1;
+			int res = o1.getType().compareTo( o2.getType() );
+			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
+		}
+	};
+	public static Comparator<VoCounter> voCountersComparator = new Comparator<VoCounter>() {
+		@Override
+		public int compare(VoCounter o1, VoCounter o2) {
+			if( null == o1.getType()) return -1;
+			if( null == o2.getType()) return 1;
+			int res = o1.getType().compareTo( o2.getType() );
+			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
+		}
+	};
 
 	@Override
 	public List<Counter> getCounters() throws InvalidOperation, TException {
@@ -80,15 +100,8 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 		for (VoCounter voCounter : counters) {
 			outList.add( voCounter.getCounter());
 		}
-		Collections.sort(outList, new Comparator<Counter>() {
-			@Override
-			public int compare(Counter o1, Counter o2) {
-				if( null == o1.getType()) return -1;
-				if( null == o2.getType()) return 1;
-				int res = o1.getType().compareTo( o2.getType() );
-				return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
-			}
-		});
+		
+		Collections.sort(outList, countersComparator);
 		return outList;
 	}
 

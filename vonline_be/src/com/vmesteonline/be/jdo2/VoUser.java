@@ -87,6 +87,7 @@ public class VoUser /* extends GeoLocation */{
 		this.popularuty = BASE_USER_SCORE;
 		this.lastNotified = this.registered = (int) (System.currentTimeMillis() / 1000L);
 		this.rootGroup = 0L;
+		
 	}
 
 	public UserProfile getUserProfile() {
@@ -470,6 +471,11 @@ public class VoUser /* extends GeoLocation */{
 	private long rootGroup;
 	
 	@Persistent
+	@Unindexed
+	private Set<String> services;
+	
+	
+	@Persistent
 	private Map<Integer, String> addressStringsByGroupType;
 	
 	//map that stores last event date that was shown to user by category
@@ -480,6 +486,14 @@ public class VoUser /* extends GeoLocation */{
 	@Persistent
 	private int lastImportantShown;
 	
+	public Set<String> getServices() {
+		return services;
+	}
+
+	public void setServices(Set<String> services) {
+		this.services = services;
+	}
+
 	public int getLastMulticastShown() {
 		return lastMulticastShown;
 	}

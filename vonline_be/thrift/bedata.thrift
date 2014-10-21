@@ -52,6 +52,7 @@ struct ShortUserInfo{
 	6: GroupType groupType,
 	7: optional set<i64> moderationGroups,
 	8: optional string address,
+	9: optional bool countersEnabled
 }
 
 struct ShortProfile{
