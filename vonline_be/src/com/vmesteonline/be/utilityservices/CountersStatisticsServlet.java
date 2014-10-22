@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,29 +26,57 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.data.PMF;
+import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
+import com.vmesteonline.be.jdo2.postaladdress.VoCity;
+import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
+import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 import com.vmesteonline.be.jdo2.utility.VoCounter;
+import com.vmesteonline.be.userservice.CounterType;
 import com.vmesteonline.be.utils.CSVHelper;
+import com.vmesteonline.be.utils.Defaults;
 import com.vmesteonline.be.utils.StorageHelper;
 import com.vmesteonline.be.utils.VoHelper;
 
 @SuppressWarnings("serial")
 public class CountersStatisticsServlet extends HttpServlet {
 
+	private static Map<CounterType,String> counterTypeNames;
+	static {
+		counterTypeNames = new HashMap<CounterType, String>();
+		counterTypeNames.put( CounterType.HOT_WATER, "Гор. вода");
+		counterTypeNames.put( CounterType.COLD_WATER, "Хол. вода");
+		counterTypeNames.put( CounterType.ELECTRICITY, "Эл-во общ.");
+		counterTypeNames.put( CounterType.ELECTRICITY_DAY, "Эл-во день");
+		counterTypeNames.put( CounterType.ELECTRICITY_NIGHT, "Эл-во ночь");
+		counterTypeNames.put( CounterType.GAS, "Газ");
+		counterTypeNames.put( CounterType.OTHER, "Другой");
+	}
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String bids = req.getParameter("bi");
+		String addrs = req.getParameter("addr");
+		PersistenceManager pm = PMF.getPm();
+		long buildingId = 0;
+		
+		if( null!=addrs) 
+		{ 
+			buildingId = getBuildingByAddress( addrs, pm );
+			
+		} else {
+			String bids = req.getParameter("bi");
+			buildingId = StorageHelper.stringToNumber(bids);
+		}
 		String ds = req.getParameter("ds");
-		if( null!=bids)
+		if( 0!=buildingId)
 			try {
-				long buildingId = StorageHelper.stringToNumber(bids);
 				int date = ds == null ? (int)(System.currentTimeMillis()/1000L) : (int) StorageHelper.stringToNumber(ds);
 				Calendar clndr = Calendar.getInstance();
 				clndr.setTimeInMillis(((long)date)*1000L);
 				
-				PersistenceManager pm = PMF.getPm();
 				List<VoPostalAddress> pal = (List<VoPostalAddress>) pm.newQuery( VoPostalAddress.class, "buildingId=="+buildingId).execute();
 				Set<Long> vgs = new HashSet<Long>();
 				for (VoPostalAddress pa : pal) {
@@ -82,34 +111,58 @@ public class CountersStatisticsServlet extends HttpServlet {
 							TreeMap<Integer,Double> valSorted = new TreeMap<Integer,Double>(values);
 							Integer curDate = valSorted.floorKey(date);
 							Integer monthAgoDate = valSorted.floorKey(date - 86400 * 30);
+							if( monthAgoDate == null )
+								monthAgoDate = valSorted.higherKey(date - 86400 * 30);
 							if( null!=curDate) {
 								csvData.add( Arrays.asList( new String[]{ 
 										""+pa.getStaircase(), ""+pa.getFloor(), ""+pa.getFlatNo(), 
-										voCounter.getType().name(), voCounter.getNumber(), voCounter.getLocation(), 
+										counterTypeNames.get(voCounter.getType()), voCounter.getNumber(), voCounter.getLocation(), 
 										""+valSorted.get(curDate),  "" + df.format(new Date( ((long)curDate)*1000L  )),
 										""+valSorted.get(monthAgoDate),  "" + df.format(new Date( ((long)monthAgoDate)*1000L  )),
 										""+VoHelper.roundDouble( valSorted.get(curDate) - valSorted.get(monthAgoDate), 2)}));
 							}
 						}
 					}
-					
-					//write response
-					resp.setStatus(HttpServletResponse.SC_OK);
-					String fileName = URLEncoder.encode( "uc."+clndr.get(Calendar.YEAR)+"."+clndr.get(Calendar.MONTH)+"."+clndr.get(Calendar.DAY_OF_MONTH)+".csv","UTF-8");
-					resp.setContentType("text/csv; filename=uc."+fileName);
-					resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
-					
-					ServletOutputStream os = resp.getOutputStream();
-					CSVHelper.writeCSV( os, csvData, ",", "|", ":");
-					os.close();
 				}
+				//write response
+				resp.setStatus(HttpServletResponse.SC_OK);
+				String fileName = URLEncoder.encode( "uc."+clndr.get(Calendar.YEAR)+"."+clndr.get(Calendar.MONTH)+"."+clndr.get(Calendar.DAY_OF_MONTH)+".csv","UTF-8");
+				resp.setContentType("text/csv; filename=uc."+fileName);
+				resp.addHeader( "Content-Disposition", "attachment; filename="+fileName);
+				
+				ServletOutputStream os = resp.getOutputStream();
+				CSVHelper.writeCSV( os, csvData, ";", "|", ":");
+				os.close();
 				
 			} catch (Exception e){
 				e.printStackTrace();
 				resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				OutputStream os = resp.getOutputStream();
-				os.write(e.getMessage().getBytes());
+				os.write((e instanceof InvalidOperation ? ((InvalidOperation)e).why : e.getMessage()).getBytes());
 				os.close();
 			}
+		else {
+			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			OutputStream os = resp.getOutputStream();
+			os.write("Адрес не найден".getBytes("UTF-8"));
+			os.close();
+		}
+	}
+
+	private long getBuildingByAddress(String addrs, PersistenceManager pm) {
+		try {
+			AddressInfo addr = VoGeocoder.resolveAddressString( Defaults.COUNTRY + " "+addrs );
+			if( !addr.isExact() || !addr.isKindHouse() )
+				return 0;
+			
+			VoCountry country = VoCountry.createVoCountry( addr.getCountryName(), pm);
+			VoCity city = VoCity.createVoCity(country, addr.getCityName(), pm);
+			VoStreet vs = VoStreet.createVoStreet(city, addr.getStreetName(), pm);
+			VoBuilding vb = VoBuilding.createVoBuilding(addr.getZipCode(), vs, addr.getBuildingNo(), addr.getLongitude(), addr.getLattitude(), pm);
+			return vb.getId();
+		} catch (InvalidOperation e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 }

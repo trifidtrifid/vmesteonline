@@ -29,17 +29,19 @@ import com.vmesteonline.be.jdo2.VoUserGroup;
 import com.vmesteonline.be.jdo2.VoUserTopic;
 import com.vmesteonline.be.jdo2.dialog.VoDialog;
 import com.vmesteonline.be.jdo2.dialog.VoDialogMessage;
+import com.vmesteonline.be.jdo2.postaladdress.AddressInfo;
 import com.vmesteonline.be.jdo2.postaladdress.VoBuilding;
 import com.vmesteonline.be.jdo2.postaladdress.VoCity;
 import com.vmesteonline.be.jdo2.postaladdress.VoCountry;
+import com.vmesteonline.be.jdo2.postaladdress.VoGeocoder;
 import com.vmesteonline.be.jdo2.postaladdress.VoPostalAddress;
 import com.vmesteonline.be.jdo2.postaladdress.VoStreet;
 
 @SuppressWarnings("unchecked")
 public class Defaults {
 
-	private static final String CITY = "Санкт Петербург";
-	private static final String COUNTRY = "Россия";
+	public static final String CITY = "Санкт Петербург";
+	public static final String COUNTRY = "Россия";
 	public static List<VoGroup> defaultGroups;
 	public static List<VoRubric> defaultRubrics;
 
@@ -256,14 +258,22 @@ public class Defaults {
 	private static List<String> initializeTestLocations(boolean loadInviteCodes, PersistenceManager pm) throws InvalidOperation {
 		
 		try{
-			VoCountry country = VoCountry.createVoCountry(COUNTRY, pm);
-			VoCity city = VoCity.createVoCity(country, CITY, pm);
-			VoStreet streetZ = VoStreet.createVoStreet(city, "Заневский", pm);
-			VoStreet streetR = VoStreet.createVoStreet(city, "Республиканская", pm);
+			
+			AddressInfo zanAddr = VoGeocoder.resolveAddressString( COUNTRY+" "+CITY+" "+"Заневский"+" "+"32к3");
+			AddressInfo resp35Addr = VoGeocoder.resolveAddressString( COUNTRY+" "+CITY+" "+"Республиканская"+" "+"35");
+			AddressInfo resp6Addr = VoGeocoder.resolveAddressString( COUNTRY+" "+CITY+" "+"Республиканская"+" "+"6");
+			
+			
+			VoCountry country = VoCountry.createVoCountry(zanAddr.getCountryName(), pm);
+			VoCity zanCity = VoCity.createVoCity(country, zanAddr.getCityName(), pm);
+			VoCity respCity = VoCity.createVoCity(country, resp35Addr.getCityName(), pm);
+			
+			VoStreet streetZ = VoStreet.createVoStreet(zanCity, zanAddr.getStreetName(), pm);
+			VoStreet streetR = VoStreet.createVoStreet(respCity, resp35Addr.getStreetName(), pm);
 
-			VoBuilding zanevsky32k3 = VoBuilding.createVoBuilding("195213", streetZ, "32к3", null, null, pm);
-			VoBuilding respublikanskaya35 = VoBuilding.createVoBuilding("195213", streetR, "35", null, null, pm);
-			VoBuilding resp6 = VoBuilding.createVoBuilding("195213", streetR, "6", null, null, pm);
+			VoBuilding zanevsky32k3 = VoBuilding.createVoBuilding("195213", streetZ, "32к3", zanAddr.getLongitude(), zanAddr.getLattitude(), pm);
+			VoBuilding respublikanskaya35 = VoBuilding.createVoBuilding("195213", streetR, "35", resp35Addr.getLongitude(), resp35Addr.getLattitude(), pm);
+			VoBuilding resp6 = VoBuilding.createVoBuilding("195213", streetR, "6", resp6Addr.getLongitude(), resp6Addr.getLattitude(), pm);
 			addresses = new VoPostalAddress[] {
 
 					VoPostalAddress.createVoPostalAddress(zanevsky32k3, (byte) 1, (byte) 1, 5, "", pm),

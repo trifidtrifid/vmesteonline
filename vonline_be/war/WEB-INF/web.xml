@@ -193,6 +193,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/update/getCodes</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>counterStatistics</servlet-name>
+		<servlet-class>com.vmesteonline.be.utilityservices.CountersStatisticsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>counterStatistics</servlet-name>
+		<url-pattern>/count</url-pattern>
+	</servlet-mapping>
 	
 	<filter>
 		<filter-name>persistenceMananagerInit</filter-name>
@@ -203,6 +211,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/file/*</url-pattern>
 		<url-pattern>/thrift/*</url-pattern>
 		<url-pattern>/about/*</url-pattern>
+		<url-pattern>/count</url-pattern>
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	

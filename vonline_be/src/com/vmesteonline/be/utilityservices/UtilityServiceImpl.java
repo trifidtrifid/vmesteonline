@@ -79,7 +79,7 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 			if( null == o1.getType()) return -1;
 			if( null == o2.getType()) return 1;
 			int res = o1.getType().compareTo( o2.getType() );
-			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
+			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()+o1.getId()).compareTo(""+o2.getLocation() + o2.getNumber()+o2.getId()) : res ;
 		}
 	};
 	public static Comparator<VoCounter> voCountersComparator = new Comparator<VoCounter>() {
@@ -88,7 +88,7 @@ public class UtilityServiceImpl extends ServiceImpl implements Iface {
 			if( null == o1.getType()) return -1;
 			if( null == o2.getType()) return 1;
 			int res = o1.getType().compareTo( o2.getType() );
-			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()).compareTo(""+o2.getLocation() + o2.getNumber()) : res ;
+			return res == 0 ? ("" + o1.getLocation() + o1.getNumber()+o1.getId()).compareTo(""+o2.getLocation() + o2.getNumber()+o2.getId()) : res ;
 		}
 	};
 
