@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -73,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		PersistenceManager pm = PMF.getPm();
 		VoUser voUser = getCurrentUser();
 		ShortUserInfo sui = voUser.getShortUserInfo( null, pm);
-		sui.setCountersEnabled( null!=voUser.getServices() && voUser.getServices().contains("counters"));
+		
 		return sui;
 	}
 
@@ -860,5 +862,19 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 		} else {
 			logger.warning("Address of user does not changed.");
 		}
+	}
+
+	@Override
+	public void updateUserServices(Map<ServiceType, Boolean> newServiceStauses) throws InvalidOperation, TException {
+		PersistenceManager pm = PMF.getPm();
+		VoUser currentUser = getCurrentUser(pm);
+		Set<ServiceType> us = currentUser.getServices();
+		if( null == us) us = new HashSet<ServiceType>();
+		for (Entry<ServiceType, Boolean> nss : newServiceStauses.entrySet()) {
+			if( us.contains( nss.getKey()) && !nss.getValue() ) us.remove(nss.getKey());
+			else if( !us.contains( nss.getKey()) && nss.getValue() ) us.add(nss.getKey());
+		}
+		currentUser.setServices( us );
+		pm.makePersistent(currentUser);
 	}
 }

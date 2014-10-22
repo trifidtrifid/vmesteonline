@@ -23,6 +23,7 @@ import com.vmesteonline.be.InvalidOperation;
 import com.vmesteonline.be.NotificationFreq;
 import com.vmesteonline.be.Notifications;
 import com.vmesteonline.be.RelationsType;
+import com.vmesteonline.be.ServiceType;
 import com.vmesteonline.be.ShortUserInfo;
 import com.vmesteonline.be.UserContacts;
 import com.vmesteonline.be.UserFamily;
@@ -125,12 +126,12 @@ public class VoUser /* extends GeoLocation */{
 
 	public ShortUserInfo getShortUserInfo( PersistenceManager pm) {
 		
-		return new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null);
+		return new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null, null==services ? new HashSet<ServiceType>() : services);
 	}
 
 	public ShortUserInfo getShortUserInfo( VoUser askedUser, PersistenceManager pm) {
 		
-		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null);
+		ShortUserInfo shortUserInfo = new ShortUserInfo(getId(), name, lastName, birthday, getAvatarTopic(), null, null==services ? new HashSet<ServiceType>() : services);
 		if( null!=askedUser )
 			if( askedUser != this)
 				shortUserInfo.setGroupType( UserServiceImpl.getRelations( askedUser, this, pm ));
@@ -472,7 +473,7 @@ public class VoUser /* extends GeoLocation */{
 	
 	@Persistent
 	@Unindexed
-	private Set<String> services;
+	private Set<ServiceType> services;
 	
 	
 	@Persistent
@@ -486,11 +487,11 @@ public class VoUser /* extends GeoLocation */{
 	@Persistent
 	private int lastImportantShown;
 	
-	public Set<String> getServices() {
+	public Set<ServiceType> getServices() {
 		return services;
 	}
 
-	public void setServices(Set<String> services) {
+	public void setServices(Set<ServiceType> services) {
 		this.services = services;
 	}
 
