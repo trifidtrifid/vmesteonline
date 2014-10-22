@@ -1702,6 +1702,9 @@ h1 {
 .counters .remove-counter:hover {
   text-decoration: none;
 }
+.counters .fa-pencil {
+  font-size: 18px;
+}
 .counter-input {
   width: 70px !important;
   display: inline-block;
@@ -1709,6 +1712,18 @@ h1 {
 .fa-clock-o {
   font-size: 18px;
   margin-left: 10px;
+}
+.gray-text {
+  color: #ccc;
+}
+.modal-remove-counter .modal-dialog {
+  width: 330px !important;
+  text-align: center;
+  padding: 10px;
+  margin-top: 100px;
+}
+.modal-remove-counter .btn {
+  display: inline-block;
 }
 .empty {
   text-align: left;

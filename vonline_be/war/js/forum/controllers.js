@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize','yaMap'])
+angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize','yaMap','ui.bootstrap'])
     .controller('baseController',function($rootScope,$state,$filter) {
 
         $rootScope.isTopSearchShow = true;
@@ -3105,7 +3105,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
 
     })
-    .controller('CountersController',function($rootScope) {
+    .controller('CountersController',function($rootScope, $modal) {
         var counters = this;
 
         $rootScope.base.mainContentTopIsHide = true;
@@ -3214,11 +3214,38 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
         counters.removeCounter = function(counter){
 
-            utilityClient.removeCounter(counter.id);
-            counters.counters = utilityClient.getCounters();
+            var modal = $modal.open({
+                templateUrl: 'myModalContent.html',
+                controller: 'ModalInstanceCtrl',
+                windowClass: 'modal-remove-counter',
+                size: 'sm'
+            });
+
+            modal.result.then(function () {
+
+                utilityClient.removeCounter(counter.id);
+                var countersLength = counters.counters.length;
+                for(var i = 0; i< countersLength; i++){
+
+                    if(counter.id == counters.counters[i].id){
+                        counters.counters.splice(i,1);
+                    }
+
+                }
+
+            });
 
         };
 
+    })
+    .controller('ModalInstanceCtrl',function($scope, $modalInstance) {
+        $scope.ok = function () {
+            $modalInstance.close();
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     })
     .controller('CountersHistoryController',function($scope,$stateParams) {
 

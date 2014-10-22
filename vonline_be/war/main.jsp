@@ -111,7 +111,7 @@
                         <li><a ui-sref="profile({ userId : 0})"> <i class="icon-user"></i>
                             Профиль
                         </a></li>
-                        <li><a ui-sref="counters"> <i class="icon-fa fa fa-tachometer"></i>
+                        <li ng-if="base.me.countersEnabled"><a ui-sref="counters"> <i class="icon-fa fa fa-tachometer"></i>
                             Счетчики
                         </a></li>
 
@@ -304,6 +304,7 @@
 <script src="js/forum/angular/angular-ui-router.js"></script>
 <script src="js/forum/angular/sanitize.js"></script>
 <script src="js/forum/angular/linky-custom.js"></script>
+<script src="js/forum/angular/ui-bootstrap-tpls-0.11.2.min.js"></script>
 
 	<script src="js/forum/app.js"></script>
 
