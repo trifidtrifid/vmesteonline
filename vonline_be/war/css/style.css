@@ -1697,7 +1697,7 @@ h1 {
 }
 .counters .remove-counter {
   color: #f00;
-  font-size: 18px;
+  font-size: 22px;
 }
 .counters .remove-counter:hover {
   text-decoration: none;

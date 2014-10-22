@@ -965,7 +965,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             var updateMap,
                 old = 0;
 
-
             if(timeStamp == 0){
                 updateMap = messageClient.getDialogUpdates();
                 var temp = 0,
@@ -1006,8 +1005,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
                 base.me.notificationIsShow = true;
                 base.me.userNotification = messageClient.getMulticastMessage();
 
-                // messageClient.getMulticastMessage();
-
             }else if(timeStamp >= 2 && timeStamp < 10000){
                 // important messages
                 $rootScope.newMessages = [];
@@ -1023,6 +1020,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
 
         setInterval(base.checkUpdates,5000);
+
+        base.nextNotification = function(){
+            base.me.userNotification = messageClient.getNextMulticastMessage();
+            if(!base.me.userNotification){
+                base.me.notificationIsShow = false;
+            }
+        };
 
         base.contentLength = 500;
 
