@@ -1176,7 +1176,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             }
         };
 
-        topCtrl.showCreateTopic = function(event){
+        $rootScope.showCreateTopic = function(event){
             event.preventDefault();
 
             $rootScope.base.createTopicIsHide ? $rootScope.base.createTopicIsHide = false : $rootScope.base.createTopicIsHide = true;
