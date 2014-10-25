@@ -3495,6 +3495,11 @@ var userClient = new com.vmesteonline.be.userservice.UserServiceClient(protocol)
 var userClientGroups = userClient.getUserGroups();
 var shortUserInfo = userClient.getShortUserInfo();
 
+var servicesStr = shortUserInfo.services.join(';');
+if(servicesStr.indexOf('10') != -1) shortUserInfo.countersEnabled = true;
+if(servicesStr.indexOf('11') != -1) shortUserInfo.countersConfirmed = true;
+if(servicesStr.indexOf('12') != -1) shortUserInfo.countersNotification = true;
+
 transport = new Thrift.Transport("/thrift/AuthService");
 protocol = new Thrift.Protocol(transport);
 var authClient = new com.vmesteonline.be.authservice.AuthServiceClient(protocol);
