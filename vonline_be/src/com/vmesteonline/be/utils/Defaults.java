@@ -14,6 +14,7 @@ import javax.jdo.Query;
 import com.vmesteonline.be.AuthServiceImpl;
 import com.vmesteonline.be.GroupType;
 import com.vmesteonline.be.InvalidOperation;
+import com.vmesteonline.be.ServiceType;
 import com.vmesteonline.be.VoError;
 import com.vmesteonline.be.data.PMF;
 import com.vmesteonline.be.jdo2.VoFileAccessRecord;
@@ -215,8 +216,8 @@ public class Defaults {
 		AuthServiceImpl asi = new AuthServiceImpl();
 		ArrayList<Long> uids = new ArrayList<Long>();
 		int counter = 0;
-		Set<String> services = new HashSet<String>();
-		services.add("counters");
+		Set<ServiceType> services = new HashSet<ServiceType>();
+		services.add(ServiceType.CountersEnabled);
 			for (String uname : unames) {
 				try {
 					long uid = asi.registerNewUser(uname, ulastnames[counter], uPasses[counter], uEmails[counter], locCodes.get(counter++), 0);

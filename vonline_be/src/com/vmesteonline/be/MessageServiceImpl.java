@@ -480,6 +480,9 @@ public class MessageServiceImpl extends ServiceImpl implements Iface {
 	public int checkUpdates(int lastRequest) throws InvalidOperation {
 		PersistenceManager pm = PMF.getPm();
 		VoSession sess = getCurrentSession(pm);
+		if( 0==sess.getUserId())
+			throw new InvalidOperation(VoError.NotAuthorized,"Session not autorized.");
+		
 		int now = (int) (System.currentTimeMillis() / 1000L);
 		if (now - sess.getLastActivityTs() > 60) { /*
 																								 * Update last Activity once per
