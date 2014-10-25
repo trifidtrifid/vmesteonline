@@ -74,18 +74,23 @@
         </tr>
     </table>
 
-    <label>
-        <input type="checkbox"/>
-        <span>Присылать копию переданных показаний на emai</span>
-    </label>
-    <label>
-        <input type="checkbox"/>
-        <span>Напоминать о сдаче показаний</span>
-    </label>
-
     <div class="clearfix">
         <a href="#" class="pull-right add-counter" ng-click="counters.addCounter()">Добавить счетчик</a>
         <button class="btn btn-sm btn-primary no-border pull-left" ng-click="counters.save()">Отправить</button>
+    </div>
+    <br/>
+
+    <div>
+        <label>
+            <input type="checkbox"/>
+            <span>Присылать копию переданных показаний на email</span>
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox"/>
+            <span>Напоминать о сдаче показаний</span>
+        </label>
     </div>
 
 </section>
