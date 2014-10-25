@@ -3109,65 +3109,29 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         };
 
     })
-    .controller('CountersController',function($rootScope, $modal) {
+    .controller('CountersController',function($rootScope, $modal,$counters) {
         var counters = this;
 
         $rootScope.base.mainContentTopIsHide = true;
         $rootScope.base.pageTitle = "Счетчики";
         $rootScope.base.isFooterBottom = true;
 
-        counters.counters = utilityClient.getCounters();
-        //counters.typesEnum = com.vmesteonline.be.userservice.CounterType;
+        counters.counters = $counters.getCounters;
         counters.typesArray = [];
         var typesEnumLength = 6;
-        /*for(var p in counters.typesEnum){
-            alert(counters.typesEnum[p]+" "+p);
-        }*/
-
 
         for(var i = 0; i < typesEnumLength; i++){
             counters.typesArray[i] = {};
             counters.typesArray[i].type = i;
-            counters.typesArray[i].typeString = getTypeString(i);
+            counters.typesArray[i].typeString = $counters.getTypeString(i);
         }
-
-        function getTypeString(type){
-            var typeString;
-
-            switch (parseInt(type)){
-                case 0:
-                    typeString = "Горячая вода";
-                    break;
-                case 1:
-                    typeString = "Холодная вода";
-                    break;
-                case 2:
-                    typeString = "Электричество(общий)";
-                    break;
-                case 3:
-                    typeString = "Электричество(ночь)";
-                    break;
-                case 4:
-                    typeString = "Электричество(день)";
-                    break;
-                case 5:
-                    typeString = "Газ";
-                    break;
-                case 6:
-                    typeString = "Другое";
-                    break;
-            }
-
-            return typeString;
-        }
-
 
         var countersLength = counters.counters.length;
         for(var i = 0; i < countersLength; i++){
             counters.counters[i].currentValue = "";
             counters.counters[i].isEdit = false;
             counters.counters[i].wasEdit = false;
-            counters.counters[i].typeString = getTypeString(counters.counters[i].type);
+            counters.counters[i].typeString = $counters.getTypeString(counters.counters[i].type);
         }
 
         counters.save = function(){
@@ -3214,7 +3178,7 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
             utilityClient.updateCounter(correctCounter);
             counter.isEdit = false;
-            counter.typeString = getTypeString(counter.type);
+            counter.typeString = $counters.getTypeString(counter.type);
         };
         counters.removeCounter = function(counter){
 
@@ -3241,6 +3205,8 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         };
 
+        angular.element($('.counters')).css({'min-height': $(window).height()-105});
+
     })
     .controller('ModalInstanceCtrl',function($scope, $modalInstance) {
         $scope.ok = function () {
@@ -3251,7 +3217,54 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
             $modalInstance.dismiss('cancel');
         };
     })
-    .controller('CountersHistoryController',function($scope,$stateParams) {
+    .factory( '$counters', function() {
+        return {
+            getCounters : utilityClient.getCounters(),
+            getTypeString : function (type){
+                var typeString;
+
+                switch (parseInt(type)){
+                    case 0:
+                        typeString = "Горячая вода";
+                        break;
+                    case 1:
+                        typeString = "Холодная вода";
+                        break;
+                    case 2:
+                        typeString = "Электричество(общий)";
+                        break;
+                    case 3:
+                        typeString = "Электричество(ночь)";
+                        break;
+                    case 4:
+                        typeString = "Электричество(день)";
+                        break;
+                    case 5:
+                        typeString = "Газ";
+                        break;
+                    case 6:
+                        typeString = "Другое";
+                        break;
+                }
+
+                return typeString;
+            }
+        }
+    })
+    .controller('CountersHistoryController',function($scope,$stateParams,$rootScope,$counters) {
+
+        $rootScope.base.mainContentTopIsHide = true;
+        $rootScope.base.pageTitle = "История показаний счетчика";
+        $rootScope.base.isFooterBottom = true;
+
+        var counters = $counters.getCounters,
+            countersLen = counters.length;
+        for(var i = 0; i < countersLen; i++){
+            if(counters[i].id == $stateParams.counterId){
+                $scope.currentCounter = counters[i];
+                $scope.currentCounter.typeString = $counters.getTypeString(counters[i].type);
+            }
+        }
 
         var now = Date.parse(new Date())/1000,
             history = utilityClient.getCounterHistory($stateParams.counterId,0,now),
@@ -3261,11 +3274,13 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $scope.counterName = $stateParams.counterName;
 
         for(var p in history){
+            $scope.history[counter] = {};
             $scope.history[counter].date = p;
-            $scope.history[counter].val = $scope.history[p];
+            $scope.history[counter].val = history[p];
             counter++;
         }
 
+        angular.element($('.counters')).css({'min-height': $(window).height()-105});
 
     })
     .controller('importantController',function($rootScope) {

@@ -1,22 +1,32 @@
 
 <section class="counters page">
 
-    <h2>История счетчика</h2>
+    <h3>История показаний счетчика</h3>
+
+    <div ng-if="currentCounter.typeString != null">Тип счетчика : <span> {{ currentCounter.typeString }} </span>   </div>
+    <div ng-if="currentCounter.location != null">Место установки : <span> {{ currentCounter.location }} </span> </div>
 
     <table class="counters-table">
         <thead>
         <tr>
-            <td>Дата</td>
-            <td>Значение</td>
+            <td width="25%">Дата</td>
+            <td width="25%">Значение</td>
+            <td width="25%">Расход</td>
+            <td width="25%">Дата сдачи показаний</td>
         </tr>
         </thead>
-        <tr ng-repeat="item in history" >
-            <td>{{ item.date }}</td>
+        <tr ng-repeat="item in history" ng-if="item.val">
+            <td>{{ item.date*1000 | date : "dd.MM.yyyy"}}</td>
             <td>{{ item.val }}</td>
+            <td ng-if="$index == 0"> - </td>
+            <td ng-if="$index != 0">
+                {{ item.val - history[$index-1].val }}
+            </td>
+            <td class="align-center">0</td>
         </tr>
     </table>
 
-    <a ui-sref="counters" class="btn btn-sm btn-primary no-border">Назад</a>
+    <a ui-sref="counters">Назад</a>
 
 </section>
 
