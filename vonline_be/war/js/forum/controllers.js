@@ -3205,6 +3205,29 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         };
 
+        counters.countersConfirm = function(){
+
+            var newServicesStatuses = [];
+            newServicesStatuses['11'] = true;
+
+            userClient.updateUserServices(newServicesStatuses);
+
+            $rootScope.base.me.countersConfirmed = true;
+        };
+
+        counters.toggleNotification = function(){
+           var newServicesStatuses = [];
+
+          if ($rootScope.base.me.countersNotification ){
+              $rootScope.base.me.countersNotification = newServicesStatuses['12'] = false;
+          }else{
+              $rootScope.base.me.countersNotification = newServicesStatuses['12'] = true;
+          }
+
+            userClient.updateUserServices(newServicesStatuses);
+
+        };
+
         angular.element($('.counters')).css({'min-height': $(window).height()-105});
 
     })
