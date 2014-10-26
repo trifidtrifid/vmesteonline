@@ -110,15 +110,15 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             defaultHeight = TEXTAREA_DEFAULT_HEIGHT;
 
             /*
-            �������� ������:
-                �� ���� ������ ���������� ~8px � ������
-                ������ ������ ������ ~14px
+             Исходные данные:
+             На один символ приходится ~8px в ширину
+             Высота строки текста ~14px
 
-            * ����� ��������� ����� �������� :
-             * 1) ������� ����� ������ � ��������
-             * 2) ���������� ����� ���������� �����, ������� �������
-             * 3) ��������� ����� ������ � ������ ������ ���������� ������
-            * */
+             * Здесь выполняем такие действия :
+             * 1) Считаем длину текста в пикселях
+             * 2) Определяем целое количестов строк, которые удалили
+             * 3) Определям новую высоту с учетом высоты удаленного текста
+             * */
 
             //console.log("0 "+scrollHeight+" "+clientHeight);
              if(scrollHeight > clientHeight){
@@ -157,7 +157,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
 
             var stringLen = textLength*k1;
             if(stringLen > clientWidth){
-                var rowCount = parseInt(stringLen/clientWidth); // ������� �����
+                var rowCount = parseInt(stringLen/clientWidth); // сколько строк
                 var areaHeight = rowCount*k2;
             }else{
                 areaHeight = TEXTAREA_DEFAULT_HEIGHT;
@@ -193,16 +193,16 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
         base.deleteMessage = function(message,messagesArray,isTopic,isWall,isDialog){
 
             if(isTopic && !isWall || message.isWallSingle){
-                // ���� talk-single ��� profit-single
+                // если talk-single или profit-single
 
-                bootbox.confirm("�� �������, ��� ������ ������� ��� ����?", function(result) {
+                bootbox.confirm("Вы уверены, что хотите удалить эту тему?", function(result) {
                     if(result) {
 
                         try {
                             var deleteResult = messageClient.deleteTopic(message.id);
                             message.message.content = deleteResult.message.content;
                         }catch(e){
-                            // ������ null, ������ �������� ���
+                            // вернул null, значит потомков нет
                         }
 
                         if(message.message.type == 1){
@@ -220,7 +220,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                     var deleteResult = messageClient.deleteTopic(message.id);
                     message.message.content = deleteResult.message.content;
                 }catch(e){
-                    // ������ null, ������ �������� ��������� �����
+                    // вернул null, значит удаление произошло чисто
                     var messagesArrayLength = messagesArray.length;
 
                      for(var i = 0; i < messagesArrayLength; i++){
@@ -250,11 +250,9 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                 }else {
                     try {
                         deleteResult = messageClient.deleteMessage(message.id);
-                        //message.content = "��������� ������� �������������";
                         message.content = deleteResult.content;
                     }
                     catch (e) {
-                        // ������� �����
                         messagesArrayLength = messagesArray.length;
                         for (var i = 0; i < messagesArrayLength; i++) {
                             if (messagesArray[i].id == message.id) {
@@ -325,8 +323,8 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             }
 
             if(message.isEdit) {
-                // ����� ��������������� �������� ����� �� ������������ �� ��������������,
-                // �� ���� �� ��� ����������� ����, ������� ���� message.isEdit, � �� !message.isEdit
+                // здесь рассматривается ситуация когда мы возвращаемся из редактирования,
+                // но выше мы уже переключиди флаг, поэтому пишу message.isEdit, а не !message.isEdit
                 if (isTopic) {
                     message.message.content = withoutTags(message.message.content);
                 } else {
@@ -336,7 +334,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
 
         };
 
-        base.pageTitle = "�������";
+        base.pageTitle = "Новости";
 
         base.user = shortUserInfo;
 
@@ -349,11 +347,11 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             if (message.important == 3 || message.important == 2){
                 message.important = 1;
                 isImportant = true;
-                message.importantText = '����� ����� "������"';
+                message.importantText = 'Снять метку "Важное"';
             }else{
                 message.important = 3;
                 isImportant = false;
-                message.importantText = '�������� ��� "������"';
+                message.importantText = 'Пометить как "Важное"';
             }
 
             messageClient.markMessageImportant(message.id,isImportant);
@@ -383,7 +381,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             ctrl.isPollAvailable = true;
 
             if(ctrl.id){
-                // ���� ��������������
+                // если редактирование
                 if(ctrl.poll && ctrl.poll.pollId){
                     ctrl.isPollShow = true;
 
@@ -398,7 +396,8 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                     ctrl.isPollAvailable = false;
                 }
             }else{
-                // ���� ��������
+                // если создание
+
 
                 ctrl.isPollShow = false;
                 ctrl.pollSubject = "";
@@ -458,12 +457,12 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
         $rootScope.initCreateTopic = function(ctrl){
 
             if(ctrl.id){
-                // ������ ��������������
+                // значит редактирование
 
-                setTimeout(pollAttach,200,ctrl.id,true); // ���� ���� ����������
+                setTimeout(pollAttach,200,ctrl.id,true); // ждем пока загрузится
 
             }else{
-                // ������ ��������
+                // значит создание
 
                 setTimeout(pollAttach,200,ctrl.attachId,false);
 
@@ -516,18 +515,18 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             if(talk.subject == TEXT_DEFAULT_4 || talk.subject == ""){
 
                 talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "�� �� ������� ���������";
+                talk.createTalkErrorText = "Вы не указали заголовок";
 
             }else if(talk.attachedImages.length == 0 && (talk.attachedDocs === undefined || talk.attachedDocs.length == 0) && !talk.isPollShow
                 && (talk.message.content == TEXT_DEFAULT_3 || !talk.message.content)){
 
                 talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "�� �� ����� ���������";
+                talk.createTalkErrorText = "Вы не ввели сообщение";
 
             }else if(talk.isPollShow && (!talk.pollSubject || talk.pollInputs[0].name == "" || talk.pollInputs[1].name == "")){
 
                 talk.isCreateTalkError = true;
-                talk.createTalkErrorText = "�� �� ������� ������ ��� ������";
+                talk.createTalkErrorText = "Вы не указали данные для опроса";
 
             }else {
 
@@ -576,12 +575,12 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                 && (ctrl.message.content == TEXT_DEFAULT_1 || !ctrl.message.content)) {
 
                 ctrl.isCreateMessageError = true;
-                ctrl.createMessageErrorText = "�� �� ����� ���������";
+                ctrl.createMessageErrorText = "Вы не ввели сообщение";
 
             } else if (ctrl.isPollShow && (!ctrl.pollSubject || ctrl.pollInputs[0].name == "" || ctrl.pollInputs[1].name == "")) {
 
                 ctrl.isCreateMessageError = true;
-                ctrl.createMessageErrorText = "�� �� ������� ������ ��� ������";
+                ctrl.createMessageErrorText = "Вы не указали данные для опроса";
 
             } else {
 
@@ -619,10 +618,10 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             }
 
             if(ctrl.isTalk){
-                // ������ ��� talk
+                // значит это talk
                 addSingleTalk(ctrl);
             }else {
-                // ������ ��� wall
+                // значит это wall
                 createWallTopic(ctrl);
             }
         };
@@ -636,7 +635,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
 
             if(message == 0){
                 wallItem.isCreateCommentError = true;
-                wallItem.createCommentErrorText = "�� �� ����� ���������";
+                wallItem.createCommentErrorText = "Вы не ввели сообщение";
             }else {
                 wallItem.isCreateCommentError = false;
                 base.initStartParamsForCreateMessage(message);
@@ -672,7 +671,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
 
             if(newMessage == 0){
                 talk.isCreateFirstMessageError = true;
-                talk.createFirstMessageErrorText = "�� �� ����� ���������";
+                talk.createFirstMessageErrorText = "Вы не ввели сообщение";
             }else {
                 talk.fullTalkTopic ?
                 talk.fullTalkTopic.answerInputIsShow = false :
@@ -723,7 +722,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             var newMessage,answer,parentId;
 
             if(!message){
-                // ���� ��������� � ��������� ������� ������
+                // если добавляем к сообщению первого уровня
                 talk.messageId = firstMessage.id;
                 talk.message = firstMessage;
 
@@ -735,7 +734,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                 if(!firstMessage.childCount || firstMessage.childCount == 0) firstMessage.childCount = 1;
 
             }else{
-                // ���� ��������� � �������� ���������
+                // если добавляем к простому сообщению
                 talk.messageId = message.id;
                 talk.message = message;
 
@@ -763,10 +762,10 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             if(newMessage == 0){
                 if(!message){
                     talk.isCreateMessageToFirstError = true;
-                    talk.createMessageToFirstErrorText = "�� �� ����� ���������";
+                    talk.createMessageToFirstErrorText = "Вы не ввели сообщение";
                 }else{
                     talk.isCreateMessageError = true;
-                    talk.createMessageErrorText = "�� �� ����� ���������";
+                    talk.createMessageErrorText = "Вы не ввели сообщение";
                 }
             }else {
                 if(!message){
@@ -807,13 +806,13 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             if ((ctrl.commentText != TEXT_DEFAULT_1 && ctrl.commentText != "") || attach.length != 0) {
 
                 if(ctrl.isEdit){
-                    // ������ ��������������
+                    // значит редактирование
 
                     var attachImg = getAttachedImages($('#attach-area-edit-'+ctrl.attachId));
                     var attachDoc = getAttachedDocs($('#attach-doc-area-edit-'+ctrl.attachId),true);
                     attach = attachImg.concat(attachDoc);
 
-                    // ��� attach
+                    // еще attach
                     ctrl.commentText = $filter('linky')(ctrl.commentText,'blank');
                     ctrl.commentText = withTags(ctrl.commentText);
                     dialogClient.updateDialogMessage(ctrl.id, ctrl.commentText,attach);
@@ -828,7 +827,7 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                     ctrl.isEdit = false;
 
                 }else {
-                    // ������ ��������
+                    // значит создание
                     attach = getAttachedImages($('#attach-area-'+ctrl.attachId)).concat(getAttachedDocs($('#attach-doc-area-'+ctrl.attachId)));
 
                     var newDialogMessage = new com.vmesteonline.be.messageservice.DialogMessage();
@@ -857,8 +856,8 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
                     $rootScope.base.initStartParamsForCreateMessage(newDialogMessage);
 
                     if(ctrl.privateMessages.length == 1){
-                        // �� ������ ���� � 0 ����������� ����� 20 ���������
-                        // ����� ��������� �� 1�� ��������� � �� �� 0
+                        // на случай если с 0 добавляется более 20 сообщений
+                        // чтобы подгружал от 1го сообщения а не от 0
                         $rootScope.base.lastLoadedId = newDialogMessage.id;
                     }
 
@@ -916,11 +915,11 @@ forumControllers.controller('baseController',function($rootScope,$state,$filter)
             }
 
             if(ctrl.id || ctrl.isDialog){
-                // ������ ��������������
+                // занчит редактирование
                 if(!ctrl.isTalk) ctrl.commentText = ctrl.content;
                 ctrl.answerShow = true;
             }else{
-                // ������ ��������
+                // значит создание
             }
 
         };
