@@ -1185,14 +1185,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
 
         $('.ng-cloak').removeClass('ng-cloak');
     })
-    /*.controller('rightBarController',function($rootScope) {
-
-        $rootScope.importantTopics = messageClient.getImportantNews($rootScope.currentGroup.id);
-        $rootScope.importantIsLoadedFromTop = true;
-
-        $('.ng-cloak').removeClass('ng-cloak');
-
-    })*/
     .controller('LentaController',function($rootScope) {
 
         $rootScope.setTab(1);
@@ -3239,40 +3231,6 @@ angular.module('forum.controllers', ['ui.select2','infinite-scroll','ngSanitize'
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
         };
-    })
-    .factory( '$counters', function() {
-        return {
-            getCounters : utilityClient.getCounters(),
-            getTypeString : function (type){
-                var typeString;
-
-                switch (parseInt(type)){
-                    case 0:
-                        typeString = "Горячая вода";
-                        break;
-                    case 1:
-                        typeString = "Холодная вода";
-                        break;
-                    case 2:
-                        typeString = "Электричество(общий)";
-                        break;
-                    case 3:
-                        typeString = "Электричество(ночь)";
-                        break;
-                    case 4:
-                        typeString = "Электричество(день)";
-                        break;
-                    case 5:
-                        typeString = "Газ";
-                        break;
-                    case 6:
-                        typeString = "Другое";
-                        break;
-                }
-
-                return typeString;
-            }
-        }
     })
     .controller('CountersHistoryController',function($scope,$stateParams,$rootScope,$counters) {
 

@@ -1,11 +1,10 @@
 'use strict';
 
-// Declare app level module which depends on filters, and services
 var main = angular.module('forum', [
   //'ngRoute',
   'ui.router',
- /* 'forum.filters',
-  'forum.services',*/
+ /* 'forum.filters',*/
+  'forum.services',
   'forum.directives',
   'forum.controllers'
 ]);

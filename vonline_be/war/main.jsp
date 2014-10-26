@@ -42,14 +42,14 @@
 <link rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
 <link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
-<link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
+<link rel="stylesheet" href="js/bower_components/select2/select2.css"/>
 
 <%--<script src="js/lib/jquery-2.1.1.min.js"></script>--%>
     <script type="text/javascript" src="//api-maps.yandex.ru/2.1/?load=package.full&lang=ru_RU&coordorder=longlat"></script>
 
 
     <script src="js/lib/jquery-2.0.3.js"></script>
-    <script src="js/forum/angular/angular.js"></script>
+    <script src="js/angular/angular.js"></script>
 <!--[if lt IE 9]>
     <script>
         document.createElement('header');
@@ -61,9 +61,9 @@
     <![endif]-->
 
     <script src="js/lib/jquery.Jcrop.min.js"></script>
-    <script src="js/forum/bower_components/select2/select2.min.js"></script>
-    <script src="js/forum/bower_components/angular-ui-select2/src/select2.js"></script>
-    <script src="js/forum/angular/ng-infinite-scroll.js"></script>
+    <script src="js/bower_components/select2/select2.min.js"></script>
+    <script src="js/bower_components/angular-ui-select2/src/select2.js"></script>
+    <script src="js/angular/ng-infinite-scroll.js"></script>
 
 </head>
 <body ng-controller="baseController as base" ng-cloak ng-class="{'height100': !base.isFooterBottom}"> <!--  -->
@@ -297,18 +297,42 @@
 	<!-- -->
 
 	<!-- собственные скрипты  -->
-	<%--<script src="js/common.js"></script>--%>
-	<%--<script src="js/forum/main.js"></script>--%>
-<script src="js/forum/directives.js"></script>
-<script src="js/forum/controllers.js"></script>
-<script src="js/forum/angular/angular-ui-router.js"></script>
-<script src="js/forum/angular/sanitize.js"></script>
-<script src="js/forum/angular/linky-custom.js"></script>
-<script src="js/forum/angular/ui-bootstrap-tpls-0.11.2.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/services.js"></script>
+<%--<script src="js/controllers.js"></script>--%>
 
-	<script src="js/forum/app.js"></script>
+<script src="js/controllers/baseController.js"></script>
+<script src="js/controllers/mainContentTopController.js"></script>
+<script src="js/controllers/leftbarController.js"></script>
+<script src="js/controllers/navbarController.js"></script>
+<script src="js/controllers/LentaController.js"></script>
+<script src="js/controllers/WallSingleController.js"></script>
+<script src="js/controllers/TalksController.js"></script>
+<script src="js/controllers/TalksSingleController.js"></script>
+<script src="js/controllers/AdvertsController.js"></script>
+<script src="js/controllers/AdvertsSingleController.js"></script>
+<script src="js/controllers/neighboursController.js"></script>
+<script src="js/controllers/ProfileController.js"></script>
+<script src="js/controllers/SettingsController.js"></script>
+<script src="js/controllers/dialogsController.js"></script>
+<script src="js/controllers/dialogController.js"></script>
+<script src="js/controllers/changeAvatarController.js"></script>
+<script src="js/controllers/MapsController.js"></script>
+<script src="js/controllers/SetInfoController.js"></script>
+<script src="js/controllers/CountersController.js"></script>
+<script src="js/controllers/ModalInstanceCtrl.js"></script>
+<script src="js/controllers/CountersHistoryController.js"></script>
+<script src="js/controllers/importantController.js"></script>
 
-<script src="js/forum/angular/ya-map-2.1.min.js" type="text/javascript"></script>
+<script src="js/angular/angular-ui-router.js"></script>
+<script src="js/angular/sanitize.js"></script>
+<script src="js/angular/linky-custom.js"></script>
+<script src="js/angular/ui-bootstrap-tpls-0.11.2.min.js"></script>
+
+	<script src="js/app.js"></script>
+
+<script src="js/angular/ya-map-2.1.min.js" type="text/javascript"></script>
 
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
