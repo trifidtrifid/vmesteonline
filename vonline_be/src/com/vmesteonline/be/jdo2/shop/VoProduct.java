@@ -63,7 +63,8 @@ public class VoProduct implements Serializable {
 			VoHelper.copyIfNotNull(this, "minClientPack",newInfo.product.minClientPack);
 			try {
 				String imageURL2 = newInfo.product.getImageURL();
-				this.imageURL = null == imageURL2 ? null : StorageHelper.replaceImage( imageURL2, this.imageURL, userId, true, _pm);
+				if( null != imageURL2 && imageURL2.trim().length() > 0 ) 
+					this.imageURL =  StorageHelper.replaceImage( imageURL2, this.imageURL, userId, true, _pm);
 			} catch (Exception e) {
 				e.printStackTrace();
 				//setImageURL(null);
