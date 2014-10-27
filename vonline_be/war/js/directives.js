@@ -2,7 +2,6 @@
 
 /* Directives */
 
-
 angular.module('forum.directives', []).
   directive('ngHasfocus', function() {
         return function(scope, element, attrs) {
@@ -25,6 +24,71 @@ angular.module('forum.directives', []).
                 if (e.which == 13)
                     scope.$apply(attrs.ngHasfocus + " = false");
             });
+        }
+    })
+    .directive('button',function(){
+        return {
+            restrict : 'E',
+            compile: function(element,attributes){
+                element.addClass('btn');
+                if(attributes.type == "submit"){
+                    element.addClass('btn-primary');
+                }
+                if(attributes.size){
+                    element.addClass('btn-'+attributes.size);
+                }
+
+            }
+        }
+
+    })
+    .directive('pagination',function(){
+        /*
+        * <pagination num-pages="task.count" current-page="task.current" on-select-page="selectPage()"></pagination>
+        * */
+        return{
+            template : '<div class="pagination">'+
+                '<ul>'+
+                '<li ng-class="{disabled: noPrevious()}"><a href="#" ng-click="selectPrevious()">Previous</a></li>'+
+                '<li ng-repeat="page in pages" ng-class="{active : isActive(page)}"><a href="#" ng-click="selectPage(page)">{{page}}</a></li>'+
+                '<li ng-class="{disabled: noNext()}"><a href="#" ng-click="selectNext()">Next</a></li>'+
+                '</ul>'+
+                '</div>',
+            restrict:"E",
+            scope : {
+                numPages: "=",
+                currentPage: "=",
+                onSelectPage: "&"
+            },
+            replace: true,
+            link: function(scope){
+                scope.$watch('numPages',function(value){
+                    scope.pages = [];
+                    for(var i = 0; i <= value; i++){
+                        scope.pages.push(i);
+                    }
+                    if(scope.currentPage > value){
+                        scope.selectPage(value);
+                    }
+                });
+
+                scope.isActive = function(page){
+                    return scope.currentPage === page;
+                };
+
+                scope.selectPage = function(page){
+                    if(!scope.isActive(page)){
+                        scope.currentPage = page;
+                        scope.onSelectPage({page : page});
+                    }
+                };
+
+                scope.selectNext = function(){
+                    if (!scope.noNext()){
+                        scope.selectPage(scope.currentPage + 1);
+                    }
+                };
+            }
         }
     });
 

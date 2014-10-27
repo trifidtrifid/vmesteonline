@@ -176,7 +176,7 @@
         <script src="gen-js/authservice_types.js" type="text/javascript"></script>
         <script src="gen-js/AuthService.js" type="text/javascript"></script>        <!-- -->
 
-        <script src="js/forum/login.js"></script>
+        <script src="js/login.js"></script>
 
         <!-- Yandex.Metrika counter -->
         <script type="text/javascript">

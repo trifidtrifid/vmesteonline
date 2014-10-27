@@ -41,7 +41,7 @@ AuthServiceImpl.checkIfAuthorised(sess.getId());
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/lib/fancybox/jquery.fancybox.css"/>
     <link rel="stylesheet" href="css/lib/jquery.Jcrop.css"/>
-    <link rel="stylesheet" href="js/forum/bower_components/select2/select2.css"/>
+    <link rel="stylesheet" href="js/bower_components/select2/select2.css"/>
 
     <link rel="shortcut icon" href="i/landing/vmesteonline.png">
 
