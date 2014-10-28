@@ -72,7 +72,7 @@ public class VoProduct implements Serializable {
 			VoHelper.copyIfNotNull(this, "price",newInfo.product.price);
 			VoHelper.copyIfNotNull(this, "fullDescr",newInfo.details.fullDescr);
 			
-			if(null!=newInfo.details.getImagesURLset()){
+			if(null!=newInfo.details.getImagesURLset() && newInfo.details.getImagesURLset().size() > 0){
 				this.imagesURLset = new ArrayList<String>();
 			
 				for (String imgURL : newInfo.details.getImagesURLset())
