@@ -207,7 +207,14 @@ public class VoUserGroup extends GeoLocation implements Comparable<VoUserGroup> 
 		do{
 			upperGroups.add(pg.getId());
 			for (Long gid : pg.visibleGroups) {
-				if( (slg = pm.getObjectById(VoUserGroup.class, gid)).getGroupType() == pg.getGroupType() )
+				VoUserGroup vug;
+				try {
+					vug = pm.getObjectById(VoUserGroup.class, gid);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+				if( (slg = vug).getGroupType() == pg.getGroupType() )
 					upperGroups.add(slg.getId());
 			}
 			

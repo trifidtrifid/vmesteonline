@@ -226,7 +226,7 @@ public class StorageHelper {
 				VoFileAccessRecord theVersion = vfar.getVersion( queryString );
 				if( null == theVersion ){
 					theVersion = vfar.getVersion( req.getParameterMap(), pm );
-					vfar.setVersion(queryString, theVersion);
+					//vfar.setVersion(queryString, theVersion);
 				}
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
