@@ -71,23 +71,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/thrift/fs</url-pattern>
 	</servlet-mapping>
 	<servlet>
-		<servlet-name>about</servlet-name>
-		<jsp-file>/about-shop.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>about</servlet-name>
-		<url-pattern>/about/*</url-pattern>
-	</servlet-mapping>
-	<servlet>
-		<servlet-name>backoffice</servlet-name>
-		<jsp-file>backoffice.jsp</jsp-file>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>backoffice</servlet-name>
-		<url-pattern>/backoffice/*</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
 		<servlet-name>MainShop</servlet-name>
 		<jsp-file>/shop.jsp</jsp-file>
 	</servlet>
