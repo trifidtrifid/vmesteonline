@@ -529,10 +529,10 @@ public class VoShop {
 //======================================================================================================================
 	public PriceType getPriceType(int date) throws InvalidOperation {
 		
-		date -= date % 86400;
+		//date -= date % 86400;
 		
-		Calendar now = Calendar.getInstance();
-		Calendar theDate = Calendar.getInstance();
+		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
+		Calendar theDate = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 		theDate.setTimeInMillis(((long)date)*1000L);
 		
 		for( OrderDates d : dates ){
@@ -541,7 +541,7 @@ public class VoShop {
 				( d.eachOddEven == 0 || 
 						d.eachOddEven == 1 && 1 == theDate.get(Calendar.WEEK_OF_YEAR) % 2  ||
 						d.eachOddEven == 2 && 0 == theDate.get(Calendar.WEEK_OF_YEAR) % 2 ) ) {
-				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore - 1) - now.get(Calendar.ZONE_OFFSET) )
+				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore))
 					return d.getPriceTypeToUse();
 				
 			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &&
@@ -561,10 +561,9 @@ public class VoShop {
 
 		List<OrderDate> odates = new ArrayList<OrderDate>();
 		
-		Calendar afterDateCldr = Calendar.getInstance();
-		from -= TimeZone.getTimeZone("Europe/Moscow").getRawOffset()/1000L;
+		Calendar afterDateCldr = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 		afterDateCldr.setTimeInMillis(((long)from)*1000L);
-		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK)) * 86400; //day of week of the date
+		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK) - afterDateCldr.getFirstDayOfWeek() + 1) * 86400 - from % 86400; //day of week of the date
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
@@ -593,9 +592,7 @@ public class VoShop {
 
 	public OrderDate getNextOrderDate(int afterDate ) throws InvalidOperation {
 		
-		afterDate -= afterDate % 86400;
-		
-		Calendar afterDateCldr = Calendar.getInstance();
+		Calendar afterDateCldr = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
 		int closestDelta = 1000;
 		PriceType pt = PriceType.INET;
@@ -612,7 +609,7 @@ public class VoShop {
 				
 				if( 1 == d.eachOddEven && 1 == afterDateCldr.get(Calendar.WEEK_OF_YEAR % 2 ) || 
 						2 == d.eachOddEven && 0 == afterDateCldr.get(Calendar.WEEK_OF_YEAR % 2 ) || 
-						0 == d.eachOddEven );
+						0 == d.eachOddEven );//not implemented
 				else
 					delta += 7;
 				

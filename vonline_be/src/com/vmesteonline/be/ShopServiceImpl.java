@@ -397,12 +397,17 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		else if (date < System.currentTimeMillis() / 1000L)
 				throw new InvalidOperation(VoError.IncorrectParametrs, "Order could not be created for the past");
 
-		date -= date % 86400;
 		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			pm.retrieve(shop);
-			PriceType pt = shop.getPriceType( date );
+			PriceType pt;
+			try {
+				pt = shop.getPriceType( date );
+			} catch (Exception e) {
+				date = getNextOrderDate( (int)(System.currentTimeMillis() / 1000L)).orderDate;
+				pt = shop.getPriceType( date );
+			}
 			
 			VoUser user = getCurrentUser(pm);
 			VoOrder voOrder = new VoOrder(user, shop, date, pt, comment, pm);
@@ -473,7 +478,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
-			
+			moveOrderDateIfExpired(currentOrder, pm);
 			currentOrder.setStatus(OrderStatus.CONFIRMED);
 			if( null!=comment ) currentOrder.setComment(comment);
 			// unset current order
@@ -488,6 +493,14 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			return currentOrder.getId();
 		} finally {
 			
+		}
+	}
+
+	private void moveOrderDateIfExpired(VoOrder currentOrder, PersistenceManager pm) throws InvalidOperation {
+		int now = (int)(System.currentTimeMillis()/1000L);
+		OrderDate nextOrderDate = pm.getObjectById(VoShop.class,currentOrder.getShopId()).getNextOrderDate(now);
+		if( nextOrderDate.orderDate % 86400 > now % 86400 ){
+			currentOrder.setDate( nextOrderDate.orderDate );
 		}
 	}
 
@@ -596,6 +609,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 				double addCost = 0.0;
 				double addWeigth = 0.0;
 				VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
+				
+				moveOrderDateIfExpired(currentOrder, pm);
 				
 				Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 				List<VoOrderLine> oldOrderLinesList = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+oldOrderId).execute();
@@ -792,6 +807,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 		try {
 			VoOrder currentOrder =  0 == orderId ? ShopServiceHelper.getCurrentOrder( this, pm ) : pm.getObjectById(VoOrder.class, orderId);
 
+			moveOrderDateIfExpired(currentOrder, pm);
 			//look if product was ordered already
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			
