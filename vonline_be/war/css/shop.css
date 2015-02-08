@@ -97,6 +97,7 @@ footer.short-footer .container {
   display: inline-block;
   color: #fff;
   margin-left: 5px;
+  font-size: 18px;
 }
 .navbar a.header-link:hover {
   text-decoration: none;
@@ -547,7 +548,6 @@ th.next,
 }
 .catalog-head table {
   background: #f9f9f9;
-  font-style: italic;
   width: 100%;
 }
 .catalog-head table td {

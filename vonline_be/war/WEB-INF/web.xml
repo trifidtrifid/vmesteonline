@@ -87,6 +87,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>about</servlet-name>
 		<url-pattern>/about/*</url-pattern>
+		<url-pattern>/terms/*</url-pattern>
+		<url-pattern>/delivery-terms/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

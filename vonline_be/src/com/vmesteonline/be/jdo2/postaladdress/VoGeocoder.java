@@ -298,7 +298,7 @@ public class VoGeocoder {
 
 		@Override
 		public void setLattitude(String string) {
-			longitude = new BigDecimal(string);			
+			lattitude = new BigDecimal(string);			
 		}
 
 		@Override

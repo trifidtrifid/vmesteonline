@@ -1457,15 +1457,15 @@ public class ShopServiceImpl extends ServiceImpl implements /*ShopBOService.Ifac
 			throws InvalidOperation {
 		
 		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург "+buildingAddressText);
-		if( null == addrInfo.getBuildingNo() || !addrInfo.isExact()){
+		if( null == addrInfo.getBuildingNo() ) {
 			addrInfo.setStreetName( buildingAddressText );
-			addrInfo.getBuildingNo("");
-			addrInfo.setCityName("Санкт Петербург");
-			addrInfo.setCountryName("Россия");
-			addrInfo.setLongitude("1"); 
-			addrInfo.setLattitude("1");
+			addrInfo.getBuildingNo("- дом не найден на карте! Уточните, пожалуйста, или введите в комментарии ниже.");
+			addrInfo.setLongitude("30.419349"); 
+			addrInfo.setLattitude("59.734401");
 		}
-		
+		if( null==addrInfo.getCityName()) addrInfo.setCityName("Санкт Петербург");
+		if( null==addrInfo.getCountryName()) addrInfo.setCountryName("Россия");
+					
 		PersistenceManager pm = getPM();
 		try {
 			VoUser currentUser = getCurrentUser(pm);  
