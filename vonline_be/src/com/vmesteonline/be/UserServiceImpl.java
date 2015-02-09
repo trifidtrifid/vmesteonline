@@ -455,7 +455,7 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 	@Override
 	
 	public FullAddressCatalogue getAddressCatalogue() throws InvalidOperation {
-		FullAddressCatalogue fac = getObjectFromCache("fullAddressCatalogue");
+		/*FullAddressCatalogue fac = getObjectFromCache("fullAddressCatalogue");
 		
 		if( null==fac ){
 			PersistenceManager pm = getPM();
@@ -493,7 +493,8 @@ public class UserServiceImpl extends ServiceImpl implements UserService.Iface {
 				
 			}
 		}
-		return fac;
+		return fac*/;
+		return new FullAddressCatalogue( new HashSet<Country>(), new ArrayList<City>(), new ArrayList<Street>(),new ArrayList<Building>());
 	}
 
 	// TODO this method called only once in test. may be unused?

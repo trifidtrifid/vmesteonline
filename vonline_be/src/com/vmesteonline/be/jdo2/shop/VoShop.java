@@ -529,30 +529,31 @@ public class VoShop {
 //======================================================================================================================
 	public PriceType getPriceType(int date) throws InvalidOperation {
 		
-		//date -= date % 86400;
+		return PriceType.INET;
+		/*
 		
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
 		Calendar theDate = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-		theDate.setTimeInMillis(((long)date)*1000L);
+		theDate.setTimeInMillis(((long)(date - date%86400))*1000L);
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY && 
-				d.orderDay == theDate.get(Calendar.DAY_OF_WEEK) &&
+				d.orderDay == theDate.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 1&&
 				( d.eachOddEven == 0 || 
 						d.eachOddEven == 1 && 1 == theDate.get(Calendar.WEEK_OF_YEAR) % 2  ||
 						d.eachOddEven == 2 && 0 == theDate.get(Calendar.WEEK_OF_YEAR) % 2 ) ) {
-				if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore))
+				if( now.getTimeInMillis() - now.getTimeInMillis() % 86400000L < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore))
 					return d.getPriceTypeToUse();
 				
 			} else if( d.type == OrderDatesType.ORDER_MOUNTHLY &&
 					( d.eachOddEven == 0 || 
 					d.eachOddEven == 1 && 1 == theDate.get(Calendar.MONTH) % 2  ||
 					d.eachOddEven == 2 && 0 == theDate.get(Calendar.MONTH) % 2 ) ) {
-			if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)d.orderBefore )
+			if( now.getTimeInMillis() < theDate.getTimeInMillis() - 86400000L * (long)(d.orderBefore))
 				return d.getPriceTypeToUse();
 			}
 		}
-		throw new InvalidOperation( VoError.IncorrectParametrs, "Order could not be created for date "+new Date(1000L * (long)date).toGMTString());
+		throw new InvalidOperation( VoError.IncorrectParametrs, "Order could not be created for date "+new Date(1000L * (long)date).toGMTString());*/
 	}
 
 	//=====================================================================================================================
@@ -562,12 +563,15 @@ public class VoShop {
 		List<OrderDate> odates = new ArrayList<OrderDate>();
 		
 		Calendar afterDateCldr = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-		afterDateCldr.setTimeInMillis(((long)from)*1000L);
-		int startOfWeek = from - (afterDateCldr.get(Calendar.DAY_OF_WEEK) - afterDateCldr.getFirstDayOfWeek() + 1) * 86400 - from % 86400; //day of week of the date
+		int gmtOffset = afterDateCldr.get(Calendar.ZONE_OFFSET) / 1000;
+		from = from + gmtOffset;
+		afterDateCldr.setTimeInMillis(((long)(from - from%86400))*1000L);
+		afterDateCldr.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		int startOfWeek = (int)(afterDateCldr.getTime().getTime()/1000L);
 		
 		for( OrderDates d : dates ){
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
-				int start = startOfWeek + d.orderDay *86400; 
+				int start = startOfWeek + (d.orderDay - 1) *86400; 
 				start -= start % 86400;
 				while( start - (d.orderBefore - 1)* 86400 < from - from % 86400 ) 
 					start += 7 * 86400;
@@ -593,7 +597,8 @@ public class VoShop {
 	public OrderDate getNextOrderDate(int afterDate ) throws InvalidOperation {
 		
 		Calendar afterDateCldr = Calendar.getInstance(TimeZone.getTimeZone("Europe/Moscow"));
-		afterDateCldr.setTimeInMillis(((long)afterDate)*1000L);
+		afterDate = afterDate + afterDateCldr.get(Calendar.ZONE_OFFSET) / 1000;
+		afterDateCldr.setTimeInMillis(((long)afterDate - afterDate%86400)*1000L);
 		int closestDelta = 1000;
 		PriceType pt = PriceType.INET;
 
@@ -601,7 +606,7 @@ public class VoShop {
 			int delta;
 			
 			if( d.type == OrderDatesType.ORDER_WEEKLY ){
-				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
+				int afterDateDayOfWeek = afterDateCldr.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 1; //day of week of the date
 				int scheduleDayOfWeek = d.orderDay - d.orderBefore; //day of week for order before
 				if( scheduleDayOfWeek < 0 ) 
 					scheduleDayOfWeek = 7 + scheduleDayOfWeek;
@@ -616,7 +621,7 @@ public class VoShop {
 			} else { //d.type == OrderDatesType.ORDER_MONTHLY
 				
 				int ddow = afterDateCldr.get(Calendar.DAY_OF_WEEK); //day of week of the date
-				int dobow = d.orderDay - d.orderBefore; //day of week for order before
+				int dobow = d.orderDay - (d.orderBefore - 1); //day of week for order before
 				if( dobow < 0 ) 
 					dobow = afterDateCldr.getActualMaximum(Calendar.DAY_OF_MONTH) - dobow;
 				delta = ddow > dobow ? afterDateCldr.getActualMaximum(Calendar.DAY_OF_MONTH) - ddow + dobow : dobow - ddow;
@@ -639,7 +644,7 @@ public class VoShop {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No order dates found in nearest 1000 days after " + 
 		new Date(1000L * (long)afterDate));
 		
-		return new OrderDate( afterDate + closestDelta * 86400, pt);
+		return new OrderDate( afterDate + (closestDelta) * 86400 , pt);
 	}
 	
 	//VOTING
