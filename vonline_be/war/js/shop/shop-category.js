@@ -41,7 +41,7 @@ define(
 							+ '<a href="#" class="product-link">'
 							+ '<div class="product-pic"><img src="'
 							+ myPic
-							+ '?w=40&h=40" alt="фото"/></div>'
+							+ '?w=80&h=80" alt="фото"/></div>'
 							+ '<span><span class="product-name">'
 							+ productsList[i].name
 							+ '</span>'

@@ -11,6 +11,7 @@
 	</system-properties>
 
 	<sessions-enabled>true</sessions-enabled>
+	<async-session-persistence enabled="true" />
 	<use-google-connector-j>false</use-google-connector-j>
 
 	<!-- HTTP Sessions are disabled by default. To enable HTTP sessions specify: 
@@ -19,6 +20,6 @@
 		data to the datastore: <async-session-persistence enabled="true" /> With 
 		this feature enabled, there is a very small chance your app will see stale 
 		session data. For details, see http://code.google.com/appengine/docs/java/config/appconfig.html#Enabling_Sessions 
-		<async-session-persistence enabled="true" /> -->
+		 -->
 
 </appengine-web-app>

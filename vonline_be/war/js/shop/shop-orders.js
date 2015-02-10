@@ -46,7 +46,7 @@ define(
                     ordersProductsHtml += '<tr class="product" data-prepack="'+ orderLines[j].product.prepackRequired +'" data-productid="'+ orderLines[j].product.id +'">'+
                         '<td>'+
                         '<a href="#" class="product-link">'+
-                        '<div class="product-pic"><img src="'+ myPic + '?w=40&h=40" alt="'+ orderLines[j].product.name +'"/></div>'+
+                        '<div class="product-pic"><img src="'+ myPic + '?w=120&h=120" alt="'+ orderLines[j].product.name +'"/></div>'+
                         '<span>'+
                         '<span class="product-name">'+orderLines[j].product.name+'</span>'+
                         orderLines[j].product.shortDescr +

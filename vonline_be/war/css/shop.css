@@ -646,8 +646,8 @@ th.next,
   float: left;
 }
 .catalog table tr td .product-pic img {
-  max-width: 40px;
-  max-height: 40px;
+  max-width: 80px;
+  max-height: 80px;
 }
 .catalog table tr td .fa {
   font-size: 24px;

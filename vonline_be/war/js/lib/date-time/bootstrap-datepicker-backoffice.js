@@ -89,7 +89,7 @@
         var currentMonth = currentDateItem.getMonth();
 
         if (globalUserAuth){
-            var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
+            var orders = client.getOrdersByStatus(metaTime-10*day,metaTime+20*day,0);
             var ordersLength = orders.length;
 
             for (var i = 0; i < ordersLength; i++){
@@ -130,6 +130,7 @@
             }
             var orderDate = parseInt($(this).attr('id'));
             var day = 3600*24;
+            orderDate = orderDate - orderDate%day
             var orders = client.getOrdersByStatus(orderDate,orderDate+day,0);
             var ordersLength = orders.length;
             var orderList = [];

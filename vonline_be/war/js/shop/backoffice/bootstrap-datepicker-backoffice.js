@@ -95,7 +95,7 @@
             nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
-            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
+            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-15*day,metaTime+15*day,0);
             //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
             var ordersLength = orders.length;
 
@@ -144,14 +144,15 @@
             }else{
                 var orderDate = parseInt($(this).attr('id'));
                 var day = 3600*24;
-                var orders = client.getOrdersByStatus(orderDate-30*day,orderDate+30*day,0);
+                orderDate -= orderDate%day;
+                var orders = client.getOrdersByStatus(orderDate,orderDate+day,0);
                 var ordersLength = orders.length;
                 var orderList = [];
                 var counter = 0;
                 for (var i = 0; i < ordersLength; i++){
-                    if (orders[i].date == orderDate){
+                    
                         orderList[counter++] = orders[i];
-                    }
+                    
                 }
                 if(statusFilterFlag){
                     orderList = filterByStatus(orderList);

@@ -577,7 +577,7 @@ public class VoShop {
 					start += 7 * 86400;
 				
 				while( start < to ){
-					odates.add( new OrderDate( start, d.getPriceTypeToUse() ));
+					odates.add( new OrderDate( start - start%86400, d.getPriceTypeToUse() ));
 					start += 7*86400;
 				}
 			} 
@@ -644,7 +644,9 @@ public class VoShop {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No order dates found in nearest 1000 days after " + 
 		new Date(1000L * (long)afterDate));
 		
-		return new OrderDate( afterDate + (closestDelta) * 86400 , pt);
+		int orderDate = afterDate + closestDelta* 86400;
+		orderDate -= orderDate%86400;
+		return new OrderDate( orderDate , pt);
 	}
 	
 	//VOTING

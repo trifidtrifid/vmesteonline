@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -764,7 +765,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> orderFields,
 			Map<Integer, ExchangeFieldType> orderLineFIelds) throws InvalidOperation {
 		
-		date -= date % 86400;
+		int gmtOffset = TimeZone.getTimeZone("Europe/Moscow").getOffset(date)/1000;
+		date -= date % 86400 + gmtOffset;
 		DataSet ds = new DataSet();
 		ds.id = 0;
 		ds.name = "TotalOrdersReport";
@@ -776,7 +778,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date == " + date) + 
+			q.setFilter("shopId == " + shop.getId() + (0 == date ? "" : " && date >= " + date +" && date <= " + (date + 86400 + gmtOffset)) + 
 					" && status == '" + OrderStatus.CONFIRMED.toString() + "'" +
 					(deliveryType == DeliveryType.UNKNOWN || null == deliveryType ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 
@@ -836,44 +838,47 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				}
 				ordersMap.get(od.userId).put(od.orderId, productQM);
 				
-				if(null!=voOrder.getOrderLines()){
-					for (Long volId : voOrder.getOrderLines().values()) {
-						
-						VoOrderLine vol = pm.getObjectById(VoOrderLine.class, volId);
-						
-						
-						if(productsList.containsKey( vol.getProductId() ))
-								vop = productsList.get(vol.getProductId());
-						else {
-								vop = pm.getObjectById(VoProduct.class, vol.getProductId());
-								productsList.put(vol.getProductId(), vop);
-						}
-								
-						OrderLineDescription old = new OrderLineDescription();
-						old.lineId = vol.getId().getId();
-						old.quantity = vol.getQuantity();
-						old.orderId = voOrder.getId();
-						// TODO optimize count of requests to DB
-						old.productId = vol.getProductId();
-						old.productName = vop.getName();
-						old.producerId = vop.getProducerId();
-	
-						VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
-						old.producerName = vopr.getName();
-						old.price = vol.getPrice();
-						old.comment = vol.getComment();
-						if (null != vol.getPackets()) {
-							old.packets = new TreeMap<Double, Integer>();
-							old.packets.putAll(vol.getPackets());
-						}
-						oldl.add(old);
-			
-						productQM.put(old.productId, old.quantity);	
-					}
+				List<VoOrderLine> orderLines;
+				if(null==voOrder.getOrderLines() || voOrder.getOrderLines().size()==0 ){
+					orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+od.orderId).execute();					
 				} else {
-					
-					continue;
+					Collection<Long> orderLineIds = voOrder.getOrderLines().values();
+					orderLines = new ArrayList<VoOrderLine>(orderLineIds.size());
+					for (Long volId : orderLineIds) {
+						orderLines.add(pm.getObjectById(VoOrderLine.class, volId));
+					}
 				}
+				for( VoOrderLine vol : orderLines){
+						
+					if(productsList.containsKey( vol.getProductId() ))
+							vop = productsList.get(vol.getProductId());
+					else {
+							vop = pm.getObjectById(VoProduct.class, vol.getProductId());
+							productsList.put(vol.getProductId(), vop);
+					}
+							
+					OrderLineDescription old = new OrderLineDescription();
+					old.lineId = vol.getId().getId();
+					old.quantity = vol.getQuantity();
+					old.orderId = voOrder.getId();
+					// TODO optimize count of requests to DB
+					old.productId = vol.getProductId();
+					old.productName = vop.getName();
+					old.producerId = vop.getProducerId();
+
+					VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
+					old.producerName = vopr.getName();
+					old.price = vol.getPrice();
+					old.comment = vol.getComment();
+					if (null != vol.getPackets()) {
+						old.packets = new TreeMap<Double, Integer>();
+						old.packets.putAll(vol.getPackets());
+					}
+					oldl.add(old);
+		
+					productQM.put(old.productId, old.quantity);	
+				}
+
 				// collect all order line information
 				/*ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
 				ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_" + od.orderId + "_lines.csv", orderLineFIelds);
@@ -1133,7 +1138,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	@Override
 	public DataSet getTotalPackReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> packFields) throws InvalidOperation {
 
-		date -= date % 86400;
+		int gmtOffset = TimeZone.getTimeZone("Europe/Moscow").getOffset(date)/1000;
+		date -= date % 86400 + gmtOffset;
 		DataSet ds = new DataSet();
 		ds.date = date;
 		ds.id = 0;
@@ -1144,7 +1150,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
 			// import get all of orders for the shop by date
 			Query q = pm.newQuery(VoOrder.class);
-			q.setFilter("shopId == " + shop.getId() + " && date == " + date +
+			q.setFilter("shopId == " + shop.getId() + " && date >= " + date + " && date <=" + (date+86400)+
 					" && status == '" + OrderStatus.CONFIRMED.toString() + "'" +
 					(deliveryType == DeliveryType.UNKNOWN ? "" : " && delivery == '" + deliveryType.toString() + "'"));
 

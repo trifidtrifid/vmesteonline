@@ -13,7 +13,7 @@ define(
             function showAllOrders(){
                 try{
                     // глобальная переменная для совмесстного использования с datepicker
-                    orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+                    orders = thriftModule.client.getOrdersByStatus(0,nowTime+30*day,0);
 
                     $('.orders-list').html("").append(createOrdersHtml(orders));
 
