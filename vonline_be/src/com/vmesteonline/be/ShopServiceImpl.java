@@ -1249,7 +1249,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		if (0 == dateFrom) // it's to expensive to show all orders
 			dateFrom = getNextOrderDate((int) (System.currentTimeMillis() / 1000L - 7L * 86400000L)).orderDate;
 
-		return getOrdersByStatus(0, dateFrom, dateTo, status);
+		return getOrdersByStatus(0, dateFrom, dateTo + 10, status);
 	}
 
 	// ======================================================================================================================

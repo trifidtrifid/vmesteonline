@@ -761,6 +761,19 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	// ======================================================================================================================
 
+	private static class OrderExtenion {
+		
+		public OrderExtenion(DeliveryType deliveryType, String deliveryAddress, double deliveryCost, String comment) {
+			this.deliveryType = deliveryType;
+			this.deliveryAddress = deliveryAddress;
+			this.comment = comment;
+			this.deliveryCost = deliveryCost;
+		}
+		DeliveryType deliveryType;
+		String deliveryAddress;
+		String comment;
+		Double deliveryCost;
+	}
 	@Override
 	public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> orderFields,
 			Map<Integer, ExchangeFieldType> orderLineFIelds) throws InvalidOperation {
@@ -803,13 +816,16 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			
 			// collect total orders CSV
 			List<List<String>> toFieldsData = new ArrayList<List<String>>();
+			Map<Long, OrderExtenion> orderExtMap = new HashMap<>();
 			
 			for (VoOrder voOrder : olist) {
 				
 				if( voOrder.getStatus() != OrderStatus.CONFIRMED )
 					continue;
-				
-				OrderDescription od = new OrderDescription();
+				VoUser user = voOrder.getUser();
+				OrderExtenion oe = new OrderExtenion(voOrder.getDelivery(), voOrder.getDeliveryTo().getAddressText(pm), voOrder.getDeliveryCost(), voOrder.getComment());
+				orderExtMap.put(voOrder.getId(), oe);
+				/*OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
 				od.date = new Date( ((long)date) * 1000L ).toString();
 				od.status = voOrder.getStatus();
@@ -823,24 +839,24 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				od.paymentType = voOrder.getPaymentType();
 				od.paymentStatus = voOrder.getPaymentStatus();
 				od.comment = voOrder.getComment();
-				VoUser user = voOrder.getUser();
+				
 				od.userId = user.getId();
 				od.userName = user.getName() + " " + user.getLastName();
-				od.weight = voOrder.getWeightGramm();
+				od.weight = voOrder.getWeightGramm();*/
 				
 				ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
 				Map<Long,Double> productQM = new TreeMap<Long, Double>();
 				
 				
-				if( !usersMap.containsKey(od.userId) ){ 
-					ordersMap.put( od.userId, new TreeMap<Long, Map<Long,Double>>());
-					usersMap.put(od.userId,user);
+				if( !usersMap.containsKey(user.getId()) ){ 
+					ordersMap.put( user.getId(), new TreeMap<Long, Map<Long,Double>>());
+					usersMap.put(user.getId(),user);
 				}
-				ordersMap.get(od.userId).put(od.orderId, productQM);
+				ordersMap.get(user.getId()).put(voOrder.getId(), productQM);
 				
 				List<VoOrderLine> orderLines;
 				if(null==voOrder.getOrderLines() || voOrder.getOrderLines().size()==0 ){
-					orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+od.orderId).execute();					
+					orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+voOrder.getId()).execute();					
 				} else {
 					Collection<Long> orderLineIds = voOrder.getOrderLines().values();
 					orderLines = new ArrayList<VoOrderLine>(orderLineIds.size());
@@ -857,7 +873,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 							productsList.put(vol.getProductId(), vop);
 					}
 							
-					OrderLineDescription old = new OrderLineDescription();
+					/*OrderLineDescription old = new OrderLineDescription();
 					old.lineId = vol.getId().getId();
 					old.quantity = vol.getQuantity();
 					old.orderId = voOrder.getId();
@@ -874,9 +890,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 						old.packets = new TreeMap<Double, Integer>();
 						old.packets.putAll(vol.getPackets());
 					}
-					oldl.add(old);
+					oldl.add(old);*/
 		
-					productQM.put(old.productId, old.quantity);	
+					productQM.put(vol.getProductId(), vol.getQuantity());	
 				}
 
 				// collect all order line information
@@ -919,7 +935,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			ds.addToData(ordersLinesTO);*/
 			
 			//create orders matrix
-			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, productsList, usersMap, pm));
+			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, orderExtMap, productsList, usersMap, pm));
 			
 			//add total orders info
 			/*ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
@@ -951,7 +967,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		return out;
 	}
 //======================================================================================================================
-	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, VoProduct> productsList,
+	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, OrderExtenion> orderExtMap, Map<Long, VoProduct> productsList,
 			Map<Long, VoUser> usersMap, PersistenceManager pm) throws IOException {
 		/*
 		User ID - Order ID - product ID - Quantity Map
@@ -966,12 +982,17 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ArrayList<String> lineOfProductId = new ArrayList<String>();
 		ArrayList<String> lineOfProductImportId = new ArrayList<String>();
 		
-		lineOfProductNames.add("");//skip three lines
-		lineOfProductNames.add("");
-		lineOfProductNames.add("");
-		lineOfProductVendors.addAll(lineOfProductNames);
-		lineOfProductId.addAll(lineOfProductNames);
-		lineOfProductImportId.addAll(lineOfProductNames);
+		List<String> threePlaceHolders = new ArrayList<>(3);
+		threePlaceHolders.addAll( Arrays.asList( new String[]{"","",""}));
+		List<String> fourPlaceHolders = new ArrayList<>(4);
+		fourPlaceHolders.addAll( Arrays.asList( new String[]{"","","",""}));
+		
+		
+		//skip two lines that would be taken by order ID, client name, client number
+		lineOfProductVendors.addAll(threePlaceHolders);
+		lineOfProductId.addAll(threePlaceHolders);
+		lineOfProductImportId.addAll(threePlaceHolders);
+		lineOfProductNames.addAll(threePlaceHolders);
 		
 		for( VoProduct nextProduct : productsList.values() ){
 			lineOfProductNames.add(nextProduct.getName());
@@ -979,12 +1000,19 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			lineOfProductId.add(""+nextProduct.getId());
 			lineOfProductImportId.add(""+nextProduct.getImportId());
 		}
+		//add placeholder for orderExtension to each orderCOlumn
+		lineOfProductNames.addAll(fourPlaceHolders);
+		lineOfProductVendors.addAll( Arrays.asList(new String[]{"Тип доставки", "Адрес доставки","Стоимость доставки", "Комменатарий"}));
+		lineOfProductId.addAll(fourPlaceHolders);
+		lineOfProductImportId.addAll(fourPlaceHolders);
+		
+		int extStartPos = lineOfProductNames.size();
 		
 		productsMatrix.add(lineOfProductVendors);
 		lineOfProductVendors.set(0, "VENDOR");
 		
 		productsMatrix.add(lineOfProductId);
-		lineOfProductId.set(0,"INT PRODUCT ID");
+		lineOfProductId.set(0,"INT PRODUCT ID"); 
 		
 		productsMatrix.add(lineOfProductImportId);
 		lineOfProductImportId.set(0, "PRODUCT ID");
@@ -1006,9 +1034,16 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					Double quantity = orderEntry.getValue().get( nextProduct.getId() );
 					line.add( "" + (quantity == null ? "" : ""+quantity));
 				}
+				line.add( orderExtMap.get(orderEntry.getKey()).deliveryType.name() );
+				line.add( orderExtMap.get(orderEntry.getKey()).deliveryAddress );
+				line.add( ""+orderExtMap.get(orderEntry.getKey()).deliveryCost );				
+				line.add( orderExtMap.get(orderEntry.getKey()).comment );
+				
 				userOrdrersCounter ++;
 			}
 		}
+		
+		
 		productsMatrix = VoHelper.transMatrix(productsMatrix);
 		//add orders matrix
 		ImportElement ordersMtxIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders_matrix.csv", null);
