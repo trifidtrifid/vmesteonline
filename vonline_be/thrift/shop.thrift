@@ -235,4 +235,6 @@ service ShopFEService {
 	i32 vote( 1:i64 shopId, 2:string value)	throws (1:error.InvalidOperation exc),
 	map<string,i32> getVotes(1:i64 shopId)	throws (1:error.InvalidOperation exc),
 	bool isActivated(1:i64 shopId)	throws (1:error.InvalidOperation exc),
+	
+	list<bedata.PostalAddress> getPickupAddresses( 1:i64 shopId ) throws (1:error.InvalidOperation exc),	
 }

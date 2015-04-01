@@ -890,11 +890,11 @@ th.next,
   display: inline-block;
 }
 .modal .product-slider .slider >li {
-  height: 192px;
-  line-height: 192px;
+  height: 292px;
+  line-height: 292px;
 }
 .modal .product-slider .slider img {
-  max-width: 192px;
+  max-width: 292px;
   max-height: 172px;
   vertical-align: top;
 }

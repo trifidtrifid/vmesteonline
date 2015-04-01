@@ -129,4 +129,7 @@ service ShopBOService {
 	shop.ShopPages getShopPages(1:i64 shopId) throws (1:error.InvalidOperation exc),
 	
 	double totalShopReturn(1:i64 shopId, 2:i32 fromDate, 3:i32 toDate) throws (1:error.InvalidOperation exc),
+	
+	list<bedata.PostalAddress> addPickupAddress( 1:i64 shopId, 2:bedata.PostalAddress pickupAddsess ) throws (1:error.InvalidOperation exc),
+	void deletePickupAddress( 1:i64 shopId, 2:i64 addressId ) throws (1:error.InvalidOperation exc),	
 }

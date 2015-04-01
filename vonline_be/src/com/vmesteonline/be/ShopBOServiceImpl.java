@@ -763,16 +763,18 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 	private static class OrderExtenion {
 		
-		public OrderExtenion(DeliveryType deliveryType, String deliveryAddress, double deliveryCost, String comment) {
+		public OrderExtenion(DeliveryType deliveryType, String deliveryAddress, double deliveryCost, String comment, String phoneNumber) {
 			this.deliveryType = deliveryType;
 			this.deliveryAddress = deliveryAddress;
 			this.comment = comment;
 			this.deliveryCost = deliveryCost;
+			this.phoneNumber = phoneNumber;
 		}
 		DeliveryType deliveryType;
 		String deliveryAddress;
 		String comment;
 		Double deliveryCost;
+		String phoneNumber;
 	}
 	@Override
 	public DataSet getTotalOrdersReport(int date, DeliveryType deliveryType, Map<Integer, ExchangeFieldType> orderFields,
@@ -823,7 +825,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				if( voOrder.getStatus() != OrderStatus.CONFIRMED )
 					continue;
 				VoUser user = voOrder.getUser();
-				OrderExtenion oe = new OrderExtenion(voOrder.getDelivery(), voOrder.getDeliveryTo().getAddressText(pm), voOrder.getDeliveryCost(), voOrder.getComment());
+				OrderExtenion oe = new OrderExtenion(voOrder.getDelivery(), voOrder.getDeliveryTo().getAddressText(pm), 
+						voOrder.getDeliveryCost(), voOrder.getComment(), user.getMobilePhone());
 				orderExtMap.put(voOrder.getId(), oe);
 				/*OrderDescription od = new OrderDescription();
 				od.orderId = voOrder.getId();
@@ -984,8 +987,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		
 		List<String> threePlaceHolders = new ArrayList<>(3);
 		threePlaceHolders.addAll( Arrays.asList( new String[]{"","",""}));
-		List<String> fourPlaceHolders = new ArrayList<>(4);
-		fourPlaceHolders.addAll( Arrays.asList( new String[]{"","","",""}));
+		List<String> fivePlaceHolders = new ArrayList<>(5);
+		fivePlaceHolders.addAll( Arrays.asList( new String[]{"","","","",""}));
 		
 		
 		//skip two lines that would be taken by order ID, client name, client number
@@ -1001,10 +1004,10 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			lineOfProductImportId.add(""+nextProduct.getImportId());
 		}
 		//add placeholder for orderExtension to each orderCOlumn
-		lineOfProductNames.addAll(fourPlaceHolders);
-		lineOfProductVendors.addAll( Arrays.asList(new String[]{"Тип доставки", "Адрес доставки","Стоимость доставки", "Комменатарий"}));
-		lineOfProductId.addAll(fourPlaceHolders);
-		lineOfProductImportId.addAll(fourPlaceHolders);
+		lineOfProductNames.addAll(fivePlaceHolders);
+		lineOfProductVendors.addAll( Arrays.asList(new String[]{"Тип доставки", "Адрес доставки","Стоимость доставки", "Комменатарий", "Телефон"}));
+		lineOfProductId.addAll(fivePlaceHolders);
+		lineOfProductImportId.addAll(fivePlaceHolders);
 		
 		int extStartPos = lineOfProductNames.size();
 		
@@ -1645,6 +1648,18 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		} catch ( JDOObjectNotFoundException onfe ){
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop is defined as current");
 		} 
+	}
+
+	@Override
+	public List<PostalAddress> addPickupAddress(long shopId, PostalAddress pickupAddsess) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePickupAddress(long shopId, long addressId) throws InvalidOperation, TException {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

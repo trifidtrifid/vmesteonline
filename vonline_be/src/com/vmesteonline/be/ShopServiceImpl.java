@@ -950,7 +950,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 				currentOrder.setDelivery(deliveryType);
 
 				if (deliveryType == DeliveryType.SELF_PICKUP) {
-					currentOrder.setDeliveryTo(voShop.getAddress());
+					currentOrder.setDeliveryTo(null==newDeliveryTo ? voShop.getAddress() : newDeliveryTo);
 
 				} else if (null != newDeliveryTo) {
 					currentOrder.setDeliveryTo(newDeliveryTo);
@@ -1699,5 +1699,25 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		} catch (JDOObjectNotFoundException onfe) {
 			throw new InvalidOperation(VoError.IncorrectParametrs, "No shop found by ID:" + shopId);
 		}
+	}
+
+	@Override
+	public List<PostalAddress> getPickupAddresses(long shopId) throws InvalidOperation {
+		PersistenceManager pm = getPM();
+		VoCountry country = new VoCountry("Россия", pm);
+		VoCity spb = new VoCity(country, "Санкт-Петербург", pm);
+		VoCity pishkin = new VoCity(country, "Санкт-Петербург", pm);
+		VoStreet lensovetaStr = new VoStreet( spb, "Ленсовета", pm);
+		VoStreet gdStr = new VoStreet( pishkin, "Железнодорожная", pm);
+		VoStreet pargStr = new VoStreet( spb, "Парголовская", pm);
+		VoBuilding vblsv = new VoBuilding(lensovetaStr, "37", null, null, pm);
+		VoBuilding vbgd = new VoBuilding(gdStr, "56А", null, null, pm);
+		VoBuilding vbparg = new VoBuilding(pargStr, "7", null, null, pm);
+		
+		List<PostalAddress> pl = new ArrayList<PostalAddress>(3);
+		pl.add( new VoPostalAddress( vblsv, (byte)0, (byte)0, 0, "").getPostalAddress(pm));
+		pl.add( new VoPostalAddress( vbgd, (byte)0, (byte)0, 0, "").getPostalAddress(pm));
+		pl.add( new VoPostalAddress( vbparg, (byte)0, (byte)0, 0, "").getPostalAddress(pm));
+		return pl;
 	}
 }

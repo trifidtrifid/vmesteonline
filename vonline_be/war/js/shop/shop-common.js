@@ -270,7 +270,7 @@ define(
                         }
 
                     if(imagesSet.length){
-                        currentModal.height('275px');
+                        currentModal.height('375px');
                     }
 
                     if (boolPrepackRequired){
