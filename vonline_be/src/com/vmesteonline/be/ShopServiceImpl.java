@@ -1706,7 +1706,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		PersistenceManager pm = getPM();
 		VoCountry country = new VoCountry("Россия", pm);
 		VoCity spb = new VoCity(country, "Санкт-Петербург", pm);
-		VoCity pishkin = new VoCity(country, "Санкт-Петербург", pm);
+		VoCity pishkin = new VoCity(country, "Пушкин", pm);
 		VoStreet lensovetaStr = new VoStreet( spb, "Ленсовета", pm);
 		VoStreet gdStr = new VoStreet( pishkin, "Железнодорожная", pm);
 		VoStreet pargStr = new VoStreet( spb, "Парголовская", pm);
