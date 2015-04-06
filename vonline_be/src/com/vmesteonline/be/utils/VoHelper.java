@@ -347,7 +347,10 @@ public class VoHelper {
 			out.add(new ArrayList<T>(ocols));
 			List<T> nextORow = out.get(row);
 			for( int col = 0; col < ocols; col++){
-				nextORow.add( matrix.get(col).get(row));
+				if( matrix.size()  > col && matrix.get(col).size() > row )
+					nextORow.add( matrix.get(col).get(row));
+				else 
+					nextORow.add( null );	
 			}
 		}
 		return out;

@@ -1038,9 +1038,10 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					line.add( "" + (quantity == null ? "" : ""+quantity));
 				}
 				line.add( orderExtMap.get(orderEntry.getKey()).deliveryType.name() );
-				line.add( orderExtMap.get(orderEntry.getKey()).deliveryAddress );
+				line.add( "\""+orderExtMap.get(orderEntry.getKey()).deliveryAddress.replace(",", " ")+"\"" );
 				line.add( ""+orderExtMap.get(orderEntry.getKey()).deliveryCost );				
-				line.add( orderExtMap.get(orderEntry.getKey()).comment );
+				line.add( "\""+orderExtMap.get(orderEntry.getKey()).comment.replace(",", ".") + "\"");
+				line.add( orderExtMap.get(orderEntry.getKey()).phoneNumber);
 				
 				userOrdrersCounter ++;
 			}

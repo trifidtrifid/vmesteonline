@@ -321,7 +321,7 @@ public class CSVHelper {
 			if (outStr.length() >= sd.length())
 				outStr = outStr.substring(sd.length());
 		} else {
-			outStr = quoteCell(fieldToWrite.toString(), fd, sd, avpd);
+			outStr = quoteCell(null == fieldToWrite ? "" : fieldToWrite.toString(), fd, sd, avpd);
 		}
 		return outStr;
 	}
