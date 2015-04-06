@@ -58,7 +58,7 @@ public class Defaults {
 	private static final String COUNTRY = "Россия";
 	public static List<VoGroup> defaultGroups;
 	public static List<VoRubric> defaultRubrics;
-	private static String shopDataStorage = "http://localhost:64284/data/vomoloko_catalog/";
+	private static String shopDataStorage = "http://www.vomoloko.ru/data/vomoloko_catalog/";
 
 	public static String user1lastName = "Afamily";
 	public static String user1name = "Aname";
