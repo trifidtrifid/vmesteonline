@@ -58,12 +58,17 @@ public class StorageHelper {
 	 * This is where backoff parameters are configured. Here it is aggressively retrying with backoff, up to 10 times but taking no more that 15 seconds
 	 * total to do so.
 	 */
+	
+	
 	private static GcsService gcsService;
 
 	static {
 		gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder().initialRetryDelayMillis(10).retryMaxAttempts(10)
 				.totalRetryPeriodMillis(15000).build());
 	}
+	public static GcsService getGcsService(){
+		return gcsService;
+	};
 
 	public StorageHelper() {
 	}
@@ -181,15 +186,16 @@ public class StorageHelper {
 			
 			try {
 				VoFileAccessRecord vfar = pm.getObjectById(VoFileAccessRecord.class, oldFileId);
-				resp.setStatus(HttpServletResponse.SC_OK);
-				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
-				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
 				
 				VoFileAccessRecord theVersion = null == queryString ? vfar : vfar.getVersion(queryString);
 				if( null == theVersion ){
 					theVersion = vfar.getVersion( req.getParameterMap(), pm );
 					vfar.setVersion(queryString, theVersion);
 				}
+				//resp.sendRedirect("http://"+theVersion.getGSFileName().getBucketName()+".storage.googleapis.com/"+theVersion.getGSFileName().getObjectName()); 
+				resp.setStatus(HttpServletResponse.SC_OK);
+				resp.setContentType(vfar.getContentType()+"; filename='"+vfar.getFileName()+"'");
+				resp.addHeader( "Content-Disposition", "attachment; filename="+vfar.getFileName());
 				
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				getFile( theVersion.getGSFileName(), baos);
@@ -265,7 +271,8 @@ public class StorageHelper {
 	}
 
 	public static void saveFileData(InputStream is, VoFileAccessRecord vfar) throws IOException {
-		GcsOutputChannel outputChannel = gcsService.createOrReplace(vfar.getGSFileName(), GcsFileOptions.getDefaultInstance());
+		GcsFileOptions options = new GcsFileOptions.Builder().acl("public-read").mimeType(vfar.getContentType()).build();
+		GcsOutputChannel outputChannel = gcsService.createOrReplace(vfar.getGSFileName(), options);
 		streamCopy(is, Channels.newOutputStream(outputChannel));
 	}
 

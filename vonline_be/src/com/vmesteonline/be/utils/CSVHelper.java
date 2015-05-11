@@ -326,10 +326,10 @@ public class CSVHelper {
 		return outStr;
 	}
 
-	private static String quoteCell(String outStr, String fd, String sd, String avpd) {
+	private static String quoteCell(String outStr, String fd, String sd, String avpd) {		
 		if (outStr.contains(fd) || outStr.contains(sd) || outStr.contains(avpd))
 			outStr = "\"" + outStr + "\"";
-		return outStr;
+		return outStr.replace("\r", "").replace("\n", ", ");
 	}
 
 	// =====================================================================================================================

@@ -828,28 +828,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				OrderExtenion oe = new OrderExtenion(voOrder.getDelivery(), voOrder.getDeliveryTo().getAddressText(pm), 
 						voOrder.getDeliveryCost(), voOrder.getComment(), user.getMobilePhone());
 				orderExtMap.put(voOrder.getId(), oe);
-				/*OrderDescription od = new OrderDescription();
-				od.orderId = voOrder.getId();
-				od.date = new Date( ((long)date) * 1000L ).toString();
-				od.status = voOrder.getStatus();
-				od.priceType = voOrder.getPriceType();
-				od.tatalCost = voOrder.getTotalCost();
-				od.createdDate = new Date( ((long)voOrder.getCreatedAt()) * 1000L).toString();
-				od.deliveryType = voOrder.getDelivery();
-				od.deliveryCost = voOrder.getDeliveryCost();
-				VoPostalAddress deliveryTo = voOrder.getDeliveryTo();
-				od.deliveryAddress = deliveryTo == null ? null : deliveryTo.getAddressText(pm);
-				od.paymentType = voOrder.getPaymentType();
-				od.paymentStatus = voOrder.getPaymentStatus();
-				od.comment = voOrder.getComment();
-				
-				od.userId = user.getId();
-				od.userName = user.getName() + " " + user.getLastName();
-				od.weight = voOrder.getWeightGramm();*/
 				
 				ArrayList<OrderLineDescription> oldl = new ArrayList<OrderLineDescription>();
 				Map<Long,Double> productQM = new TreeMap<Long, Double>();
-				
 				
 				if( !usersMap.containsKey(user.getId()) ){ 
 					ordersMap.put( user.getId(), new TreeMap<Long, Map<Long,Double>>());
@@ -857,16 +838,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				}
 				ordersMap.get(user.getId()).put(voOrder.getId(), productQM);
 				
-				List<VoOrderLine> orderLines;
-				if(null==voOrder.getOrderLines() || voOrder.getOrderLines().size()==0 ){
-					orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+voOrder.getId()).execute();					
-				} else {
-					Collection<Long> orderLineIds = voOrder.getOrderLines().values();
-					orderLines = new ArrayList<VoOrderLine>(orderLineIds.size());
-					for (Long volId : orderLineIds) {
-						orderLines.add(pm.getObjectById(VoOrderLine.class, volId));
-					}
-				}
+				List<VoOrderLine> orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+voOrder.getId()).execute();
 				for( VoOrderLine vol : orderLines){
 						
 					if(productsList.containsKey( vol.getProductId() ))
@@ -875,83 +847,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 							vop = pm.getObjectById(VoProduct.class, vol.getProductId());
 							productsList.put(vol.getProductId(), vop);
 					}
-							
-					/*OrderLineDescription old = new OrderLineDescription();
-					old.lineId = vol.getId().getId();
-					old.quantity = vol.getQuantity();
-					old.orderId = voOrder.getId();
-					// TODO optimize count of requests to DB
-					old.productId = vol.getProductId();
-					old.productName = vop.getName();
-					old.producerId = vop.getProducerId();
-
-					VoProducer vopr = pm.getObjectById(VoProducer.class, old.producerId);
-					old.producerName = vopr.getName();
-					old.price = vol.getPrice();
-					old.comment = vol.getComment();
-					if (null != vol.getPackets()) {
-						old.packets = new TreeMap<Double, Integer>();
-						old.packets.putAll(vol.getPackets());
-					}
-					oldl.add(old);*/
-		
 					productQM.put(vol.getProductId(), vol.getQuantity());	
 				}
-
-				// collect all order line information
-				/*ByteArrayOutputStream lbaos = new ByteArrayOutputStream();
-				ImportElement ordersLinesIE = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_" + od.orderId + "_lines.csv", orderLineFIelds);
-				List<List<String>> lfieldsData = new ArrayList<List<String>>();
-
-				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, lfieldsData);
-
-				ordersLinesIE.setFieldsData(VoHelper.matrixToList(lfieldsData));
-				lbaos.close();
-				byte[] fileData = lbaos.toByteArray();
-
-				ordersLinesIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, ordersLinesIE.getFileName()));
-
-				odl.add(od);
-				ds.addToData(ordersLinesIE);
-				
-				//collect total order info
-				toFieldsData.add( createModifableListFromArray( new String[]{ ""+od.orderId, od.userName, "" +user.getMobilePhone()})); //order title
-				if( od.deliveryType != DeliveryType.SELF_PICKUP ) toFieldsData.add( createModifableListFromArray( new String[]{ od.deliveryAddress }));
-				if( null!=od.comment && od.comment.trim().length() > 0 ) toFieldsData.add( createModifableListFromArray( new String[]{ od.comment }));
-				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
-				CSVHelper.writeCSVData(lbaos, CSVHelper.getFieldsMap(odInstance, ExchangeFieldType.ORDER_LINE_ID, orderLineFIelds), oldl, toFieldsData); //orderLines
-				toFieldsData.add( createModifableListFromArray( new String[]{ "-------","-------------------","----------------","-------","-------------------","----------------"})); //order
-				toFieldsData.add( createModifableListFromArray( new String[]{ "Вес: "+od.weight, "Доставка: "+od.deliveryCost, "Итого: "+od.tatalCost })); //order
-				toFieldsData.add( createModifableListFromArray( new String[]{ "=======","===================","================","=======","===================","================"})); //order
-				toFieldsData.add( createModifableListFromArray( new String[]{ ""})); //delimiter*/
-			}
-			
-		// collect total orders CSV
-			/*ByteArrayOutputStream tobaos = new ByteArrayOutputStream();
-			CSVHelper.writeCSV(tobaos, toFieldsData, null, null, null);		
-			tobaos.close();
-			byte[] toFileDate = tobaos.toByteArray();
-			
-			ImportElement ordersLinesTO = new ImportElement(ImExType.EXPORT_ORDER_LINES, "order_total_lines.csv", orderLineFIelds);
-			ordersLinesTO.setUrl(StorageHelper.saveImage(toFileDate, "text/csv", currentUserId, false, pm, ordersLinesTO.getFileName()));
-			ordersLinesTO.setFieldsData( VoHelper.matrixToList(toFieldsData) );
-			ds.addToData(ordersLinesTO);*/
-			
+		}
 			//create orders matrix
 			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, orderExtMap, productsList, usersMap, pm));
-			
-			//add total orders info
-			/*ImportElement ordersIE = new ImportElement(ImExType.EXPORT_ORDERS, "orders.csv", orderFields);
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			CSVHelper.writeCSVData(baos, CSVHelper.getFieldsMap(oInstance, ExchangeFieldType.ORDER_ID, orderFields), odl, fieldsData);
-			ordersIE.setFieldsData( VoHelper.matrixToList(fieldsData) );
-			baos.close();
-			byte[] fileData2 = baos.toByteArray();
-			ordersIE.setUrl(StorageHelper.saveImage(fileData2, "text/csv", currentUserId, false, pm, ordersIE.getFileName()));
-
-			ds.addToData(ordersIE);*/
-
 			return ds;
 
 		} catch (InvalidOperation ei) {
@@ -962,12 +862,6 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			e.printStackTrace();
 			throw new InvalidOperation(VoError.GeneralError, "Failed to export data. " + e);
 		}
-	}
-//======================================================================================================================
-	private static ArrayList<String> createModifableListFromArray(String[] array) {
-		ArrayList<String> out = new ArrayList<String>( array.length );
-		out.addAll( Arrays.asList( array ));
-		return out;
 	}
 //======================================================================================================================
 	private ImportElement createFullOrderMatrix(long currentUserId, Map<Long, Map<Long, Map<Long, Double>>> ordersMap, Map<Long, OrderExtenion> orderExtMap, Map<Long, VoProduct> productsList,
@@ -1038,9 +932,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					line.add( "" + (quantity == null ? "" : ""+quantity));
 				}
 				line.add( orderExtMap.get(orderEntry.getKey()).deliveryType.name() );
-				line.add( "\""+orderExtMap.get(orderEntry.getKey()).deliveryAddress.replace(",", " ")+"\"" );
+				line.add( orderExtMap.get(orderEntry.getKey()).deliveryAddress );
 				line.add( ""+orderExtMap.get(orderEntry.getKey()).deliveryCost );				
-				line.add( "\""+orderExtMap.get(orderEntry.getKey()).comment.replace(",", ".") + "\"");
+				line.add( orderExtMap.get(orderEntry.getKey()).comment);
 				line.add( orderExtMap.get(orderEntry.getKey()).phoneNumber);
 				
 				userOrdrersCounter ++;
@@ -1398,9 +1292,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	}
 
 
-	private static Object createShopProductsByCategoryKey(long shopId) {
-		return "createShopProductsByCategoryKey"+shopId;
-	}
+	
 	
 	// ======================================================================================================================
 

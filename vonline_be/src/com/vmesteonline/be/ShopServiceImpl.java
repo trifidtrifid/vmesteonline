@@ -253,7 +253,8 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 				products = new ArrayList<Product>();
 				List<VoProduct> vpl = getProductsFromCategory(categoryId, shopId, pm);
 
-				Collections.sort(vpl, productCategoryNameComparator);
+				Collections.sort(vpl, new ProductCategoryIdComparator(pm));
+				
 				Set<Long> productIds = new HashSet<Long>();
 				for (VoProduct product : vpl) {
 					if (!product.isDeleted() && !productIds.contains(product.getId())) {
@@ -295,6 +296,45 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		}
 
 	};
+	
+	// ======================================================================================================================
+
+	private static class ProductCategoryIdComparator implements Comparator<VoProduct> {
+
+		private PersistenceManager pm;
+		private Map<Long,Long> importIdMap;
+		public ProductCategoryIdComparator( PersistenceManager pm){
+			this.pm = pm;
+			importIdMap = new HashMap<>();
+			List<VoProductCategory> pcs = (List<VoProductCategory>) pm.newQuery(VoProductCategory.class).execute();
+			for( VoProductCategory pc: pcs){
+				importIdMap.put(pc.getId(), pc.getImportId());
+			}
+		}
+		@Override
+		public int compare(VoProduct o1, VoProduct o2) {
+			
+			List<Long> o1cats = o1.getCategories();
+			List<Long> o2cats = o2.getCategories();
+			
+			if (o1cats.size() == 0 || o2cats.size() == 0)
+				return Integer.compare(o1cats.size(), o2cats.size());
+			
+			int ccomp = Long.compare(getMaxImportId(o1cats), getMaxImportId(o2cats));
+			return ccomp != 0 ? ccomp : Long.compare( o1.getImportId(), o2.getImportId());
+		}
+		
+		public long getMaxImportId(List<Long> categoryIdList) {
+			long maximpId = 0L;
+			for( Long cid : categoryIdList){
+				Long nextCiid = importIdMap.get(cid);
+				if( null!=nextCiid && nextCiid > maximpId )
+					maximpId = nextCiid;
+			}
+			return maximpId;
+		}
+	};
+	
 
 	// ======================================================================================================================
 	@Override
@@ -1448,7 +1488,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 				Query prodQuery = pm.newQuery(VoProduct.class, "shopId==" + shopId);
 				// prodQuery.setOrdering("score DESC");
 				List<VoProduct> products = (List<VoProduct>) prodQuery.execute();
-				Collections.sort(products, new ProdcutScoreComparator());
+				//Collections.sort(products, new ProdcutScoreComparator());
 				for (VoProduct voProduct : products) {
 					for (Long catId : voProduct.getCategories()) {
 						if (!cpm.containsKey(catId)) {
@@ -1481,40 +1521,6 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 	}
 
 	// ======================================================================================================================
-
-	// ======================================================================================================================
-	@Override
-	public PostalAddress createDeliveryAddress(String buildingAddressText, int flatNo, byte floor, byte staircase, String comment)
-			throws InvalidOperation {
-
-		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург " + buildingAddressText);
-		if (null == addrInfo.getBuildingNo()) {
-			addrInfo.setStreetName(buildingAddressText);
-			addrInfo.getBuildingNo("- дом не найден на карте! Уточните, пожалуйста, или введите в комментарии ниже.");
-			addrInfo.setLongitude("30.419349");
-			addrInfo.setLattitude("59.734401");
-		}
-		if (null == addrInfo.getCityName())
-			addrInfo.setCityName("Санкт Петербург");
-		if (null == addrInfo.getCountryName())
-			addrInfo.setCountryName("Россия");
-
-		PersistenceManager pm = getPM();
-		try {
-			VoUser currentUser = getCurrentUser(pm);
-			VoCountry voCountry = new VoCountry(addrInfo.getCountryName(), pm);
-			VoCity voCity = new VoCity(voCountry, addrInfo.getCityName(), pm);
-			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(), pm);
-			String no = addrInfo.getBuildingNo();
-			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
-			VoPostalAddress pa = new VoPostalAddress(voBuilding, staircase, floor, flatNo, comment);
-			currentUser.addDeliveryAddress(pa, buildingAddressText);
-			return pa.getPostalAddress(pm);
-
-		} finally {
-
-		}
-	}
 
 	@Override
 	public MatrixAsList getUserDeliveryAddresses() throws InvalidOperation {
@@ -1719,5 +1725,41 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		pl.add( new VoPostalAddress( vbgd, (byte)0, (byte)0, 0, "").getPostalAddress(pm));
 		pl.add( new VoPostalAddress( vbparg, (byte)0, (byte)0, 0, "").getPostalAddress(pm));
 		return pl;
+	}
+
+	// ======================================================================================================================
+	
+	// ======================================================================================================================
+	@Override
+	public PostalAddress createDeliveryAddress(String buildingAddressText, int flatNo, byte floor, byte staircase, String comment)
+			throws InvalidOperation {
+	
+		AddressInfo addrInfo = VoGeocoder.resolveAddressString("Россия Санкт Петербург " + buildingAddressText);
+		if (null == addrInfo.getBuildingNo()) {
+			addrInfo.setStreetName(buildingAddressText);
+			addrInfo.getBuildingNo("- дом не найден на карте! Уточните, пожалуйста, или введите в комментарии ниже.");
+			addrInfo.setLongitude("30.419349");
+			addrInfo.setLattitude("59.734401");
+		}
+		if (null == addrInfo.getCityName())
+			addrInfo.setCityName("Санкт Петербург");
+		if (null == addrInfo.getCountryName())
+			addrInfo.setCountryName("Россия");
+	
+		PersistenceManager pm = getPM();
+		try {
+			VoUser currentUser = getCurrentUser(pm);
+			VoCountry voCountry = new VoCountry(addrInfo.getCountryName(), pm);
+			VoCity voCity = new VoCity(voCountry, addrInfo.getCityName(), pm);
+			VoStreet voStreet = new VoStreet(voCity, addrInfo.getStreetName(), pm);
+			String no = addrInfo.getBuildingNo();
+			VoBuilding voBuilding = new VoBuilding(voStreet, no, addrInfo.getLongitude(), addrInfo.getLattitude(), pm);
+			VoPostalAddress pa = new VoPostalAddress(voBuilding, staircase, floor, flatNo, comment);
+			currentUser.addDeliveryAddress(pa, buildingAddressText);
+			return pa.getPostalAddress(pm);
+	
+		} finally {
+	
+		}
 	}
 }

@@ -74,6 +74,10 @@ public class VoProducer {
 		return producer;
 	}
 
+	public long getImportId() {
+		return importId;
+	}
+
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key id;

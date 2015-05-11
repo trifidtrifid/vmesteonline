@@ -458,13 +458,13 @@ public class VoShop {
 		return out;
 	}
 
-	public static Map<Integer, Double> convertFromDeliveryTypeMap(Map<DeliveryType, Double> in, Map<Integer, Double> out) {
+	public static<T> Map<Integer, T> convertFromDeliveryTypeMap(Map<DeliveryType, T> in, Map<Integer, T> out) {
 		if (null == in)
 			return out;
 		if (null == out)
-			out = new HashMap<Integer, Double>();
+			out = new HashMap<Integer, T>();
 
-		for (Entry<DeliveryType, Double> e : in.entrySet())
+		for (Entry<DeliveryType, T> e : in.entrySet())
 			out.put(e.getKey().getValue(), e.getValue());
 		return out;
 	}

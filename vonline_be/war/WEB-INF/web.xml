@@ -4,7 +4,16 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-
+	
+    <servlet>
+		<servlet-name>ExportServlet</servlet-name>
+		<servlet-class>com.vmesteonline.be.utils.ExportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ExportServlet</servlet-name>
+		<url-pattern>/utils/export</url-pattern>
+	</servlet-mapping>
+	
    	<servlet>
 		<servlet-name>UpdateSomething</servlet-name>
 		<servlet-class>com.vmesteonline.be.utils.UpdateSomething</servlet-class>
@@ -109,6 +118,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>backoffice</servlet-name>
 		<url-pattern>/backoffice/*</url-pattern>
+		<url-pattern>/backoffice</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>

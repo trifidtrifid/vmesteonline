@@ -155,6 +155,10 @@ public class VoUser extends GeoLocation {
 		return deliveryAddresses!=null ? deliveryAddresses.get(key) : null;
 	}
 	
+	public Map<String,VoPostalAddress> getDeliveryAddress( ) {
+		return deliveryAddresses != null ? deliveryAddresses : new HashMap<String,VoPostalAddress>() ;
+	}
+	
 	public void setLocation(long locCode, PersistenceManager pm) throws InvalidOperation {
 		Key addressKey = VoPostalAddress.getKeyValue(locCode);
 		try {

@@ -57,10 +57,21 @@ public class VoFileAccessRecord {
 	public GcsFilename getGSFileName() {
 		return new GcsFilename(bucket, fileName);
 	}
-
 	
 	public String getContentType() {
 		return contentType;
+	}
+
+	public int getCreatedAt() {
+		return createdAt;
+	}
+
+	public String getBucket() {
+		return bucket;
+	}
+
+	public String getPublicFileName() {
+		return publicFileName;
 	}
 
 
@@ -93,6 +104,10 @@ public class VoFileAccessRecord {
 	@Persistent
 	@Unowned
 	Map<String,VoFileAccessRecord> versions;
+
+	public final Map<String, VoFileAccessRecord> getVersions() {
+		return versions;
+	}
 
 	public VoFileAccessRecord getVersion(Map<String, String[]> params, PersistenceManager p) {
 		return getVersion(params,p,true);
