@@ -32,7 +32,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Магазин</title>
+<title>Во!Молоко Натуральные Вологодские продукты</title>
 
 <link rel="stylesheet" href="/build/shop.min.css" />
 <!--[if lt IE 9]>
