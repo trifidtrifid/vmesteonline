@@ -98,7 +98,7 @@ public class VoGeocoder {
 							}
 						building.setLocation( new BigDecimal(longitude), new BigDecimal(lattitude));
 						
-						return new Pair<String, String>(longitude, lattitude);
+						return Pair.of(longitude, lattitude);
 					}
 				}
 				throw new InvalidOperation(VoError.GeneralError, "Failed to get Location. THere is No data");

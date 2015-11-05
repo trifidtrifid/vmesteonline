@@ -149,7 +149,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<filter-class>com.vmesteonline.be.Main</filter-class>
 		<init-param>
 			<param-name>landingURL</param-name>
-			<param-value>voclub.co</param-value>
+			<param-value>vomoloko.ru</param-value>
 		</init-param>
 		<init-param>
 			<param-name>localPostfix</param-name>

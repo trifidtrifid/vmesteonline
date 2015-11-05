@@ -40,7 +40,7 @@ public class VoFileAccessRecord {
 	}
 	
 	public long getId() {
-		return id.getId();
+		return null==id ? 0 : id.getId();
 	}
 
 	public long getUserId() {

@@ -64,8 +64,8 @@ public class OAuthServlet extends HttpServlet {
 
 				authServiceImpl.registerNewUser(o.getString("first_name"), o.getString("last_name"), "123456", email, null);
 				authServiceImpl.allowUserAccess(email, "", false);
-				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте voclub.co",
-						"вы зарегистрировались на сайте http://voclub.co. Ваш логин для входа: " + email
+				EMailHelper.sendSimpleEMail(email, "Регистрация на сайте www.vomoloko.ru",
+						"вы зарегистрировались на сайте http://www.vomoloko.ru Ваш логин для входа: " + email
 								+ ". Ваш пароль: 123456. Рекомендуем изменить.");
 			}
 

@@ -25,7 +25,7 @@ import com.vmesteonline.be.utils.ExportServlet;
 @SuppressWarnings("serial")
 public class Main implements javax.servlet.Filter {
 	
-	private static String landingURL = "voclub.co";
+	private static String landingURL = "vomoloko.ru";
 	private static String shopContext = "shop";
 	
 	private static String postfix; 
@@ -48,17 +48,7 @@ public class Main implements javax.servlet.Filter {
 			
 			String landingPage = "http://"+landingURL+postfix + ":" +request.getServerPort();
 			String host = request.getServerName();
-			
-			if( host.contains( landingURL+postfix )){
-				ServiceImpl si = new ServiceImpl( request.getSession() );
-				try {
-					si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0, ServiceImpl.getPM() );
-				} catch (InvalidOperation e) {
-					e.printStackTrace();
-				}
-				chain.doFilter( srequest, sresponse );
-				return;
-			}
+						
 			
 			if( postfix.length() > 0 && host.endsWith(postfix)) //remove local postfix if it's presented
 				host = host.substring(0, host.length() - postfix.length());
@@ -99,7 +89,14 @@ public class Main implements javax.servlet.Filter {
 						}
 						
 					} else {
-						//redirect to landing page
+						ServiceImpl si = new ServiceImpl( request.getSession() );
+						try {
+							si.setCurrentAttribute( CurrentAttributeType.SHOP.getValue(), 0, ServiceImpl.getPM() );
+						} catch (InvalidOperation e) {
+							e.printStackTrace();
+						}
+//						chain.doFilter( srequest, sresponse );
+						
 						response.sendRedirect(landingPage);
 						logger.fine("URL not looks like shop's address so go to landing page '"+landingPage+"'");
 						return;
