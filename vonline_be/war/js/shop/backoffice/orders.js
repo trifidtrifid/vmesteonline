@@ -13,7 +13,7 @@ define(
             function showAllOrders(){
                 try{
                     // глобальная переменная для совмесстного использования с datepicker
-                    orders = thriftModule.client.getOrdersByStatus(0,nowTime+30*day,0);
+                    orders = thriftModule.client.getOrdersByStatus(nowTime-60*day,nowTime+60*day,0);
 
                     $('.orders-list').html("").append(createOrdersHtml(orders));
 
@@ -331,7 +331,7 @@ define(
                 var statusText = $(this).find('a').text();
                 var statusType = getStatusTypeByText(statusText);
 
-                var newOrders = thriftModule.client.getOrdersByStatus(0,nowTime + 180*day,statusType);
+                var newOrders = thriftModule.client.getOrdersByStatus(nowTime - 180*day,nowTime + 180*day,statusType);
 
                 if(deliveryFilterFlag){
                     newOrders = filterByDelivery(newOrders);
@@ -437,7 +437,7 @@ define(
             $('.type-delivery-dropdown .dropdown-menu li').click(function(e){
                 e.preventDefault();
 
-                var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+                var orders = thriftModule.client.getOrdersByStatus(nowTime-60*day,nowTime+180*day,0);
                 var newOrders = filterByDelivery(orders);
 
                 if(statusFilterFlag){
@@ -506,7 +506,7 @@ define(
             /* --- */
 
             function searchByWord(word){
-                var orders = thriftModule.client.getOrdersByStatus(0,nowTime+180*day,0);
+                var orders = thriftModule.client.getOrdersByStatus(nowTime-60*day,nowTime+180*day,0);
 
                 var filterOrders = filterBySearch(orders,word);
 

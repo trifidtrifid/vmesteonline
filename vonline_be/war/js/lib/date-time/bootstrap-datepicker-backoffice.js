@@ -89,7 +89,7 @@
         var currentMonth = currentDateItem.getMonth();
 
         if (globalUserAuth){
-            var orders = client.getOrdersByStatus(metaTime-10*day,metaTime+20*day,0);
+            var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+60*day,0);
             var ordersLength = orders.length;
 
             for (var i = 0; i < ordersLength; i++){

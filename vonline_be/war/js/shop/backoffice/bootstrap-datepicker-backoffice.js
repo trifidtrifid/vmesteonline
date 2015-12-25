@@ -95,7 +95,7 @@
             nextMonth = currentMonth + 1;
 
         if (globalUserAuth){
-            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-15*day,metaTime+15*day,0);
+            orders = (orders) ? orders : client.getOrdersByStatus(metaTime-60*day,metaTime+60*day,0);
             //var orders = client.getOrdersByStatus(metaTime-30*day,metaTime+30*day,0);
             var ordersLength = orders.length;
 

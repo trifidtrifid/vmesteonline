@@ -21,5 +21,12 @@
 		this feature enabled, there is a very small chance your app will see stale 
 		session data. For details, see http://code.google.com/appengine/docs/java/config/appconfig.html#Enabling_Sessions 
 		 -->
-
+<static-files>
+  <include path="/build/**.*" expiration="7d" />
+  <include path="/file/**.*" expiration="30d"/>
+  <include path="/**.js" expiration="7d" />
+  <include path="/**.jpg" expiration="7d" />
+  <include path="/**.png" expiration="7d" />
+  <include path="/**.jpeg" expiration="7d" />
+</static-files>
 <module>default</module></appengine-web-app>

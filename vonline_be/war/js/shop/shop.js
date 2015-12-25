@@ -1,4 +1,6 @@
 require.config({
+	
+	enforceDefine: false,
     baseUrl:  "/build", //"/js/shop"
     paths: {
         "datepicker": "../js/shop/datepicker",

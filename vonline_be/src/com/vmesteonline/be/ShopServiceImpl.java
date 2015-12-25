@@ -625,13 +625,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		String subject = shop.getName() + " Заказ# " + currentOrder.getId() + " Подтвержден.";
 		try {
 			EMailHelper.sendSimpleEMail(shopOwner.getEmail(), subject, htmlBody);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("FAiled to send Email : " + subject + " Reason: " + e);
 			e.printStackTrace();
 		}
 		try {
 			EMailHelper.sendSimpleEMail(shopOwner.getEmail(), customer.getEmail(), subject, htmlBody);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("FAiled to send Email : " + subject + " Reason: " + e);
 			e.printStackTrace();
 		}
