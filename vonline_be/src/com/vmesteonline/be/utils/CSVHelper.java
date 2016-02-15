@@ -303,6 +303,15 @@ public class CSVHelper {
 
 		if (fieldToWrite instanceof Number) {
 			outStr = quoteCell(trimFloatPointAsString(fieldToWrite.toString()), fd, sd, avpd);
+			try {
+				if( Double.parseDouble(outStr) + 1 < Double.parseDouble(""+fieldToWrite) 
+						|| Double.parseDouble(outStr)-1 > Double.parseDouble(""+fieldToWrite)) {
+					logger.error("Numeric formating error: in="+fieldToWrite+" out="+outStr 
+							+ " trim returns:"+trimFloatPointAsString(fieldToWrite.toString()));
+				}
+			} catch (NumberFormatException e) {
+				logger.error(e.getMessage(),e);				
+			}
 
 		} else if (fieldToWrite instanceof Set || fieldToWrite instanceof List) {
 			outStr = "";

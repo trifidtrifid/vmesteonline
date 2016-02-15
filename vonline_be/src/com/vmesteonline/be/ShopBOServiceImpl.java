@@ -17,6 +17,7 @@ import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
@@ -24,7 +25,6 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 import javax.management.openmbean.InvalidOpenTypeException;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.access.VoUserAccessBaseRoles;
@@ -75,7 +75,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public static Logger logger;
 
 	static {
-		logger = Logger.getLogger(ShopBOServiceImpl.class);
+		logger = Logger.getLogger(ShopBOServiceImpl.class.getName());
 	}
 	
 	public ShopBOServiceImpl(String sessionId) {
@@ -211,7 +211,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 					vp = new VoProducer(shopId, userId, pc, pm);
 
-					logger.debug("Producer " + vp + " added to " + voShop);
+					logger.fine("Producer " + vp + " added to " + voShop);
 				}
 				pm.makePersistent(vp);
 			}
@@ -267,13 +267,13 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 
 						if (vppc == null) {
 
-							logger.warn(err);
+							logger.severe(err);
 							throw new InvalidOperation(VoError.IncorrectParametrs, "parent Id " + pc.getParentId()
 									+ " not found as Id of categories above in a list provided");
 						} else {
 							while (null == (vppc = VoProductCategory.getByImportId(shopId, pc.getParentId(), pm)))
 								;
-							logger.warn("It sounds like index is broken. Category found by one-by-one search! Because " + err);
+							logger.severe("It sounds like index is broken. Category found by one-by-one search! Because " + err);
 						}
 
 					}
@@ -286,12 +286,12 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 					pc.setParentId(null == vppc ? 0 : vppc.getId());
 					vpc.update(pc, 0, pm);
 				} else {
-					logger.debug("Use parent category " + pc.getParentId());
+					logger.fine("Use parent category " + pc.getParentId());
 					vpc = new VoProductCategory(voShop, pc.getId(), pc.getParentId(), pc.getName(), pc.getDescr(), pc.getLogoURLset(), pc.getTopicSet(),
 							voShop.getOwnerId(), pc.socialNetworks, pm);
 
 					pc.setId(vpc.getId());
-					logger.debug("Category " + vpc + " added to " + voShop);
+					logger.fine("Category " + vpc + " added to " + voShop);
 				}
 
 				pm.makePersistent(vpc);
@@ -357,7 +357,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 			for (Entry<Long, OrderStatus> ose : orderStatusMap.entrySet()) {
 				VoOrder nextVO = pm.getObjectById(VoOrder.class, ose.getKey());
 				if (null == nextVO) {
-					logger.error("No order found by ID=" + ose.getKey());
+					logger.severe("No order found by ID=" + ose.getKey());
 				} else {
 					nextVO.setStatus(ose.getValue());
 					pm.makeNontransactional(nextVO);
@@ -407,7 +407,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 						dates.getType() != ods.getType())
 					newDatesList.add(ods);
 			}
-			logger.debug("removed "+ (voShop.getDates().size() - newDatesList.size())+" dates form shopID"+shopId);
+			logger.fine("removed "+ (voShop.getDates().size() - newDatesList.size())+" dates form shopID"+shopId);
 			voShop.setDates(newDatesList);
 			pm.makePersistent(voShop);
 		} catch (Exception e) {
@@ -720,7 +720,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	private void processUpdateShops(List<ShopDescription> shopRows) throws InvalidOperation {
 		ArrayList<Shop> pcl = new ArrayList<Shop>();
 		VoHelper.convertMutableSet(shopRows, pcl, new Shop());
-		logger.warn("SHOPS could not be uploaded, all of them must be created mutualy!");
+		logger.severe("SHOPS could not be uploaded, all of them must be created mutualy!");
 		// this.uploadShops(pcl, false);
 	}
 
@@ -786,6 +786,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ds.id = 0;
 		ds.name = "TotalOrdersReport";
 		
+		String debugLine = "";
 		PersistenceManager pm = getPM();
 		try {
 			VoShop shop = ShopServiceHelper.getCurrentShop( this, pm );
@@ -838,6 +839,8 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				}
 				ordersMap.get(user.getId()).put(voOrder.getId(), productQM);
 				
+				debugLine += "Order:"+voOrder.getId()+" user:"+user.getId()+" lines:";
+				
 				List<VoOrderLine> orderLines = (List<VoOrderLine>) pm.newQuery( VoOrderLine.class, "orderId=="+voOrder.getId()).execute();
 				for( VoOrderLine vol : orderLines){
 						
@@ -848,8 +851,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 							productsList.put(vol.getProductId(), vop);
 					}
 					productQM.put(vol.getProductId(), vol.getQuantity());	
+					debugLine += vop.getId()+":"+vol.getQuantity()+";";
 				}
-		}
+				debugLine += "\r\n";
+			}
+			logger.severe("OrdersReport: "+debugLine);
 			//create orders matrix
 			ds.addToData(createFullOrderMatrix(currentUserId, ordersMap, orderExtMap, productsList, usersMap, pm));
 			return ds;
@@ -917,6 +923,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		productsMatrix.add(lineOfProductNames);
 		lineOfProductNames.set(0, "PRODUCT NAME");
 		
+		String debugLine = "";
 		for(  VoUser nextUser : usersMap.values() ){
 			int userOrdrersCounter = 1;
 			for( Entry<Long, Map<Long,Double>> orderEntry : ordersMap.get(nextUser.getId()).entrySet()){
@@ -927,9 +934,11 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				line.add( nextUser.getName()+" "+nextUser.getLastName());
 				line.add( "order["+userOrdrersCounter+"]:"+orderEntry.getKey() );
 				//fill the row
+				debugLine += "orderId:"+orderEntry.getKey();
 				for( VoProduct nextProduct : productsList.values() ){
 					Double quantity = orderEntry.getValue().get( nextProduct.getId() );
 					line.add( "" + (quantity == null ? "" : ""+quantity));
+					debugLine += nextProduct.getId()+":"+quantity+";";
 				}
 				line.add( orderExtMap.get(orderEntry.getKey()).deliveryType.name() );
 				line.add( orderExtMap.get(orderEntry.getKey()).deliveryAddress );
@@ -938,7 +947,9 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 				line.add( orderExtMap.get(orderEntry.getKey()).phoneNumber);
 				
 				userOrdrersCounter ++;
+				debugLine += "\r\n";
 			}
+			logger.severe("CreateOrderMatrix: "+debugLine);
 		}
 		
 		
@@ -951,6 +962,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		ordersMtxIE.setFieldsData( VoHelper.matrixToList(productsMatrix) );
 		baos.close();
 		byte[] fileData = baos.toByteArray();
+		logger.fine("OrderReportContent:"+new String( baos.toByteArray()));
 		ordersMtxIE.setUrl(StorageHelper.saveImage(fileData, "text/csv", currentUserId, false, pm, "orders.csv"));
 
 		return ordersMtxIE;
@@ -1278,7 +1290,7 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 	public boolean isPublicMethod(String method) {
 		Long roleRequired;
 		if( null == (roleRequired =  VoShopAccessRoles.getRequiredRole(method))){
-			logger.warn("Method '"+method+"' is called but there is no role registered for it! Access denied");
+			logger.warning("Method '"+method+"' is called but there is no role registered for it! Access denied");
 			return false;
 		}
 		return roleRequired == VoUserAccessBaseRoles.ANYBODY || roleRequired == VoShopAccessRoles.CUSTOMER;
@@ -1291,9 +1303,6 @@ public class ShopBOServiceImpl extends ServiceImpl implements Iface {
 		return ServiceCategoryID.SHOP_SI.ordinal();
 	}
 
-
-	
-	
 	// ======================================================================================================================
 
 	

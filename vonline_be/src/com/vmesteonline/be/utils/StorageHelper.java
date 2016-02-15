@@ -357,13 +357,16 @@ public class StorageHelper {
 			
 			String contentString = new String(urlOrContent);
 			
-			if( contentString.startsWith("url(")){
+			if( contentString.startsWith("url(") && contentString.endsWith(")")){
+				contentString = contentString.substring(4, contentString.length() - 1 ).trim();
+				if( contentString.startsWith("\"") && contentString.endsWith("\""))
+					contentString = contentString.substring(1,contentString.length()-1);
 				
 				String[] split = contentString.split("[():;,]");
-				if( split.length >= 5 && split[0].equalsIgnoreCase("URL") && split[1].equalsIgnoreCase("data")){
-					if( split[3].equals("base64")){
-						is = new ByteArrayInputStream( Base64.decode(split[4]));
-						contentType = split[2];
+				if( split.length >= 4 && split[0].equalsIgnoreCase("data")){
+					if( split[2].equals("base64")){
+						is = new ByteArrayInputStream( Base64.decode(split[3]));
+						contentType = split[1];
 					} 
 				}
 				

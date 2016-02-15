@@ -16,12 +16,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.apache.log4j.Logger;
 import org.apache.thrift.TException;
 
 import com.vmesteonline.be.access.VoUserAccessBase;
@@ -73,7 +73,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 	private static int QUANTITY_SCALE = 5;
 
 	static {
-		logger = Logger.getLogger(ShopServiceImpl.class);
+		logger = Logger.getLogger(ShopServiceImpl.class.getName());
 	}
 
 	// ======================================================================================================================
@@ -266,7 +266,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 				try {
 					putObjectToCache(key, products);
 				} catch (Exception e) {
-					logger.warn("FAiled to put product list ti the cache. " + e.getMessage());
+					logger.warning("FAiled to put product list ti the cache. " + e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -505,9 +505,21 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 			if (null != orderLines && 0 != orderLines.size()) {
 				for (Iterator<Entry<Long, Long>> oli = orderLines.entrySet().iterator(); oli.hasNext();) {
 					Long olid = oli.next().getValue();
-					pm.deletePersistent(pm.getObjectById(VoOrderLine.class, olid));
+					try{
+						pm.deletePersistent(pm.getObjectById(VoOrderLine.class, olid));
+					} catch(Exception e){}
 				}
 			}
+			List<VoOrderLine> orderLiness = (List<VoOrderLine>) pm.newQuery(
+					VoOrderLine.class,
+					"orderId==" + orderId).execute();
+			if (!orderLines.isEmpty()){
+				for( VoOrderLine ol: orderLiness){
+						try{
+							pm.deletePersistent(ol);
+						} catch(Exception e){}												
+				}
+			}				
 			// unset current order
 			if (0 == orderId)
 				setCurrentAttribute(CurrentAttributeType.ORDER.getValue(), 0, pm);
@@ -626,13 +638,13 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		try {
 			EMailHelper.sendSimpleEMail(shopOwner.getEmail(), subject, htmlBody);
 		} catch (Exception e) {
-			logger.error("FAiled to send Email : " + subject + " Reason: " + e);
+			logger.severe("FAiled to send Email : " + subject + " Reason: " + e);
 			e.printStackTrace();
 		}
 		try {
 			EMailHelper.sendSimpleEMail(shopOwner.getEmail(), customer.getEmail(), subject, htmlBody);
 		} catch (Exception e) {
-			logger.error("FAiled to send Email : " + subject + " Reason: " + e);
+			logger.severe("FAiled to send Email : " + subject + " Reason: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -857,7 +869,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		PersistenceManager pm = getPM();
 		try {
 			VoOrder currentOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder(this, pm) : pm.getObjectById(VoOrder.class, orderId);
-
+			orderId = currentOrder.getId();
 			moveOrderDateIfExpired(currentOrder, pm);
 			// look if product was ordered already
 			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
@@ -868,11 +880,40 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 
 			VoOrderLine oldLine = null;
 			if (currentOdrerLines.containsKey(productId)) {
-				oldLine = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(productId));
-				double oldQty = oldLine.getQuantity();
-				weightDiff -= oldQty * voProduct.getWeight();
-				costDiff -= oldQty * oldLine.getPrice();
-				voProduct.setScore(voProduct.getScore() - oldQty);
+				try{
+					oldLine = pm.getObjectById(VoOrderLine.class, currentOdrerLines.get(productId));
+					double oldQty = oldLine.getQuantity();
+					weightDiff -= oldQty * voProduct.getWeight();
+					costDiff -= oldQty * oldLine.getPrice();
+					voProduct.setScore(voProduct.getScore() - oldQty);
+				} catch(Exception e){
+					logger.warning("Order line registered in the linesMap but not exists orderId==" + orderId + " && productId == "+" orderLIneId="+currentOdrerLines.get(productId));
+					currentOdrerLines.remove(productId);
+				}
+			}
+			if( null == oldLine ){
+				List<VoOrderLine> orderLines = (List<VoOrderLine>) pm.newQuery(
+						VoOrderLine.class,
+						"orderId==" + orderId + " && productId == " + productId).execute();
+				if (!orderLines.isEmpty()){
+					logger.warning("The map of orderLines does not contain a line that persist. orderId==" + orderId + " && productId == ");
+					double oldQty = oldLine.getQuantity();
+					oldLine = orderLines.get(0);
+					currentOdrerLines.put(productId, oldLine.getId().getId());
+					weightDiff -= oldQty * voProduct.getWeight();
+					costDiff -= oldQty * oldLine.getPrice();
+					voProduct.setScore(voProduct.getScore() - oldQty);
+					for( VoOrderLine ol: orderLines){
+						if(oldLine.getId() != ol.getId() ){
+							logger.warning("There is several order lines of the same product in the order: orderId==" + orderId + " && productId == "+" orderLIneId="+ol.getId());
+							pm.deletePersistent(ol);
+							oldQty = oldLine.getQuantity();
+							weightDiff -= oldQty * voProduct.getWeight();
+							costDiff -= oldQty * oldLine.getPrice();
+							voProduct.setScore(voProduct.getScore() - oldQty);							
+						}							
+					}
+				}				
 			}
 
 			Map<Double, Integer> packsRounded;
@@ -916,14 +957,15 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 			 */
 
 			pm.makePersistent(currentOrder);
+			pm.makePersistent(voProduct);
 			return new OrderUpdateInfo(currentOrder.getTotalCost(), currentOrder.getDelivery(), currentOrder.getDeliveryCost(),
 					currentOrder.getWeightGramm(), theLine.getOrderLine(pm));
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new InvalidOperation(VoError.GeneralError, "Failed to addOrderLine Id=" + productId + ". " + e);
+			logger.severe("Failed to addOrderLine OrderId="+orderId+" ProductId=" + productId + ". "+e);
+			throw new InvalidOperation(VoError.GeneralError, "Failed to addOrderLine OrderId="+orderId+" ProductId=" + productId + ". " + e);
 		} finally {
-
 		}
 	}
 
@@ -937,22 +979,29 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 		try {
 			VoOrder currentOrder = 0 == orderId ? ShopServiceHelper.getCurrentOrder(this, pm) : pm.getObjectById(VoOrder.class, orderId);
 
-			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
+/*			Map<Long, Long> currentOdrerLines = currentOrder.getOrderLines();
 			Long removedLineID = currentOdrerLines.remove(productId);
 			if (null == removedLineID) {
-				logger.warn("No order line found for product id=" + productId + " in order: " + orderId);
+				logger.warning("No order line found for product id=" + productId + " in order: " + orderId);
 				return false;
 			}
-
-			VoOrderLine removedLine = pm.getObjectById(VoOrderLine.class, removedLineID);
-			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);
-			voProduct.setScore(voProduct.getScore() - removedLine.getQuantity());
-
-			currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
-			currentOrder.addWeigthGramm(-removedLine.getQuantity() * voProduct.getWeight());
-
-			pm.deletePersistent(removedLine);
+*/
+			VoProduct voProduct = pm.getObjectById(VoProduct.class, productId);	
+			List<VoOrderLine> orderLines = (List<VoOrderLine>) pm.newQuery(
+					VoOrderLine.class,
+					"orderId==" + currentOrder.getId() + " && productId == " + productId).execute();
+			if (!orderLines.isEmpty()){
+				for( VoOrderLine ol: orderLines){
+					VoOrderLine removedLine = ol;
+					voProduct.setScore(voProduct.getScore() - removedLine.getQuantity());
+					currentOrder.addCost(-removedLine.getPrice() * removedLine.getQuantity());
+					currentOrder.addWeigthGramm(-removedLine.getQuantity() * voProduct.getWeight());
+					pm.deletePersistent(removedLine);
+				}
+			}	
+			
 			pm.makePersistent(currentOrder);
+			pm.makePersistent(voProduct);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1237,7 +1286,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 					pm.makePersistent(currentOrder);
 					return false;
 				} else {
-					logger.warn("" + voShop + " have no Payment type " + paymentType.name() + " Payment type will not been changed");
+					logger.warning("" + voShop + " have no Payment type " + paymentType.name() + " Payment type will not been changed");
 					return false;
 				}
 			}
@@ -1459,7 +1508,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 	public boolean isPublicMethod(String method) {
 		Long roleRequired;
 		if (null == (roleRequired = VoShopAccessRoles.getRequiredRole(method))) {
-			logger.warn("Method '" + method + "' is called but there is no role registered for it! Access denied");
+			logger.warning("Method '" + method + "' is called but there is no role registered for it! Access denied");
 			return false;
 		}
 		return roleRequired == VoUserAccessBaseRoles.ANYBODY || roleRequired == VoShopAccessRoles.CUSTOMER;
@@ -1577,7 +1626,7 @@ public class ShopServiceImpl extends ServiceImpl implements /*
 
 		Long roleRequired;
 		if (null == (roleRequired = VoShopAccessRoles.getRequiredRole(method))) {
-			logger.warn("Method '" + method + "' is called but there is no role registered for it! Access denied");
+			logger.warning("Method '" + method + "' is called but there is no role registered for it! Access denied");
 			return false;
 		}
 
