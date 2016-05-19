@@ -1,10 +1,10 @@
 require.config({
-	
+	waitSeconds: 0,
 	enforceDefine: false,
-    baseUrl:  "/build", //"/js/shop"
+    baseUrl:  "http://static.vomoloko.ru/shop/build", //"/js/shop"
     paths: {
-        "datepicker": "../js/shop/datepicker",
-        "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru"
+        "datepicker": "http://static.vomoloko.ru/shop/js/shop/datepicker",
+        "datepicker-ru": "http://static.vomoloko.ru/shop/js/lib/date-time/locales/bootstrap-datepicker.ru"
         /*"jquery"   : "../js/lib/jquery-2.1.1.min",
         "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
         "bootstrap": "../js/lib/bootstrap.min",

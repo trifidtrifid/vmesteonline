@@ -6,8 +6,8 @@
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesomeOriginal';
-  src: url('../../font/fontawesome-webfont.eot?v=4.1.0');
-  src: url('../../font/fontawesome-webfont.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('../../font/fontawesome-webfont.woff?v=4.1.0') format('woff'), url('../../font/fontawesome-webfont.ttf?v=4.1.0') format('truetype'), url('../../font/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') format('svg');
+  src: url('http://www.vomoloko.ru/font/fontawesome-webfont.eot?v=4.1.0');
+  src: url('http://www.vomoloko.ru/font/fontawesome-webfont.eot?#iefix&v=4.1.0') format('embedded-opentype'), url('http://www.vomoloko.ru/font/fontawesome-webfont.woff?v=4.1.0') format('woff'), url('http://www.vomoloko.ru/font/fontawesome-webfont.ttf?v=4.1.0') format('truetype'), url('http://www.vomoloko.ru/font/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular') format('svg');
   font-weight: normal;
   font-style: normal;
 }

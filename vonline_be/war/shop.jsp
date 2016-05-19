@@ -49,7 +49,7 @@
     </script>
     <![endif]-->
 
-    <script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+    <script type="text/javascript" data-main="http://static.vomoloko.ru/shop/build/build.js" src="http://static.vomoloko.ru/shop/js/shop/require.min.js"></script>
 
     <%--<script src="../js/lib/jquery-2.1.1.min.js"></script>
     <script src="../js/lib/bootstrap.min.js"></script>
@@ -147,9 +147,9 @@
                                                     for( int i = 0; i < socialNetworksSize ; i ++ ){
                                                         if(!socialNetworks.get(keys[i]).equals("")){
                                                             if (socialNetworks.get(keys[i]).indexOf("vk") != -1){
-                                                                imgSrc = "/i/vk.png";
+                                                                imgSrc = "http://static.vomoloko.ru/shop/i/vk.png";
                                                             }else if(socialNetworks.get(keys[i]).indexOf("fb") != -1){
-                                                                imgSrc = "/i/fb.png";
+                                                                imgSrc = "http://static.vomoloko.ru/shop/i/fb.png";
                                                             }
 
                                                 %>
@@ -205,10 +205,11 @@
                                                 <div class="product-pic">
                                                 <c:choose>
                                                     <c:when test="${product.imageURL != null}">
-                                                        <img src="${product.imageURL}?w=120&h=120" alt="фото"/>
+                                                        <!-- img src="${product.imageURL}?w=120&h=120" alt="фото"/> -->
+                                                        <img src="http://static.vomoloko.ru/shop/files/120x120${product.imageURL}" alt="фото"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <img src="/i/no-photo.png" alt="нет фото" />
+                                                        <img src="http://static.vomoloko.ru/shop/i/no-photo.png" alt="нет фото" />
                                                     </c:otherwise>
                                                 </c:choose>
                                                 </div>

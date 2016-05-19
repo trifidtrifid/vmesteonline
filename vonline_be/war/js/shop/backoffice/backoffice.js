@@ -1,17 +1,18 @@
 require.config({
-    baseUrl: "/build",
+    baseUrl: "http://static.vomoloko.ru/shop/build",
+    waitSeconds: 0,
     paths: {
-        "jquery"   : "../js/lib/jquery-2.1.1.min",
-        "bootstrap": "../js/lib/bootstrap.min",
-        "ace_extra": "../js/lib/ace-extra.min",
-        "ace_elements": "../js/lib/ace-elements.min",
-        "jquery_ui": "../js/lib/jquery-ui-1.10.3.full.min",
-        "flexslider": "../js/lib/jquery.flexslider-min",
-        "ace_spinner": "../js/lib/fuelux/fuelux.spinner",
-        "datepicker-backoffice": "../js/shop/backoffice/bootstrap-datepicker-backoffice",
-        "datepicker-ru": "../js/lib/date-time/locales/bootstrap-datepicker.ru",
-        "multiselect": "../js/lib/jquery.multiselect.min",
-        "bootbox":"../js/bootbox.min"
+        "jquery"   : "http://static.vomoloko.ru/shop/js/lib/jquery-2.1.1.min",
+        "bootstrap": "http://static.vomoloko.ru/shop/js/lib/bootstrap.min",
+        "ace_extra": "http://static.vomoloko.ru/shop/js/lib/ace-extra.min",
+        "ace_elements": "http://static.vomoloko.ru/shop/js/lib/ace-elements.min",
+        "jquery_ui": "http://static.vomoloko.ru/shop/js/lib/jquery-ui-1.10.3.full.min",
+        "flexslider": "http://static.vomoloko.ru/shop/js/lib/jquery.flexslider-min",
+        "ace_spinner": "http://static.vomoloko.ru/shop/js/lib/fuelux/fuelux.spinner",
+        "datepicker-backoffice": "http://static.vomoloko.ru/shop/js/shop/backoffice/bootstrap-datepicker-backoffice",
+        "datepicker-ru": "http://static.vomoloko.ru/shop/js/lib/date-time/locales/bootstrap-datepicker.ru",
+        "multiselect": "http://static.vomoloko.ru/shop/js/lib/jquery.multiselect.min",
+        "bootbox":"http://static.vomoloko.ru/shop/js/bootbox.min"
     },
     shim:{
         'ace_spinner':{

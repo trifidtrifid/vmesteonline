@@ -264,7 +264,7 @@
 	<script defer src="js/shop/landing/flexslider/jquery.flexslider-min.js"></script>
 	<script src="js/shop/landing/initSlider.js"></script>
 
-	<script type="text/javascript" data-main="/build/build.js" src="/js/shop/require.min.js"></script>
+	<script type="text/javascript" data-main="http://static.vomoloko.ru/shop/build/build.js" src="http://static.vomoloko.ru/shop/js/shop/require.min.js"></script>
 
 </body>
 </html>
