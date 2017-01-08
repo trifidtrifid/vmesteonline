@@ -205,8 +205,8 @@
                                                 <div class="product-pic">
                                                 <c:choose>
                                                     <c:when test="${product.imageURL != null}">
-                                                        <!-- img src="${product.imageURL}?w=120&h=120" alt="фото"/> -->
-                                                        <img src="http://static.vomoloko.ru/shop/files/120x120${product.imageURL}" alt="фото"/>
+                                                        <img src="${product.imageURL}?w=120&h=120" alt="фото"/>
+                                                        <!-- img src="http://static.vomoloko.ru/shop/files/120x120${product.imageURL}" alt="фото"/ -->
                                                     </c:when>
                                                     <c:otherwise>
                                                         <img src="http://static.vomoloko.ru/shop/i/no-photo.png" alt="нет фото" />

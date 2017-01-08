@@ -702,7 +702,7 @@
 																				<input type="file" id="imageURL-${product.id}">
 																				<c:choose>
 																					<c:when test="${product.imageURL != null}">
-																						<img src="http://static.vomoloko.ru/shop/files${product.imageURL}" alt="картинка" />
+																						<img src="${product.imageURL}" alt="картинка" />
 																					</c:when>
 																					<c:otherwise>
 																						<img src="http://static.vomoloko.ru/shop/i/no-photo.png"
@@ -781,7 +781,7 @@
 														<td class="product-imageURL">
 															<%--<input type="file" id="imageURL-${product.id}">--%> <c:choose>
 																<c:when test="${product.imageURL != null}">
-																	<img src="http://static.vomoloko.ru/shop/files${product.imageURL}" alt="картинка" />
+																	<img src="${product.imageURL}" alt="картинка" />
 																</c:when>
 																<c:otherwise>
 																	<img src="http://static.vomoloko.ru/shop/i/no-photo.png"

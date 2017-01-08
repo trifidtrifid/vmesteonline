@@ -39,9 +39,9 @@ define(
 							+ '">'
 							+ '<td>'
 							+ '<a href="#" class="product-link">'
-							+ '<div class="product-pic"><img src="http://static.vomoloko.ru/shop/files/80x80'
+							+ '<div class="product-pic"><img src="
 							+ myPic
-							+ '" alt="фото"/></div>'
+							+ ?w=80&h=80'" alt="фото"/></div>'
 							+ '<span><span class="product-name">'
 							+ productsList[i].name
 							+ '</span>'
