@@ -104,6 +104,7 @@ public class Main implements javax.servlet.Filter {
 				}
 				
 			} catch (Exception e){
+				e.printStackTrace();
 				logger.fine( "Failed to get shop for host '"+host+"' request URL: "+request.getRequestURI()+ " exc:"+e);
 				response.sendRedirect(landingPage);
 				return;

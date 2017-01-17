@@ -286,7 +286,7 @@ public class VoHelper {
 	}
 //===================================================================================================================
 	public static void forgetAllPersistent(Class cl, PersistenceManager pm){
-		Extent extent = pm.getExtent(cl);
+		Extent extent = pm.getExtent(cl,false);
 		for (Object object : extent) {
 			try {
 				pm.deletePersistent(object);

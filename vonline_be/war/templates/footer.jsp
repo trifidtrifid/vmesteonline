@@ -2,7 +2,7 @@
 
 <footer>
     <div id="colophon" class="wrapper clearfix">
-        (c) Во!Молоко Санкт-Петербург, 2015
+        (c) Во!Молоко Санкт-Петербург, 2017
         <div>email: marina@vomoloko.ru</div>
 
     <!-- /Yandex.Metrika informer -->

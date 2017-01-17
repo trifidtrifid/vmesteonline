@@ -5,6 +5,15 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
 	
+	<servlet>
+		<servlet-name>ClearAllSessions</servlet-name>
+		<servlet-class>com.vmesteonline.be.utils.ClearAllSessions</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ClearAllSessions</servlet-name>
+		<url-pattern>/utils/sclear</url-pattern>
+	</servlet-mapping>
+	
     <servlet>
 		<servlet-name>ExportServlet</servlet-name>
 		<servlet-class>com.vmesteonline.be.utils.ExportServlet</servlet-class>
